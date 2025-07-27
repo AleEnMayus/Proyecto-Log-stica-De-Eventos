@@ -1,0 +1,62 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependencias
+node_modules/
+
+# Builds y empaquetados
+dist/
+build/
+.out/
+
+# Archivos de producción / SSR
+dist-ssr/
+.server/
+
+# Configuración local
+*.local
+.env
+.env.*.local
+
+# Base de datos temporal
+*.sqlite
+*.db
+*.sql
+
+# Archivos de respaldo
+*.bak
+*.tmp
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos generados por herramientas de desarrollo
+coverage/
+.nyc_output/
+.cache/
+eslintcache
+
+# IDEs
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Test snapshot
+__snapshots__/
+
+# Otros
+*.tgz
+*.lock

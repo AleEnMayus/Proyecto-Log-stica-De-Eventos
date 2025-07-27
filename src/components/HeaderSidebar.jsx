@@ -1,0 +1,61 @@
+import React, { useState } from 'react';
+import './components.css';
+
+const HeaderSidebar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  return (
+    <>
+      {/* Header */}
+      <header className="bg-white shadow-sm sticky-top header-container">
+        <div className="container">
+          <div className="row align-items-center py-3">
+            <div className="col-6">
+              <div className="d-flex align-items-center">
+                <button className="menu-btn me-3" onClick={toggleMenu}>
+                  ☰
+                </button>
+                <div className="logo-text">
+                  Happy-Art Eventos  
+                </div>
+              </div>
+            </div>
+            <div className="col-6 text-end">
+              <button className="btn btn-outline-primary me-2 register-btn mb-1 mb-lg-0">
+                Registrar
+              </button>
+              <button className="btn-primary-custom btn">
+                Iniciar Sesión
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Overlay para cerrar el menú */}
+      <div 
+        className={`sidebar-overlay ${isMenuOpen ? 'active' : ''}`} 
+        onClick={toggleMenu}
+      ></div>
+
+      {/* Sidebar */}
+      <div className={`sidebar ${isMenuOpen ? 'open' : ''}`}>
+        <div className="p-4 mt-5 pt-5">
+          <nav className= "mt-5">
+            <a href="#inicio" className="sidebar-menu-item">Inicio</a>
+            <a href="#galeria" className="sidebar-menu-item">Galería</a>
+            <a href="#eventos" className="sidebar-menu-item">Eventos</a>
+            <a href="#promociones" className="sidebar-menu-item">Promociones</a>
+            <a href="#contacto" className="sidebar-menu-item">Contacto</a>
+          </nav>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default HeaderSidebar;

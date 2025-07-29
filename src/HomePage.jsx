@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './components/components.css';
+import HeaderSidebar from './components/HeaderSidebar';
 
-const TEST = () => {
+const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -59,12 +60,14 @@ const TEST = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+      <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+        
+      <HeaderSidebar />
 
       {/* Main Content */}
       <main className="container my-5 mt-5 pt-5">
         {/* Hero Section */}
-        <section id="inicio" className="mb-5">
+        <section id="inicio" className="mb-5 mt-5">
           <h1 className="section-title display-4">
             Happy Art Event
           </h1>
@@ -77,17 +80,17 @@ const TEST = () => {
         <section id="galeria" className="mb-5">
           <h2 className="section-title h3">Galería De Eventos</h2>
           <div className="carousel-container">
-            <div 
-              className="carousel-track" 
+            <div
+              className="carousel-track"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {images.map((image, index) => (
                 <div key={image.id} className="carousel-slide">
                   <div className="text-center">
-                    <div 
-                      style={{ 
-                        width: '200px', 
-                        height: '150px', 
+                    <div
+                      style={{
+                        width: '200px',
+                        height: '150px',
                         background: '#dee2e6',
                         borderRadius: '10px',
                         display: 'flex',
@@ -103,7 +106,7 @@ const TEST = () => {
                 </div>
               ))}
             </div>
-            
+
             <button className="carousel-btn prev" onClick={prevSlide}>
               ‹
             </button>
@@ -119,9 +122,9 @@ const TEST = () => {
           <p className="text-muted mb-4">
             Especificación de espacio donde se podrá asignar una cita para el evento que desee el usuario.
           </p>
-          <button className="btn-secondary-custom btn">
+          <a href='/login' className="btn-secondary-custom btn">
             Agendar Cita
-          </button>
+          </a>
         </section>
 
         {/* Promociones */}
@@ -130,7 +133,7 @@ const TEST = () => {
           <p className="text-muted mb-4">
             Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.
           </p>
-          
+
           <div className="row">
             {promociones.map((promo) => (
               <div key={promo.id} className="col-lg-6 col-xl-3 mb-4">
@@ -185,7 +188,7 @@ const TEST = () => {
       {/* Bootstrap JS */}
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     </div>
-  );
-};
+  )
+}
 
-export default TEST;
+export default HomePage

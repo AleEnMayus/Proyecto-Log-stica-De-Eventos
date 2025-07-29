@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './components.css';
+
 
 const HeaderSidebar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,38 +11,37 @@ const HeaderSidebar = () => {
   };
 
   return (
-    <>
-      {/* Header */}
+      <>
       <header className="bg-white shadow-sm sticky-top header-container">
-        <div className="container">
-          <div className="row align-items-center py-3">
-            <div className="col-6">
-              <div className="d-flex align-items-center">
-                <button className="menu-btn me-3" onClick={toggleMenu}>
-                  ☰
-                </button>
-                <div className="logo-text">
-                  Happy-Art Eventos  
-                </div>
+      <div className="container">
+        <div className="row align-items-center py-3">
+          <div className="col-6">
+            <div className="d-flex align-items-center">
+              <button className="menu-btn me-3" onClick={toggleMenu}>
+                ☰
+              </button>
+              <div className="logo-text">
+                Happy-Art Eventos
               </div>
             </div>
-            <div className="col-6 text-end">
-              <button className="btn btn-outline-primary me-2 register-btn mb-1 mb-lg-0">
-                Registrar
-              </button>
-              <button className="btn-primary-custom btn">
-                Iniciar Sesión
-              </button>
-            </div>
+          </div>
+          <div className="col-6 text-end">
+            <a href='/Register' className="btn btn-outline-primary me-2 register-btn mb-1 mb-lg-0">
+              Registrarse
+            </a>
+            <Link to="/login" className="btn-primary-custom btn">
+              Iniciar Sesión
+            </Link>
           </div>
         </div>
-      </header>
+      </div>
+    </header>
+    <div
+      className={`sidebar-overlay ${isMenuOpen ? 'active' : ''}`}
+      onClick={toggleMenu}
+    >
 
-      {/* Overlay para cerrar el menú */}
-      <div 
-        className={`sidebar-overlay ${isMenuOpen ? 'active' : ''}`} 
-        onClick={toggleMenu}
-      ></div>
+    </div>
 
       {/* Sidebar */}
       <div className={`sidebar ${isMenuOpen ? 'open' : ''}`}>
@@ -53,8 +54,7 @@ const HeaderSidebar = () => {
             <a href="#contacto" className="sidebar-menu-item">Contacto</a>
           </nav>
         </div>
-      </div>
-    </>
+      </div></>
   );
 };
 

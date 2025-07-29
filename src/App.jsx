@@ -1,16 +1,23 @@
 import { useState } from 'react'
-import HeaderSidebar from './components/HeaderSidebar'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './components/components.css'
-import TEST from './test'
+import HomePage from './HomePage'
+import LoginPage from './LogIn';
+import RegisterPage from './Register';
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <>
-      <HeaderSidebar />
-      <TEST />
-    </>
+    <div className="Aplicacion">
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/Register" element={<RegisterPage />} />
+      </Routes>
+    </BrowserRouter>
+    </div>
   )
 }
 

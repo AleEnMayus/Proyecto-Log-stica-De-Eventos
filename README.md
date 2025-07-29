@@ -1,12 +1,35 @@
-# React + Vite
+# 📦 Proyecto de Logística de Eventos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un sistema inteligente de gestión de eventos desarrollado con tecnologías modernas, diseñado para optimizar procesos de planificación, seguimiento y ejecución. Este proyecto busca facilitar la coordinación entre organizadores, proveedores y clientes de forma eficiente.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tecnologías Utilizadas
 
-## Expanding the ESLint configuration
+- ⚛️ **React** — Frontend dinámico e interactivo  
+- 🟩 **Node.js** — Backend escalable y ligero  
+- 🐬 **MySQL** — Base de datos relacional para gestión de información  
+- 🎨 **CSS con Bootstrap** — Diseño responsivo y estético
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🔧 Funcionalidades Clave (por implementar)
+
+- Gestión de eventos, cronogramas y participantes  
+- Panel administrativo con estadísticas en tiempo real  
+- Registro e inicio de sesión  
+- Integración con proveedores y logística de recursos
+
+---
+
+## 📌 Estado del Proyecto
+
+> 🚧 **En desarrollo** — Fecha estimada de entrega: *inicios de septiembre*
+
+---
+
+## 📥 Instalación y Ejecución
+
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/AleEnMayus/Proyecto-Log-stica-De-Eventos.git

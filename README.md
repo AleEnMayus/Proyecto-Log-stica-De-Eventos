@@ -46,10 +46,12 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
    Descargar de la pagina y usar el comando en la terminal de la carpeta **creada**
    FrontEnd 
    ```bash
-   'npm install, npm install react-router-dom '
+   
+   'npm install react-router-dom '
    ```
    BackEnd
    ```bash
+   'npm install
    'npm i express'
 
 4. Ejecutar servidor:

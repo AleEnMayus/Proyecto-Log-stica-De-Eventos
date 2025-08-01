@@ -30,6 +30,7 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
 
 ## 📥 Instalación y Ejecución
 1. Clona el repositorio:
+
    #Git
    Descargar e Instalar git y usar el comando en la terminal de una carpeta
    ```bash

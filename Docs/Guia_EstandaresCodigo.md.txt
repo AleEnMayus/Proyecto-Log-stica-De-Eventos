@@ -1,0 +1,46 @@
+A-
+Reglas de Nombre de Variables
+
+Camel Case: para nombrar las variables usaremos camelCase, y toda palabra que inicie tendrá que ir en mayúscula.
+
+Clases 
+
+PascalCase: Todas la palabras inician en mayúscula.
+
+Métodos 
+
+CamelCase: para nombrar las variables usaremos camelCase, y toda palabra que inicie tendrá que ir en mayúscula.
+
+
+Constantes 
+
+UPPER_CASE: Todas la palabras en mayúscula.
+
+B-
+
+Comentarios y documentación interna 
+
+JS: Usa // y /** */ para explicar funciones complejas o estructuras importantes.
+
+React: {/** */} para explicar funciones complejas o estructuras importantes.
+
+C-
+
+Identación 
+
+JS: 2 o 4 espacios
+
+D-
+
+     Aceptado	               No aceptado
+let productPrice = 19.99;  var x = 19.99;
+def getUserName():	   def GetUserName():
+const MAX_WIDTH = 800;	   const maxWidth = 800;
+class User():              class user():
+Comentarios relevantes     Comentarios irrelevantes o ausentes
+
+
+
+
+
+

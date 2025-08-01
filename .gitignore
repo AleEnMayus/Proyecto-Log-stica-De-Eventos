@@ -26,7 +26,6 @@ dist-ssr/
 # Base de datos temporal
 *.sqlite
 *.db
-*.sql
 
 # Archivos de respaldo
 *.bak

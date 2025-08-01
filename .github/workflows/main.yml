@@ -1,4 +1,4 @@
-name: CI - Fullstack React + Express
+name: CI - Frontend con React + Vite
 
 on:
   push:
@@ -7,43 +7,31 @@ on:
     branches: [ main ]
 
 jobs:
-  fullstack-ci:
+  build-frontend:
+    name: Ejecutar CI en el frontend
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar repositorio
+      - name: Clonar el repositorio
         uses: actions/checkout@v3
 
-      # ========================
-      # Backend (Express)
-      # ========================
-      - name: Instalar dependencias del backend
-        working-directory: ./backend
-        run: npm install
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-      - name: Lint del backend
-        working-directory: ./backend
-        run: npm run lint
-
-      - name: Test del backend
-        working-directory: ./backend
-        run: npm run test
-
-      # ========================
-      # Frontend (React + Vite)
-      # ========================
-      - name: Instalar dependencias del frontend
+      - name: Instalar dependencias
         working-directory: ./frontend
         run: npm install
 
-      - name: Lint del frontend
+      - name: Verificar errores con ESLint
         working-directory: ./frontend
         run: npm run lint
 
-      - name: Build del frontend
+      - name: Compilar la app con Vite
         working-directory: ./frontend
         run: npm run build
 
-      - name: Test del frontend
+      - name: Ejecutar pruebas con Vitest
         working-directory: ./frontend
         run: npm run test

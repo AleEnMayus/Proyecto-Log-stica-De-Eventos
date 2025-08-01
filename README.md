@@ -42,21 +42,12 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
 
 2. Instalar librerias necesarias:
 
-   #Node JS
-   Descargar de la pagina y usar el comando en la terminal de la carpeta **creada**
-   FrontEnd 
-   ```bash
-   npm install
-   npm install react-router-dom 
-   ```
-   BackEnd
-   ```bash
-   npm install
-   npm i express
-
+   -Descargar e Instalar Node JS de la pagina
+   -Ejecutar el archivo 'setup.bash'
+   
 4. Ejecutar servidor:
 
-   En la carpeta creada ejecutar en la terminal
+   En la carpeta creada FrontEnd ejecutar en la terminal
    ```bash
    npm run dev
       

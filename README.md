@@ -36,16 +36,23 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
    ```bash
    'git config --global user.name "TuNombre"'
    'git config --global user.email "tu@email.com"'
-   'git clone https://github.com/AleEnMayus/Proyecto-Log-stica-De-Eventos.git' y Iniciar sesión
+   'git clone https://github.com/AleEnMayus/Proyecto-Log-stica-De-Eventos.git'
+   ```
+    y Iniciar sesión
 
 2. Instalar librerias necesarias:
 
    #Node JS
    Descargar de la pagina y usar el comando en la terminal de la carpeta **creada**
+   FrontEnd 
    ```bash
-   'npm install, npm install react-router-dom y npm i express'
+   'npm install, npm install react-router-dom '
+   ```
+   BackEnd
+   ```bash
+   'npm i express'
 
-3. Ejecutar servidor:
+4. Ejecutar servidor:
 
    En la carpeta creada ejecutar en la terminal
    ```bash

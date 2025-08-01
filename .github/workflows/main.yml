@@ -1,4 +1,4 @@
-name: CI - React + Express
+name: CI - Fullstack React + Express
 
 on:
   push:
@@ -7,43 +7,43 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  fullstack-ci:
     runs-on: ubuntu-latest
 
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v3
 
-      # =========================
-      # Backend - Express
-      # =========================
+      # ========================
+      # Backend (Express)
+      # ========================
       - name: Instalar dependencias del backend
-        working-directory: ./server
+        working-directory: ./backend
         run: npm install
 
       - name: Lint del backend
-        working-directory: ./server
+        working-directory: ./backend
         run: npm run lint
 
-      - name: Pruebas del backend
-        working-directory: ./server
+      - name: Test del backend
+        working-directory: ./backend
         run: npm run test
 
-      # =========================
-      # Frontend - React + Vite
-      # =========================
+      # ========================
+      # Frontend (React + Vite)
+      # ========================
       - name: Instalar dependencias del frontend
-        working-directory: ./client
+        working-directory: ./frontend
         run: npm install
 
-      - name: Build del frontend
-        working-directory: ./client
-        run: npm run build
-
       - name: Lint del frontend
-        working-directory: ./client
+        working-directory: ./frontend
         run: npm run lint
 
-      - name: Pruebas del frontend
-        working-directory: ./client
+      - name: Build del frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Test del frontend
+        working-directory: ./frontend
         run: npm run test

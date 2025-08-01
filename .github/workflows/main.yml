@@ -1,0 +1,33 @@
+name: CI
+
+# Este workflow se activa cuando haces push o pull request a la rama main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # Se usa un entorno Linux para ejecutar los pasos
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3  # Baja el código de tu repo
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Usa esta versión de Node
+
+      - name: Instalar dependencias
+        run: npm install  # Instala los paquetes necesarios
+
+      - name: Verificar compilación
+        run: npm run build  # Ejecuta tu build
+
+      - name: Ejecutar pruebas unitarias
+        run: npm test  # Corre los tests
+
+      - name: Validar con linter
+        run: npm run lint  # Revisa errores de estilo

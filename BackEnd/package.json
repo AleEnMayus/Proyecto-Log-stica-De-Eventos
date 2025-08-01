@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "react-scripts build",
-    "test": "react-scripts test --watchAll=false",
-    "lint": "eslint."
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test":"vitest run"
   },
   "keywords": [],
   "author": "",

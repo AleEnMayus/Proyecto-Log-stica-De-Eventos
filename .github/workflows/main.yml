@@ -1,6 +1,5 @@
-name: CI
+name: CI - React + Express
 
-# Este workflow se activa cuando haces push o pull request a la rama main
 on:
   push:
     branches: [ main ]
@@ -9,25 +8,42 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest  # Se usa un entorno Linux para ejecutar los pasos
+    runs-on: ubuntu-latest
 
     steps:
       - name: Clonar repositorio
-        uses: actions/checkout@v3  # Baja el código de tu repo
+        uses: actions/checkout@v3
 
-      - name: Instalar Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18  # Usa esta versión de Node
+      # =========================
+      # Backend - Express
+      # =========================
+      - name: Instalar dependencias del backend
+        working-directory: ./server
+        run: npm install
 
-      - name: Instalar dependencias
-        run: npm install  # Instala los paquetes necesarios
+      - name: Lint del backend
+        working-directory: ./server
+        run: npm run lint
 
-      - name: Verificar compilación
-        run: npm run build  # Ejecuta tu build
+      - name: Pruebas del backend
+        working-directory: ./server
+        run: npm run test
 
-      - name: Ejecutar pruebas unitarias
-        run: npm test  # Corre los tests
+      # =========================
+      # Frontend - React + Vite
+      # =========================
+      - name: Instalar dependencias del frontend
+        working-directory: ./client
+        run: npm install
 
-      - name: Validar con linter
-        run: npm run lint  # Revisa errores de estilo
+      - name: Build del frontend
+        working-directory: ./client
+        run: npm run build
+
+      - name: Lint del frontend
+        working-directory: ./client
+        run: npm run lint
+
+      - name: Pruebas del frontend
+        working-directory: ./client
+        run: npm run test

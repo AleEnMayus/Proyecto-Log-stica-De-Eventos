@@ -1,0 +1,73 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.0.4">
+  <diagram name="Página-1" id="k0vmOhPt7ipfV4V7eULD">
+    <mxGraphModel dx="662" dy="547" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-6" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="19U0Gbtye8LwaDOjYcsF-8" target="19U0Gbtye8LwaDOjYcsF-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-7" value="1. Ingresar Criterio Busqueda" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="19U0Gbtye8LwaDOjYcsF-6">
+          <mxGeometry x="-0.1106" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-8" value=":Usuario" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="75" y="30" width="110" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-9" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=0;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="19U0Gbtye8LwaDOjYcsF-11" target="19U0Gbtye8LwaDOjYcsF-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-10" value="2. Enviar Busqueda" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="19U0Gbtye8LwaDOjYcsF-9">
+          <mxGeometry x="-0.079" relative="1" as="geometry">
+            <mxPoint x="-8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-11" value=":UI_BuscadorGlobal" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="359" y="100" width="121" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-12" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="19U0Gbtye8LwaDOjYcsF-16" target="19U0Gbtye8LwaDOjYcsF-19">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="225" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-13" value="3. Consultar En BD" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="19U0Gbtye8LwaDOjYcsF-12">
+          <mxGeometry x="-0.2211" relative="1" as="geometry">
+            <mxPoint x="15" y="-3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-14" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="19U0Gbtye8LwaDOjYcsF-16" target="19U0Gbtye8LwaDOjYcsF-11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="385" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-15" value="5. Mostrar Resultados" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="19U0Gbtye8LwaDOjYcsF-14">
+          <mxGeometry x="-0.1054" y="12" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-16" value=":SistemaBusqueda" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="70" y="210" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-17" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=12;startSize=8;endSize=8;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="19U0Gbtye8LwaDOjYcsF-19" target="19U0Gbtye8LwaDOjYcsF-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-18" value="4. Devolver Resultados" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;" vertex="1" connectable="0" parent="19U0Gbtye8LwaDOjYcsF-17">
+          <mxGeometry x="-0.0186" y="-3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-19" value=":BD_Datos" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="335" y="320" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="19U0Gbtye8LwaDOjYcsF-35" value="&lt;div&gt;El buscador global puede dar distintos resultados sobre eventos, contratos, recursos, citas, etc. D&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;isponible para clientes y administradores, con diferentes permisos sobre los resultados.&lt;/span&gt;&lt;/div&gt;" style="html=1;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="520" y="140" width="180" height="170" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

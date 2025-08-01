@@ -1,0 +1,110 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="27.1.6">
+  <diagram name="Página-1" id="bUz74yoLnu7ht94QflnF">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="SDb2772jXdgig_5gKARs-1" value="Administrador" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;arcSize=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="90" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-2" value="Sistema" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;arcSize=0;" vertex="1" parent="1">
+          <mxGeometry x="340" y="90" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-3" value="Base de Datos" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="640" y="90" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-4" value="1. Pulsa el apartado &quot;Contrato&quot;" style="endArrow=block;html=1;" edge="1" parent="1">
+          <mxGeometry x="0.0333" y="10" relative="1" as="geometry">
+            <mxPoint x="106" y="147" as="sourcePoint" />
+            <mxPoint x="406" y="147" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-5" value="2. Consultar listado de contratos" style="endArrow=block;html=1;" edge="1" parent="1">
+          <mxGeometry x="-0.0267" y="13" relative="1" as="geometry">
+            <mxPoint x="405" y="200" as="sourcePoint" />
+            <mxPoint x="705" y="200" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-6" value="3. Retornar listado" style="endArrow=block;html=1;" edge="1" parent="1">
+          <mxGeometry x="0.0267" y="-13" relative="1" as="geometry">
+            <mxPoint x="705" y="230" as="sourcePoint" />
+            <mxPoint x="405" y="230" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-7" value="4. Mostrar listado de contratos" style="endArrow=block;html=1;" edge="1" parent="1">
+          <mxGeometry x="-0.04" y="-13" relative="1" as="geometry">
+            <mxPoint x="405" y="260" as="sourcePoint" />
+            <mxPoint x="105" y="260" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-8" value="" style="dashed=1;endArrow=none;" edge="1" parent="1" source="SDb2772jXdgig_5gKARs-19" target="SDb2772jXdgig_5gKARs-9">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="120" as="sourcePoint" />
+            <mxPoint x="405" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-9" value="Sistema" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="340" y="310" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-10" value="" style="dashed=1;endArrow=none;" edge="1" parent="1" source="SDb2772jXdgig_5gKARs-17" target="SDb2772jXdgig_5gKARs-11">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="705" y="120" as="sourcePoint" />
+            <mxPoint x="705" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-11" value="Base de Datos" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="640" y="310" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-12" value="" style="dashed=1;endArrow=none;" edge="1" parent="1" source="SDb2772jXdgig_5gKARs-21" target="SDb2772jXdgig_5gKARs-13">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="120" as="sourcePoint" />
+            <mxPoint x="105" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-13" value="Administrador" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="310" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-14" value="" style="dashed=1;endArrow=none;" edge="1" parent="1" target="SDb2772jXdgig_5gKARs-15">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="120" as="sourcePoint" />
+            <mxPoint x="405" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-15" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="403" y="147" width="5" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-16" value="" style="dashed=1;endArrow=none;" edge="1" parent="1" target="SDb2772jXdgig_5gKARs-17">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="705" y="120" as="sourcePoint" />
+            <mxPoint x="705" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-17" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="702.5" y="197" width="5" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-18" value="" style="dashed=1;endArrow=none;" edge="1" parent="1" source="SDb2772jXdgig_5gKARs-15" target="SDb2772jXdgig_5gKARs-19">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="405" y="167" as="sourcePoint" />
+            <mxPoint x="405" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-19" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="403" y="230.5" width="5" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-20" value="" style="dashed=1;endArrow=none;" edge="1" parent="1" target="SDb2772jXdgig_5gKARs-21">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="105" y="120" as="sourcePoint" />
+            <mxPoint x="105" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SDb2772jXdgig_5gKARs-21" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="102.5" y="257" width="5" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

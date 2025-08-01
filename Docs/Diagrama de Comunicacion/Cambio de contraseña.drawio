@@ -1,0 +1,199 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.0.4">
+  <diagram name="Página-1" id="eKBa7YJ1tgcM0x-qSY-J">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-1" value="Actor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="90" y="150" width="30" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-2" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Interfaz&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="374" y="140" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-3" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="118" y="181.66333333333338" as="sourcePoint" />
+            <mxPoint x="372" y="182" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-4" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Base de Datos&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="370" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-5" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Servidor&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-7" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Autenticación&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="370" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-8" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="165" y="149.23" as="sourcePoint" />
+            <mxPoint x="335" y="149.23" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-9" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;1:&lt;/span&gt;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Solicita cambio de contraseña&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="215" y="80" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-10" value="" style="endArrow=none;html=1;rounded=0;exitX=0.999;exitY=0.444;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitPerimeter=0;" edge="1" parent="1" source="N1mma1sqcr6fpLRp46Ce-2" target="N1mma1sqcr6fpLRp46Ce-5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="570" y="280" as="sourcePoint" />
+            <mxPoint x="824" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-11" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="530" y="170" as="sourcePoint" />
+            <mxPoint x="700" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-12" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt; 2:&lt;/span&gt;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Muestra formulario&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="215" y="190" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-15" value="3:&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Ingresa contraseña actual y nueva&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="165" y="110" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-17" value="4:&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Envía datos&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="550" y="140" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-19" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="779.5" y="210" as="sourcePoint" />
+            <mxPoint x="779.5" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-20" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="790" y="250" as="sourcePoint" />
+            <mxPoint x="790" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-21" value="5:&amp;nbsp;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Valida sesión&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="790" y="280" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-22" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="N1mma1sqcr6fpLRp46Ce-7" target="N1mma1sqcr6fpLRp46Ce-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="840" y="399.5" as="sourcePoint" />
+            <mxPoint x="1040" y="399.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-23" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="860" y="390" as="sourcePoint" />
+            <mxPoint x="1030" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-24" value="&lt;div style=&quot;text-align: left;&quot;&gt;&lt;font face=&quot;jetbrains, jetbrains Fallback, Menlo, Monaco, monospace, monospace&quot; color=&quot;#383a42&quot;&gt;&lt;span style=&quot;font-size: 14px; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;8:&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; white-space: pre;&quot;&gt;Consulta hash&lt;/span&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="920" y="340" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-25" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="N1mma1sqcr6fpLRp46Ce-7" target="N1mma1sqcr6fpLRp46Ce-4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="900" y="530" as="sourcePoint" />
+            <mxPoint x="1220" y="530" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="780" y="470" />
+              <mxPoint x="1130" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-27" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;7: &lt;/span&gt;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Verifica contraseña actual&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="890" y="310" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-28" value="" style="endArrow=none;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="750" y="210" as="sourcePoint" />
+            <mxPoint x="750" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-30" value="6:&amp;nbsp;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;Sesión válida&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="630" y="280" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-31" value="" style="endArrow=none;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="494" y="189.5" as="sourcePoint" />
+            <mxPoint x="720" y="189.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-33" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;9:M&lt;/span&gt;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt;ostrarConfirmacion&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="590" y="200" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-35" value="" style="endArrow=block;dashed=1;endFill=0;endSize=12;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="307.5" y="220" as="sourcePoint" />
+            <mxPoint x="182.5" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-36" value="&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3Brounded%3D0%3B%22%20edge%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%3CmxPoint%20x%3D%22860%22%20y%3D%22390%22%20as%3D%22sourcePoint%22%2F%3E%3CmxPoint%20x%3D%221030%22%20y%3D%22390%22%20as%3D%22targetPoint%22%2F%3E%3C%2FmxGeometry%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3Brounded%3D0%3B%22%20edge%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%3CmxPoint%20x%3D%22860%22%20y%3D%22390%22%20as%3D%22sourcePoint%22%2F%3E%3CmxPoint%20x%3D%221030%22%20y%3D%22390%22%20as%3D%22targetPoint%22%2F%3E%3C%2FmxGeometry%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;&lt;span style=&quot;color: rgba(0, 0, 0, 0); font-family: monospace; font-size: 0px; text-align: start; text-wrap-mode: nowrap;&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22%22%20style%3D%22endArrow%3Dclassic%3Bhtml%3D1%3Brounded%3D0%3B%22%20edge%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20width%3D%2250%22%20height%3D%2250%22%20relative%3D%221%22%20as%3D%22geometry%22%3E%3CmxPoint%20x%3D%22860%22%20y%3D%22390%22%20as%3D%22sourcePoint%22%2F%3E%3CmxPoint%20x%3D%221030%22%20y%3D%22390%22%20as%3D%22targetPoint%22%2F%3E%3C%2FmxGeometry%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; text-align: left; white-space: pre; background-color: rgb(255, 255, 255);&quot;&gt; 9: Retorna hash&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="910" y="400" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-38" value="" style="endArrow=none;html=1;rounded=0;exitX=0.75;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="N1mma1sqcr6fpLRp46Ce-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="118" y="160" as="sourcePoint" />
+            <mxPoint x="370" y="157" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-40" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="280" y="190" as="sourcePoint" />
+            <mxPoint x="210" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-44" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="730" y="340" as="sourcePoint" />
+            <mxPoint x="730" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-45" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="1040" y="459.44" as="sourcePoint" />
+            <mxPoint x="860" y="459.44" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-46" value="" style="endArrow=none;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="N1mma1sqcr6fpLRp46Ce-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="600" y="450" as="sourcePoint" />
+            <mxPoint x="780" y="440" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="670" y="400" />
+              <mxPoint x="670" y="450" />
+              <mxPoint x="780" y="450" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-47" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="770" y="460" as="sourcePoint" />
+            <mxPoint x="660" y="410" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="660" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-48" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;10:Compara contraseñas&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;11:Valida nueva contraseña&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;12:&lt;/span&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; white-space: pre;&quot;&gt;Genera hash nuevo&lt;/span&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="440" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-50" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;13:Actualiza contraseña&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="360" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-52" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;14:Confirma cambio&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="890" y="420" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-53" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;15:Cambio exitoso&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="305" width="140" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-54" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="710" y="200" as="sourcePoint" />
+            <mxPoint x="530" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-55" value="&lt;span style=&quot;color: rgb(56, 58, 66); font-family: jetbrains, &amp;quot;jetbrains Fallback&amp;quot;, Menlo, Monaco, monospace, monospace; font-size: 14px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: pre; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;16:Confirma operación&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="535" y="220" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="N1mma1sqcr6fpLRp46Ce-56" value="17: Contraseña Cambiada" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="170" y="225" width="160" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

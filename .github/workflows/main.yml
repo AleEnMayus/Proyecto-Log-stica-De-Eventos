@@ -1,0 +1,37 @@
+name: CI - Frontend con React + Vite
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-frontend:
+    name: Ejecutar CI en el frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalar dependencias
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Verificar errores con ESLint
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Compilar la app con Vite
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Ejecutar pruebas con Vitest
+        working-directory: ./frontend
+        run: npm run test

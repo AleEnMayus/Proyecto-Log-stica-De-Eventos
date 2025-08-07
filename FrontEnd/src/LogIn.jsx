@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import './LogIn.css';
 
 const LoginPage = () => {
@@ -82,9 +84,9 @@ const LoginPage = () => {
               />
 
               <div className="form-options">
-                <button type="button" className="forgot-password">
+                <Link to="/recover" className="forgot-password">
                   ¿Olvidaste tu contraseña?
-                </button>
+                </Link>
               </div>
 
               <button

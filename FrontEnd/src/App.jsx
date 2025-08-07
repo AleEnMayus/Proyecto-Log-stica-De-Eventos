@@ -2,11 +2,15 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
+
+
 // Importación de estilos y vistas
 import './components/components.css'
 import HomePage from './HomePage'
 import LoginPage from './LogIn'
 import RegisterPage from './Register'
+import RecoverPassword from './RecoverPassword'
+
 
 // Componente principal de la aplicación
 function App() {
@@ -25,6 +29,10 @@ function App() {
 
           {/* Ruta a la página de registro */}
           <Route path="/register" element={<RegisterPage />} />
+
+          {/* Ruta a la página de recuperación de contraseña */}
+          <Route path="/recover" element={<RecoverPassword />} />
+
         </Routes>
       </BrowserRouter>
     </div>

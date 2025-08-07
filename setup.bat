@@ -29,10 +29,7 @@ call npm install react-router-dom
 IF %ERRORLEVEL% NEQ 0 (
     echo  Error al instalar react-router-dom
     exit /b
-)
-call npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
 
-call npx eslint --init
 
 echo Instalando Backend...
 cd ..\backend

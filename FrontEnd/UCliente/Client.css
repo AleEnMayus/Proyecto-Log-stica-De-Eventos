@@ -1,0 +1,62 @@
+/* Contenedor principal centrado */
+.contratos-container {
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center;     /* Centrar verticalmente */
+  gap: 20px;
+  flex-wrap: wrap;
+  min-height: calc(100vh - 150px); /* Ajusta según altura de header */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Tarjetas específicas para contratos */
+.contratos-card {
+  max-width: 300px;
+  flex: 1 1 280px;
+}
+
+/* Estilo de los select e inputs */
+.dropdown,
+.input-group-custom input {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+}
+
+/* Grupo de input con ícono */
+.input-group-custom {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding-right: 5px;
+  margin-bottom: 15px;
+}
+
+.input-group-custom input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  color: #888;
+  font-size: 14px;
+}
+
+.input-group-custom input:focus {
+  outline: none;
+}
+
+.icon-btn {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Botón ancho completo */
+.w-100 {
+  width: 100%;
+}

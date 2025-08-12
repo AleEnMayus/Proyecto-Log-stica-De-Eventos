@@ -224,3 +224,21 @@
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
   border-radius: 2px;
 }
+
+/* Contenedor principal de Contratos */
+.contratos-container {
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center;     /* Centra verticalmente */
+  gap: 20px;               /* Espacio entre tarjetas */
+  flex-wrap: wrap;         /* Permite que bajen en pantallas pequeñas */
+  min-height: calc(100vh - 150px); /* Altura mínima (menos header) */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Ajustes de las tarjetas */
+.contratos-card {
+  max-width: 300px;
+  flex: 1 1 280px;
+}

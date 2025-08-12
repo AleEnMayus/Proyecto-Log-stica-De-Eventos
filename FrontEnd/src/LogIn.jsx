@@ -31,15 +31,6 @@ const LoginPage = () => {
         email: 'user@happyart.com' 
       }
     },
-    'cliente@happyart.com': {
-      password: 'cliente123',
-      data: { 
-        id: 3,
-        name: 'María Cliente', 
-        role: 'user', 
-        email: 'cliente@happyart.com' 
-      }
-    }
   };
 
   const handleInputChange = (e) => {
@@ -80,8 +71,7 @@ const LoginPage = () => {
   const loginDemo = (userType) => {
     const demoCredentials = {
       admin: { email: 'admin@happyart.com', password: 'admin123' },
-      user: { email: 'user@happyart.com', password: 'user123' },
-      cliente: { email: 'cliente@happyart.com', password: 'cliente123' }
+      user: { email: 'user@happyart.com', password: 'user123' }
     };
 
     const creds = demoCredentials[userType];
@@ -142,7 +132,7 @@ const LoginPage = () => {
             <div className="card-body">
               <h6 className="card-title text-muted mb-3">🧪 Panel de Testing - Usuarios Demo</h6>
               <div className="row g-2">
-                <div className="col-md-4">
+                <div className="col-md-6">
                   <button 
                     type="button" 
                     className="btn btn-outline-success btn-sm w-100"
@@ -151,22 +141,13 @@ const LoginPage = () => {
                     👤 Usuario Normal
                   </button>
                 </div>
-                <div className="col-md-4">
+                <div className="col-md-6">
                   <button 
                     type="button" 
                     className="btn btn-outline-warning btn-sm w-100"
                     onClick={() => loginDemo('admin')}
                   >
                     👑 Administrador
-                  </button>
-                </div>
-                <div className="col-md-4">
-                  <button 
-                    type="button" 
-                    className="btn btn-outline-info btn-sm w-100"
-                    onClick={() => loginDemo('cliente')}
-                  >
-                    🎉 Cliente Premium
                   </button>
                 </div>
               </div>

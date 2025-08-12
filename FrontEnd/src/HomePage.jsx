@@ -1,22 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './components/components.css';
 import DynamicHeader from './components/DynamicHeader';
 
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [user, setUser] = useState(null); // Estado del usuario
+  const [user, setUser] = useState(null);
 
-  // Función para simular login
+   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+    // Escuchar cambios en localStorage
+    const handleStorageChange = () => {
+      const updatedUser = localStorage.getItem('user');
+      setUser(updatedUser ? JSON.parse(updatedUser) : null);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Funciones de login/logout
   const handleLogin = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
-    console.log('Usuario logueado:', userData);
   };
 
-  // Función para logout
   const handleLogout = () => {
+    localStorage.removeItem('user');
     setUser(null);
-    console.log('Usuario deslogueado');
   };
+
 
   // Datos del carrusel
   const images = [

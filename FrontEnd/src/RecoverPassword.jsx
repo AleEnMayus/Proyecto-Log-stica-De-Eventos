@@ -8,15 +8,18 @@ const RecoverPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [errorMessage, setErrorMessage] = useState('');
+  
   const codeRefs = useRef([]);
 
+  // Manejo del cambio de valor en los inputs del código
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
 
+      // Enfocar al siguiente campo automáticamente
       if (value && index < code.length - 1) {
         codeRefs.current[index + 1].focus();
       } else if (!value && index > 0) {
@@ -25,18 +28,60 @@ const RecoverPassword = () => {
     }
   };
 
-  const handleSendCode = () => {
+  // Función para enviar el código de verificación al correo
+  const handleSendCode = async () => {
     if (!email) {
-      alert('Por favor ingresa tu correo.');
+      setErrorMessage('Por favor ingresa tu correo.');
       return;
     }
-    alert(`Código enviado a ${email}`);
+
+    try {
+      const response = await fetch('http://localhost:5000/send-recovery-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      if (response.ok) {
+        alert(`Código enviado a ${email}`);
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || 'Error al enviar el código');
+      }
+    } catch (error) {
+      setErrorMessage('Error al conectar con el servidor');
+    }
   };
 
-  const handleSubmit = (e) => {
+  // Función para manejar la actualización de la contraseña
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ email, code: code.join(''), newPassword, confirmPassword });
-    alert('Contraseña actualizada');
+
+    if (newPassword !== confirmPassword) {
+      setErrorMessage('Las contraseñas no coinciden.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          code: code.join(''),
+          newPassword
+        })
+      });
+
+      if (response.ok) {
+        alert('Contraseña actualizada exitosamente');
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || 'Error al actualizar la contraseña');
+      }
+    } catch (error) {
+      setErrorMessage('Error al conectar con el servidor');
+    }
   };
 
   const handleGoBackBrowser = () => {
@@ -63,6 +108,8 @@ const RecoverPassword = () => {
       <div className="login-content mt-4">
         <div className="login-form-card">
           <h1 className="login-title">Recuperar Contraseña</h1>
+
+          {errorMessage && <div className="error-message">{errorMessage}</div>}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group mb-3">

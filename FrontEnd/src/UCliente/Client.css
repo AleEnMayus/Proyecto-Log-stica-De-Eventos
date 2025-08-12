@@ -60,3 +60,41 @@
 .w-100 {
   width: 100%;
 }
+
+
+/* Contenedor centrado */
+.cita-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 150px); /* Ajuste por el header fijo */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Tarjeta del formulario */
+.cita-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Inputs y textarea */
+.cita-card input,
+.cita-card textarea {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: white;
+}
+
+.cita-card textarea {
+  resize: none;
+}
+
+/* Botón ancho completo */
+.w-100 {
+  width: 100%;
+}

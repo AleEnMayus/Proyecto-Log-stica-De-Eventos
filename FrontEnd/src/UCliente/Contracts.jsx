@@ -1,10 +1,11 @@
 import React from "react";
 import "./Client.css"; // Importa el CSS separado
+import HeaderCl from "../components/HeaderCl";
 
 const Contracts = () => {
   return (
     <div className="contratos-container">
-      
+      <HeaderCl />
       {/* Enviar Contrato */}
       <div className="promo-card contratos-card">
         <h3>Enviar Contrato</h3>

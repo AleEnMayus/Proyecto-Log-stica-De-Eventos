@@ -10,7 +10,7 @@ import HomePage from './HomePage'
 import LoginPage from './LogIn'
 import RegisterPage from './Register'
 import RecoverPassword from './RecoverPassword'
-import Contracts from '../UCliente/Contracts'
+import Contracts from './UCliente/Contracts'
 
 
 // Componente principal de la aplicación

@@ -62,39 +62,79 @@
 }
 
 
-/* Contenedor centrado */
-.cita-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 150px); /* Ajuste por el header fijo */
-  padding: 20px;
-  box-sizing: border-box;
+
+
+/* Contenedor principal */
+.schedule-container {
+  max-width: 450px;
+  margin: 120px auto 50px auto; /* deja espacio para el header */
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  text-align: left;
 }
 
-/* Tarjeta del formulario */
-.cita-card {
-  width: 100%;
-  max-width: 400px;
+/* Título */
+.schedule-title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 25px;
+}
+
+/* Labels */
+.schedule-form label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: block;
+  margin: 12px 0 6px;
+  color: #333;
 }
 
 /* Inputs y textarea */
-.cita-card input,
-.cita-card textarea {
+.schedule-form input,
+.schedule-form textarea {
   width: 100%;
-  padding: 10px 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-  background-color: white;
+  padding: 12px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: #f9f9f9;
 }
 
-.cita-card textarea {
-  resize: none;
+.schedule-form input:focus,
+.schedule-form textarea:focus {
+  outline: none;
+  border-color: rgb(21, 165, 231);
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(21, 165, 231, 0.3);
 }
 
-/* Botón ancho completo */
-.w-100 {
+.schedule-form textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* Botón */
+.btn-submit {
   width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  background: linear-gradient(135deg, rgb(177, 121, 241), rgb(21, 165, 231));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(21, 165, 231, 0.3);
 }

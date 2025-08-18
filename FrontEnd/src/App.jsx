@@ -11,7 +11,7 @@ import LoginPage from './LogIn'
 import RegisterPage from './Register'
 import RecoverPassword from './RecoverPassword'
 import Contracts from './UCliente/Contracts'
-import ScheduleAppointment from './UCliente/ScheduleAppointment'
+import Schedule from './UCliente/Schedule'
 
 // Componente principal de la aplicación
 function App() {
@@ -38,7 +38,7 @@ function App() {
           <Route path="/contracts-client" element={<Contracts />} />
 
            {/* Ruta a la página principal */}
-          <Route path="/ScheduleAppointment-client" element={<ScheduleAppointment />} />
+          <Route path="/Schedule-client" element={<Schedule />} />
 
         </Routes>
       </BrowserRouter>

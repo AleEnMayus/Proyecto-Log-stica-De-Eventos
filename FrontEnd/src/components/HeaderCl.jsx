@@ -4,9 +4,14 @@ import './components.css';
 
 const HeaderCl = ({ user }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
   };
 
   return (
@@ -19,27 +24,55 @@ const HeaderCl = ({ user }) => {
                 <button className="menu-btn me-3" onClick={toggleMenu}>
                   ☰
                 </button>
-                <div className="logo-text">
-                  Happy-Art Eventos
-                </div>
-                {/* 👇 Aquí el saludo */}
-                {user && (
-                  <span className="ms-3">👋 Hola {user.name}</span>
-                )}
+                <div className="logo-text">Happy-Art Eventos</div>
               </div>
             </div>
-            <div className="col-6 text-end">
-              <a href='/Register' className="btn btn-outline-primary me-2 register-btn mb-1 mb-lg-0">
-                Registrarse
-              </a>
-              <Link to="/login" className="btn-primary-custom btn">
-                Iniciar Sesión
-              </Link>
+
+            <div className="col-6 text-end position-relative">
+              {user ? (
+                // 👤 Menú de usuario (cuando está logueado)
+                <div 
+                  className="d-inline-flex align-items-center user-menu-trigger"
+                  onClick={toggleUserMenu}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="me-2">🔔</span>
+                  <span className="me-2">👤</span>
+                  <span className="fw-bold">{user.name}</span>
+                  <span className="ms-1">▼</span>
+                </div>
+              ) : (
+                // 🔑 Botones de login/registro (cuando no está logueado)
+                <>
+                  <a href='/Register' className="btn btn-outline-primary me-2 register-btn mb-1 mb-lg-0">
+                    Registrarse
+                  </a>
+                  <Link to="/login" className="btn-primary-custom btn">
+                    Iniciar Sesión
+                  </Link>
+                </>
+              )}
+
+              {isUserMenuOpen && user && (
+                <div className="user-dropdown">
+                  <div className="p-3 border-bottom">
+                    <div className="fw-bold">{user.name}</div>
+                    <div className="text-muted small">{user.email}</div>
+                  </div>
+                  <Link to="/editar-perfil" className="dropdown-item-custom">
+                    ⚙ Editar perfil
+                  </Link>
+                  <Link to="/logout" className="dropdown-item-custom">
+                    ↩ Cerrar sesión
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </header>
 
+      {/* Overlay */}
       <div
         className={`sidebar-overlay ${isMenuOpen ? 'active' : ''}`}
         onClick={toggleMenu}
@@ -56,7 +89,6 @@ const HeaderCl = ({ user }) => {
             <a href="#contacto" className="sidebar-menu-item">Contacto</a>
             <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
             <Link to="/contracts-client" className="sidebar-menu-item">Contratos</Link>
-
           </nav>
         </div>
       </div>

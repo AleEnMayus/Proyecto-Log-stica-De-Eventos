@@ -90,7 +90,7 @@ const HomePage = () => {
   const getWelcomeMessage = () => {
     if (!user) return 'Happy Art Event';
     if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.name}!`;
-    return `¡Bienvenido ${user.name}!`;
+    return `¡Bienvenidooo ${user.name}!`;
   };
 
   const getWelcomeDescription = () => {

@@ -55,7 +55,8 @@ const HeaderCl = ({ user }) => {
             <a href="#promociones" className="sidebar-menu-item">Promociones</a>
             <a href="#contacto" className="sidebar-menu-item">Contacto</a>
             <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
-            <a href="#agendar" className="sidebar-menu-item">Contratos</a>
+            <Link to="/contracts-client" className="sidebar-menu-item">Contratos</Link>
+
           </nav>
         </div>
       </div>

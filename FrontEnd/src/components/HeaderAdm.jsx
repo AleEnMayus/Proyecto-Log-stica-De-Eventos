@@ -77,6 +77,8 @@ const HeaderAdm = () => {
             <a href="#contacto" className="sidebar-menu-item">Contacto</a>
             <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
             <a href="#agendar" className="sidebar-menu-item">Contrato</a>
+            {/* Aquí va el link corregido */}
+            <Link to="/survay" className="sidebar-menu-item">Encuestas</Link>
           </nav>
         </div>
       </div>

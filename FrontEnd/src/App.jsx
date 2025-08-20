@@ -14,6 +14,8 @@ import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/survay'  
 import  CreateSurvay from './Uadmin/createsurvay'
+import Recursos from './Uadmin/Recursos'
+import Recursos2 from './Uadmin/Recursos2'
 
 // Componente principal de la aplicación
 function App() {
@@ -47,6 +49,15 @@ function App() {
 
           {/* Ruta a la página de creación de encuestas */}
           <Route path="/createsurvay" element={<CreateSurvay />} />
+
+          {/* Ruta a la página de recursos */}
+          <Route path="/Recursos-admin" element={<Recursos />} />
+
+          {/* Ruta a la página de recursos */}
+          <Route path="/Recursos2-admin" element={<Recursos2 />} />
+
+
+
 
         </Routes>
       </BrowserRouter>

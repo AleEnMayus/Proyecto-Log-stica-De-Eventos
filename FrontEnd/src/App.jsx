@@ -13,7 +13,7 @@ import RecoverPassword from './RecoverPassword'
 import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/survay'  
-import  CreateSurvay from './Uadmin/createsurvay'
+import CreateSurvay from './Uadmin/createsurvay'
 
 // Componente principal de la aplicación
 function App() {

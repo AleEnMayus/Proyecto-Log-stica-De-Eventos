@@ -7,7 +7,7 @@ const CreateSurvay = () => {
     <div className="survay-container">
       <HeaderAdm />
       <div className="survay-card">
-        <h2>Crear Encuesta</h2>
+        <h2 class className="title" >Crear Encuesta</h2>
 
         {/* Estrellas */}
         <div className="survay-stars">

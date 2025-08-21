@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";  // 👈 Importa Link
 import "./survay.css";
 import HeaderAdm from "../components/HeaderAdm";
 
@@ -35,14 +36,12 @@ const Survey = () => {
       <h2>Encuestas</h2>
 
       {/* Botón Crear Encuesta */}
-      <button  className="create-btn">+ Crear Encuesta</button>
+      <Link to="/createsurvay" className="create-btn">
+        + Crear Encuesta
+      </Link>
 
       {/* Buscador */}
-      <input
-        type="text"
-        placeholder="Buscar..."
-        className="search-box"
-      />
+      <input type="text" placeholder="Buscar..." className="search-box" />
 
       {/* Tabla */}
       <table className="survey-table">

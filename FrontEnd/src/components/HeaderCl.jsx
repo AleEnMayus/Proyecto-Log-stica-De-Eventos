@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './components.css';
+import Notifications from "../UCliente/Notification-tray";
 
-const HeaderCl = ({ user }) => {
+const HeaderCl = ({ user: propUser }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // 👇 Si no viene un usuario, usamos uno falso
+  const user = propUser || {
+    name: "Cliente Prueba",
+    email: "cliente@correo.com"
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -31,7 +39,7 @@ const HeaderCl = ({ user }) => {
             <div className="col-6 text-end position-relative">
               {user ? (
                 // 👤 Menú de usuario (cuando está logueado)
-                <div 
+                <div
                   className="d-inline-flex align-items-center user-menu-trigger"
                   onClick={toggleUserMenu}
                   style={{ cursor: 'pointer' }}
@@ -88,7 +96,9 @@ const HeaderCl = ({ user }) => {
             <a href="#promociones" className="sidebar-menu-item">Promociones</a>
             <a href="#contacto" className="sidebar-menu-item">Contacto</a>
             <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
-            <Link to="/contracts-client" className="sidebar-menu-item">Contratos</Link>
+            <Link to="/contracts-client" className="sidebar-menu-item">Contratos</Link> 
+            <Link to="/survey" className="sidebar-menu-item">Encuestas</Link> 
+            <Link to="/Notification-tray" className="sidebar-menu-item">Notificaciones</Link>
           </nav>
         </div>
       </div>

@@ -14,6 +14,7 @@ import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/survay'  
 import CreateSurvay from './Uadmin/createsurvay'
+import Logout from './components/LogOut'
 
 // Componente principal de la aplicación
 function App() {
@@ -35,6 +36,8 @@ function App() {
 
           {/* Ruta a la página de recuperación de contraseña */}
           <Route path="/recover" element={<RecoverPassword />} />
+
+          <Route path='/logout' element={<Logout />} />
            
            {/* Ruta a la página principal */}
           <Route path="/contracts-client" element={<Contracts />} />

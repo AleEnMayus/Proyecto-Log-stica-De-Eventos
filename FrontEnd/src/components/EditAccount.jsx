@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./PerfilModal.css";
 
-const PerfilModal = ({ isOpen, onClose, user }) => {
+const EditModal = ({ isOpen, onClose, user }) => {
   const navigate = useNavigate();
   if (!isOpen) return null;
 
@@ -29,7 +29,7 @@ const PerfilModal = ({ isOpen, onClose, user }) => {
           ×
         </button>
 
-        <h4 className="modal-title text-center mb-3">Detalles del Perfil</h4>
+        <h4 className="modal-title text-center mb-3">Editar Perfil</h4>
 
         <div className="pm-body d-flex flex-wrap"> 
           <div className="pm-photo">
@@ -56,45 +56,72 @@ const PerfilModal = ({ isOpen, onClose, user }) => {
             <div className="field-row">
               <div className="field">
                 <div className="field-label">Nombre completo</div>
-                <div className="field-value">{fullName}</div>
+                <input
+                  type="text"
+                  className="field-value"
+                  defaultValue={fullName}
+                />
               </div>
             </div>
 
             <div className="field-row">
               <div className="field">
                 <div className="field-label">Correo</div>
-                <div className="field-value">{email}</div>
+                <input
+                  type="email"
+                  className="field-value"
+                  defaultValue={email}
+                />
               </div>
             </div>
 
             <div className="field-row">
               <div className="field">
-                <div className="field-label">Número de telefono (Opcional)</div>
-                <div className="field-value">{phoneNumber}</div>
+                <div className="field-label">Número de teléfono (Opcional)</div>
+                <input
+                  type="tel"
+                  className="field-value"
+                  defaultValue={phoneNumber}
+                />
               </div>
             </div>
 
             <div className="field-row">
               <div className="field">
                 <div className="field-label">Fecha de nacimiento</div>
-                <div className="field-value">{birthDate}</div>
+                <input
+                  type="date"
+                  className="field-value"
+                  defaultValue={birthDate}
+                />
               </div>
             </div>
 
             <div className="field-row two-cols">
               <div className="field">
                 <div className="field-label">Tipo de documento</div>
-                <div className="field-value">{identificationType}</div>
+                <select className="field-value" defaultValue={identificationType}>
+                  <option value="">Seleccionar</option>
+                  <option value="cedula">Cédula de Ciudadanía</option>
+                  <option value="cedula_extranjeria">Cédula de Extranjería</option>
+                  <option value="pasaporte">Pasaporte</option>
+                  <option value="tarjeta_identidad">Tarjeta de Identidad</option>
+                </select>
               </div>
+
               <div className="field">
                 <div className="field-label">Número de documento</div>
-                <div className="field-value">{documentNumber}</div>
+                <input
+                  type="text"
+                  className="field-value"
+                  defaultValue={documentNumber}
+                />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="pm-footer">
+        <div className="pm-footer d-flex flex-column">
           <button
             className="btn-primary-custom w-100"
             onClick={() => {
@@ -102,7 +129,7 @@ const PerfilModal = ({ isOpen, onClose, user }) => {
               navigate("/editar-perfil");
             }}
           >
-            Editar perfil
+            Guardar Cambios
           </button>
           <button
             className="btn-secondary-custom w-100"
@@ -111,12 +138,12 @@ const PerfilModal = ({ isOpen, onClose, user }) => {
               navigate("/logout");
             }}
           >
-            Cerrar sesión
+            Cambiar contraseña
           </button>
         </div>
       </div>
     </div>
-  );
+    );
 };
 
-export default PerfilModal;
+export default EditModal;

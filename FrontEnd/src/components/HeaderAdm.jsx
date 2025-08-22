@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './components.css';
 import PerfilModal from './account';
+import EditModal from "./EditAccount";
 
 const HeaderAdm = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  
+  const [showPerfil, setShowPerfil] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     // Obtener datos del usuario del localStorage
@@ -19,12 +22,6 @@ const HeaderAdm = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
-
-  const handleOpenProfile = (e) => {
-    e.preventDefault();
-    setShowModal(true);
-    setIsUserMenuOpen(false);
-  };
 
   const userImageUrl = userData?.profilePicture || null;
 
@@ -85,9 +82,10 @@ const HeaderAdm = () => {
                     <div className="text-muted small">{userData.email}</div>
                     <div className="badge bg-secondary small mt-1">{userData.role}</div>
                   </div>
-                  <Link className="dropdown-item-custom" onClick={handleOpenProfile}>
+                  <Link className="dropdown-item-custom" onClick={() => {setShowPerfil(true); setIsUserMenuOpen(false)}}>
                     Ver perfil
                   </Link>
+                  
                   
                   <Link to="/logout" className="dropdown-item-custom">
                     Cerrar sesión
@@ -121,11 +119,22 @@ const HeaderAdm = () => {
         </div>
       </div>
 
+      {/* Modal de perfil */}
       <PerfilModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        isOpen={showPerfil}
+        onClose={() => setShowPerfil(false)}
         user={userData}
-        role={userData?.role === "admin" ? "admin" : "cliente"}
+        onEdit={() => {
+          setShowPerfil(false);
+          setShowEdit(true);
+        }}
+      />
+
+      {/* Modal de edición */}
+      <EditModal
+        isOpen={showEdit}
+        onClose={() => setShowEdit(false)}
+        user={userData}
       />
     </>
   );

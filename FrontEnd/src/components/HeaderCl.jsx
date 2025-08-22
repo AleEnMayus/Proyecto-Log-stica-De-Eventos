@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './components.css';
 import PerfilModal from './account';
+import EditModal from "./EditAccount";
 
-const HeaderCl = () => {
+const HeaderAdm = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  
+  const [showPerfil, setShowPerfil] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     // Obtener datos del usuario del localStorage
@@ -19,12 +22,6 @@ const HeaderCl = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
-
-  const handleOpenProfile = (e) => {
-    e.preventDefault();
-    setShowModal(true);
-    setIsUserMenuOpen(false);
-  };
 
   const userImageUrl = userData?.profilePicture || null;
 
@@ -60,14 +57,11 @@ const HeaderCl = () => {
                 style={{ cursor: 'pointer' }}
               >
                 <span className="fw-bold me-2">
-                  {userData ? (userData.fullName || userData.name).split(' ')[0] : 'Invitado'}
+                  {userData ? (userData.fullName).split(' ')[0] : 'Invitado'}
                 </span>
 
                 {userImageUrl ? (
-                  <img 
-                    src={userImageUrl} 
-                    alt="Avatar del usuario" 
-                    className="ms-2 rounded-circle img-50"
+                  <img src={userImageUrl} alt="Avatar del usuario" className="ms-2 rounded-circle img-50"
                     onError={(e) => {
                       e.target.style.display = 'none';
                       e.target.nextElementSibling.style.display = 'block';
@@ -84,13 +78,14 @@ const HeaderCl = () => {
               {isUserMenuOpen && userData && (
                 <div className="user-dropdown position-absolute end-0 me-4 mt-2">
                   <div className="p-3 border-bottom">
-                    <div className="fw-bold">{userData.fullName || userData.name}</div>
+                    <div className="fw-bold">{userData.fullName}</div>
                     <div className="text-muted small">{userData.email}</div>
                     <div className="badge bg-secondary small mt-1">{userData.role}</div>
                   </div>
-                  <Link className="dropdown-item-custom" onClick={handleOpenProfile}>
+                  <Link className="dropdown-item-custom" onClick={() => {setShowPerfil(true); setIsUserMenuOpen(false)}}>
                     Ver perfil
                   </Link>
+                  
                   
                   <Link to="/logout" className="dropdown-item-custom">
                     Cerrar sesión
@@ -124,14 +119,25 @@ const HeaderCl = () => {
         </div>
       </div>
 
+      {/* Modal de perfil */}
       <PerfilModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
+        isOpen={showPerfil}
+        onClose={() => setShowPerfil(false)}
         user={userData}
-        role={userData?.role === "admin" ? "admin" : "cliente"}
+        onEdit={() => {
+          setShowPerfil(false);
+          setShowEdit(true);
+        }}
+      />
+
+      {/* Modal de edición */}
+      <EditModal
+        isOpen={showEdit}
+        onClose={() => setShowEdit(false)}
+        user={userData}
       />
     </>
   );
 };
 
-export default HeaderCl;
+export default HeaderAdm;

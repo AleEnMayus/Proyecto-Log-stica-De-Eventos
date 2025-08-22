@@ -1,0 +1,120 @@
+.create-event-section {   
+  height: calc(100vh - 80px); 
+  overflow: hidden; 
+  margin-top: 80px; 
+}
+
+.create-event-container {   
+  padding: 15px 4rem 5px 4rem; 
+  max-width: 100%;   
+  margin: 0 auto;   
+  height: 100%; 
+  display: flex;   
+  flex-direction: column;
+}  
+
+.create-event-title {   
+  text-align: center;   
+  margin-bottom: 12px; 
+  font-size: 2.4rem; 
+  font-weight: 600;
+  color: #000000;
+}
+
+.section-title {
+  text-align: center;   
+  margin-bottom: 25px;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #000000;
+}  
+
+.create-event-grid {   
+  display: grid;   
+  grid-template-columns: 1fr 1fr;   
+  gap: 50px; 
+  align-items: start;   
+  flex: 1;   
+  overflow: hidden; 
+  max-width: 1600px;   
+  margin: 0 auto;
+  height: calc(100% - 60px); 
+}  
+
+.create-event-column {   
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}  
+
+.form-field {   
+  margin-bottom: 12px; 
+}  
+
+.form-label {   
+  display: block;   
+  color: #374151;   
+  font-size: 14px;   
+  font-weight: 600;   
+  margin-bottom: 8px; 
+}  
+
+.form-label span {   
+  color: #dc2626;   
+  margin-left: 6px; 
+}  
+
+.form-input,.form-textarea {   
+  width: 100%;   
+  padding: 10px; 
+  border: 1px solid #e5e7eb;   
+  border-radius: 8px;   
+  font-size: 14px; 
+  box-sizing: border-box; 
+}  
+
+.form-textarea {   
+  resize: vertical; 
+}  
+
+.form-container {   
+  max-width: 1000px;   
+  margin: 0 auto;   
+  padding: 20px;   
+  background: #f5f7fa;   
+  border-radius: 12px;   
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+}  
+
+.btn-full {   
+  width: 100%;   
+  padding: 14px;   
+  font-size: 15px; 
+}  
+
+.payment-options {   
+  display: flex;   
+  gap: 20px;   
+  flex-wrap: wrap; 
+}  
+
+.payment-option {   
+  display: flex;   
+  align-items: center;   
+  gap: 10px;   
+  font-size: 15px; 
+}  
+
+.confirm-button {   
+  display: flex;   
+  justify-content: center;   
+  margin-top: 8px; 
+  padding-bottom: 5px; 
+}  
+
+.confirm-button button {   
+  padding: 10px 40px; 
+  font-size: 15px; 
+}

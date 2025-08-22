@@ -5,7 +5,7 @@ import '../components/components.css';
 const EventDetails = () => {
   const [formData, setFormData] = useState({
     correoElectronico: 'example@email.com',
-    nombreCliente: '',
+    nombreCliente: 'James Herrid',
     telefonoContacto: '',
     numeroDocumento: '',
     ubicacionEvento: '',
@@ -14,7 +14,8 @@ const EventDetails = () => {
     tematicaEvento: '',
     horaEvento: '',
     paqueteSeleccionado: '',
-    metodoPago: ''
+    metodoPago: '',
+    estadoEvento: 'En planeación'
   });
 
   const handleInputChange = (e) => {
@@ -38,40 +39,91 @@ const EventDetails = () => {
         
         <div style={{ 
           display: 'flex', 
-          alignItems: 'center', 
+          alignItems: 'center',
+          justifyContent: 'space-between',
           marginBottom: '40px',
           backgroundColor: '#f8f9fa',
           padding: '20px',
           borderRadius: '12px'
         }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            backgroundColor: '#9ca3af',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: '20px'
-          }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div style={{
+              width: '60px',
+              height: '60px',
+              backgroundColor: '#9ca3af',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: '15px',
+              color: 'white',
+              fontSize: '20px',
+              fontWeight: '600'
+            }}>
+            </div>
+            <div>
+              <h4 style={{ 
+                color: '#6b7280', 
+                fontSize: '14px',
+                fontWeight: '500',
+                margin: '0 0 4px 0'
+              }}>
+                Nombre de usuario
+              </h4>
+              <p style={{ 
+                color: '#111827', 
+                fontSize: '16px',
+                fontWeight: '600',
+                margin: '0 0 4px 0'
+              }}>
+                Juan Pérez
+              </p>
+              <p style={{ 
+                color: '#6b7280', 
+                fontSize: '14px',
+                margin: 0
+              }}>
+                Correo electrónico
+              </p>
+              <p style={{ 
+                color: '#111827', 
+                fontSize: '14px',
+                margin: 0
+              }}>
+                example@email.com
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 style={{ 
-              color: '#6b7280', 
+          
+          <div style={{ textAlign: 'right' }}>
+            <h4 style={{ 
+              color: '#111827', 
               fontSize: '16px',
-              fontWeight: '500',
+              fontWeight: '600',
               margin: '0 0 8px 0'
             }}>
-              Correo electronico
-            </h3>
-            <p style={{ 
-              color: '#111827', 
-              fontSize: '18px',
-              fontWeight: '600',
-              margin: 0
+              Estado del evento
+            </h4>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: '8px'
             }}>
-              {formData.correoElectronico}
-            </p>
+              <div style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#03ff25ff',
+                borderRadius: '50%'
+              }}></div>
+              <span style={{ 
+                color: '#111827', 
+                fontSize: '14px',
+                fontWeight: '500'
+              }}>
+                {formData.estadoEvento}
+              </span>
+            </div>
           </div>
         </div>
 

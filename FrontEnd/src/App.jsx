@@ -16,6 +16,8 @@ import Survay from './Uadmin/survay'
 import  CreateSurvay from './Uadmin/createsurvay'
 import ListEvents from './Uadmin/HomeEvents'
 import EventDetails from './Uadmin/EventDetails'
+import CreateEvent from './Uadmin/CreateEvent'
+import EditEvent from './Uadmin/EditEvent'
 
 // Componente principal de la aplicación
 function App() {
@@ -53,6 +55,10 @@ function App() {
           <Route path="/list-events" element={<ListEvents />} />
 
           <Route path="/event-details" element={<EventDetails />} />
+
+          <Route path="/create-event" element={<CreateEvent />} />
+
+          <Route path="/edit-event" element={<EditEvent />} />
 
         </Routes>
       </BrowserRouter>

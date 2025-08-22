@@ -1,4 +1,3 @@
-/* Header Styles */
 .header-container {
   position: fixed !important;
   top: 0;
@@ -321,4 +320,16 @@
   gap: 12px;
   margin-top: 18px;
   justify-content: space-between;
+}
+
+.img-50 {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+@media (max-width: 770px) {
+  span.fw-bold.me-2{
+    display: none;
+  }
 }

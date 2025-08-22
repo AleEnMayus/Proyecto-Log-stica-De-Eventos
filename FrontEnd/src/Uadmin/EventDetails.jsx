@@ -54,13 +54,6 @@ const EventDetails = () => {
             justifyContent: 'center',
             marginRight: '20px'
           }}>
-            <span style={{ 
-              color: 'white', 
-              fontSize: '32px',
-              fontWeight: 'bold' 
-            }}>
-              👤
-            </span>
           </div>
           <div>
             <h3 style={{ 
@@ -108,7 +101,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Text
+                  Juan Pérez
                 </div>
               </div>
 
@@ -129,7 +122,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  123456789
                 </div>
               </div>
 
@@ -150,7 +143,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  C.C.
                 </div>
               </div>
 
@@ -171,7 +164,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  Cumpleaños Numero 36
                 </div>
               </div>
 
@@ -192,10 +185,11 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  1
                 </div>
               </div>
             </div>
+            
             <div>
               <div style={{ marginBottom: '25px' }}>
                 <label style={{
@@ -214,7 +208,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Text
+                  3123213456
                 </div>
               </div>
 
@@ -235,7 +229,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  Avenida 68 Num°123, Bogotá D.C.
                 </div>
               </div>
 
@@ -256,7 +250,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  15/10/2023
                 </div>
               </div>
 
@@ -277,7 +271,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  9:00 AM
                 </div>
               </div>
 
@@ -298,7 +292,7 @@ const EventDetails = () => {
                   padding: '12px',
                   color: '#6b7280'
                 }}>
-                  Content
+                  Daviplata
                 </div>
               </div>
             </div>
@@ -306,81 +300,36 @@ const EventDetails = () => {
 
           <div style={{
             display: 'flex',
-            gap: '15px',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '20px',
             flexWrap: 'wrap',
-            marginBottom: '20px'
+            marginBottom: '30px',
+            width: '100%'
           }}>
-            <button className="btn-secondary-custom" style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <span style={{ fontSize: '16px' }}>🗑️</span>
+            <button className="btn-primary-custom">
               Cancelar evento
             </button>
 
-            <button style={{
-              background: '#6b7280',
-              border: 'none',
-              borderRadius: '25px',
-              padding: '10px 25px',
-              fontWeight: '500',
-              transition: 'all 0.3s ease',
-              color: 'white',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#4b5563';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#6b7280';
-            }}
-            >
+            <button className="btn-primary-custom">
               Editar evento
             </button>
 
-            <button style={{
-              background: '#6b7280',
-              border: 'none',
-              borderRadius: '25px',
-              padding: '10px 25px',
-              fontWeight: '500',
-              transition: 'all 0.3s ease',
-              color: 'white',
-              cursor: 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#4b5563';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#6b7280';
-            }}
-            >
+            <button className="btn-primary-custom">
               Editar Estado de Evento
             </button>
           </div>
 
-          <div style={{ textAlign: 'center' }}>
-            <button style={{
-              background: '#6b7280',
-              border: 'none',
-              borderRadius: '25px',
+          <div style={{ 
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: '100%'
+          }}>
+            <button className="btn-secondary-custom" style={{
               padding: '12px 60px',
-              fontWeight: '500',
-              transition: 'all 0.3s ease',
-              color: 'white',
-              cursor: 'pointer',
               fontSize: '16px'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = '#4b5563';
-              e.target.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = '#6b7280';
-              e.target.style.transform = 'translateY(0)';
-            }}
-            >
+            }}>
               Volver
             </button>
           </div>

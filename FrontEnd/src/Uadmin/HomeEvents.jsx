@@ -20,7 +20,7 @@ const ListEvents = () => {
       hora: '10:00',
       nombreEvento: 'Workshop de React',
       agendadoPor: 'María García',
-      estado: 'Confirmado'
+      estado: 'En ejecución',
     },
     {
       id: 3,
@@ -28,7 +28,7 @@ const ListEvents = () => {
       hora: '16:15',
       nombreEvento: 'Reunión de equipo',
       agendadoPor: 'Carlos López',
-      estado: 'En planeación'
+      estado: 'Terminado'
     },
     {
       id: 4,
@@ -36,7 +36,7 @@ const ListEvents = () => {
       hora: '09:00',
       nombreEvento: 'Evento de fin de año',
       agendadoPor: 'Ana Martínez',
-      estado: 'Cancelado'
+      estado: 'En planeación'
     }
   ];
 
@@ -49,11 +49,11 @@ const ListEvents = () => {
   const getEstadoColor = (estado) => {
     switch(estado.toLowerCase()) {
       case 'terminado':
-        return { color: '#059669' }; 
+        return { color: '#ff0000ff' }; 
       case 'en planeación':
-        return { color: '#d97706' }; 
+        return { color: '#03ff25ff' }; 
       case 'en ejecución':
-        return { color: '#dc2626' }; 
+        return { color: '#ffae00ff' }; 
       default:
         return { color: '#4b5563' }; 
     }

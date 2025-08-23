@@ -12,6 +12,11 @@ import RegisterPage from './Register'
 import RecoverPassword from './RecoverPassword'
 import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
+import ImageGalleryViewer from './Uadmin/gallery'
+import ImageGallery from './Uadmin/gallery2'
+import EventGalleryManager from './Uadmin/galleryof'
+
+
 
 // Componente principal de la aplicación
 function App() {
@@ -22,6 +27,15 @@ function App() {
     <div className="Aplicacion">
       <BrowserRouter>
         <Routes>
+          {/*Ruta a la pagina */}
+          <Route path='/gallery2' element={< ImageGallery/>}/>
+
+          {/*Ruta a la pagina */}
+          <Route path='/galleryof' element={<EventGalleryManager />}/>
+
+          {/*Ruta a la pagina */}
+          <Route path='/gallery' element={< ImageGalleryViewer/>}/>
+
           {/* Ruta a la página principal */}
           <Route path="/" element={<HomePage />} />
 

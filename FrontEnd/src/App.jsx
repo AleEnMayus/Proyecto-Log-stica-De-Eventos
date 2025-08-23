@@ -15,6 +15,7 @@ import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/survay'  
 import CreateSurvay from './Uadmin/createsurvay'
 import Logout from './components/LogOut'
+import UpdatePassword from './components/AccountModal/NewPassword'
 
 // Componente principal de la aplicación
 function App() {
@@ -51,7 +52,12 @@ function App() {
           {/* Ruta a la página de creación de encuestas */}
           <Route path="/createsurvay" element={<CreateSurvay />} />
 
-        </Routes>
+          <Route path='/change-password' element={<UpdatePassword />}/>
+
+
+
+
+          </Routes>
       </BrowserRouter>
     </div>
   )

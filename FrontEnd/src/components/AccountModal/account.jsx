@@ -1,11 +1,10 @@
-// PerfilModal.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./PerfilModal.css";
 
 const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
   const navigate = useNavigate();
-  const [showEModal, setShowEModal] = useState(false);
+  
 
   if (!isOpen) return null;
 
@@ -24,12 +23,6 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
   } = user || {};
 
   const rolLegible = role === "admin" ? "Administrador" : "Cliente";
-
-  const handleEditProfile = (e) => {
-    e.preventDefault();
-    setShowEModal(true);
-    onClose(); // cerramos el modal actual
-  };
 
   return (
     <>
@@ -126,7 +119,7 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
             <button className="btn-primary-custom w-100"
               onClick={() => {
                 onClose();
-                onEdit();   // 👉 abre el EditModal desde el padre
+                onEdit();   // Abre el EditModal desde el padre
               }}>
               Editar perfil
             </button>

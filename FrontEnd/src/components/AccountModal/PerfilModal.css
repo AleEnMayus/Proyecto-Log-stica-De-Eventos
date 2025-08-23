@@ -85,6 +85,52 @@
   justify-content: space-between;
 }
 
+/* Estilos para campos bloqueados en el perfil */
+.field-disabled {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  cursor: not-allowed !important;
+  border-color: #dee2e6 !important;
+  opacity: 0.7;
+}
+
+.field-disabled:focus {
+  box-shadow: none !important;
+  border-color: #dee2e6 !important;
+}
+
+/* Estilo para el select cuando está deshabilitado */
+.field-disabled option {
+  color: #6c757d;
+}
+
+/* Indicador visual adicional para campos protegidos */
+.field-label .text-muted {
+  font-size: 0.75rem;
+  font-weight: normal;
+}
+
+/* Hover effect para campos bloqueados */
+.field-disabled:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* Placeholder styling for disabled fields */
+.field-disabled::placeholder {
+  color: #adb5bd !important;
+  opacity: 1;
+}
+
+.w-80 {
+  max-width: 80%;
+}
+
+.min-h-200px {
+  min-height: 100px;
+  max-height: 200px;
+  resize:none;
+}
+
 @media (max-width: 403px) {
   .pm-photo{
     width: 100vw;

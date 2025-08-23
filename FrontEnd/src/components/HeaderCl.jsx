@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './components.css';
-import PerfilModal from './account';
-import EditModal from "./EditAccount";
+import PerfilModal from './AccountModal/account';
+import EditModal from "./AccountModal/EditAccount";
 
-const HeaderAdm = () => {
+const HeaderCl = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -86,7 +86,6 @@ const HeaderAdm = () => {
                     Ver perfil
                   </Link>
                   
-                  
                   <Link to="/logout" className="dropdown-item-custom">
                     Cerrar sesión
                   </Link>
@@ -140,4 +139,4 @@ const HeaderAdm = () => {
   );
 };
 
-export default HeaderAdm;
+export default HeaderCl;

@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "./PerfilModal.css";
+import DocModal from './DocumentModal';
 
 const EditModal = ({ isOpen, onClose, user }) => {
   const navigate = useNavigate();
+  const [showDocModal, setShowDocModal] = useState(false); // 👈 mover arriba
+
   if (!isOpen) return null;
 
   const stop = (e) => e.stopPropagation();
@@ -53,28 +56,41 @@ const EditModal = ({ isOpen, onClose, user }) => {
               </div>
             </div>
 
+            {/* Nombre completo - Solo bloqueado para usuarios (role: 'user') */}
             <div className="field-row">
               <div className="field">
-                <div className="field-label">Nombre completo</div>
+                <div className="field-label">
+                  Nombre completo
+                  {role === 'user' && <span className="text-muted ms-2">(Campo protegido)</span>}
+                </div>
                 <input
                   type="text"
-                  className="field-value"
+                  className={`field-value ${role === 'user' ? 'field-disabled' : ''}`}
                   defaultValue={fullName}
+                  disabled={role === 'user'}
+                  readOnly={role === 'user'}
                 />
               </div>
             </div>
 
+            {/* Correo - Bloqueado para ambos roles */}
             <div className="field-row">
               <div className="field">
-                <div className="field-label">Correo</div>
+                <div className="field-label">
+                  Correo
+                  <span className="text-muted ms-2">(Campo protegido)</span>
+                </div>
                 <input
                   type="email"
-                  className="field-value"
+                  className="field-value field-disabled"
                   defaultValue={email}
+                  disabled={true}
+                  readOnly={true}
                 />
               </div>
             </div>
 
+            {/* Teléfono - Siempre editable */}
             <div className="field-row">
               <div className="field">
                 <div className="field-label">Número de teléfono (Opcional)</div>
@@ -86,6 +102,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
               </div>
             </div>
 
+            {/* Fecha de nacimiento - Siempre editable */}
             <div className="field-row">
               <div className="field">
                 <div className="field-label">Fecha de nacimiento</div>
@@ -97,10 +114,18 @@ const EditModal = ({ isOpen, onClose, user }) => {
               </div>
             </div>
 
+            {/* Tipo y número de documento - Solo bloqueado para usuarios (role: 'user') */}
             <div className="field-row two-cols">
               <div className="field">
-                <div className="field-label">Tipo de documento</div>
-                <select className="field-value" defaultValue={identificationType}>
+                <div className="field-label">
+                  Tipo de documento
+                  {role === 'user' && <span className="text-muted ms-2">(Campo protegido)</span>}
+                </div>
+                <select 
+                  className={`field-value ${role === 'user' ? 'field-disabled' : ''}`}
+                  defaultValue={identificationType}
+                  disabled={role === 'user'}
+                >
                   <option value="">Seleccionar</option>
                   <option value="cedula">Cédula de Ciudadanía</option>
                   <option value="cedula_extranjeria">Cédula de Extranjería</option>
@@ -110,11 +135,16 @@ const EditModal = ({ isOpen, onClose, user }) => {
               </div>
 
               <div className="field">
-                <div className="field-label">Número de documento</div>
+                <div className="field-label">
+                  Número de documento
+                  {role === 'user' && <span className="text-muted ms-2">(Campo protegido)</span>}
+                </div>
                 <input
                   type="text"
-                  className="field-value"
+                  className={`field-value ${role === 'user' ? 'field-disabled' : ''}`}
                   defaultValue={documentNumber}
+                  disabled={role === 'user'}
+                  readOnly={role === 'user'}
                 />
               </div>
             </div>
@@ -131,17 +161,25 @@ const EditModal = ({ isOpen, onClose, user }) => {
           >
             Guardar Cambios
           </button>
-          <button
-            className="btn-secondary-custom w-100"
+          <button className="btn-secondary-custom w-100"
             onClick={() => {
               onClose();
-              navigate("/logout");
-            }}
-          >
+              navigate("/change-password");}}>
+
             Cambiar contraseña
           </button>
+          {user?.role === 'user' && (
+            <button className="btn-secondary-custom w-100"
+             onClick={() =>{setShowDocModal(true)}}>
+                Solicitar cambio de documento
+            </button>
+          )}
         </div>
       </div>
+      <DocModal 
+        isOpen={showDocModal}
+        onClose={() => setShowDocModal(false)}
+        user={user}/>
     </div>
     );
 };

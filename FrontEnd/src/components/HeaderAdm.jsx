@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './components.css';
-import PerfilModal from './account';
-import EditModal from "./EditAccount";
+import PerfilModal from './AccountModal/account';
+import EditModal from "./AccountModal/EditAccount";
 
 const HeaderAdm = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

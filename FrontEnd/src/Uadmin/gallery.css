@@ -21,7 +21,7 @@
 /* Estilos base */
 .gallery-container {
   display: flex;
-  height: 90vh;
+  height: 80vh;
   background-color: var(--background-primary);
   position: relative;
 }

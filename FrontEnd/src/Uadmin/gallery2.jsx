@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import './gallery2.css';
+import './gallery.css';
+import HeaderAdm from '../components/HeaderAdm';
+
+
 
 export default function ImageGallery() { 
   const [currentImage, setCurrentImage] = useState(0);
@@ -170,187 +173,195 @@ export default function ImageGallery() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
-      {/* Header simulado */}
-      <div className="bg-white border-b border-purple-200 p-4">
-        <h1 className="text-2xl font-bold text-purple-800">Galería de Imágenes - Admin</h1>
-      </div>
+    <>
+      <div className="app-container vh'90">
+        {/* Header */}
+        <HeaderAdm />
 
-      <div className="flex h-[90vh]">
-        {/* Área principal de la galería */}
-        <div className="flex-1 flex flex-col">
-          {/* Contenedor de imagen con navegación */}
-          <div className="flex-1 relative flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100">
-            <div className="w-[90%] h-[90%] p-5">
-              <img
-                src={images[currentImage].src}
-                alt={images[currentImage].alt}
-                className="w-full h-full object-cover rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
-              />
-              
-              {/* Botones de navegación */}
-              <button
-                onClick={prevImage}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm border border-purple-300 rounded-xl p-3 shadow-md hover:bg-cyan-500 hover:text-white transition-all duration-300 hover:scale-105"
-              >
-                <span className="text-2xl font-bold">‹</span>
-              </button>
-              
-              <button
-                onClick={nextImage}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm border border-purple-300 rounded-xl p-3 shadow-md hover:bg-cyan-500 hover:text-white transition-all duration-300 hover:scale-105"
-              >
-                <span className="text-2xl font-bold">›</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Paginación */}
-          <div className="flex justify-center p-4 bg-white border-t border-purple-200 gap-2">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => goToImage(index)}
-                className={`w-9 h-9 rounded-lg border font-medium transition-all duration-200 ${
-                  index === currentImage 
-                    ? 'bg-purple-600 text-white border-purple-600 shadow-sm' 
-                    : 'bg-white text-cyan-600 border-purple-300 hover:bg-blue-50 hover:border-purple-600'
-                }`}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Panel lateral de comentarios */}
-        <div className="w-80 bg-white border-l border-purple-200 flex flex-col">
-          <div className="flex-1 overflow-y-auto p-4">
-            {images[currentImage].comments.map((comment, index) => (
-              <div key={comment.id} className="bg-gradient-to-br from-blue-50 to-slate-50 border border-purple-300 rounded-xl p-4 mb-4 hover:transform hover:-translate-y-1 hover:shadow-md transition-all duration-200">
-                <div className="text-sm font-semibold text-purple-600 mb-2">
-                  Comentario {index + 1}
-                </div>
-                <div className="text-sm text-purple-800 leading-relaxed">
-                  {comment.text}
-                </div>
-              </div>
-            ))}
-            
-            {images[currentImage].comments.length === 0 && (
-              <div className="text-center text-gray-500 py-8 italic">
-                No hay comentarios para esta imagen
-              </div>
-            )}
-          </div>
-
-          {/* Área para añadir comentario */}
-          <div className="border-t border-purple-200 bg-blue-50">
-            <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white text-center py-3 text-sm font-semibold uppercase tracking-wide">
-              Añadir Comentario
-            </div>
-            <div className="p-4 bg-white border-l border-r border-purple-200">
-              <button 
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white py-3 px-4 rounded-lg text-sm font-semibold uppercase tracking-wide hover:-translate-y-1 hover:shadow-md transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30"
-                onClick={openCommentModal}
-              >
-                <span className="text-base">+</span>
-                Añadir Comentario
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Modal de Selección Comentarios Públicos */}
-      {showCommentModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-2xl w-[90%] max-w-2xl max-h-[80vh] overflow-hidden">
-            {/* Header del Modal */}
-            <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-5 relative">
-              <h3 className="text-lg font-semibold text-center tracking-wide">
-                Selección Comentarios Públicos
-              </h3>
-              <button 
-                className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 rounded-full w-8 h-8 flex items-center justify-center text-xl transition-colors"
-                onClick={closeCommentModal}
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Cuerpo del Modal */}
-            <div className="p-6 max-h-96 overflow-y-auto">
-              {currentModalComments.map((comment) => (
-                <div 
-                  key={comment.id} 
-                  className={`bg-gradient-to-br from-blue-50 to-slate-50 border rounded-lg p-4 mb-3 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${
-                    selectedComments.includes(comment.id) 
-                      ? 'border-purple-600 bg-purple-50/50 shadow-purple-200 shadow-sm' 
-                      : 'border-purple-300 hover:border-purple-600'
-                  }`}
-                  onClick={() => toggleCommentSelection(comment.id)}
+        <div className="gallery-container d-flex" style={{ height: '90vh' }}>
+          {/* Área principal de la galería */}
+          <div className="main-area flex-grow-1 d-flex flex-column">
+            {/* Contenedor de imagen con navegación */}
+            <div className="image-container flex-grow-1 position-relative d-flex align-items-center justify-content-center">
+              <div className="image-wrapper w-90 h-90 p-4">
+                <img
+                  src={images[currentImage].src}
+                  alt={images[currentImage].alt}
+                  className="main-image w-100 h-100 rounded-3 shadow-lg"
+                  style={{ objectFit: 'cover' }}
+                />
+                
+                {/* Botones de navegación */}
+                <button
+                  onClick={prevImage}
+                  className="nav-button nav-prev btn btn-light position-absolute top-50 translate-middle-y shadow rounded-3"
+                  style={{ left: '16px', zIndex: 10 }}
                 >
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-semibold text-purple-600">
-                      Comentario {comment.number}
-                    </span>
-                    <div className="flex gap-2">
-                      <button 
-                        className="bg-white border border-purple-300 text-cyan-600 px-2 py-1 rounded text-xs hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition-all"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePublishComment(comment.id);
-                        }}
-                      >
-                        Publicar
-                      </button>
-                      <button 
-                        className="bg-white border border-purple-300 text-cyan-600 px-2 py-1 rounded text-xs hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition-all"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRejectComment(comment.id);
-                        }}
-                      >
-                        Rechazar
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-sm text-purple-800 leading-relaxed text-justify">
-                    {comment.text}
-                  </p>
-                </div>
+                  <span className="fs-3 fw-bold">‹</span>
+                </button>
+                
+                <button
+                  onClick={nextImage}
+                  className="nav-button nav-next btn btn-light position-absolute top-50 translate-middle-y shadow rounded-3"
+                  style={{ right: '16px', zIndex: 10 }}
+                >
+                  <span className="fs-3 fw-bold">›</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Paginación */}
+            <div className="pagination d-flex justify-content-center p-3 bg-white border-top gap-2">
+              {images.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToImage(index)}
+                  className={`page-button btn ${index === currentImage 
+                    ? 'btn-primary' 
+                    : 'btn-outline-primary'
+                  } rounded-2`}
+                  style={{ width: '36px', height: '36px' }}
+                >
+                  {index + 1}
+                </button>
               ))}
             </div>
+          </div>
 
-            {/* Footer del Modal */}
-            <div className="border-t border-purple-200 p-4 bg-blue-50 flex justify-between items-center">
-              <div className="flex gap-1">
-                {Array.from({ length: totalModalPages }, (_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => setCurrentModalPage(i + 1)}
-                    className={`w-7 h-7 rounded text-xs font-medium transition-all ${
-                      currentModalPage === i + 1
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white text-cyan-600 border border-purple-300 hover:bg-purple-600 hover:text-white'
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
+          {/* Panel lateral de comentarios */}
+          <div className="comments-panel bg-white border-start d-flex flex-column" style={{ width: '320px' }}>
+            <div className="comments-list flex-grow-1 overflow-auto p-3">
+              {images[currentImage].comments.map((comment, index) => (
+                <div key={comment.id} className="comment-item card mb-3 border-primary-subtle shadow-sm">
+                  <div className="card-body">
+                    <div className="comment-user fw-semibold text-primary mb-2" style={{ fontSize: '14px' }}>
+                      Comentario {index + 1}
+                    </div>
+                    <div className="comment-text text-dark" style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                      {comment.text}
+                    </div>
+                  </div>
+                </div>
+              ))}
               
-              <button 
-                className="bg-gradient-to-r from-amber-500 to-orange-600 text-white px-4 py-2 rounded-md text-sm font-semibold hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 shadow-amber-500/30"
-                onClick={submitComment}
-              >
+              {images[currentImage].comments.length === 0 && (
+                <div className="no-comments text-center text-muted py-4 fst-italic">
+                  No hay comentarios para esta imagen
+                </div>
+              )}
+            </div>
+
+            {/* Área para añadir comentario */}
+            <div className="add-comment-section border-top">
+              <div className="add-comment-header bg-primary text-white text-center py-2 fw-semibold text-uppercase" style={{ fontSize: '14px', letterSpacing: '0.5px' }}>
                 Añadir Comentario
-              </button>
+              </div>
+              <div className="add-comment-body p-3 bg-light">
+                <button 
+                  className="add-comment-button btn btn-primary w-100 fw-semibold text-uppercase d-flex align-items-center justify-content-center gap-2"
+                  onClick={openCommentModal}
+                  style={{ letterSpacing: '0.5px' }}
+                >
+                  <span className="fs-5">+</span>
+                  Añadir Comentario
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Modal de Selección Comentarios Públicos */}
+        {showCommentModal && (
+          <div className="modal-overlay position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1050 }}>
+            <div className="modal-content bg-white rounded-3 shadow-lg" style={{ width: '90%', maxWidth: '768px', maxHeight: '80vh' }}>
+              {/* Header del Modal */}
+              <div className="modal-header bg-primary text-white p-3 position-relative rounded-top">
+                <h3 className="modal-title text-center fw-semibold mb-0" style={{ fontSize: '18px', letterSpacing: '0.5px' }}>
+                  Selección Comentarios Públicos
+                </h3>
+                <button 
+                  className="modal-close btn btn-sm position-absolute top-50 translate-middle-y bg-white bg-opacity-25 border-0 rounded-circle text-white"
+                  style={{ right: '16px', width: '32px', height: '32px' }}
+                  onClick={closeCommentModal}
+                >
+                  <span className="fs-5">×</span>
+                </button>
+              </div>
+
+              {/* Cuerpo del Modal */}
+              <div className="modal-body p-4 overflow-auto" style={{ maxHeight: '384px' }}>
+                {currentModalComments.map((comment) => (
+                  <div 
+                    key={comment.id} 
+                    className={`modal-comment card mb-3 cursor-pointer ${selectedComments.includes(comment.id) 
+                      ? 'border-primary bg-primary bg-opacity-10' 
+                      : 'border-secondary-subtle'
+                    }`}
+                    onClick={() => toggleCommentSelection(comment.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div className="card-body p-3">
+                      <div className="modal-comment-header d-flex justify-content-between align-items-center mb-2">
+                        <span className="modal-comment-number fw-semibold text-primary" style={{ fontSize: '14px' }}>
+                          Comentario {comment.number}
+                        </span>
+                        <div className="modal-comment-actions d-flex gap-2">
+                          <button 
+                            className="modal-action-btn btn btn-sm btn-outline-info"
+                            style={{ fontSize: '12px' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePublishComment(comment.id);
+                            }}
+                          >
+                            Publicar
+                          </button>
+                          <button 
+                            className="modal-action-btn btn btn-sm btn-outline-info"
+                            style={{ fontSize: '12px' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRejectComment(comment.id);
+                            }}
+                          >
+                            Rechazar
+                          </button>
+                        </div>
+                      </div>
+                      <p className="modal-comment-text mb-0 text-dark" style={{ fontSize: '14px', lineHeight: '1.5', textAlign: 'justify' }}>
+                        {comment.text}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Footer del Modal */}
+              <div className="modal-footer border-top p-3 bg-light d-flex justify-content-between align-items-center">
+                <div className="modal-pagination d-flex gap-1">
+                  {Array.from({ length: totalModalPages }, (_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setCurrentModalPage(i + 1)}
+                      className={`modal-page-btn btn btn-sm ${currentModalPage === i + 1 ? 'btn-primary' : 'btn-outline-primary'}`}
+                      style={{ width: '28px', height: '28px', fontSize: '12px' }}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                </div>
+                
+                <button 
+                  className="modal-submit-btn btn btn-warning fw-semibold"
+                  onClick={submitComment}
+                >
+                  Añadir Comentario
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

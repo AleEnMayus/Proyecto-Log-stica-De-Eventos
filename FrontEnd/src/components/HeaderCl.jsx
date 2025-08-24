@@ -4,7 +4,7 @@ import './components.css';
 import PerfilModal from './AccountModal/account';
 import EditModal from "./AccountModal/EditAccount";
 
-const HeaderCl = () => {
+const HeaderAdm = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -36,6 +36,7 @@ const HeaderCl = () => {
                   ☰
                 </button>
                 <div className="logo-text">Happy-Art Eventos</div>
+                <img src="../public/HAE_logoNOTXTNOBG"/>
               </div>
             </div>
 
@@ -56,7 +57,7 @@ const HeaderCl = () => {
                 onClick={toggleUserMenu} 
                 style={{ cursor: 'pointer' }}
               >
-                <span className="fw-bold me-2">
+                <span className="fw-bold me-2 title-headersb">
                   {userData ? (userData.fullName).split(' ')[0] : 'Invitado'}
                 </span>
 
@@ -85,6 +86,7 @@ const HeaderCl = () => {
                   <Link className="dropdown-item-custom" onClick={() => {setShowPerfil(true); setIsUserMenuOpen(false)}}>
                     Ver perfil
                   </Link>
+                  
                   
                   <Link to="/logout" className="dropdown-item-custom">
                     Cerrar sesión
@@ -139,4 +141,4 @@ const HeaderCl = () => {
   );
 };
 
-export default HeaderCl;
+export default HeaderAdm;

@@ -14,8 +14,11 @@ import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/survay'  
 import CreateSurvay from './Uadmin/createsurvay'
+
+
 import Logout from './components/LogOut'
 import UpdatePassword from './components/AccountModal/NewPassword'
+import AdminAccountsList from './Uadmin/ManageAcc/HomeAccounts'
 
 // Componente principal de la aplicación
 function App() {
@@ -37,8 +40,6 @@ function App() {
 
           {/* Ruta a la página de recuperación de contraseña */}
           <Route path="/recover" element={<RecoverPassword />} />
-
-          <Route path='/logout' element={<Logout />} />
            
            {/* Ruta a la página principal */}
           <Route path="/contracts-client" element={<Contracts />} />
@@ -53,9 +54,8 @@ function App() {
           <Route path="/createsurvay" element={<CreateSurvay />} />
 
           <Route path='/change-password' element={<UpdatePassword />}/>
-
-
-
+          <Route path='/logout' element={<Logout />} />
+          <Route path='/ManageAccounts' element={<AdminAccountsList />}/>
 
           </Routes>
       </BrowserRouter>

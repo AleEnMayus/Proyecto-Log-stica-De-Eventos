@@ -328,8 +328,17 @@
   object-fit: cover;
 }
 
+.logolink{
+  text-decoration: none;
+  color: inherit;
+  align-items: center;
+}
+
 @media (max-width: 770px) {
-  span.fw-bold.me-2{
+  .title-headersb{
+    display: none;
+  }
+  .logo-text{
     display: none;
   }
 }

@@ -122,13 +122,73 @@
 }
 
 .w-80 {
-  max-width: 80%;
+  max-width: 80% !important;
 }
 
 .min-h-200px {
   min-height: 100px;
   max-height: 200px;
   resize:none;
+}
+
+.modal-message {
+  font-size: 16px;
+  margin: 20px 0;
+}
+
+.status-options {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.status-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+}
+
+.status-option:hover {
+  background: #f1f1f1;
+}
+
+.status-option.selected {
+  background: #e8e5ff; /* suave morado, consistente con tu .btn:hover */
+  border: 1px solid #6c5ce7;
+}
+
+.status-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.status-option.selected .status-box {
+  border-color: #6c5ce7;
+  background: #6c5ce7;
+  color: #fff;
+}
+
+.checkmark {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.status-label {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 @media (max-width: 403px) {

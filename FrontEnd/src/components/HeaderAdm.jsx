@@ -35,7 +35,10 @@ const HeaderAdm = () => {
                 <button className="menu-btn me-3" onClick={toggleMenu}>
                   ☰
                 </button>
+                <a href='/' className='d-flex logolink'>
+                <img src="/HAE_logo.png" className='img-50'/>
                 <div className="logo-text">Happy-Art Eventos</div>
+                </a>
               </div>
             </div>
 
@@ -56,7 +59,7 @@ const HeaderAdm = () => {
                 onClick={toggleUserMenu} 
                 style={{ cursor: 'pointer' }}
               >
-                <span className="fw-bold me-2">
+                <span className="fw-bold me-2 title-headersb">
                   {userData ? (userData.fullName).split(' ')[0] : 'Invitado'}
                 </span>
 

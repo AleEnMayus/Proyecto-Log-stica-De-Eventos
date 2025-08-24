@@ -15,7 +15,8 @@ import Schedule from './UCliente/Schedule'
 import ImageGalleryViewer from './Uadmin/gallery'
 import ImageGallery from './Uadmin/gallery2'
 import EventGalleryManager from './Uadmin/galleryof'
-
+import  ImageGalleryC from './UCliente/galleryC'
+import ImageGalleryViewerC from  './UCliente/galleryC2'
 
 
 // Componente principal de la aplicación
@@ -27,6 +28,14 @@ function App() {
     <div className="Aplicacion">
       <BrowserRouter>
         <Routes>
+
+          {/*Ruta a la pagina */}
+          <Route path='/galleryC2' element={< ImageGalleryViewerC/>}/>
+
+
+          {/*Ruta a la pagina */}
+          <Route path='/galleryC' element={< ImageGalleryC/>}/>
+
           {/*Ruta a la pagina */}
           <Route path='/gallery2' element={< ImageGallery/>}/>
 
@@ -53,6 +62,8 @@ function App() {
 
            {/* Ruta a la página principal */}
           <Route path="/Schedule-client" element={<Schedule />} />
+
+
 
         </Routes>
       </BrowserRouter>

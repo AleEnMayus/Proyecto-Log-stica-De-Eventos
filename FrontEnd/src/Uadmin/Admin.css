@@ -141,3 +141,81 @@
   transform: translateY(-2px);
   background: rgb(21, 165, 231);
 }
+
+
+/* CALENDARIO ADMINISTRADOR */
+.calendar-container {
+  padding: 40px;
+  margin-top: 80px; /* separarlo del header fijo */
+}
+
+.calendar-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.calendar-content {
+  display: flex;
+  gap: 50px;
+  align-items: flex-start;
+}
+
+/* Caja de calendario */
+.calendar-box {
+  flex: 1;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.calendar-arrows span {
+  margin: 0 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Grilla de calendario */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 40px);
+  gap: 8px;
+}
+
+.day-name {
+  font-weight: bold;
+  text-align: center;
+}
+
+.day {
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.day:hover {
+  background: rgba(21, 165, 231, 0.2);
+}
+
+.selected {
+  background: rgb(21, 165, 231);
+  color: white;
+  font-weight: bold;
+}
+
+/* Caja de eventos */
+.event-box {
+  width: 280px;
+  min-height: 200px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  padding: 15px;
+  background: #fff;
+}
+

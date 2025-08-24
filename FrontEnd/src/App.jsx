@@ -42,6 +42,7 @@ import EventGalleryManager from './Uadmin/gallery/galleryof'
 import  ImageGalleryC from './UCliente/gallerycli/galleryC'
 import ImageGalleryViewerC from  './UCliente/gallerycli/galleryC2'
 
+import Calendarclient from './UCliente/Calendarclient'
 
 // Componente principal de la aplicación
 function App() {
@@ -109,6 +110,12 @@ function App() {
           <Route path='/gallery2' element={< ImageGallery/>}/>
           <Route path='/galleryof' element={<EventGalleryManager />}/>
           <Route path='/gallery' element={< ImageGalleryViewer/>}/>
+
+          {/* Nicol */}
+          <Route path='/Calendar' element={<Calendarclient />} />
+          
+
+
 
           </Routes>
       </BrowserRouter>

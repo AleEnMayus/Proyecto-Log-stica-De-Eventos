@@ -43,7 +43,7 @@ import  ImageGalleryC from './UCliente/gallerycli/galleryC'
 import ImageGalleryViewerC from  './UCliente/gallerycli/galleryC2'
 
 import Calendarclient from './UCliente/Calendarclient'
-
+import Calendaradmin from './Uadmin/Calendaradmin'
 // Componente principal de la aplicación
 function App() {
   // Estado local para contar interacciones o elementos (ejemplo)
@@ -113,6 +113,7 @@ function App() {
 
           {/* Nicol */}
           <Route path='/Calendar' element={<Calendarclient />} />
+          <Route path='/Calendaradmin' element={<Calendaradmin />} />
           
 
 

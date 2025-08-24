@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Admin.css"; // Importa los estilos
 
-const Recursos = () => {
+const Mainresources = () => {
   const [search, setSearch] = useState("");
 
   // Datos de ejemplo
@@ -61,4 +61,4 @@ const Recursos = () => {
   );
 };
 
-export default Recursos;
+export default Mainresources;

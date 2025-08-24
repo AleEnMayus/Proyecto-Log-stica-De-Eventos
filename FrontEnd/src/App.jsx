@@ -11,11 +11,11 @@ import LoginPage from './LogIn'
 import RegisterPage from './Register'
 import RecoverPassword from './RecoverPassword'
 import Contracts from './UCliente/Contracts'
-import Schedule from './UCliente/Schedule'
+import Schedule from './UCliente/Schedule' 
 import Survay from './Uadmin/survay'  
 import  CreateSurvay from './Uadmin/createsurvay'
-import Recursos from './Uadmin/Recursos'
-import Recursos2 from './Uadmin/Recursos2'
+import Mainresources from './Uadmin/mainresources'
+import Secondaryresources from './Uadmin/secondaryresources'
 
 // Componente principal de la aplicación
 function App() {
@@ -51,10 +51,10 @@ function App() {
           <Route path="/createsurvay" element={<CreateSurvay />} />
 
           {/* Ruta a la página de recursos */}
-          <Route path="/Recursos-admin" element={<Recursos />} />
+          <Route path="/mainresources-admin" element={<Mainresources />} />
 
           {/* Ruta a la página de recursos */}
-          <Route path="/Recursos2-admin" element={<Recursos2 />} />
+          <Route path="/secondaryresources-admin" element={< Secondaryresources/>} />
 
 
 

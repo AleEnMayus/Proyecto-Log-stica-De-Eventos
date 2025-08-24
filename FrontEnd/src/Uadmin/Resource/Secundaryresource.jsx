@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./Recursos2.css";
+import "./Admin.css";
 
-const Recursos2 = () => {
+const Secondaryresources = () => {
   const [recursos, setRecursos] = useState([
     { id: 1, nombre: "Content", codigo: "Content", cantidad: "Content", estado: "Content" },
     { id: 2, nombre: "Content", codigo: "Content", cantidad: "Content", estado: "Content" },
@@ -88,4 +88,4 @@ const Recursos2 = () => {
   );
 };
 
-export default Recursos2;
+export default Secondaryresources;

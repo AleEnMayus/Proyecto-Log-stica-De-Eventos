@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import HeaderAdm from "../components/HeaderAdm";
-import '../components/components.css';
+import HeaderAdm from "../../components/HeaderAdm";
+import '../../components/components.css';
 import './FormsEvent.css';
 
 const CreateEvent = () => {

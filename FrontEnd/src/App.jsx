@@ -2,9 +2,6 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-
-
-// Importación de estilos y vistas
 import './components/components.css'
 import HomePage from './HomePage'
 import LoginPage from './LogIn'
@@ -20,8 +17,8 @@ import EventDetailsA from './Uadmin/Eventos/EventDetailsAdm'
 import EventDetailsC from './UCliente/Eventos/EventDetailsCl'
 import ListEventsC from './UCliente/Eventos/HomeEventsCl'
 import EventState from './Uadmin/Eventos/EventState'
-import CreateEvent from './Uadmin/CreateEvent'
-import EditEvent from './Uadmin/EditEvent'
+import CreateEvent from './Uadmin/Eventos/CreateEvent'
+import EditEvent from './Uadmin/Eventos/EditEvent'
 import RequestCancel from './UCliente/Eventos/RequestEvent'
 import CancelEvent from './Uadmin/Eventos/CancelRequest'
 

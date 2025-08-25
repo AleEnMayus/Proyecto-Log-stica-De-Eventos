@@ -12,7 +12,7 @@ import RegisterPage from './Register'
 import RecoverPassword from './RecoverPassword'
 import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
-import Survay from './Uadmin/survay'  
+import Survay from './Uadmin/CreateSurvey/survey'  
 import  CreateSurvay from './Uadmin/CreateSurvey/createsurvey'
 import SurvayClient from './UCliente/survey' // Importación del componente de encuesta del cliente
 import Notifications from './UCliente/Notification-tray' // Importación del componente de notificaciones
@@ -46,10 +46,10 @@ function App() {
           <Route path="/Schedule-client" element={<Schedule />} />
 
           {/* Ruta a la página de encuestas */}
-          <Route path="/survay" element={<Survay />} />
+          <Route path="/survey" element={<Survay />} />
 
           {/* Ruta a la página de creación de encuestas */}
-          <Route path="/createsurvay" element={<CreateSurvay />} />
+          <Route path="/createsurvey" element={<CreateSurvay />} />
 
           {/* Ruta a la encuesta del cliente */}
           <Route path="/survey" element={<SurvayClient />} />

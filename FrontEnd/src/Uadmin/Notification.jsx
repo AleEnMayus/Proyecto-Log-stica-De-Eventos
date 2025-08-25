@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import HeaderCl from "../components/HeaderAdm"; // ⬅️ agrega el Header
-import "./survay.css";
+import './CreateSurvey/survey.css';
 
 const Notifications = () => {
   const [activeTab, setActiveTab] = useState("Todo");

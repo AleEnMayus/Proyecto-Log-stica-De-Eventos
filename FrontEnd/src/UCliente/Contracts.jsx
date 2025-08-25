@@ -4,7 +4,7 @@ import HeaderCl from "../components/HeaderCl";
 
 const Contracts = () => {
   // 🔹 Simulamos que el usuario ya inició sesión
-  const user = {
+  const user = {  
     name: "Juan", // Puedes poner el nombre del cliente logueado
   };
 

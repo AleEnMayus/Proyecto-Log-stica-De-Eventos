@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Client.css";
+import './Client.css';
 import HeaderCl from "../components/HeaderCl";
 
 const Contracts = () => {

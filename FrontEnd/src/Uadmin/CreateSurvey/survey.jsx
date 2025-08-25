@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";  // 👈 Importa Link
-import "./survay.css";
-import HeaderAdm from "../components/HeaderAdm";
+import "./survey.css";
+import HeaderAdm from "../../components/HeaderAdm";
 
 const Survey = () => {
   const [encuestas] = useState([

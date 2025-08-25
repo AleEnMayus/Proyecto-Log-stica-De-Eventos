@@ -1,6 +1,6 @@
 import React from "react";
 import HeaderAdm from "../../components/HeaderAdm";
-import "./survay.css";
+import './survey.css';
 
 const CreateSurvay = () => {
   return (

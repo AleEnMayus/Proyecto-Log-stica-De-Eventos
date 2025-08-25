@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './components.css';
+<<<<<<< HEAD
 import PerfilModal from './AccountModal/account';
 import EditModal from "./AccountModal/EditAccount";
+=======
+import Notifications from "../UCliente/Notification-tray";
+>>>>>>> Nury
 
 const HeaderAdm = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+<<<<<<< HEAD
   const [userData, setUserData] = useState(null);
   
   const [showPerfil, setShowPerfil] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+=======
+  const [showNotifications, setShowNotifications] = useState(false);
+>>>>>>> Nury
 
   useEffect(() => {
     // Obtener datos del usuario del localStorage
@@ -118,6 +126,7 @@ const HeaderAdm = () => {
             <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
             <a href="#agendar" className="sidebar-menu-item">Contrato</a>
             <Link to="/survay" className="sidebar-menu-item">Encuestas</Link>
+            <Link to="/Notification" className="sidebar-menu-item">Notificaciones</Link>
           </nav>
         </div>
       </div>

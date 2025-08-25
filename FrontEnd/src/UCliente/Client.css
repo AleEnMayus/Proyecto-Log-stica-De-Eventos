@@ -138,3 +138,128 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(21, 165, 231, 0.3);
 }
+
+/* Estilos para la encuesta */
+
+.encuesta-container {
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 700px;
+}
+
+.encuesta-titulo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.encuesta-pregunta {
+  font-size: 1rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.estrellas {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.encuesta-btn {
+  background-color: #4a5260;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.encuesta-btn:hover {
+  background-color: #3a4150;
+}
+
+/* Estilos para bandeja de notificaciones */
+.notificaciones-container {
+  margin-top: 100px;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.titulo {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #444;
+  font-weight: 500;
+}
+
+.tab-btn.active {
+  border-bottom: 3px solid black;
+  font-weight: bold;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  background: white;
+}
+
+.card h2 {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.btn {
+  background: #2f3640;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+.btn:hover {
+  background: #1d2530;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+  padding: 10px;
+}

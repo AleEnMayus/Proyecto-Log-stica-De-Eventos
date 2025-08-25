@@ -14,9 +14,9 @@ import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
 import ImageGalleryViewer from './Uadmin/gallery'
 import ImageGallery from './Uadmin/gallery2'
-import EventGalleryManager from './Uadmin/galleryof'
+import EventGalleryManager from './Uadmin/gallery/galleryof'
 import  ImageGalleryC from './UCliente/galleryC'
-import ImageGalleryViewerC from  './UCliente/galleryC2'
+import ImageGalleryViewerC from  './UCliente/gallerycli/galleryC2'
 
 
 // Componente principal de la aplicación

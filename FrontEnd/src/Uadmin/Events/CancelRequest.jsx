@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import HeaderCl from "../../components/HeaderAdm";
 import '../../components/components.css';
-import '../../UCliente/Eventos/Events.css';
+import '../../UCliente/Events/Events.css';
 import HeaderAdm from '../../components/HeaderAdm';
 import './CancelRequestModal.css'; // 👈 clases del modal de cancelación
 

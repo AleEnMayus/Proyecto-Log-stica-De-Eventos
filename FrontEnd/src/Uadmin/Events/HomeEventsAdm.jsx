@@ -1,7 +1,7 @@
 import React, { useState } from 'react'; 
 import HeaderCl from "../../components/HeaderCl";
 import '../../components/components.css';
-import '../../UCliente/Eventos/Events.css';
+import '../../UCliente/Events/Events.css';
 import HeaderAdm from '../../components/HeaderAdm';
 
 const ListEventsA = () => {

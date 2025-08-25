@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import HeaderCl from "../../components/HeaderAdm";
 import '../../components/components.css';
-import '../../UCliente/Eventos/Events.css';
-import HeaderAdm from '../../components/HeaderAdm';
+import '../../UCliente/Events/Events.css';
+import './EventState.css'; // 
 
-const EventDetailsA = () => {
+const EventState = () => {
   const [formData, setFormData] = useState({
     correoElectronico: 'example@email.com',
     nombreCliente: 'James Herrid',
@@ -20,6 +20,9 @@ const EventDetailsA = () => {
     estadoEvento: 'En planeación'
   });
 
+  const [showModal, setShowModal] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -28,16 +31,39 @@ const EventDetailsA = () => {
     }));
   };
 
+  const openModal = () => {
+    setSelectedStatus(formData.estadoEvento);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedStatus('');
+  };
+
+  const handleStatusChange = () => {
+    if (selectedStatus) {
+      setFormData(prev => ({
+        ...prev,
+        estadoEvento: selectedStatus
+      }));
+      closeModal();
+    }
+  };
+
+  const handleStatusSelect = (status) => {
+    setSelectedStatus(status);
+  };
+
   return (
     <div className="contact-section">
-      <HeaderAdm/>
+      <HeaderCl/>
       
       <div className="content-container">
         
         <div className="user-card">
           <div className="user-info">
-            <div className="avatar">
-            </div>
+            <div className="avatar"></div>
             <div>
               <h4 className="user-label">Nombre de usuario</h4>
               <p className="user-name">Juan Pérez</p>
@@ -112,23 +138,20 @@ const EventDetailsA = () => {
               </div>
             </div>
           </div>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '20px',
-            flexWrap: 'wrap',
-            marginBottom: '30px',
-            width: '100%'
-          }}>
+          
+          <div className="event-actions">
             <button className="btn-primary-custom">
               Editar evento
             </button>
 
-            <button className="btn-primary-custom">
+            <button 
+              className="btn-primary-custom"
+              onClick={openModal}
+            >
               Editar Estado de Evento
             </button>
           </div>
+          
           <div className="button-container">
             <button className="btn-secondary-custom back-button">
               Volver
@@ -136,8 +159,66 @@ const EventDetailsA = () => {
           </div>
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+
+            <button 
+              onClick={closeModal}
+              className="modal-close"
+            >
+              ×
+            </button>
+
+            <h2 className="modal-title">Cambiar estado</h2>
+
+            <div className="status-options">
+              <div 
+                onClick={() => handleStatusSelect('En planeación')}
+                className={`status-option ${selectedStatus === 'En planeación' ? 'selected-planning' : ''}`}
+              >
+                <div className={`status-box ${selectedStatus === 'En planeación' ? 'checked-planning' : ''}`}>
+                  {selectedStatus === 'En planeación' && <span className="checkmark">✓</span>}
+                </div>
+                <span className="status-label">En planeación</span>
+              </div>
+
+              <div 
+                onClick={() => handleStatusSelect('En ejecución')}
+                className={`status-option ${selectedStatus === 'En ejecución' ? 'selected-execution' : ''}`}
+              >
+                <div className={`status-box ${selectedStatus === 'En ejecución' ? 'checked-execution' : ''}`}>
+                  {selectedStatus === 'En ejecución' && <span className="checkmark">✓</span>}
+                </div>
+                <span className="status-label">En ejecución</span>
+              </div>
+
+              <div 
+                onClick={() => handleStatusSelect('Finalizado')}
+                className={`status-option ${selectedStatus === 'Finalizado' ? 'selected-finished' : ''}`}
+              >
+                <div className={`status-box ${selectedStatus === 'Finalizado' ? 'checked-finished' : ''}`}>
+                  {selectedStatus === 'Finalizado' && <span className="checkmark">✓</span>}
+                </div>
+                <span className="status-label">Finalizado</span>
+              </div>
+            </div>
+
+            <div className="confirm-container">
+              <button 
+                onClick={handleStatusChange}
+                disabled={!selectedStatus}
+                className={`confirm-button ${selectedStatus ? 'active' : 'disabled'}`}
+              >
+                Cambiar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default EventDetailsA;
+export default EventState;

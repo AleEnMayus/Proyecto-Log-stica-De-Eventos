@@ -46,7 +46,7 @@ const HeaderAdm = () => {
             <div className="col-6 d-flex justify-content-end align-items-center gap-3">
               {/* Botón de Notificaciones */}
               <Link 
-                to="/notifications-admin" 
+                to="/Notification" 
                 className="d-inline-flex align-items-center justify-content-center notification-trigger me-3"
                 style={{ textDecoration: 'none' }}
               >
@@ -111,14 +111,13 @@ const HeaderAdm = () => {
         <div className="p-4 mt-5 pt-5">
           <nav className="mt-5">
             <a href="/" className="sidebar-menu-item">Inicio</a>
-            <a href="#galeria" className="sidebar-menu-item">Galería</a>
-            <a href="#eventos" className="sidebar-menu-item">Eventos</a>
-            <a href="#promociones" className="sidebar-menu-item">Promociones</a>
-            <a href="#contacto" className="sidebar-menu-item">Contacto</a>
-            <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a><Link to="/Contracts" className="sidebar-menu-item">Contratos</Link>
-            <Link to="/ContractsAdmin" className="sidebar-menu-item">Contratos</Link>
+            <Link to="/EventsHomeAdmin" className="sidebar-menu-item">Gestionar eventos</Link>
             <Link to="/survay" className="sidebar-menu-item">Encuestas</Link>
-            <Link to="/Notification" className="sidebar-menu-item">Notificaciones</Link>
+            <Link to="" className="sidebar-menu-item">Contratos</Link>
+            <Link to="/ManageAccounts" className="sidebar-menu-item">Gestionar cuentas</Link>
+            <Link to="/MainResources" className="sidebar-menu-item">Recursos</Link>
+            <Link to="/galleryAdmin" className="sidebar-menu-item">Gestionar galería</Link>
+            <Link to="" className="sidebar-menu-item">Calendario</Link>
           </nav>
         </div>
       </div>

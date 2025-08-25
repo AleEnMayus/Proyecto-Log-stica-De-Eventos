@@ -39,7 +39,7 @@ const ImageGalleryC = () => {
   return (
     <div className="gallery-manager">
       <div className="gallery-left">
-        <h2 className="gallery-title">Gestionar Galeria de Eventos</h2>
+        <h2 className="gallery-title">Galeria de Eventos</h2>
         <div className="gallery-grid">
           {images.map((img, idx) => (
             <div key={idx} className="image-card">

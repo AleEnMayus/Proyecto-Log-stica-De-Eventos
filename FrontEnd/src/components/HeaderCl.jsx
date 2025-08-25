@@ -46,7 +46,7 @@ const HeaderCl = () => {
             <div className="col-6 d-flex justify-content-end align-items-center gap-3">
               {/* Botón de Notificaciones */}
               <Link 
-                to="/notifications-admin" 
+                to="/Notification-tray" 
                 className="d-inline-flex align-items-center justify-content-center notification-trigger me-3"
                 style={{ textDecoration: 'none' }}
               >
@@ -112,7 +112,10 @@ const HeaderCl = () => {
           <nav className="mt-5">
             <a href="/" className="sidebar-menu-item">Inicio</a>
             <Link to="/Schedule-client" className="sidebar-menu-item">Agendar cita</Link>
+            <Link to="" className="sidebar-menu-item">Contrato</Link>
+            <Link to="" className="sidebar-menu-item">Calendario</Link>
             <Link to="/EventsHome" className="sidebar-menu-item">Eventos</Link>
+            <Link to="/gallery" className="sidebar-menu-item">Galería</Link>
             
           </nav>
         </div>

@@ -38,8 +38,8 @@ import Notification from './Uadmin/Notification'
 
 import ImageGalleryViewer from './Uadmin/gallery/gallery'
 import ImageGallery from './Uadmin/gallery/gallery2'
-import EventGalleryManager from './Uadmin/gallery/galleryof'
-import  ImageGalleryC from './UCliente/gallerycli/galleryC'
+import ManagerImageGallery from './Uadmin/gallery/galleryof'
+import ImageGalleryC from './UCliente/gallerycli/galleryC'
 import ImageGalleryViewerC from  './UCliente/gallerycli/galleryC2'
 
 
@@ -95,8 +95,8 @@ function App() {
           <Route path='/RequestEvent' element={<CancelEvent />}/>
 
           {/* Nicol */}
-          <Route path="/mainresources-admin" element={<Mainresources />} />
-          <Route path="/secondaryresources-admin" element={< Secondaryresources/>} />
+          <Route path="/MainResources" element={<Mainresources />} />
+          <Route path="/SecondaryResources" element={< Secondaryresources/>} />
 
           {/* Nury */}
           <Route path="/survey" element={<SurvayClient />} />
@@ -104,11 +104,10 @@ function App() {
           <Route path="/Notification" element={<Notification />} />
 
           {/* David */}
-          <Route path='/galleryC2' element={< ImageGalleryViewerC/>}/>
-          <Route path='/galleryC' element={< ImageGalleryC/>}/>
-          <Route path='/gallery2' element={< ImageGallery/>}/>
-          <Route path='/galleryof' element={<EventGalleryManager />}/>
-          <Route path='/gallery' element={< ImageGalleryViewer/>}/>
+          <Route path='/galleryView' element={<ImageGalleryViewerC />}/>
+          <Route path='/gallery' element={<ImageGalleryC />}/>
+          <Route path='/galleryViewAdmin' element={<ImageGallery />}/>
+          <Route path='/galleryAdmin' element={<ManagerImageGallery />}/>
 
           </Routes>
       </BrowserRouter>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './galleryof.css';
 
-const ImageGallery = () => {
+const ManagerImageGallery = () => {
   const [images, setImages] = useState(Array(9).fill(null));
 
   const handleUpload = (e) => {
@@ -76,4 +76,4 @@ const ImageGallery = () => {
   );
 };
 
-export default ImageGallery;
+export default ManagerImageGallery;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './components.css';
-<<<<<<< HEAD
 import PerfilModal from './AccountModal/account';
 import EditModal from "./AccountModal/EditAccount";
+import Notifications from "../UCliente/Notification-tray";
 
 const HeaderCl = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,20 +12,6 @@ const HeaderCl = () => {
   
   const [showPerfil, setShowPerfil] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-=======
-import Notifications from "../UCliente/Notification-tray";
-
-const HeaderCl = ({ user: propUser }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
-
-  // 👇 Si no viene un usuario, usamos uno falso
-  const user = propUser || {
-    name: "Cliente Prueba",
-    email: "cliente@correo.com"
-  };
->>>>>>> Nury
 
   useEffect(() => {
     // Obtener datos del usuario del localStorage
@@ -57,7 +43,6 @@ const HeaderCl = ({ user: propUser }) => {
               </div>
             </div>
 
-<<<<<<< HEAD
             {/* Notificaciones y Menú de usuario */}
             <div className="col-6 d-flex justify-content-end align-items-center gap-3">
               {/* Botón de Notificaciones */}
@@ -68,32 +53,6 @@ const HeaderCl = ({ user: propUser }) => {
               >
                 <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentcolor"><path d="M160-200v-60h80v-304q0-84 49.5-150.5T420-798v-22q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v22q81 17 130.5 83.5T720-564v304h80v60H160Zm320-302Zm0 422q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM300-260h360v-304q0-75-52.5-127.5T480-744q-75 0-127.5 52.5T300-564v304Z"/></svg>
               </Link>
-=======
-            <div className="col-6 text-end position-relative">
-              {user ? (
-                // 👤 Menú de usuario (cuando está logueado)
-                <div
-                  className="d-inline-flex align-items-center user-menu-trigger"
-                  onClick={toggleUserMenu}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <span className="me-2">🔔</span>
-                  <span className="me-2">👤</span>
-                  <span className="fw-bold">{user.name}</span>
-                  <span className="ms-1">▼</span>
-                </div>
-              ) : (
-                // 🔑 Botones de login/registro (cuando no está logueado)
-                <>
-                  <a href='/Register' className="btn btn-outline-primary me-2 register-btn mb-1 mb-lg-0">
-                    Registrarse
-                  </a>
-                  <Link to="/login" className="btn-primary-custom btn">
-                    Iniciar Sesión
-                  </Link>
-                </>
-              )}
->>>>>>> Nury
 
               {/* Menú de Usuario */}
               <div 
@@ -158,14 +117,8 @@ const HeaderCl = ({ user: propUser }) => {
             <a href="#promociones" className="sidebar-menu-item">Promociones</a>
             <a href="#contacto" className="sidebar-menu-item">Contacto</a>
             <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
-<<<<<<< HEAD
             <a href="#agendar" className="sidebar-menu-item">Contrato</a>
             <Link to="/survay" className="sidebar-menu-item">Encuestas</Link>
-=======
-            <Link to="/contracts-client" className="sidebar-menu-item">Contratos</Link> 
-            <Link to="/survey" className="sidebar-menu-item">Encuestas</Link> 
-            <Link to="/Notification-tray" className="sidebar-menu-item">Notificaciones</Link>
->>>>>>> Nury
           </nav>
         </div>
       </div>

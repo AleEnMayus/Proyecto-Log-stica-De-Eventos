@@ -38,6 +38,7 @@ const ImageGalleryC = () => {
 
   return (
     <div className="gallery-manager">
+      <HeaderCl />
       <div className="gallery-left">
         <h2 className="gallery-title">Galeria de Eventos</h2>
         <div className="gallery-grid">

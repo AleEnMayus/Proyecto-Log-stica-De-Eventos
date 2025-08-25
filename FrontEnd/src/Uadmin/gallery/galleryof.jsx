@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './galleryof.css';
+import HeaderAdm from '../../components/HeaderAdm';
 
 const ManagerImageGallery = () => {
   const [images, setImages] = useState(Array(9).fill(null));
@@ -41,6 +42,7 @@ const ManagerImageGallery = () => {
 
   return (
     <div className="gallery-manager">
+      <HeaderAdm />
       <div className="gallery-left">
         <h2 className="gallery-title">Gestionar Galeria de Eventos</h2>
         <div className="gallery-grid">

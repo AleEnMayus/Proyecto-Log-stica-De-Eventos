@@ -13,7 +13,7 @@ import RecoverPassword from './RecoverPassword'
 import Contracts from './UCliente/Contracts'
 import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/survay'  
-import  CreateSurvay from './Uadmin/createsurvay'
+import  CreateSurvay from './Uadmin/CreateSurvey/createsurvey'
 import SurvayClient from './UCliente/survey' // Importación del componente de encuesta del cliente
 import Notifications from './UCliente/Notification-tray' // Importación del componente de notificaciones
 import Notification from './Uadmin/Notification' // Importación del componente de notificaciones del administrador

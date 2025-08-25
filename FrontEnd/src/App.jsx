@@ -12,6 +12,7 @@ import RegisterPage from './Register'
 import RecoverPassword from './RecoverPassword'
 
 
+
 // Componente principal de la aplicación
 function App() {
   // Estado local para contar interacciones o elementos (ejemplo)

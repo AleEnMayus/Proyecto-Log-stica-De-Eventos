@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './LogIn.css'; // Importar el archivo CSS
 
 const RegisterPage = () => {
@@ -13,6 +13,7 @@ const RegisterPage = () => {
   });
 
   const [errorMessage, setErrorMessage] = useState('');
+  const errorRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -31,15 +32,23 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/register', {
+      const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
 
       if (response.ok) {
-        alert('Registro exitoso');
-        // Redirigir o hacer algo más después del registro
+        setErrorMessage('✅ Registro exitoso. Ahora puedes iniciar sesión.');
+        setFormData({
+          fullName: '',
+          birthDate: '',
+          identificationType: '',
+          documentNumber: '',
+          email: '',
+          password: '',
+          confirmPassword: ''
+        });  
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Error en el registro');
@@ -48,6 +57,12 @@ const RegisterPage = () => {
       setErrorMessage('Error al conectar con el servidor');
     }
   };
+
+  useEffect(() => {
+    if (errorMessage && errorRef.current) {
+      errorRef.current.focus();
+    }
+  }, [errorMessage]);
 
   const handleGoBackBrowser = () => {
     window.history.back();
@@ -84,7 +99,10 @@ const RegisterPage = () => {
             Crea tu cuenta en Happy-Art Eventos
           </p>
 
-          {errorMessage && <div className="error-message">{errorMessage}</div>}
+          {errorMessage && 
+          <div className="error-message" ref={errorRef}
+          tabIndex="-1">{errorMessage}
+          </div>}
 
           <form onSubmit={handleSubmit}>
             <div className="row">
@@ -124,10 +142,9 @@ const RegisterPage = () => {
                   required
                 >
                   <option value="">Seleccionar</option>
-                  <option value="cedula">Cédula de Ciudadanía</option>
-                  <option value="cedula_extranjeria">Cédula de Extranjería</option>
-                  <option value="pasaporte">Pasaporte</option>
-                  <option value="tarjeta_identidad">Tarjeta de Identidad</option>
+                  <option value="CC">Cédula de Ciudadanía</option>
+                  <option value="CE">Cédula de Extranjería</option>
+                  <option value="PP">Permiso de permanencia</option>
                 </select>
               </div>
               <div className="col-md-6">

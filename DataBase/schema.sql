@@ -5,7 +5,6 @@ USE ProyectoLogisticaEventos;
 CREATE TABLE Usuario(
     IdUsuario int PRIMARY KEY AUTO_INCREMENT,
     Nombres varchar(50),
-    Apellidos varchar(50),
     TipoDocumento enum('CC', 'CE', 'PP'),
     NumDocumento varchar(20),
     FechaNacimiento date,
@@ -113,12 +112,12 @@ CREATE TABLE Comentarios (
     FOREIGN KEY (IdArchivoMultimedia) REFERENCES ArchivoMultimedia(IdArchivo)
 );
 
-INSERT INTO Usuario (Nombres, Apellidos, TipoDocumento, NumDocumento, FechaNacimiento, CorreoElect, Contraseña, Estado, Rol) VALUES
-('Juan Carlos', 'Pérez García', 'CC', '12345678', '1990-05-15', 'juan.perez@email.com', 'contraseña123', 'activo', 'user'),
-('María Elena', 'Rodríguez López', 'CC', '87654321', '1988-08-22', 'maria.rodriguez@email.com', 'mipass456', 'activo', 'user'),
-('Ana Patricia', 'Gómez Ruiz', 'CE', '98765432', '1995-12-10', 'ana.gomez@email.com', 'ana789', 'activo', 'admin'),
-('Carlos Alberto', 'Martínez Silva', 'CC', '11223344', '1992-03-18', 'carlos.martinez@email.com', 'carlos321', 'activo', 'user'),
-('Laura Sofía', 'Hernández Torres', 'PP', '55667788', '1987-11-25', 'laura.hernandez@email.com', 'laura654', 'inactivo', 'user');
+INSERT INTO Usuario (Nombres, TipoDocumento, NumDocumento, FechaNacimiento, CorreoElect, Contraseña, Estado, Rol) VALUES
+('Juan Carlos', 'CC', '12345678', '1990-05-15', 'juan.perez@email.com', 'contraseña123', 'activo', 'user'),
+('María Elena', 'CC', '87654321', '1988-08-22', 'maria.rodriguez@email.com', 'mipass456', 'activo', 'user'),
+('Ana Patricia', 'CE', '98765432', '1995-12-10', 'ana.gomez@email.com', 'ana789', 'activo', 'admin'),
+('Carlos Alberto', 'CC', '11223344', '1992-03-18', 'carlos.martinez@email.com', 'carlos321', 'activo', 'user'),
+('Laura Sofía', 'PP', '55667788', '1987-11-25', 'laura.hernandez@email.com', 'laura654', 'inactivo', 'user');
 
 INSERT INTO Recursos (NombreRecurso, Cantidad, DescripcionEstado, Estado, Precio) VALUES
 ('Mesas redondas', '20', 'Mesas de madera en buen estado', 'Disponible', 15000.00),
@@ -183,7 +182,7 @@ INSERT INTO Comentarios (TextoComentario, EstadoComentario, FechaPublicacion, Id
 ('Me gustó mucho la propuesta de decoración', 'pendiente', '2024-12-22 09:15:00', 1, 4);
 
 CREATE OR REPLACE VIEW VistaSatisfaccionEventos AS
-SELECT  e.IdEvento, e.NombreEvento, CONCAT(u.Nombres, ' ', u.Apellidos) AS Cliente, ROUND(AVG(r.ValorNumerico), 2) AS PromedioSatisfaccion, COUNT(r.IdRespuesta) AS TotalRespuestas
+SELECT  e.IdEvento, e.NombreEvento, CONCAT(u.Nombres) AS Cliente, ROUND(AVG(r.ValorNumerico), 2) AS PromedioSatisfaccion, COUNT(r.IdRespuesta) AS TotalRespuestas
 FROM Eventos e
 JOIN Usuario u ON e.IdCliente = u.IdUsuario
 JOIN Respuestas r ON e.IdEvento = r.IdEvento

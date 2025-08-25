@@ -109,15 +109,6 @@ const HomePage = () => {
         onLogout={handleLogout} 
       />
 
-      {/* Estado actual del usuario para debugging */}
-      {user && (
-        <div className="container mt-3">
-          <div className={`alert ${user.role === 'admin' ? 'alert-warning' : 'alert-info'}`}>
-            <strong>Estado actual:</strong> Logueado como {user.name} ({user.role})
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
       <main className="container my-5 mt-5 pt-5">
         {/* Hero Section personalizada */}

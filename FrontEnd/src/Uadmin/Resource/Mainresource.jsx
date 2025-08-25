@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Admin.css"; // Importa los estilos
+import '../Admin.css'; // Importa los estilos
 
 const Mainresources = () => {
   const [search, setSearch] = useState("");

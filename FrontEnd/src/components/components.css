@@ -55,8 +55,8 @@
 .sidebar {
   position: fixed;
   top: 0;
-  left: -300px;
-  width: 300px;
+  left: -400px;
+  width: 400px !important;
   height: 100vh;
   background-color: #ffffff;
   transition: left 0.3s ease-in-out;

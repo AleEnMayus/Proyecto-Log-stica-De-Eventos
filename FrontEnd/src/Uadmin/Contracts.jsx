@@ -1,17 +1,10 @@
 import React from "react";
-import "./Client.css"; // Importa el CSS separado
-import HeaderCl from "../components/HeaderCl";
+import HeaderAdm from "../components/HeaderAdm";
 
 const Contracts = () => {
-  // 🔹 Simulamos que el usuario ya inició sesión
-  const user = {  
-    name: "Juan", // Puedes poner el nombre del cliente logueado
-  };
-
   return (
     <div className="contratos-container">
-      {/* 👇 Pasamos el user al Header */}
-      <HeaderCl user={user} />
+      <HeaderAdm />
 
       {/* Enviar Contrato */}
       <div className="promo-card contratos-card">
@@ -25,7 +18,6 @@ const Contracts = () => {
         <label htmlFor="archivoEnviar">Eliminar Contrato</label>
         <div className="input-group-custom">
           <input type="text" id="archivoEnviar" value="CONTRATO.P" readOnly />
-          <span className="icon-btn">📂</span>
         </div>
 
         <button className="btn-primary-custom w-100">Enviar Contrato</button>
@@ -43,7 +35,6 @@ const Contracts = () => {
         <label htmlFor="archivoEliminar">Eliminar Contrato</label>
         <div className="input-group-custom">
           <input type="text" id="archivoEliminar" value="CONTRATO.P" readOnly />
-          <span className="icon-btn">👁</span>
         </div>
 
         <button className="btn-secondary-custom w-100">Eliminar</button>

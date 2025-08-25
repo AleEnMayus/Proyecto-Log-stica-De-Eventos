@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Admin.css";
+import '../Admin.css';
 
 const Secondaryresources = () => {
   const [recursos, setRecursos] = useState([

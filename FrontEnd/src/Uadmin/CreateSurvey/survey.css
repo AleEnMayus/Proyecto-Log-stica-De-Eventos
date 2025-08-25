@@ -273,18 +273,6 @@ h2.title {
   color: #555;
   margin-bottom: 15px;
 }
-
-.btn {
-  background: #2f3640;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  cursor: pointer;
-}
-.btn:hover {
-  background: #1d2530;
-}
-
 .notification-dropdown {
   position: absolute;
   top: 100%;

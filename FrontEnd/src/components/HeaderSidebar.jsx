@@ -51,10 +51,8 @@ const HeaderSidebar = () => {
             <a href="#eventos" className="sidebar-menu-item">Eventos</a>
             <a href="#promociones" className="sidebar-menu-item">Promociones</a>
             <a href="#contacto" className="sidebar-menu-item">Contacto</a>
-            <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
+            <a href="/login" className="sidebar-menu-item">Agendar Cita</a>
             
-            {/* Aquí agregamos el link a Contratos */}
-            <Link to="/contracts-client" className="sidebar-menu-item">Contratos</Link>
           </nav>
         </div>
       </div>

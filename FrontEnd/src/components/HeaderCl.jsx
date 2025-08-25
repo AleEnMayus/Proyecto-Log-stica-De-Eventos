@@ -111,13 +111,9 @@ const HeaderCl = () => {
         <div className="p-4 mt-5 pt-5">
           <nav className="mt-5">
             <a href="/" className="sidebar-menu-item">Inicio</a>
-            <a href="#galeria" className="sidebar-menu-item">Galería</a>
-            <a href="#eventos" className="sidebar-menu-item">Eventos</a>
-            <a href="#promociones" className="sidebar-menu-item">Promociones</a>
-            <a href="#contacto" className="sidebar-menu-item">Contacto</a>
-            <a href="#agendar" className="sidebar-menu-item">Agendar Cita</a>
-            <a href="#agendar" className="sidebar-menu-item">Contrato</a>
-            <Link to="/survay" className="sidebar-menu-item">Encuestas</Link>
+            <Link to="/Schedule-client" className="sidebar-menu-item">Agendar cita</Link>
+            <Link to="/EventsHome" className="sidebar-menu-item">Eventos</Link>
+            
           </nav>
         </div>
       </div>

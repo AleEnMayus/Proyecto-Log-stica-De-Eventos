@@ -7,7 +7,7 @@ import HomePage from './HomePage'
 import LoginPage from './LogIn'
 import RegisterPage from './Register'
 import RecoverPassword from './RecoverPassword'
-import Contracts from './UCliente/Contracts'
+import Contracts from './Uadmin/Contracts'
 import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/CreateSurvey/survey'  
 import  CreateSurvay from './Uadmin/CreateSurvey/createsurvey'
@@ -29,8 +29,8 @@ import EditEvent from './Uadmin/Events/EditEvent'
 import RequestCancel from './UCliente/Events/RequestEvent'
 import CancelEvent from './Uadmin/Events/CancelRequest'
 
-import Mainresources from './Uadmin/mainresources'
-import Secondaryresources from './Uadmin/secondaryresources'
+import Mainresources from './Uadmin/Resource/Mainresource'
+import Secondaryresources from './Uadmin/Resource/Secondaryresource'
 
 import SurvayClient from './UCliente/survey'
 import Notifications from './UCliente/Notification-tray'
@@ -65,13 +65,13 @@ function App() {
           <Route path="/recover" element={<RecoverPassword />} />
            
            {/* Ruta a la página principal */}
-          <Route path="/contracts-client" element={<Contracts />} />
+          <Route path="/ContractsAdmin" element={<Contracts />} />
 
            {/* Ruta a la página principal */}
-          <Route path="/Schedule-client" element={<Schedule />} />
+          <Route path="/Schedule" element={<Schedule />} />
 
           {/* Ruta a la página de encuestas */}
-          <Route path="/survay" element={<Survay />} />
+          <Route path="/Survay" element={<Survay />} />
 
           {/* Ruta a la página de creación de encuestas */}
           <Route path="/createsurvay" element={<CreateSurvay />} />

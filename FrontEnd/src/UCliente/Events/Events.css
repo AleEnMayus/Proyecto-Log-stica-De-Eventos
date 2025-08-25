@@ -1,7 +1,3 @@
-.contact-section {
-  min-height: 100vh;
-}
-
 .content-container {
   padding: 100px 2rem 2rem 2rem;
   max-width: 1200px;
@@ -125,9 +121,6 @@
 .back-button {
   padding: 12px 60px;
   font-size: 16px;
-}
-.contact-section {
-  min-height: 100vh;
 }
 
 .list-container {

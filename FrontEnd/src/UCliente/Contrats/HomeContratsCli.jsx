@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import HeaderAdm from "../../components/HeaderAdm";
 import '../../components/components.css';
-import '../../Uadmin/Contracts/Contrats.css';
+import '../../Uadmin/Contracts/Contracts.css';
 
 const ContratoClienteComponent = () => {
   const [contrato, setContrato] = useState('');

@@ -19,9 +19,12 @@ const HeaderSidebar = () => {
                 <button className="menu-btn me-3" onClick={toggleMenu}>
                   ☰
                 </button>
+                <a href="/" className="navbar-brand d-flex align-items-center">
+                <img src="/HAE_logo.png" className='img-50'/>
                 <div className="logo-text">
                   Happy-Art Eventos
                 </div>
+                </a>
               </div>
             </div>
             <div className="col-6 text-end">

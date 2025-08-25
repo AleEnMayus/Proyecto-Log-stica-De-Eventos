@@ -10,7 +10,7 @@ const DynamicHeader = ({ user, onLogin, onLogout }) => {
   }
 
   // Si es admin, mostrar header de admin
-  if (user.role === 'admin') {
+  if (user.rol === 'admin') {
     return <HeaderAdm user={user} onLogout={onLogout} />;
   }
 

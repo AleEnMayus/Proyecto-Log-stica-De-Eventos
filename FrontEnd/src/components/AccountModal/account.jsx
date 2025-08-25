@@ -12,17 +12,18 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
 
   // Sacamos los datos del user que viene del localStorage
   const {
-    fullName,
+    nombre,
     email,
     phoneNumber,
     birthDate,
     identificationType,
     documentNumber,
     profilePicture,
-    role
+    rol
   } = user || {};
 
-  const rolLegible = role === "admin" ? "Administrador" : "Cliente";
+  const rolLegible = rol === "admin" ? "Administrador" : "Cliente";
+  const onlyDate = birthDate.split("T")[0];
 
   return (
     <>
@@ -77,7 +78,7 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
               <div className="field-row">
                 <div className="field">
                   <div className="field-label">Nombre completo</div>
-                  <div className="field-value">{fullName}</div>
+                  <div className="field-value">{nombre}</div>
                 </div>
               </div>
 
@@ -98,7 +99,7 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
               <div className="field-row">
                 <div className="field">
                   <div className="field-label">Fecha de nacimiento</div>
-                  <div className="field-value">{birthDate}</div>
+                  <div className="field-value">{onlyDate}</div>
                 </div>
               </div>
 

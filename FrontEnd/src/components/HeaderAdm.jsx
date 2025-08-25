@@ -62,7 +62,7 @@ const HeaderAdm = () => {
                 style={{ cursor: 'pointer' }}
               >
                 <span className="fw-bold me-2 title-headersb">
-                  {userData?.fullName?.split(' ')[0] || 'Invitado'}
+                  {userData?.nombre?.split(' ')[0] || 'Invitado'}
                 </span>
 
                 {userImageUrl ? (
@@ -83,9 +83,9 @@ const HeaderAdm = () => {
               {isUserMenuOpen && userData && (
                 <div className="user-dropdown position-absolute end-0 mt-2">
                   <div className="p-3 border-bottom">
-                    <div className="fw-bold">{userData.fullName}</div>
+                    <div className="fw-bold">{userData.nombre}</div>
                     <div className="text-muted small">{userData.email}</div>
-                    <div className="badge bg-secondary small mt-1">{userData.role}</div>
+                    <div className="badge bg-secondary small mt-1">{userData.rol}</div>
                   </div>
                   <Link className="dropdown-item-custom" onClick={() => {setShowPerfil(true); setIsUserMenuOpen(false)}}>
                     Ver perfil

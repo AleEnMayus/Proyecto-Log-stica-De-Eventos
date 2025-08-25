@@ -233,7 +233,7 @@ const AdminAccountsList = () => {
                 </td>
                 <td>
                   <button
-                    className="btn btn-status"
+                    className="btn-custom btn-status-custom"
                     onClick={() => handleOpenStatusModal(user.id, user.estado)}
                   >
                     {user.estado}
@@ -241,7 +241,7 @@ const AdminAccountsList = () => {
                 </td>
                 <td>
                   <button
-                    className="btn btn-edit"
+                    className="btn-custom btn-edit-custom"
                     onClick={() => handleEdit(user.id)}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
@@ -251,7 +251,7 @@ const AdminAccountsList = () => {
                 </td>
                 <td>
                   <button
-                    className="btn btn-delete"
+                    className="btn-custom btn-delete-custom"
                     onClick={() => handleDelete(user.id)}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">

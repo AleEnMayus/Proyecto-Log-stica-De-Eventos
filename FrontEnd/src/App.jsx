@@ -89,7 +89,7 @@ function App() {
           {/* Diego */}
           <Route path="/EventsHomeAdmin" element={<ListEventsA />} />
           <Route path="/EventDetailsAdmin" element={<EventDetailsA />} />
-          <Route path="/create-event" element={<CreateEvent />} />
+          <Route path="/CreateEvent" element={<CreateEvent />} />
           <Route path="/edit-event" element={<EditEvent />} />
           <Route path='/EventDetails' element={<EventDetailsC />}/>
           <Route path='/EventsHome' element={<ListEventsC />}/>

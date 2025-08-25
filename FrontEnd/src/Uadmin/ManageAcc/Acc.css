@@ -46,7 +46,7 @@ input:focus {
 .search-input-group {
   display: flex;
   align-items: center;
-  border: 1px solid #ddd;
+  border: 1px solid #ced4da;
   border-radius: 25px;
   padding: 5px 12px;
   background: #fff;
@@ -124,7 +124,7 @@ input:focus {
 }
 
 /* Botones de acción */
-.btn {
+.btn-custom {
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -133,17 +133,17 @@ input:focus {
   transition: all 0.3s ease;
 }
 
-.btn-status {
+.btn-status-custom {
   background: #f1f1f1;
   color: #333;
 }
 
-.btn-edit {
+.btn-edit-custom {
   background: #3498db;
   color: white;
 }
 
-.btn-delete {
+.btn-delete-custom {
   background: #e74c3c;
   color: white;
 }

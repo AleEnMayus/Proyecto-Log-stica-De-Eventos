@@ -77,7 +77,10 @@ router.post("/login", async (req, res) => {
       id: user.IdUsuario,
       nombre: user.Nombres,
       email: user.CorreoElect,
-      rol: user.Rol
+      rol: user.Rol,
+      birthDate: user.FechaNacimiento,
+      documentNumber: user.NumDocumento,
+      identificationType: user.TipoDocumento
     });
   } catch (error) {
     console.error("❌ Error en login:", error);

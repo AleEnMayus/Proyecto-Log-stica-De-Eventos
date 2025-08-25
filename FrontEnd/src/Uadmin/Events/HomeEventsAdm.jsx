@@ -1,4 +1,5 @@
 import React, { useState } from 'react'; 
+import { Link, useNavigate } from 'react-router-dom';
 import HeaderCl from "../../components/HeaderCl";
 import '../../components/components.css';
 import '../../UCliente/Events/Events.css';
@@ -118,16 +119,17 @@ const ListEventsA = () => {
           </div>
         </div>
         <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'center' }}>
-          <button className="btn-primary-custom" style={{
+          <Link to="/CreateEvent" className="btn-primary-custom" style={{
             padding: '15px 35px',
             fontSize: '16px',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px'
+            gap: '10px',
+            textDecoration: 'none'
           }}>
             <span style={{ fontSize: '20px', fontWeight: 'bold' }}>+</span>
             <span>Agendar Evento</span>
-          </button>
+          </Link>
         </div>
 
         {eventosFiltrados.length === 0 && (

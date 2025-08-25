@@ -6,13 +6,12 @@ const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [user, setUser] = useState(null);
 
-   useEffect(() => {
+  useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
 
-    // Escuchar cambios en localStorage
     const handleStorageChange = () => {
       const updatedUser = localStorage.getItem('user');
       setUser(updatedUser ? JSON.parse(updatedUser) : null);
@@ -25,7 +24,6 @@ const HomePage = () => {
     };
   }, []);
 
-  // Funciones de login/logout
   const handleLogin = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
     setUser(userData);
@@ -36,8 +34,6 @@ const HomePage = () => {
     setUser(null);
   };
 
-
-  // Datos del carrusel
   const images = [
     { id: 1, alt: "Evento 1" },
     { id: 2, alt: "Evento 2" },
@@ -46,34 +42,33 @@ const HomePage = () => {
     { id: 5, alt: "Evento 5" }
   ];
 
-  // Promociones
   const promociones = [
     {
       id: 1,
       titulo: "PROMOCION UNO",
       nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      descripcion: "Lorem ipsum dolor sit amet...",
       valor: "$1.000.000"
     },
     {
       id: 2,
       titulo: "PROMOCION DOS",
       nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      descripcion: "Lorem ipsum dolor sit amet...",
       valor: "$1.000.000"
     },
     {
       id: 3,
       titulo: "PROMOCION TRES",
       nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      descripcion: "Lorem ipsum dolor sit amet...",
       valor: "$1.000.000"
     },
     {
       id: 4,
       titulo: "PROMOCION CUATRO",
       nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+      descripcion: "Lorem ipsum dolor sit amet...",
       valor: "$1.000.000"
     }
   ];
@@ -86,32 +81,28 @@ const HomePage = () => {
     setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  // Función para obtener el mensaje de bienvenida según el tipo de usuario
+  // 👇 Cambiado a user.rol y user.nombre
   const getWelcomeMessage = () => {
     if (!user) return 'Happy Art Event';
-    if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.fullName}!`;
-    return `¡Bienvenido ${user.fullName}!`;
+    if (user.rol === 'admin') return `Panel de Admin - ¡Hola ${user.nombre}!`;
+    return `¡Bienvenido ${user.nombre}!`;
   };
 
   const getWelcomeDescription = () => {
     if (!user) return 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.';
-    if (user.role === 'admin') return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
+    if (user.rol === 'admin') return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
     return 'Ahora puedes agendar citas, ver tus eventos y acceder a promociones exclusivas.';
   };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
-      
-      {/* Header dinámico que cambia según el usuario */}
       <DynamicHeader 
         user={user} 
         onLogin={handleLogin} 
         onLogout={handleLogout} 
       />
 
-      {/* Main Content */}
       <main className="container my-5 mt-5 pt-5">
-        {/* Hero Section personalizada */}
         <section id="inicio" className="mb-5 mt-5">
           <h1 className="section-title display-4">
             {getWelcomeMessage()}
@@ -121,7 +112,6 @@ const HomePage = () => {
           </p>
         </section>
 
-        {/* Galería de Eventos */}
         <section id="galeria" className="mb-5">
           <h2 className="section-title h3">Galería De Eventos</h2>
           <div className="carousel-container">
@@ -129,7 +119,7 @@ const HomePage = () => {
               className="carousel-track"
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
-              {images.map((image, index) => (
+              {images.map((image) => (
                 <div key={image.id} className="carousel-slide">
                   <div className="text-center">
                     <div
@@ -161,13 +151,12 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Agendamiento de Citas */}
         <section id="eventos" className="mb-5">
           <h2 className="section-title h3">
-            {user && user.role === 'admin' ? 'Gestión de Citas' : 'Agendamiento De Citas'}
+            {user && user.rol === 'admin' ? 'Gestión de Citas' : 'Agendamiento De Citas'}
           </h2>
           <p className="text-muted mb-4">
-            {user && user.role === 'admin' 
+            {user && user.rol === 'admin' 
               ? 'Como administrador, puedes ver y gestionar todas las citas del sistema.'
               : user 
                 ? 'Como usuario registrado, puedes agendar citas directamente.'
@@ -175,15 +164,14 @@ const HomePage = () => {
             }
           </p>
           <a href='/login' className="btn-secondary-custom btn">
-            {user && user.role === 'admin' ? 'Gestionar Todas las Citas' : user ? 'Agendar Nueva Cita' : 'Agendar Cita'}
+            {user && user.rol === 'admin' ? 'Gestionar Todas las Citas' : user ? 'Agendar Nueva Cita' : 'Agendar Cita'}
           </a>
         </section>
 
-        {/* Promociones */}
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Paquetes De Promociones</h2>
           <p className="text-muted mb-4">
-            {user && user.role === 'admin' 
+            {user && user.rol === 'admin' 
               ? 'Panel de administración de promociones y paquetes.'
               : 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.'
             }
@@ -209,7 +197,6 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Contacto y Redes Sociales */}
         <section id="contacto" className="contact-section">
           <div className="row">
             <div className="col-md-6 mb-5 mb-md-0">
@@ -240,7 +227,6 @@ const HomePage = () => {
         </section>
       </main>
 
-      {/* Bootstrap JS */}
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     </div>
   )

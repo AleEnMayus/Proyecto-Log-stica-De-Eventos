@@ -49,4 +49,40 @@ router.post("/register", async (req, res) => {
   }
 });
 
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Correo y contraseña son requeridos" });
+  }
+
+  try {
+    const [rows] = await db
+      .promise()
+      .query("SELECT * FROM Usuario WHERE CorreoElect = ?", [email]);
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: "Credenciales incorrectas" });
+    }
+
+    const user = rows[0];
+    const passwordMatch = await bcrypt.compare(password, user.Contraseña);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Credenciales incorrectas" });
+    }
+
+    // 🔹 Aquí podrías generar un JWT, por ahora solo devolvemos datos básicos
+    res.json({
+      id: user.IdUsuario,
+      nombre: user.Nombres,
+      email: user.CorreoElect,
+      rol: user.Rol
+    });
+  } catch (error) {
+    console.error("❌ Error en login:", error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
+});
+
 module.exports = router;

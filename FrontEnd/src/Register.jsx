@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './LogIn.css'; // Importar el archivo CSS
 
 const RegisterPage = () => {
@@ -12,6 +13,7 @@ const RegisterPage = () => {
     confirmPassword: ''
   });
 
+  const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const errorRef = useRef(null);
 
@@ -49,6 +51,10 @@ const RegisterPage = () => {
           password: '',
           confirmPassword: ''
         });  
+        setTimeout(() => {
+            navigate('/login');
+        }, 1500); // 1.5 segundos para que el usuario vea el mensaje
+    
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Error en el registro');

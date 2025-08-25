@@ -111,7 +111,7 @@ const HeaderCl = () => {
         <div className="p-4 mt-5 pt-5">
           <nav className="mt-5">
             <a href="/" className="sidebar-menu-item">Inicio</a>
-            <Link to="/Schedule-client" className="sidebar-menu-item">Agendar cita</Link>
+            <Link to="/Schedule" className="sidebar-menu-item">Agendar cita</Link>
             <Link to="" className="sidebar-menu-item">Contrato</Link>
             <Link to="" className="sidebar-menu-item">Calendario</Link>
             <Link to="/EventsHome" className="sidebar-menu-item">Eventos</Link>

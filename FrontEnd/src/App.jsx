@@ -12,7 +12,6 @@ import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/CreateSurvey/survey'  
 import  CreateSurvay from './Uadmin/CreateSurvey/createsurvey'
 
-
 import Logout from './components/LogOut'
 import UpdatePassword from './components/AccountModal/NewPassword'
 import AdminAccountsList from './Uadmin/ManageAcc/HomeAccounts'
@@ -43,6 +42,10 @@ import ImageGalleryViewerC from  './UCliente/gallerycli/galleryC2'
 
 import Calendarclient from './UCliente/Calendarclient'
 import Calendaradmin from './Uadmin/Calendaradmin'
+
+import ContratComponent from './Uadmin/Contracts/HomeContratsAdmin'
+import ListadoContratosComponent from './Uadmin/Contracts/ListContrats'
+import ContratoClienteComponent from './UCliente/Contrats/HomeContratsCli'
 // Componente principal de la aplicación
 function App() {
   // Estado local para contar interacciones o elementos (ejemplo)
@@ -113,8 +116,9 @@ function App() {
           <Route path='/Calendar' element={<Calendarclient />} />
           <Route path='/Calendaradmin' element={<Calendaradmin />} />
           
-
-
+          <Route path='/HomeContractsAdmin' element={<ContratComponent/>}/>
+          <Route path='/ListContracts' element={<ListadoContratosComponent/>}/>  
+          <Route path='/HomeContractsCli' element={<ContratoClienteComponent/>}/>
 
           </Routes>
       </BrowserRouter>

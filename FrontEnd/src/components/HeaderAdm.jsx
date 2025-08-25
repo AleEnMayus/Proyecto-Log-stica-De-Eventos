@@ -114,7 +114,7 @@ const HeaderAdm = () => {
             <a href="/" className="sidebar-menu-item">Inicio</a>
             <Link to="/EventsHomeAdmin" className="sidebar-menu-item">Gestionar eventos</Link>
             <Link to="/survay" className="sidebar-menu-item">Encuestas</Link>
-            <Link to="" className="sidebar-menu-item">Contratos</Link>
+            <Link to="/ListContracts" className="sidebar-menu-item">Contratos</Link>
             <Link to="/ManageAccounts" className="sidebar-menu-item">Gestionar cuentas</Link>
             <Link to="/MainResources" className="sidebar-menu-item">Recursos</Link>
             <Link to="/galleryAdmin" className="sidebar-menu-item">Gestionar galería</Link>

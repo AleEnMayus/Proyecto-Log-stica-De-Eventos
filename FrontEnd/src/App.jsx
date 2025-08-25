@@ -36,7 +36,6 @@ import SurvayClient from './UCliente/survey'
 import Notifications from './UCliente/Notification-tray'
 import Notification from './Uadmin/Notification'
 
-import ImageGalleryViewer from './Uadmin/gallery/gallery'
 import ImageGallery from './Uadmin/gallery/gallery2'
 import ManagerImageGallery from './Uadmin/gallery/galleryof'
 import ImageGalleryC from './UCliente/gallerycli/galleryC'

@@ -89,8 +89,8 @@ const HomePage = () => {
   // Función para obtener el mensaje de bienvenida según el tipo de usuario
   const getWelcomeMessage = () => {
     if (!user) return 'Happy Art Event';
-    if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.name}!`;
-    return `¡Bienvenidooo ${user.name}!`;
+    if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.fullName}!`;
+    return `¡Bienvenido ${user.fullName}!`;
   };
 
   const getWelcomeDescription = () => {
@@ -211,16 +211,6 @@ const HomePage = () => {
                     <p className="fw-bold mb-0" style={{ color: 'rgb(255, 83, 121)' }}>
                       <strong>Valor: {promo.valor}</strong>
                     </p>
-                    {user && user.role === 'admin' && (
-                      <button className="btn btn-sm btn-warning mt-2 w-100">
-                        Editar Promoción
-                      </button>
-                    )}
-                    {user && user.role === 'user' && (
-                      <button className="btn btn-sm btn-primary mt-2 w-100">
-                        Contratar Ahora
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>

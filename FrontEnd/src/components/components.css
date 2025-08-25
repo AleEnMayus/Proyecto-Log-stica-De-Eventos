@@ -1,4 +1,3 @@
-/* Header Styles */
 .header-container {
   position: fixed !important;
   top: 0;
@@ -265,4 +264,81 @@
 
 .dropdown-item-custom:hover {
   background-color: #f9f9f9;
+}
+
+.profile-modal {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 760px;
+  width: 94%;
+  padding: 22px;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.profile-modal .close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: 0;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pm-body {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.pm-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  flex-shrink: 0;
+}
+
+.pm-fields { flex: 1; }
+
+.field-row { display: flex; gap: 16px; margin-bottom: 12px; }
+.field-row.two-cols .field { flex: 1; }
+.field { width: 100%; }
+.field-label { font-size: 12px; color: #6c757d; margin-bottom: 4px; }
+.field-value {
+  background: #f3f5f7;
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.pm-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  justify-content: space-between;
+}
+
+.img-50 {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.logolink{
+  text-decoration: none;
+  color: inherit;
+  align-items: center;
+}
+
+@media (max-width: 770px) {
+  .title-headersb{
+    display: none;
+  }
+  .logo-text{
+    display: none;
+  }
 }

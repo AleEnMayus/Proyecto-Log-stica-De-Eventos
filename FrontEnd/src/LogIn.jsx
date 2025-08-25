@@ -11,26 +11,36 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Usuarios de prueba
+  // Usuarios de prueba con datos adicionales
   const testUsers = {
     'admin@happyart.com': {
       password: 'admin123',
       data: { 
         id: 1,
-        name: 'Ana Administradora', 
+        fullName: 'Ana María Administradora',
         role: 'admin', 
-        email: 'admin@happyart.com' 
+        email: 'admin@happyart.com',
+        phoneNumber: '300 1234567',
+        birthDate: '1985-03-15',
+        identificationType: 'cedula',
+        documentNumber: '123456789',
+        profilePicture: 'https://randomuser.me/api/portraits/women/45.jpg'
       }
     },
     'user@happyart.com': {
       password: 'user123',
       data: { 
         id: 2,
-        name: 'Juan Usuario', 
+        fullName: 'Juan Pérez',
         role: 'user', 
-        email: 'user@happyart.com' 
+        email: 'user@happyart.com',
+        phoneNumber: '300 1234567',
+        birthDate: '1992-07-20',
+        identificationType: 'cedula',
+        documentNumber: '987654321',
+        profilePicture: 'https://randomuser.me/api/portraits/men/46.jpg'
       }
-    },
+    }
   };
 
   const handleInputChange = (e) => {
@@ -39,7 +49,6 @@ const LoginPage = () => {
       ...prev,
       [name]: value
     }));
-    // Limpiar error cuando el usuario empiece a escribir
     if (error) setError('');
   };
 
@@ -48,19 +57,14 @@ const LoginPage = () => {
     setIsLoading(true);
     setError('');
 
-    // Simular delay de API
     setTimeout(() => {
       const user = testUsers[formData.email.toLowerCase()];
       
       if (user && user.password === formData.password) {
-        // Login exitoso
         localStorage.setItem('user', JSON.stringify(user.data));
         console.log('Login exitoso:', user.data);
-        
-        // Redirigir al home
         navigate('/');
       } else {
-        // Login fallido
         setError('Email o contraseña incorrectos');
       }
       
@@ -87,12 +91,16 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    // Simular login con Google (usuario demo)
     const googleUser = {
       id: 4,
       name: 'Usuario Google',
       role: 'user',
-      email: 'google@usuario.com'
+      email: 'google@usuario.com',
+      fullName: 'Usuario Google',
+      birthDate: '',
+      identificationType: '',
+      documentNumber: '',
+      profilePicture: 'https://randomuser.me/api/portraits/men/50.jpg'
     };
     
     localStorage.setItem('user', JSON.stringify(googleUser));
@@ -124,9 +132,7 @@ const LoginPage = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="login-content mt-4">
-        {/* Panel de usuarios demo - Solo para testing */}
         <div className="demo-panel mb-4">
           <div className="card">
             <div className="card-body">
@@ -158,7 +164,6 @@ const LoginPage = () => {
           </div>
         </div>
 
-        {/* Login Form */}
         <div className="login-form-card">
           <h1 className="login-title">Iniciar Sesión</h1>
           <p className="login-subtitle">
@@ -233,13 +238,11 @@ const LoginPage = () => {
             </a>
           </p>
 
-          {/* Credenciales de prueba */}
           <div className="credentials-info mt-4">
             <small className="text-muted">
               <strong>Credenciales de prueba:</strong><br/>
               • Admin: admin@happyart.com / admin123<br/>
-              • Usuario: user@happyart.com / user123<br/>
-              • Cliente: cliente@happyart.com / cliente123
+              • Usuario: user@happyart.com / user123
             </small>
           </div>
         </div>

@@ -1,10 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './components/components.css';
-import HeaderSidebar from './components/HeaderSidebar';
+import DynamicHeader from './components/DynamicHeader';
 
 const HomePage = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [user, setUser] = useState(null);
+
+   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
+    // Escuchar cambios en localStorage
+    const handleStorageChange = () => {
+      const updatedUser = localStorage.getItem('user');
+      setUser(updatedUser ? JSON.parse(updatedUser) : null);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Funciones de login/logout
+  const handleLogin = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
 
   // Datos del carrusel
   const images = [
@@ -55,24 +86,47 @@ const HomePage = () => {
     setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  // Función para obtener el mensaje de bienvenida según el tipo de usuario
+  const getWelcomeMessage = () => {
+    if (!user) return 'Happy Art Event';
+    if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.name}!`;
+    return `¡Bienvenido ${user.name}!`;
+  };
+
+  const getWelcomeDescription = () => {
+    if (!user) return 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.';
+    if (user.role === 'admin') return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
+    return 'Ahora puedes agendar citas, ver tus eventos y acceder a promociones exclusivas.';
   };
 
   return (
-      <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
-        
-      <HeaderSidebar />
+    <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
+      
+      {/* Header dinámico que cambia según el usuario */}
+      <DynamicHeader 
+        user={user} 
+        onLogin={handleLogin} 
+        onLogout={handleLogout} 
+      />
+
+      {/* Estado actual del usuario para debugging */}
+      {user && (
+        <div className="container mt-3">
+          <div className={`alert ${user.role === 'admin' ? 'alert-warning' : 'alert-info'}`}>
+            <strong>Estado actual:</strong> Logueado como {user.name} ({user.role})
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="container my-5 mt-5 pt-5">
-        {/* Hero Section */}
+        {/* Hero Section personalizada */}
         <section id="inicio" className="mb-5 mt-5">
           <h1 className="section-title display-4">
-            Happy Art Event
+            {getWelcomeMessage()}
           </h1>
           <p className="lead text-muted mb-4">
-            Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.
+            {getWelcomeDescription()}
           </p>
         </section>
 
@@ -99,7 +153,7 @@ const HomePage = () => {
                         margin: '0 auto'
                       }}
                     >
-                      🖼️
+                      🖼
                     </div>
                     <p className="mt-3 mb-0">{image.alt}</p>
                   </div>
@@ -118,12 +172,19 @@ const HomePage = () => {
 
         {/* Agendamiento de Citas */}
         <section id="eventos" className="mb-5">
-          <h2 className="section-title h3">Agendamiento De Citas</h2>
+          <h2 className="section-title h3">
+            {user && user.role === 'admin' ? 'Gestión de Citas' : 'Agendamiento De Citas'}
+          </h2>
           <p className="text-muted mb-4">
-            Especificación de espacio donde se podrá asignar una cita para el evento que desee el usuario.
+            {user && user.role === 'admin' 
+              ? 'Como administrador, puedes ver y gestionar todas las citas del sistema.'
+              : user 
+                ? 'Como usuario registrado, puedes agendar citas directamente.'
+                : 'Especificación de espacio donde se podrá asignar una cita para el evento que desee el usuario.'
+            }
           </p>
           <a href='/login' className="btn-secondary-custom btn">
-            Agendar Cita
+            {user && user.role === 'admin' ? 'Gestionar Todas las Citas' : user ? 'Agendar Nueva Cita' : 'Agendar Cita'}
           </a>
         </section>
 
@@ -131,7 +192,10 @@ const HomePage = () => {
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Paquetes De Promociones</h2>
           <p className="text-muted mb-4">
-            Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.
+            {user && user.role === 'admin' 
+              ? 'Panel de administración de promociones y paquetes.'
+              : 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.'
+            }
           </p>
 
           <div className="row">
@@ -147,6 +211,16 @@ const HomePage = () => {
                     <p className="fw-bold mb-0" style={{ color: 'rgb(255, 83, 121)' }}>
                       <strong>Valor: {promo.valor}</strong>
                     </p>
+                    {user && user.role === 'admin' && (
+                      <button className="btn btn-sm btn-warning mt-2 w-100">
+                        Editar Promoción
+                      </button>
+                    )}
+                    {user && user.role === 'user' && (
+                      <button className="btn btn-sm btn-primary mt-2 w-100">
+                        Contratar Ahora
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -158,7 +232,7 @@ const HomePage = () => {
         <section id="contacto" className="contact-section">
           <div className="row">
             <div className="col-md-6 mb-5 mb-md-0">
-              <h3 className="section-title h4 ">Contacto</h3>
+              <h3 className="section-title h4">Contacto</h3>
               <div className="mb-3">
                 <strong>Teléfono:</strong> +57 312400579
               </div>
@@ -170,7 +244,7 @@ const HomePage = () => {
               </div>
             </div>
             <div className="col-md-6 mt-5 mt-md-0">
-              <h3 className="section-title h4 ">Redes Sociales</h3>
+              <h3 className="section-title h4">Redes Sociales</h3>
               <div className="mb-3">
                 <strong>Facebook:</strong> Happy-Art-Event
               </div>
@@ -191,4 +265,4 @@ const HomePage = () => {
   )
 }
 
-export default HomePage
+export default HomePage;

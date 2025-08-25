@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './components.css';
 
 
-const HeaderSidebar = () => {
+const HeaderCl = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -61,4 +61,4 @@ const HeaderSidebar = () => {
   );
 };
 
-export default HeaderSidebar;
+export default HeaderCl;

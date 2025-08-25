@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import HeaderAdm from '../../components/HeaderAdm';
 import ConfirmModal from "../../components/ModalConfirm";
 import ModalState from "../../components/ModalState";
@@ -159,10 +161,12 @@ const AdminAccountsList = () => {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
+  const navigate = useNavigate();
+
   const handleEdit = (userId) => {
-    console.log('Editar usuario:', userId);
-    // Aquí se abrirá el modal de edición
+    navigate(`/users/edit/${userId}`); // Redirige a la página de edición
   };
+
 
   return (
     <div className="admin-accounts-container">
@@ -171,12 +175,12 @@ const AdminAccountsList = () => {
 
       <div className="admin-header mt-5 pt-5">
         <h2 className="admin-title">ADMINISTRAR CUENTA</h2>
-        <button className="btn-create-account d-flex">
+        <Link to="/CreateAccount" className="btn-create-account d-flex" style={{ textDecoration: 'none' }}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">
             <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z"/>
           </svg>
           Crear cuenta
-        </button>
+        </Link>
       </div>
 
       {/* Search Bar */}
@@ -315,4 +319,4 @@ const AdminAccountsList = () => {
   );
 };
 
-export default AdminAccountsList;
+export default AdminAccountsList

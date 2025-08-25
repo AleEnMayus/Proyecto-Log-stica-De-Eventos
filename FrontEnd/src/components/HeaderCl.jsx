@@ -4,7 +4,7 @@ import './components.css';
 import PerfilModal from './AccountModal/account';
 import EditModal from "./AccountModal/EditAccount";
 
-const HeaderAdm = () => {
+const HeaderCl = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -35,8 +35,10 @@ const HeaderAdm = () => {
                 <button className="menu-btn me-3" onClick={toggleMenu}>
                   ☰
                 </button>
+                <a href='/' className='d-flex logolink'>
+                <img src="/HAE_logo.png" className='img-50'/>
                 <div className="logo-text">Happy-Art Eventos</div>
-                <img src="../public/HAE_logoNOTXTNOBG"/>
+                </a>
               </div>
             </div>
 
@@ -141,4 +143,4 @@ const HeaderAdm = () => {
   );
 };
 
-export default HeaderAdm;
+export default HeaderCl;

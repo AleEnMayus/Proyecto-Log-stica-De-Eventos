@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import './components.css';
 import PerfilModal from './AccountModal/account';
 import EditModal from "./AccountModal/EditAccount";
-import Notifications from "../UCliente/Notification-tray";
 
 const HeaderCl = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

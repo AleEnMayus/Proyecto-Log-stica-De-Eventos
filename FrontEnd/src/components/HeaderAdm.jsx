@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import './components.css';
 import PerfilModal from './AccountModal/account';
 import EditModal from "./AccountModal/EditAccount";
-import Notifications from "../UCliente/Notification-tray";
 
 const HeaderAdm = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,7 +11,6 @@ const HeaderAdm = () => {
   
   const [showPerfil, setShowPerfil] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     // Obtener datos del usuario del localStorage

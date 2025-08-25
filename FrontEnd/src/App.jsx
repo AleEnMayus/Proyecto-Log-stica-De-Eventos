@@ -28,6 +28,9 @@ import CreateEvent from './Uadmin/Events/CreateEvent'
 import EditEvent from './Uadmin/Events/EditEvent'
 import RequestCancel from './UCliente/Events/RequestEvent'
 import CancelEvent from './Uadmin/Events/CancelRequest'
+import ContratComponent from './Uadmin/Contracts/HomeContratsAdmin'
+import ListadoContratosComponent from './Uadmin/Contracts/ListContrats'
+import ContratoClienteComponent from './UCliente/Contrats/HomeContratsCli'
 
 import Mainresources from './Uadmin/Resource/Mainresource'
 import Secondaryresources from './Uadmin/Resource/Secondaryresource'
@@ -93,6 +96,9 @@ function App() {
           <Route path='/EventStateAdmin' element={<EventState />}/>
           <Route path='/EventCancel' element={<RequestCancel />}/>
           <Route path='/RequestEvent' element={<CancelEvent />}/>
+          <Route path='/HomeContratsAdmin' element={<ContratComponent/>}/>
+          <Route path='/ListContrats' element={<ListadoContratosComponent/>}/>  
+          <Route path='/HomeContratsCli' element={<ContratoClienteComponent/>}/>  
 
           {/* Nicol */}
           <Route path="/MainResources" element={<Mainresources />} />

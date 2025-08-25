@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import HeaderCl from "../../components/HeaderCl";
+import HeaderAdm from "../../components/HeaderAdm";
 import '../../components/components.css';
-import '../../Uadmin/Contracts/Contracts.css';
+import './Contracts.css';
 
 const ContratoClienteComponent = () => {
   const [contrato, setContrato] = useState('');
@@ -29,15 +29,20 @@ const ContratoClienteComponent = () => {
     }
   };
 
+  const handleVerListado = () => {
+    // Aquí irá la lógica para ver listado
+  };
+
   return (
     <div className="contrato-container">
-      <HeaderCl />
+      <HeaderAdm />
+      
       <div className="contrato-wrapper">
         {/* Título principal */}
         <h1 className="contrato-title">
           Contrato
         </h1>
-
+        
         {/* Sección de envío de contrato */}
         <div className="contrato-section">
           <h2 className="contrato-subtitle">
@@ -46,65 +51,46 @@ const ContratoClienteComponent = () => {
           
           {/* Campo de texto */}
           <div className="contrato-field">
-            <label className="contrato-label">
+            <div className="contrato-label">
               Contrato:
-            </label>
+            </div>
             <div className="contrato-helper">
               CONTRATO N°
             </div>
           </div>
-
+          
           {/* Botones internos */}
           <div className="contrato-actions">
             <button 
+              onClick={handleCargarContrato} 
               className="btn-gradient"
-              onClick={handleCargarContrato}
             >
               Cargar Contrato
             </button>
             
             <button 
+              onClick={handleEnviarContrato} 
               className="btn-gradient"
-              onClick={handleEnviarContrato}
             >
               Enviar Contrato
             </button>
             
             <button 
+              onClick={handleEliminarContrato} 
               className="btn-gradient"
-              onClick={handleEliminarContrato}
             >
               Eliminar contrato
             </button>
           </div>
         </div>
 
-        {/* Sección de descarga de contrato */}
-        <div className="contrato-section">
-          <h2 className="contrato-subtitle">
-            Descargar Contrato
-          </h2>
-          
-          {/* Campo de descarga */}
-          <div className="contrato-field">
-            <label className="contrato-label">
-              Descargar Contrato
-            </label>
-            <div className="contrato-helper">
-              CONTRATO N°
-            </div>
-          </div>
-
-          {/* Botón de descarga */}
-          <div className="contrato-actions">
-            <button 
-              className="btn-gradient"
-              onClick={handleDescargar}
-            >
-              Descargar
-            </button>
-          </div>
-        </div>
+        {/* Botón externo */}
+        <button 
+          onClick={handleVerListado}
+          className="btn-pink"
+        >
+          Ver Listado De Contratos
+        </button>
       </div>
     </div>
   );

@@ -60,7 +60,7 @@ const RegisterPage = () => {
           <div className="row align-items-center py-3">
             <div className="col-6">
               <div className="d-flex align-items-center">
-                <button onClick={handleGoBackBrowser} className="back-btn me-4" title="Volver">
+                <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
                   ←
                 </button>
                 <div className="logo-text">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './gallery.css';
+import './gallery2.css';
 import HeaderAdm from '../../components/HeaderAdm';
 
 

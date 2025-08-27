@@ -10,7 +10,7 @@ import RecoverPassword from './RecoverPassword'
 import Contracts from './Uadmin/Contracts'
 import Schedule from './UCliente/Schedule'
 import Survay from './Uadmin/CreateSurvey/survey'  
-import  CreateSurvay from './Uadmin/CreateSurvey/createsurvey'
+import CreateSurvay from './Uadmin/CreateSurvey/createsurvey'
 
 import Logout from './components/LogOut'
 import UpdatePassword from './components/AccountModal/NewPassword'
@@ -46,6 +46,8 @@ import Calendaradmin from './Uadmin/Calendaradmin'
 import ContratComponent from './Uadmin/Contracts/HomeContratsAdmin'
 import ListadoContratosComponent from './Uadmin/Contracts/ListContrats'
 import ContratoClienteComponent from './UCliente/Contrats/HomeContratsCli'
+
+import TestC from './test'
 // Componente principal de la aplicación
 function App() {
   // Estado local para contar interacciones o elementos (ejemplo)
@@ -55,6 +57,9 @@ function App() {
     <div className="Aplicacion">
       <BrowserRouter>
         <Routes>
+          
+          <Route path="/test" element={<TestC />} />
+
           {/* Ruta a la página principal */}
           <Route path="/" element={<HomePage />} />
 
@@ -119,6 +124,9 @@ function App() {
           <Route path='/HomeContractsAdmin' element={<ContratComponent/>}/>
           <Route path='/ListContracts' element={<ListadoContratosComponent/>}/>  
           <Route path='/HomeContractsCli' element={<ContratoClienteComponent/>}/>
+
+          {/* Eventos */}
+
 
           </Routes>
       </BrowserRouter>

@@ -2,70 +2,96 @@ import React, { useState } from 'react';
 import HeaderAdm from "../../components/HeaderAdm";
 import '../../components/components.css';
 import './Contracts.css';
+import { useNavigate } from "react-router-dom";
 
-const ContratoComponent = () => {
+const ContratoClienteComponent = () => {
   const [contrato, setContrato] = useState('');
+  const [contratoDescargar, setContratoDescargar] = useState('');
+  const navigate = useNavigate();
 
   const handleCargarContrato = () => {
-    console.log('Cargando contrato');
-    alert('Función de cargar contrato');
+    // Aquí irá la lógica de cargar contrato
   };
 
   const handleEnviarContrato = () => {
     if (contrato.trim()) {
-      console.log('Enviando contrato:', contrato);
-      alert('Contrato enviado exitosamente');
+      // Aquí irá la lógica de enviar contrato
       setContrato('');
-    } else {
-      alert('Por favor, ingrese el contenido del contrato');
     }
   };
 
   const handleEliminarContrato = () => {
     setContrato('');
-    console.log('Contrato eliminado');
-    alert('Contrato eliminado');
+    // Aquí irá la lógica de eliminar contrato
+  };
+
+  const handleDescargar = () => {
+    if (contratoDescargar.trim()) {
+      // Aquí irá la lógica de descargar contrato
+    }
   };
 
   const handleVerListado = () => {
-    console.log('Mostrando listado de contratos');
-    alert('Mostrando listado de contratos');
+    // Navega a la página del listado de contratos
+    navigate('/ListContracts'); // Cambia esta ruta por la correcta
   };
 
   return (
     <div className="contrato-container">
+      <HeaderAdm />
+      
       <div className="contrato-wrapper">
         {/* Título principal */}
-        <h1 className="contrato-title">Contrato</h1>
+        <h1 className="contrato-title">
+          Contrato
+        </h1>
         
         {/* Sección de envío de contrato */}
-        <div className="contrato-box">
-          <h2 className="contrato-subtitle">Enviar Contrato</h2>
+        <div className="contrato-section">
+          <h2 className="contrato-subtitle">
+            Enviar Contrato
+          </h2>
           
           {/* Campo de texto */}
           <div className="contrato-field">
-            <div className="contrato-label">Contrato:</div>
-            <div className="contrato-hint">CONTRATO N°</div>
+            <div className="contrato-label">
+              Contrato:
+            </div>
+            <div className="contrato-helper">
+              CONTRATO N°
+            </div>
           </div>
           
-          {/* Botones de acción dentro del recuadro */}
-          <div className="contrato-buttons">
-            <button onClick={handleCargarContrato} className="contrato-button">
+          {/* Botones internos */}
+          <div className="contrato-actions">
+            <button 
+              onClick={handleCargarContrato} 
+              className="btn-gradient"
+            >
               Cargar Contrato
             </button>
             
-            <button onClick={handleEnviarContrato} className="contrato-button">
+            <button 
+              onClick={handleEnviarContrato} 
+              className="btn-gradient"
+            >
               Enviar Contrato
             </button>
             
-            <button onClick={handleEliminarContrato} className="contrato-button">
+            <button 
+              onClick={handleEliminarContrato} 
+              className="btn-gradient"
+            >
               Eliminar contrato
             </button>
           </div>
         </div>
-        
-        {/* Botón de listado fuera del recuadro */}
-        <button onClick={handleVerListado} className="contrato-button full">
+
+        {/* Botón externo */}
+        <button 
+          onClick={handleVerListado}
+          className="btn-pink"
+        >
           Ver Listado De Contratos
         </button>
       </div>
@@ -73,4 +99,4 @@ const ContratoComponent = () => {
   );
 };
 
-export default ContratoComponent;
+export default ContratoClienteComponent;

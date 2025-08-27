@@ -44,7 +44,7 @@ import Calendarclient from './UCliente/Calendarclient'
 import Calendaradmin from './Uadmin/Calendaradmin'
 
 import ContratComponent from './Uadmin/Contracts/HomeContratsAdmin'
-import ListadoContratosComponent from './Uadmin/Contracts/ListContrats'
+import ListadoContratosComponent from './Uadmin/Contracts/ListContracts'
 import ContratoClienteComponent from './UCliente/Contrats/HomeContratsCli'
 // Componente principal de la aplicación
 function App() {

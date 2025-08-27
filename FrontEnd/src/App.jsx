@@ -1,134 +1,302 @@
-import { useState } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 // Importación de estilos y vistas
 import './components/components.css'
-import HomePage from './HomePage'
-import LoginPage from './LogIn'
-import RegisterPage from './Register'
-import RecoverPassword from './RecoverPassword'
-import Contracts from './Uadmin/Contracts'
-import Schedule from './UCliente/Schedule'
-import Survay from './Uadmin/CreateSurvey/survey'  
-import CreateSurvay from './Uadmin/CreateSurvey/createsurvey'
 
-import Logout from './components/LogOut'
-import UpdatePassword from './components/AccountModal/NewPassword'
-import AdminAccountsList from './Uadmin/ManageAcc/HomeAccounts'
-import CreateAccountForm from './Uadmin/ManageAcc/CreateAcc'
-import EditAccountPage from './Uadmin/ManageAcc/EditAccAdmin'
+// Importaciones organizadas por tipo
+import {
+  HomePage,
+  LoginPage,
+  RegisterPage,
+  RecoverPassword,
+  Logout,
+  UpdatePassword,
+  TestC
+} from './imports/commonImports'
 
-import ListEventsA from './Uadmin/Events/HomeEventsAdm'
-import EventDetailsA from './Uadmin/Events/EventDetailsAdm'
-import EventDetailsC from './UCliente/Events/EventDetailsCl'
-import ListEventsC from './UCliente/Events/HomeEventsCl'
-import EventState from './Uadmin/Events/EventState'
-import CreateEvent from './Uadmin/Events/CreateEvent'
-import EditEvent from './Uadmin/Events/EditEvent'
-import RequestCancel from './UCliente/Events/RequestEvent'
-import CancelEvent from './Uadmin/Events/CancelRequest'
+import {
+  AdminAccountsList,
+  CreateAccountForm,
+  EditAccountPage,
+  ListEventsA,
+  EventDetailsA,
+  CreateEvent,
+  EditEvent,
+  Mainresources,
+  Secondaryresources,
+  Survay,
+  CreateSurvay,
+  Notification,
+  ImageGallery,
+  ManagerImageGallery,
+  AdminCalendar,
+  ContratComponent,
+  ListadoContratosComponent,
+  Contracts
+} from './imports/adminImports'
 
-import Mainresources from './Uadmin/Resource/Mainresource'
-import Secondaryresources from './Uadmin/Resource/Secondaryresource'
+import {
+  Schedule,
+  EventDetailsC,
+  ListEventsC,
+  SurvayClient,
+  Notifications,
+  ImageGalleryC,
+  ImageGalleryViewerC,
+  ClientCalendar,
+  ContratoClienteComponent
+} from './imports/clientImports'
 
-import SurvayClient from './UCliente/survey'
-import Notifications from './UCliente/Notification-tray'
-import Notification from './Uadmin/Notification'
+// Configuración de rutas
+const routeConfig = {
+  public: [
+    { path: '/', component: HomePage }
+  ],
+  
+  publicOnly: [
+    { path: '/login', component: LoginPage },
+    { path: '/register', component: RegisterPage },
+    { path: '/recover', component: RecoverPassword }
+  ],
+  
+  authenticated: [
+    { path: '/logout', component: Logout },
+    { path: '/change-password', component: UpdatePassword }
+  ],
+  
+  admin: [
+    // Notificaciones
+    { path: '/NotificationsAdmin', component: Notification },
+    
+    // Recursos
+    { path: '/MainResources', component: Mainresources },
+    { path: '/SecondaryResources', component: Secondaryresources },
+    
+    // Encuestas
+    { path: '/SurvayHome', component: Survay },
+    { path: '/createsurvay', component: CreateSurvay },
+    
+    // Galería
+    { path: '/GalleryViewAdmin', component: ImageGallery },
+    { path: '/GalleryAdmin', component: ManagerImageGallery },
+    
+    // Cuentas
+    { path: '/ManageAccounts', component: AdminAccountsList },
+    { path: '/CreateAccount', component: CreateAccountForm },
+    { path: '/users/edit/:userId', component: EditAccountPage },
+    
+    // Calendario
+    { path: '/CalendarAdmin', component: AdminCalendar },
+    
+    // Contratos
+    { path: '/HomeContractsAdmin', component: ContratComponent },
+    { path: '/ListContracts', component: ListadoContratosComponent },
+    { path: '/ContractsAdmin', component: Contracts },
+    
+    // Eventos
+    { path: '/EventsHomeAdmin', component: ListEventsA },
+    { path: '/EventDetailsAdmin', component: EventDetailsA },
+    { path: '/CreateEvent', component: CreateEvent },
+    { path: '/EditEvent', component: EditEvent }
+  ],
+  
+  client: [
+    // Notificaciones
+    { path: '/Notifications', component: Notifications },
+    
+    // Citas
+    { path: '/Schedule', component: Schedule },
+    
+    // Encuestas
+    { path: '/Survey', component: SurvayClient },
+    
+    // Galería
+    { path: '/GalleryView', component: ImageGalleryViewerC },
+    { path: '/Gallery', component: ImageGalleryC },
+    
+    // Calendario
+    { path: '/Calendar', component: ClientCalendar },
+    
+    // Contratos
+    { path: '/HomeContractsCl', component: ContratoClienteComponent },
+    
+    // Eventos
+    { path: '/EventDetails', component: EventDetailsC },
+    { path: '/EventsHome', component: ListEventsC }
+  ],
+  
+  development: [
+    { path: '/test', component: TestC }
+  ]
+}
 
-import ImageGallery from './Uadmin/gallery/gallery2'
-import ManagerImageGallery from './Uadmin/gallery/galleryof'
-import ImageGalleryC from './UCliente/gallerycli/galleryC'
-import ImageGalleryViewerC from  './UCliente/gallerycli/galleryC2'
+// Hook de autenticación
+const useAuth = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userRole, setUserRole] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-import Calendarclient from './UCliente/Calendarclient'
-import Calendaradmin from './Uadmin/Calendaradmin'
+  useEffect(() => {
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('authToken')
+        const storedRole = localStorage.getItem('userRole')
+        
+        if (token && storedRole) {
+          setIsAuthenticated(true)
+          setUserRole(storedRole)
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-import ContratComponent from './Uadmin/Contracts/HomeContratsAdmin'
-import ListadoContratosComponent from './Uadmin/Contracts/ListContracts'
-import ContratoClienteComponent from './UCliente/Contrats/HomeContratsCli'
+    checkAuth()
+  }, [])
 
-import TestC from './test'
-// Componente principal de la aplicación
+  return { isAuthenticated, userRole, loading }
+}
+
+// Componentes de protección de rutas
+const ProtectedRoute = ({ children, requiredRole, userRole, isAuthenticated }) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />
+  }
+  
+  if (requiredRole && userRole !== requiredRole) {
+    return <Navigate to="/" replace />
+  }
+  
+  return children
+}
+
+const PublicOnlyRoute = ({ children, isAuthenticated }) => {
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />
+  }
+  return children
+}
+
+// Función para renderizar rutas
+const renderRoutes = (routes, routeType, authProps = {}) => {
+  return routes.map(({ path, component: Component }) => {
+    const element = <Component />
+    
+    switch (routeType) {
+      case 'public':
+        return <Route key={path} path={path} element={element} />
+      
+      case 'publicOnly':
+        return (
+          <Route 
+            key={path} 
+            path={path} 
+            element={
+              <PublicOnlyRoute isAuthenticated={authProps.isAuthenticated}>
+                {element}
+              </PublicOnlyRoute>
+            } 
+          />
+        )
+      
+      case 'authenticated':
+        return (
+          <Route 
+            key={path} 
+            path={path} 
+            element={
+              <ProtectedRoute isAuthenticated={authProps.isAuthenticated}>
+                {element}
+              </ProtectedRoute>
+            } 
+          />
+        )
+      
+      case 'admin':
+        return (
+          <Route 
+            key={path} 
+            path={path} 
+            element={
+              <ProtectedRoute 
+                requiredRole="admin" 
+                userRole={authProps.userRole} 
+                isAuthenticated={authProps.isAuthenticated}
+              >
+                {element}
+              </ProtectedRoute>
+            } 
+          />
+        )
+      
+      case 'client':
+        return (
+          <Route 
+            key={path} 
+            path={path} 
+            element={
+              <ProtectedRoute 
+                requiredRole="user" 
+                userRole={authProps.userRole} 
+                isAuthenticated={authProps.isAuthenticated}
+              >
+                {element}
+              </ProtectedRoute>
+            } 
+          />
+        )
+      
+      case 'development':
+        return <Route key={path} path={path} element={element} />
+      
+      default:
+        return null
+    }
+  })
+}
+
+// Componente principal
 function App() {
-  // Estado local para contar interacciones o elementos (ejemplo)
-  const [count, setCount] = useState(0)
+  const { isAuthenticated, userRole, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div>Cargando...</div>
+      </div>
+    )
+  }
+
+  const authProps = { isAuthenticated, userRole }
 
   return (
     <div className="Aplicacion">
       <BrowserRouter>
         <Routes>
+          {/* Rutas públicas */}
+          {renderRoutes(routeConfig.public, 'public')}
           
-          <Route path="/test" element={<TestC />} />
-
-          {/* Ruta a la página principal */}
-          <Route path="/" element={<HomePage />} />
-
-          {/* Ruta a la página de inicio de sesión */}
-          <Route path="/login" element={<LoginPage />} />
-
-          {/* Ruta a la página de registro */}
-          <Route path="/register" element={<RegisterPage />} />
-
-          {/* Ruta a la página de recuperación de contraseña */}
-          <Route path="/recover" element={<RecoverPassword />} />
-           
-           {/* Ruta a la página principal */}
-          <Route path="/ContractsAdmin" element={<Contracts />} />
-
-           {/* Ruta a la página principal */}
-          <Route path="/Schedule" element={<Schedule />} />
-
-          {/* Ruta a la página de encuestas */}
-          <Route path="/Survay" element={<Survay />} />
-
-          {/* Ruta a la página de creación de encuestas */}
-          <Route path="/createsurvay" element={<CreateSurvay />} />
-
-          {/* Ale */}
-          <Route path='/change-password' element={<UpdatePassword />}/>
-          <Route path='/logout' element={<Logout />} />
-          <Route path='/ManageAccounts' element={<AdminAccountsList />}/>
-          <Route path='/CreateAccount' element={<CreateAccountForm />}/>
-          <Route path='/users/edit/:userId' element={<EditAccountPage />} />
-
-          {/* Diego */}
-          <Route path="/EventsHomeAdmin" element={<ListEventsA />} />
-          <Route path="/EventDetailsAdmin" element={<EventDetailsA />} />
-          <Route path="/CreateEvent" element={<CreateEvent />} />
-          <Route path="/edit-event" element={<EditEvent />} />
-          <Route path='/EventDetails' element={<EventDetailsC />}/>
-          <Route path='/EventsHome' element={<ListEventsC />}/>
-          <Route path='/EventStateAdmin' element={<EventState />}/>
-          <Route path='/EventCancel' element={<RequestCancel />}/>
-          <Route path='/RequestEvent' element={<CancelEvent />}/>
-
-          {/* Nicol */}
-          <Route path="/MainResources" element={<Mainresources />} />
-          <Route path="/SecondaryResources" element={< Secondaryresources/>} />
-
-          {/* Nury */}
-          <Route path="/survey" element={<SurvayClient />} />
-          <Route path="/Notification-tray" element={<Notifications />} />
-          <Route path="/Notification" element={<Notification />} />
-
-          {/* David */}
-          <Route path='/galleryView' element={<ImageGalleryViewerC />}/>
-          <Route path='/gallery' element={<ImageGalleryC />}/>
-          <Route path='/galleryViewAdmin' element={<ImageGallery />}/>
-          <Route path='/galleryAdmin' element={<ManagerImageGallery />}/>
-
-          {/* Nicol */}
-          <Route path='/Calendar' element={<Calendarclient />} />
-          <Route path='/Calendaradmin' element={<Calendaradmin />} />
+          {/* Rutas solo para no autenticados */}
+          {renderRoutes(routeConfig.publicOnly, 'publicOnly', authProps)}
           
-          <Route path='/HomeContractsAdmin' element={<ContratComponent/>}/>
-          <Route path='/ListContracts' element={<ListadoContratosComponent/>}/>  
-          <Route path='/HomeContractsCli' element={<ContratoClienteComponent/>}/>
-
-          {/* Eventos */}
-
-
-          </Routes>
+          {/* Rutas para usuarios autenticados */}
+          {renderRoutes(routeConfig.authenticated, 'authenticated', authProps)}
+          
+          {/* Rutas de administrador */}
+          {renderRoutes(routeConfig.admin, 'admin', authProps)}
+          
+          {/* Rutas de cliente */}
+          {renderRoutes(routeConfig.client, 'client', authProps)}
+          
+          {/* Rutas de desarrollo */}
+          {renderRoutes(routeConfig.development, 'development')}
+          
+          {/* Ruta 404 */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </BrowserRouter>
     </div>
   )

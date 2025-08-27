@@ -1,0 +1,6 @@
+export { default as HomePage } from '../HomePage'
+export { default as LoginPage } from '../LogIn'
+export { default as RegisterPage } from '../Register'
+export { default as RecoverPassword } from '../RecoverPassword'
+export { default as Logout } from '../components/LogOut'
+export { default as UpdatePassword } from '../components/AccountModal/NewPassword'

@@ -31,9 +31,8 @@ import {
   ImageGallery,
   ManagerImageGallery,
   AdminCalendar,
-  ContratComponent,
-  ListadoContratosComponent,
-  Contracts
+  ContractsAdmin,
+  ContractsList
 } from './imports/adminImports'
 
 import {
@@ -45,7 +44,7 @@ import {
   ImageGalleryC,
   ImageGalleryViewerC,
   ClientCalendar,
-  ContratoClienteComponent
+  ContractsClient
 } from './imports/clientImports'
 
 // Configuración de rutas
@@ -62,7 +61,7 @@ const routeConfig = {
   
   authenticated: [
     { path: '/logout', component: Logout },
-    { path: '/change-password', component: UpdatePassword }
+    { path: '/updatePassword', component: UpdatePassword }
   ],
   
   admin: [
@@ -90,9 +89,8 @@ const routeConfig = {
     { path: '/CalendarAdmin', component: AdminCalendar },
     
     // Contratos
-    { path: '/HomeContractsAdmin', component: ContratComponent },
-    { path: '/ListContracts', component: ListadoContratosComponent },
-    { path: '/ContractsAdmin', component: Contracts },
+    { path: '/HomeContractsAdmin', component: ContractsAdmin },
+    { path: '/ListContracts', component: ContractsList },
     
     // Eventos
     { path: '/EventsHomeAdmin', component: ListEventsA },
@@ -119,7 +117,7 @@ const routeConfig = {
     { path: '/Calendar', component: ClientCalendar },
     
     // Contratos
-    { path: '/HomeContractsCl', component: ContratoClienteComponent },
+    { path: '/HomeContractsCl', component: ContractsClient },
     
     // Eventos
     { path: '/EventDetails', component: EventDetailsC },

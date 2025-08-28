@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Endpoint de prueba
 app.get("/api/usuarios", (req, res) => {
-  db.query("SELECT * FROM usuario", (err, results) => {
+  db.query("SELECT * FROM user", (err, results) => {
     if (err) {
       console.error("Error en consulta:", err);
       res.status(500).json({ error: "Error al obtener usuarios" });

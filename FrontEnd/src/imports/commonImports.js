@@ -4,3 +4,5 @@ export { default as RegisterPage } from '../Register'
 export { default as RecoverPassword } from '../RecoverPassword'
 export { default as Logout } from '../components/LogOut'
 export { default as UpdatePassword } from '../components/AccountModal/NewPassword'
+
+export { default as TestC } from '../test'

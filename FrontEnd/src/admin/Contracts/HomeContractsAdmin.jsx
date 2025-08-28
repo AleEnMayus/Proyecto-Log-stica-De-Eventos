@@ -1,50 +1,44 @@
 import React, { useState } from 'react';
-import HeaderCl from "../../components/HeaderCl";
+import HeaderAdm from "../../components/HeaderAdm";
 import '../../components/components.css';
-import '../../Uadmin/Contracts/Contracts.css';
+import './Contracts.css';
+import { useNavigate } from "react-router-dom";
 
-const ContratoClienteComponent = () => {
+const ContractsAdmin = () => {
   const [contrato, setContrato] = useState('');
   const [contratoDescargar, setContratoDescargar] = useState('');
+  const navigate = useNavigate();
 
   const handleCargarContrato = () => {
-    console.log('Cargando contrato');
     // Aquí irá la lógica de cargar contrato
   };
 
   const handleEnviarContrato = () => {
     if (contrato.trim()) {
-      console.log('Enviando contrato:', contrato);
-      setContrato('');
       // Aquí irá la lógica de enviar contrato
-    } else {
-      alert('Por favor, complete el contrato');
+      setContrato('');
     }
   };
 
   const handleEliminarContrato = () => {
     setContrato('');
-    console.log('Contrato eliminado');
     // Aquí irá la lógica de eliminar contrato
   };
 
   const handleDescargar = () => {
     if (contratoDescargar.trim()) {
-      console.log('Descargando contrato:', contratoDescargar);
       // Aquí irá la lógica de descargar contrato
-    } else {
-      alert('Por favor, especifique el contrato a descargar');
     }
   };
 
   const handleVerListado = () => {
-    console.log('Ver listado de contratos');
-    // Aquí irá la lógica para ver listado
+    // Navega a la página del listado de contratos
+    navigate('/ListContracts'); // Cambia esta ruta por la correcta
   };
 
   return (
     <div className="contrato-container">
-      <HeaderCl />
+      <HeaderAdm />
       
       <div className="contrato-wrapper">
         {/* Título principal */}
@@ -93,35 +87,16 @@ const ContratoClienteComponent = () => {
           </div>
         </div>
 
-        {/* Sección adicional para descarga (opcional) */}
-        <div className="contrato-section">
-          <h2 className="contrato-subtitle">
-            Descargar Contrato
-          </h2>
-          
-          <div className="contrato-field">
-            <div className="contrato-label">
-              Contrato a descargar:
-            </div>
-            <div className="contrato-helper">
-              CONTRATO N°
-            </div>
-          </div>
-          
-          <div className="contrato-actions">
-            <button 
-              onClick={handleDescargar} 
-              className="btn-gradient"
-            >
-              Descargar
-            </button>
-          </div>
-        </div>
-
-
+        {/* Botón externo */}
+        <button 
+          onClick={handleVerListado}
+          className="btn-pink"
+        >
+          Ver Listado De Contratos
+        </button>
       </div>
     </div>
   );
 };
 
-export default ContratoClienteComponent;
+export default ContractsAdmin;

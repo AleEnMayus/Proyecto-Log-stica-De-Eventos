@@ -111,7 +111,7 @@ CREATE TABLE Comments (
 );
 
 CREATE OR REPLACE VIEW EventSatisfactionView AS
-SELECT  e.EventId, e.EventName, CONCAT(u.Names) AS Client, ROUND(AVG(a.NumericValue), 2) AS SatisfactionAverage, COUNT(a.AnswerId) AS TotalAnswers
+SELECT  e.EventId, e.EventName, Names AS Client, ROUND(AVG(a.NumericValue), 2) AS SatisfactionAverage, COUNT(a.AnswerId) AS TotalAnswers
 FROM Events e
 JOIN User u ON e.ClientId = u.UserId
 JOIN Answers a ON e.EventId = a.EventId
@@ -130,3 +130,5 @@ BEGIN
     ORDER BY SatisfactionAverage DESC;
 END;
 //
+
+select * from user;

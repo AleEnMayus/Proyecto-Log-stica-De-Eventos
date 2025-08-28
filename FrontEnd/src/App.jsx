@@ -131,32 +131,35 @@ const routeConfig = {
 
 // Hook de autenticación
 const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [userRole, setUserRole] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = () => {
       try {
-        const token = localStorage.getItem('authToken')
-        const storedRole = localStorage.getItem('userRole')
-        
-        if (token && storedRole) {
-          setIsAuthenticated(true)
-          setUserRole(storedRole)
+        const token = localStorage.getItem("authToken");
+        const storedUser = localStorage.getItem("user");
+
+        if (token && storedUser) {
+          setIsAuthenticated(true);
+          const parsedUser = JSON.parse(storedUser);
+          setUserData(parsedUser);
+          setUserRole(parsedUser.role);
         }
       } catch (error) {
-        console.error('Error checking authentication:', error)
+        console.error("Error checking authentication:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    checkAuth()
-  }, [])
+    checkAuth();
+  }, []);
 
-  return { isAuthenticated, userRole, loading }
-}
+  return { isAuthenticated, userRole, userData, loading };
+};
 
 // Componentes de protección de rutas
 const ProtectedRoute = ({ children, requiredRole, userRole, isAuthenticated }) => {
@@ -230,7 +233,7 @@ const renderRoutes = (routes, routeType, authProps = {}) => {
           />
         )
       
-      case 'client':
+      case 'user':
         return (
           <Route 
             key={path} 
@@ -287,7 +290,7 @@ function App() {
           {renderRoutes(routeConfig.admin, 'admin', authProps)}
           
           {/* Rutas de cliente */}
-          {renderRoutes(routeConfig.client, 'client', authProps)}
+          {renderRoutes(routeConfig.client, 'user', authProps)}
           
           {/* Rutas de desarrollo */}
           {renderRoutes(routeConfig.development, 'development')}

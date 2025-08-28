@@ -59,7 +59,7 @@ router.post("/login", async (req, res) => {
   try {
       const [rows] = await db
         .promise()
-        .query("SELECT * FROM Usuario WHERE CorreoElect = ?", [email]);
+        .query("SELECT * FROM User WHERE Email = ?", [email]);
 
       if (rows.length === 0) {
         return res.status(401).json({ message: "Credenciales incorrectas" });
@@ -74,14 +74,17 @@ router.post("/login", async (req, res) => {
 
       // Generar un JWT, por ahora solo devolvemos datos básicos
       res.json({
-        id: user.UserId,
-        fullName: user.Names,
-        identificationType: user.DocumentType,
-        documentNumber: user.DocumentNumber,
-        email: user.Email,
-        birthDate: user.BirthDate,
-        role: user.Role,
-        photo: user.Photo
+        token: 'token',
+        user: {
+          id: user.UserId,
+          fullName: user.Names,
+          identificationType: user.DocumentType,
+          documentNumber: user.DocumentNumber,
+          email: user.Email,
+          birthDate: user.BirthDate,
+          role: user.Role,
+          photo: user.Photo
+        }
       });
     } catch (error) {
       console.error("❌ Error en login:", error);

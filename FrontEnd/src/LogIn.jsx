@@ -35,9 +35,10 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("user", JSON.stringify(data));
-        console.log("✅ Login exitoso:", data);
-        navigate("/");
+        localStorage.setItem("authToken", data.token); // 🔑 Token
+        localStorage.setItem("user", JSON.stringify(data.user)); // 👤 Datos usuario
+        console.log("✅ Login exitoso:", data.user);
+        navigate(0);
       } else {
         setError(data.message || "Error al iniciar sesión");
       }

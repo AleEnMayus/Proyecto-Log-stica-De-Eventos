@@ -5,7 +5,7 @@ USE ProyectoLogisticaEventos;
 CREATE TABLE User(
     UserId int PRIMARY KEY AUTO_INCREMENT,
     Names varchar(50),
-    DocumentType enum('ID', 'FI', 'PP'),
+    DocumentType enum('CC', 'CE', 'PP'),
     DocumentNumber varchar(20),
     BirthDate date,
     Email varchar(50),

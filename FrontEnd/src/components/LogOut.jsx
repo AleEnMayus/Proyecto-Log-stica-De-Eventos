@@ -10,11 +10,13 @@ const Logout = () => {
     // Simula proceso de cierre de sesión
     const timer = setTimeout(() => {
       localStorage.clear(); // elimina datos de usuario
+      navigate(0); // recarga la página
       navigate("/login");   // redirige al login
     }, 2000); // 2 segundos de "cargando"
 
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, navigate(0)
+  );
 
   return (
     <div className="logout-container">

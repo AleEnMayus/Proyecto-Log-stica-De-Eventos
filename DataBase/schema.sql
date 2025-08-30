@@ -5,7 +5,7 @@ USE ProyectoLogisticaEventos;
 CREATE TABLE User(
     UserId int PRIMARY KEY AUTO_INCREMENT,
     Names varchar(50),
-    DocumentType enum('ID', 'FI', 'PP'),
+    DocumentType enum('CC', 'CE', 'PP'),
     DocumentNumber varchar(20),
     BirthDate date,
     Email varchar(50),
@@ -111,7 +111,7 @@ CREATE TABLE Comments (
 );
 
 CREATE OR REPLACE VIEW EventSatisfactionView AS
-SELECT  e.EventId, e.EventName, CONCAT(u.Names) AS Client, ROUND(AVG(a.NumericValue), 2) AS SatisfactionAverage, COUNT(a.AnswerId) AS TotalAnswers
+SELECT  e.EventId, e.EventName, Names AS Client, ROUND(AVG(a.NumericValue), 2) AS SatisfactionAverage, COUNT(a.AnswerId) AS TotalAnswers
 FROM Events e
 JOIN User u ON e.ClientId = u.UserId
 JOIN Answers a ON e.EventId = a.EventId

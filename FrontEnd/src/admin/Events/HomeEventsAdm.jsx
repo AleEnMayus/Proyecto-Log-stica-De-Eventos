@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import HeaderCl from "../../components/HeaderCl";
 import '../../components/components.css';
-import '../../UCliente/Events/Events.css';
+import '../../user/Events/Events.css';
 import HeaderAdm from '../../components/HeaderAdm';
 
 const ListEventsA = () => {

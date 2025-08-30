@@ -271,3 +271,13 @@
   color: #0f5132;
   background: #d1e7dd;
 }
+
+@media (max-width: 500px) {
+  .login-content.mt-4{
+    padding: 0px 0px !important;
+  }
+  .login-form-card {
+    margin: 0px 0px !important;
+  }
+
+}

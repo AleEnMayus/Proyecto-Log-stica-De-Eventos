@@ -84,13 +84,13 @@ const HomePage = () => {
   // 👇 Cambiado a user.rol y user.nombre
   const getWelcomeMessage = () => {
     if (!user) return 'Happy Art Event';
-    if (user.rol === 'admin') return `Panel de Admin - ¡Hola ${user.nombre}!`;
-    return `¡Bienvenido ${user.nombre}!`;
+    if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.fullName}!`;
+    return `¡Bienvenido ${user.fullName}!`;
   };
 
   const getWelcomeDescription = () => {
     if (!user) return 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.';
-    if (user.rol === 'admin') return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
+    if (user.role === 'admin') return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
     return 'Ahora puedes agendar citas, ver tus eventos y acceder a promociones exclusivas.';
   };
 
@@ -153,10 +153,10 @@ const HomePage = () => {
 
         <section id="eventos" className="mb-5">
           <h2 className="section-title h3">
-            {user && user.rol === 'admin' ? 'Gestión de Citas' : 'Agendamiento De Citas'}
+            {user && user.role === 'admin' ? 'Gestión de Citas' : 'Agendamiento De Citas'}
           </h2>
           <p className="text-muted mb-4">
-            {user && user.rol === 'admin' 
+            {user && user.role === 'admin' 
               ? 'Como administrador, puedes ver y gestionar todas las citas del sistema.'
               : user 
                 ? 'Como usuario registrado, puedes agendar citas directamente.'
@@ -164,14 +164,14 @@ const HomePage = () => {
             }
           </p>
           <a href='/login' className="btn-secondary-custom btn">
-            {user && user.rol === 'admin' ? 'Gestionar Todas las Citas' : user ? 'Agendar Nueva Cita' : 'Agendar Cita'}
+            {user && user.role === 'admin' ? 'Gestionar Todas las Citas' : user ? 'Agendar Nueva Cita' : 'Agendar Cita'}
           </a>
         </section>
 
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Paquetes De Promociones</h2>
           <p className="text-muted mb-4">
-            {user && user.rol === 'admin' 
+            {user && user.role === 'admin' 
               ? 'Panel de administración de promociones y paquetes.'
               : 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.'
             }

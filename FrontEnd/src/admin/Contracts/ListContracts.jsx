@@ -3,7 +3,7 @@ import HeaderAdm from "../../components/HeaderAdm";
 import '../../components/components.css';
 import './ContractsList.css';
 
-const ListadoContratosComponent = () => {
+const ContractsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -149,4 +149,4 @@ const ListadoContratosComponent = () => {
   );
 };
 
-export default ListadoContratosComponent;
+export default ContractsList;

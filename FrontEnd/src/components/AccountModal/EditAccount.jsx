@@ -15,7 +15,6 @@ const EditModal = ({ isOpen, onClose, user }) => {
   const {
     fullName,
     email,
-    phoneNumber,
     birthDate,
     identificationType,
     documentNumber,
@@ -84,20 +83,6 @@ const EditModal = ({ isOpen, onClose, user }) => {
                   type="email"
                   className="field-value field-disabled"
                   defaultValue={email}
-                  disabled={true}
-                  readOnly={true}
-                />
-              </div>
-            </div>
-
-            {/* Teléfono - Siempre editable */}
-            <div className="field-row">
-              <div className="field">
-                <div className="field-label">Número de teléfono (Opcional)</div>
-                <input
-                  type="tel"
-                  className="field-value"
-                  defaultValue={phoneNumber}
                 />
               </div>
             </div>

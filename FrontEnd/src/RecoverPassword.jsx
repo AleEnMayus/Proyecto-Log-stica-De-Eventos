@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import './LogIn.css'; // Reutilizamos los estilos del login
+import './components/CSS/FormsUser.css'; // Reutilizamos los estilos del login
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');

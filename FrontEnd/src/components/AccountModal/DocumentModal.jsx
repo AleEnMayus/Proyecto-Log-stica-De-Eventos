@@ -1,7 +1,7 @@
 // DocModal.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./PerfilModal.css";
+import "../CSS/Modals.css";
 
 const DocModal = ({ isOpen, onClose, user }) => {
  const [reason, setReason] = useState('');
@@ -9,13 +9,6 @@ const DocModal = ({ isOpen, onClose, user }) => {
  if (!isOpen) return null;
 
  const stop = (e) => e.stopPropagation();
-
- // Sacamos los datos del user que viene del localStorage
- const {
-   fullName,
-   email,
-   phoneNumber
- } = user || {};
 
  const SendReason = () => {
    if (reason.trim()) {

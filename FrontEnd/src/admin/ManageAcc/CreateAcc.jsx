@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Form.css'
+import '../../components/CSS/FormsUser.css'
 
 const CreateAccountForm = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +12,7 @@ const CreateAccountForm = () => {
     rol: '',
     password: ''
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e) => {
@@ -27,12 +27,12 @@ const CreateAccountForm = () => {
     // Validación básica
     const requiredFields = ['firstName', 'lastName', 'email', 'birthDate', 'documentType', 'documentNumber', 'rol', 'password'];
     const emptyFields = requiredFields.filter(field => !formData[field]);
-    
+
     if (emptyFields.length > 0) {
       alert('Por favor, completa todos los campos obligatorios.');
       return;
     }
-    
+
     console.log('Datos del formulario:', formData);
     alert('Cuenta creada exitosamente!');
     // Aquí iría la lógica para enviar los datos al servidor
@@ -53,21 +53,19 @@ const CreateAccountForm = () => {
 
   return (
     <div className="login-container">
-      
-      
       <div className="login-content">
         <button className="back-btn" onClick={() => window.history.back()}>
           ←
         </button>
-        
+
         <div className="login-form-card">
           <h1 className="login-title">CREAR CUENTA</h1>
-          
-          <div onSubmit={handleSubmit}>
-            <div className="form-row">
-              <div className="form-col">
+
+          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+            <div className="row">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Nombre completo <span style={{color: 'red'}}>*</span>
+                  Nombre completo <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -78,9 +76,9 @@ const CreateAccountForm = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="form-col">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Nombre de los apellidos <span style={{color: 'red'}}>*</span>
+                  Apellidos <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -93,10 +91,10 @@ const CreateAccountForm = () => {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-col">
+            <div className="row">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Correo electrónico <span style={{color: 'red'}}>*</span>
+                  Correo electrónico <span className="text-danger">*</span>
                 </label>
                 <input
                   type="email"
@@ -107,9 +105,9 @@ const CreateAccountForm = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="form-col">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Fecha de nacimiento <span style={{color: 'red'}}>*</span>
+                  Fecha de nacimiento <span className="text-danger">*</span>
                 </label>
                 <input
                   type="date"
@@ -121,10 +119,10 @@ const CreateAccountForm = () => {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-col">
+            <div className="row">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Tipo de documento <span style={{color: 'red'}}>*</span>
+                  Tipo de documento <span className="text-danger">*</span>
                 </label>
                 <select
                   name="documentType"
@@ -139,9 +137,9 @@ const CreateAccountForm = () => {
                   <option value="tarjeta_identidad">Tarjeta de Identidad</option>
                 </select>
               </div>
-              <div className="form-col">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Número de documento <span style={{color: 'red'}}>*</span>
+                  Número de documento <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -154,10 +152,10 @@ const CreateAccountForm = () => {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-col">
+            <div className="row">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Rol <span style={{color: 'red'}}>*</span>
+                  Rol <span className="text-danger">*</span>
                 </label>
                 <select
                   name="rol"
@@ -170,9 +168,9 @@ const CreateAccountForm = () => {
                   <option value="admin">Administrador</option>
                 </select>
               </div>
-              <div className="form-col">
+              <div className="col-md-6 mb-3">
                 <label className="form-label">
-                  Contraseña <span style={{color: 'red'}}>*</span>
+                  Contraseña <span className="text-danger">*</span>
                 </label>
                 <div className="input-with-icon">
                   <input
@@ -183,36 +181,35 @@ const CreateAccountForm = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                   />
-                  <span 
+                  <span
                     className="toggle-visibility-inside"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
                     ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" /><path d="M1 1l22 22" /></svg>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" /><path d="M1 1l22 22" /></svg>
                     )}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="form-actions">
-              <button 
-                type="button" 
+            <div className="d-flex justify-content-between mt-4">
+              <button
+                type="button"
                 className="btn-cancel"
                 onClick={handleCancel}
               >
                 Cancelar
               </button>
-              <button 
-                type="button" 
+              <button
+                type="submit"
                 className="btn-primary-custom"
-                onClick={handleSubmit}
               >
                 Crear
               </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './components/components.css';
+import './components/CSS/Home.css';
 import DynamicHeader from './components/DynamicHeader';
 
 const HomePage = () => {

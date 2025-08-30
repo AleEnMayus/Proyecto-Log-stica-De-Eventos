@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import "./PerfilModal.css";
+import "../CSS/Modals.css";
 import DocModal from './DocumentModal';
 
 const EditModal = ({ isOpen, onClose, user }) => {
@@ -149,7 +149,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
           <button className="btn-secondary-custom w-100"
             onClick={() => {
               onClose();
-              navigate("/change-password");}}>
+              navigate("/updatePassword");}}>
 
             Cambiar contraseña
           </button>

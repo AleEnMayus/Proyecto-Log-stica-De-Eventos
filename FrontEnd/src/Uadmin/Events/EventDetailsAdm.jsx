@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeaderCl from "../../components/HeaderAdm";
 import '../../components/components.css';
 import '../../UCliente/Events/Events.css';
@@ -20,12 +21,18 @@ const EventDetailsA = () => {
     estadoEvento: 'En planeación'
   });
 
+  const navigate = useNavigate();
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleEditEvent = () => {
+    navigate('/edit-event');
   };
 
   return (
@@ -121,7 +128,10 @@ const EventDetailsA = () => {
             marginBottom: '30px',
             width: '100%'
           }}>
-            <button className="btn-primary-custom">
+            <button 
+              className="btn-primary-custom"
+              onClick={handleEditEvent}
+            >
               Editar evento
             </button>
 

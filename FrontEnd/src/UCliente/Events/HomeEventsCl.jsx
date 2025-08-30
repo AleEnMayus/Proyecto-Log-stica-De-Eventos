@@ -1,10 +1,12 @@
 import React, { useState } from 'react'; 
+import { useNavigate } from 'react-router-dom';
 import HeaderCl from "../../components/HeaderCl";
 import '../../components/components.css';
 import './Events.css';
 
 const ListEventsC = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const eventos = [
     {
@@ -46,6 +48,10 @@ const ListEventsC = () => {
 
   const getInitials = (name) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
+  const handleVerEvento = () => {
+    navigate('/EventDetails');
   };
 
   return (
@@ -106,7 +112,9 @@ const ListEventsC = () => {
                       </div>
                     </td>
                     <td>
-                      <button className="btn-primary-custom event-button">
+                      <button 
+                        className="btn-primary-custom event-button"
+                        onClick={handleVerEvento}>
                         Ver evento
                       </button>
                     </td>

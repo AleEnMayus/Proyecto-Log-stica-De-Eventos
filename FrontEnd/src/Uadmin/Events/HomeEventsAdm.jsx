@@ -7,6 +7,7 @@ import HeaderAdm from '../../components/HeaderAdm';
 
 const ListEventsA = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const eventos = [
     {
@@ -14,7 +15,7 @@ const ListEventsA = () => {
       fecha: '15/12/2024',
       hora: '14:30',
       nombreEvento: 'Conferencia de Marketing Digital',
-      agendadoPor: 'Juan Pérez',
+      agendadoPor: 'Maria Muñoz',
       estado: 'En planeación'
     },
     {
@@ -48,6 +49,10 @@ const ListEventsA = () => {
 
   const getInitials = (name) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
+  const handleVerEvento = () => {
+    navigate('/EventDetailsAdmin');
   };
 
   return (
@@ -108,7 +113,10 @@ const ListEventsA = () => {
                       </div>
                     </td>
                     <td>
-                      <button className="btn-primary-custom event-button">
+                      <button 
+                        className="btn-primary-custom event-button"
+                        onClick={handleVerEvento}
+                      >
                         Ver evento
                       </button>
                     </td>

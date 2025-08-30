@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeaderCl from "../../components/HeaderAdm";
 import '../../components/components.css';
 import '../../UCliente/Events/Events.css';
@@ -22,6 +23,7 @@ const EventState = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +55,10 @@ const EventState = () => {
 
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
+  };
+
+  const handleEditEvent = () => {
+    navigate('/edit-event');
   };
 
   return (
@@ -140,7 +146,10 @@ const EventState = () => {
           </div>
           
           <div className="event-actions">
-            <button className="btn-primary-custom">
+            <button 
+              className="btn-primary-custom"
+              onClick={handleEditEvent}
+            >
               Editar evento
             </button>
 

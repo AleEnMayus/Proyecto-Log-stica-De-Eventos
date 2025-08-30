@@ -95,10 +95,12 @@
   color: rgba(0, 0, 0, 0.904);
   text-decoration: none;
   padding: 15px 25px;
-  display: block;
+  display: flex;
+  align-items: center;
   transition: all 0.3s ease;
   border-radius: 8px;
   margin: 5px 15px;
+  font-size: larger;
 }
 
 .sidebar-menu-item:hover {
@@ -106,6 +108,13 @@
   color: rgb(21, 165, 231);
   transform: translateX(10px);
 }
+
+.sidebar-menu-item svg {
+  margin-right: 12px;
+  width: 32px;
+  height: 32px;
+}
+
 
 /* Botones adicionales */
 .btn-secondary-custom {

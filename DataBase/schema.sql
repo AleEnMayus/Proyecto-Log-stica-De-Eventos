@@ -130,5 +130,3 @@ BEGIN
     ORDER BY SatisfactionAverage DESC;
 END;
 //
-
-select * from user;

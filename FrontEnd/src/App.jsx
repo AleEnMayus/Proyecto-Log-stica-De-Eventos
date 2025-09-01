@@ -83,7 +83,7 @@ const routeConfig = {
     // Cuentas
     { path: '/ManageAccounts', component: AdminAccountsList },
     { path: '/CreateAccount', component: CreateAccountForm },
-    { path: '/users/edit/:userId', component: EditAccountPage },
+    { path: '/ManageAccounts/edit/:userId', component: EditAccountPage },
     
     // Calendario
     { path: '/CalendarAdmin', component: AdminCalendar },
@@ -94,9 +94,9 @@ const routeConfig = {
     
     // Eventos
     { path: '/EventsHomeAdmin', component: ListEventsA },
-    { path: '/EventDetailsAdmin', component: EventDetailsA },
+    { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
-    { path: '/EditEvent', component: EditEvent }
+    { path: '/EditEvent/:eventId', component: EditEvent }
   ],
   
   client: [

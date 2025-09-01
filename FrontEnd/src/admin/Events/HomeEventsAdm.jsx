@@ -1,13 +1,14 @@
 import React, { useState } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
-import HeaderCl from "../../components/HeaderCl";
 import '../../components/components.css';
-import '../../user/Events/Events.css';
+import '../../components/CSS/Lists.css'; // Archivo CSS universal
 import HeaderAdm from '../../components/HeaderAdm';
 
 const ListEventsA = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
+  const eventsPerPage = 5;
 
   const eventos = [
     {
@@ -25,6 +26,38 @@ const ListEventsA = () => {
       nombreEvento: 'Workshop de React',
       agendadoPor: 'Juan Pérez',
       estado: 'En ejecución'
+    },
+    {
+      id: 3,
+      fecha: '22/12/2024',
+      hora: '16:00',
+      nombreEvento: 'Seminario de UX/UI',
+      agendadoPor: 'Ana García',
+      estado: 'Terminado'
+    },
+    {
+      id: 4,
+      fecha: '25/12/2024',
+      hora: '09:00',
+      nombreEvento: 'Taller de JavaScript',
+      agendadoPor: 'Carlos López',
+      estado: 'En planeación'
+    },
+    {
+      id: 5,
+      fecha: '28/12/2024',
+      hora: '11:30',
+      nombreEvento: 'Conferencia de IA',
+      agendadoPor: 'Sofia Martín',
+      estado: 'En ejecución'
+    },
+    {
+      id: 6,
+      fecha: '30/12/2024',
+      hora: '15:00',
+      nombreEvento: 'Workshop de Node.js',
+      agendadoPor: 'Miguel Torres',
+      estado: 'En planeación'
     }
   ];
 
@@ -43,109 +76,144 @@ const ListEventsA = () => {
       case 'en ejecución':
         return { color: '#ffae00ff' }; 
       default:
-        return { color: '#4b5563' }; 
+        return { color: '#ffae00ff' };
     }
   };
 
-  const getInitials = (name) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const handleVerEvento = (eventId) => {
+    navigate(`/EventsHomeAdmin/Details/${eventId}`);
   };
 
-  const handleVerEvento = () => {
-    navigate('/EventDetailsAdmin');
-  };
+  // Paginación
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = eventosFiltrados.slice(indexOfFirstEvent, indexOfLastEvent);
+  const totalPages = Math.ceil(eventosFiltrados.length / eventsPerPage);
 
   return (
-    <div className="contact-section">
+    <div className="list-container mle-0">
       <HeaderAdm/>
       
-      <div className="list-container">
-        <h1 className="section-title">
-          Listado de eventos
-        </h1>
-      
-        <div className="search-container">
-          <div className="search-wrapper">
-            <span className="search-icon"></span>
-            <input
-              type="text"
-              placeholder="Buscar eventos"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-        </div>
-
-        <div className="promo-card table-container">
-          <div className="table-wrapper">
-            <table className="events-table">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Hora</th>
-                  <th>Nombre del evento</th>
-                  <th>Agendado por:</th>
-                  <th>Estado del evento</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {eventosFiltrados.map((evento, index) => (
-                  <tr key={evento.id}>
-                    <td>{evento.fecha}</td>
-                    <td>{evento.hora}</td>
-                    <td>{evento.nombreEvento}</td>
-                    <td>
-                      <div className="user-cell">
-                        <div className="user-avatar">
-                          <span>{getInitials(evento.agendadoPor)}</span>
-                        </div>
-                        <span className="user-name">{evento.agendadoPor}</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="status-cell">
-                        <span className="status-icon"></span>
-                        <span className="status-label" style={getEstadoColor(evento.estado)}>
-                          {evento.estado}
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      <button 
-                        className="btn-primary-custom event-button"
-                        onClick={handleVerEvento}
-                      >
-                        Ver evento
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'center' }}>
-          <Link to="/CreateEvent" className="btn-primary-custom" style={{
-            padding: '15px 35px',
-            fontSize: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            textDecoration: 'none'
-          }}>
-            <span style={{ fontSize: '20px', fontWeight: 'bold' }}>+</span>
-            <span>Agendar Evento</span>
-          </Link>
-        </div>
-
-        {eventosFiltrados.length === 0 && (
-          <div className="empty-state">
-            <p>No se encontraron eventos que coincidan con tu búsqueda.</p>
-          </div>
-        )}
+      {/* Header */}
+      <div className="list-header mt-5 pt-5">
+        <h2 className="list-title">LISTADO DE EVENTOS</h2>
+        <Link to="/CreateEvent" className="btn-create">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">
+            <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+          </svg>
+          Agendar Evento
+        </Link>
       </div>
+
+      {/* Search Bar */}
+      <div className="search-container mb-4 w-50-lg">
+        <span className="search-label">Buscar eventos</span>
+        <div className="search-input-group">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+          </svg>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Buscar por evento, organizador o estado..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="table-container">
+        <table className="list-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Nombre del evento</th>
+              <th>Estado</th>
+              <th>Ver</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentEvents.map((evento) => (
+              <tr key={evento.id}>
+                <td>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontWeight: '600', color: '#2c3e50' }}>{evento.fecha}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#6c757d' }}>{evento.hora}</div>
+                  </div>
+                </td>
+                <td>
+                  <span style={{ fontWeight: '500', color: '#2c3e50' }}>
+                    {evento.nombreEvento}
+                  </span>
+                </td>
+
+                <td>
+                  <span 
+                    className="btn-custom btn-status-custom"
+                    style={getEstadoColor(evento.estado)}
+                  >
+                    {evento.estado}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="btn-custom btn-view-custom"
+                    onClick={() => handleVerEvento(evento.id)}
+                  >
+                    Ver
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination */}
+      <div className="pagination">
+        <button
+          className="pagination-arrow"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+          </svg>
+        </button>
+
+        <div className="pagination-numbers">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className="pagination-arrow"
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Empty State */}
+      {eventosFiltrados.length === 0 && (
+        <div className="empty-state">
+          <p>No se encontraron eventos que coincidan con tu búsqueda.</p>
+        </div>
+      )}
     </div>
   );
 };

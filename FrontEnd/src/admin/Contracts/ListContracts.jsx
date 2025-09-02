@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import HeaderAdm from "../../components/HeaderAdm";
-import '../../components/components.css';
-import './ContractsList.css';
+import "../../components/components.css";
+import "../../components/CSS/FormsUser.css";
 
 const ContractsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Datos de ejemplo para los contratos
   const contratos = [
     { id: 1, texto: 'Contrato 1° Cliente 1 Nombre Evento' },
@@ -27,12 +27,12 @@ const ContractsList = () => {
     { id: 16, texto: 'Contrato 16° Cliente 16 Nombre Evento' },
   ];
 
-  const itemsPerPage = 4;
-  
+  const itemsPerPage = 3;
+
   const filteredContratos = contratos.filter(contrato =>
     contrato.texto.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   const totalPages = Math.ceil(filteredContratos.length / itemsPerPage);
 
   const getCurrentPageContratos = () => {
@@ -50,7 +50,7 @@ const ContractsList = () => {
     console.log('Eliminar contrato:', contratoId);
     alert(`Eliminar contrato ${contratoId}`);
   };
-  
+
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -59,7 +59,7 @@ const ContractsList = () => {
 
   const renderPaginationButtons = () => {
     const buttons = [];
-    
+
     // Botón anterior
     buttons.push(
       <button
@@ -72,7 +72,7 @@ const ContractsList = () => {
       </button>
     );
 
-    // Generar todas las páginas que realmente existen
+    // Generar todas las páginas
     for (let i = 1; i <= totalPages; i++) {
       buttons.push(
         <button
@@ -101,49 +101,70 @@ const ContractsList = () => {
   };
 
   return (
-    <div className="listado-container">
+    <div className="login-content mt-5 pt-5">
       <HeaderAdm />
-      <div className="listado-wrapper">
+      <div className="login-form-card contracts-card">
         {/* Título principal */}
-        <h1 className="listado-title">Listado De Contratos</h1>
-        
+        <h1 className="login-title">Listado De Contratos</h1>
+
         {/* Barra de búsqueda */}
-        <div className="search-container">
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Buscar..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
+        <div className="form-row form-input" style={{ marginBottom: 20 }}>
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Buscar..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            style={{ border: 0, outline: 'none', flex: 1 }}
+          />
         </div>
 
+        {/* Lista de contratos */}
         <div className="contratos-list">
           {getCurrentPageContratos().map((contrato) => (
-            <div key={contrato.id} className="contrato-item">
-              <span className="contrato-text">{contrato.texto}</span>
-              <div className="contrato-actions">
+            <div
+              className="contrato-item form-row"
+              key={contrato.id}
+            >
+              <div style={{ flex: 1 }}>
+                <span className="contrato-text" style={{ color: '#2c3e50', fontWeight: 600 }}>
+                  {contrato.texto}
+                </span>
+              </div>
+
+              <div className="d-flex flex-column align-items-center contrato-actions" style={{ gap: 8 }}>
                 <button
                   onClick={() => handleExpand(contrato.id)}
-                  className="contrato-action expand"
+                  className="btn-secondary-custom"
+                  type="button"
                 >
-                  Descargar
+                  <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentcolor"><path d="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"/></svg>
                 </button>
                 <button
                   onClick={() => handleDelete(contrato.id)}
-                  className="contrato-action delete"
+                  className="btn-cancel"
+                  type="button"
                 >
-                  Eliminar
+                  <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentcolor"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z"/></svg>
                 </button>
               </div>
             </div>
           ))}
         </div>
-        
-        {/* Paginación */}
-        <div className="pagination">{renderPaginationButtons()}</div>
+
+        {/* Paginación (usa tus clases existente .pagination, .pagination-btn, .pagination-arrow) */}
+        {totalPages > 1 && (
+          <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
+            <div className="pagination">
+              {renderPaginationButtons()}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

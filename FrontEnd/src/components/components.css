@@ -13,8 +13,6 @@
 }
 
 
-
-
 /* ------------------ PAGINACIÓN OPTIMIZADA ------------------ */
 .pagination {
   display: flex;
@@ -79,6 +77,8 @@
   font-size: 0.875rem;
   color: #6b7280;
 }
+
+
 
 @media (max-width: 770px) {
   .title-headersb{

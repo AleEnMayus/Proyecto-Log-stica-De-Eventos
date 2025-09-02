@@ -74,7 +74,7 @@ const routeConfig = {
     
     // Encuestas
     { path: '/SurvayHome', component: Survay },
-    { path: '/createsurvay', component: CreateSurvay },
+    { path: '/SurvayHome/create', component: CreateSurvay },
     
     // Galería
     { path: '/GalleryViewAdmin', component: ImageGallery },

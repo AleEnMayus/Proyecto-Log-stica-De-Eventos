@@ -4,12 +4,12 @@ import PerfilModal from './AccountModal/account';
 import EditModal from "./AccountModal/EditAccount";
 
 const HeaderAdm = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState(null);
-  
-  const [showPerfil, setShowPerfil] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
+
+  const [openComponent, setOpenComponent] = useState(null); 
+  // valores posibles: "sidebar", "perfil", "edit" o null
+
 
   useEffect(() => {
     // Obtener datos del usuario del localStorage
@@ -19,8 +19,15 @@ const HeaderAdm = () => {
     }
   }, []);
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
+
+  const toggleMenu = () => {
+    setOpenComponent(openComponent === "sidebar" ? null : "sidebar");
+  };
+
+  const openPerfil = () => {
+    setOpenComponent("perfil");
+  };
 
   const userImageUrl = userData?.photo || null;
 
@@ -93,7 +100,13 @@ const HeaderAdm = () => {
                     <div className="badge bg-secondary small mt-1">{getUserLabel()}
                     </div>
                   </div>
-                  <Link className="dropdown-item-custom" onClick={() => {setShowPerfil(true); setIsUserMenuOpen(false)}}>
+                  <Link 
+                    className="dropdown-item-custom" 
+                    onClick={() => {
+                      openPerfil();
+                      setIsUserMenuOpen(false);
+                    }}
+                  >
                     Ver perfil
                   </Link>
                   <Link to="/logout" className="dropdown-item-custom">
@@ -109,12 +122,12 @@ const HeaderAdm = () => {
 
       {/* Overlay */}
       <div
-        className={`sidebar-overlay ${isMenuOpen ? 'active' : ''}`}
-        onClick={toggleMenu}
+        className={`sidebar-overlay ${openComponent === "sidebar" ? "active" : ""}`}
+        onClick={() => setOpenComponent(null)}
       ></div>
 
       {/* Sidebar */}
-      <div className={`sidebar ${isMenuOpen ? 'open' : ''}`}>
+      <div className={`sidebar ${openComponent === "sidebar" ? "open" : ""}`}>
         <div className="p-4 mt-5 pt-5">
           <nav className="mt-5">
             <a href="/" className="sidebar-menu-item">
@@ -123,7 +136,7 @@ const HeaderAdm = () => {
             <Link to="/EventsHomeAdmin" className="sidebar-menu-item">
             <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="Currentcolor"><path d="m80-80 190.67-533.33 344.66 342L80-80Zm111.33-111.33 303.34-108-196-196.67-107.34 304.67Zm374-258L528.67-486l234.66-234.67q32-32 79.67-32.33 47.67-.33 79.67 31.67L942-702l-36.67 36.67L884.67-686q-17.34-17.33-41-17.67Q820-704 802-686L565.33-449.33ZM406-606l-36.67-36.67 28-28q20-20 19-46.33t-19-44.33L370-788.67l36.67-36.66 26 26q34 34 33.66 83.66Q466-666 432-632l-26 26Zm80.67 78L450-564.67 599.33-714q17.34-17.33 17-44-.33-26.67-17.66-44l-62-62 36.66-36.67 63.34 63.34q31.33 32 32 79.33.66 47.33-31.34 79.33L486.67-528Zm158.66 159.33-36.66-36.66L661.33-458q34-34 81.67-34.67 47.67-.66 81.67 33.34L880-404l-36.67 36.67-56-56q-20-20-43.66-20-23.67 0-43.67 20l-54.67 54.66Zm-454 177.34Z"/></svg>      
             Gestionar eventos</Link>
-            <Link to="/survay" className="sidebar-menu-item">
+            <Link to="/SurvayHome" className="sidebar-menu-item">
             <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="Currentcolor"><path d="M186.67-120q-27.5 0-47.09-19.58Q120-159.17 120-186.67v-586.66q0-27.5 19.58-47.09Q159.17-840 186.67-840h192.66q7.67-35.33 35.84-57.67Q443.33-920 480-920t64.83 22.33Q573-875.33 580.67-840h192.66q27.5 0 47.09 19.58Q840-800.83 840-773.33v586.66q0 27.5-19.58 47.09Q800.83-120 773.33-120H186.67Zm0-66.67h586.66v-586.66H186.67v586.66ZM280-280h275.33v-66.67H280V-280Zm0-166.67h400v-66.66H280v66.66Zm0-166.66h400V-680H280v66.67Zm200-181.34q13.67 0 23.5-9.83t9.83-23.5q0-13.67-9.83-23.5t-23.5-9.83q-13.67 0-23.5 9.83t-9.83 23.5q0 13.67 9.83 23.5t23.5 9.83Zm-293.33 608v-586.66 586.66Z"/></svg>  
             Encuestas</Link>
             <Link to="/ListContracts" className="sidebar-menu-item">
@@ -147,19 +160,16 @@ const HeaderAdm = () => {
 
       {/* Modal de perfil */}
       <PerfilModal
-        isOpen={showPerfil}
-        onClose={() => setShowPerfil(false)}
+        isOpen={openComponent === "perfil"}
+        onClose={() => setOpenComponent(null)}
         user={userData}
-        onEdit={() => {
-          setShowPerfil(false);
-          setShowEdit(true);
-        }}
+        onEdit={() => setOpenComponent("edit")}
       />
 
       {/* Modal de edición */}
       <EditModal
-        isOpen={showEdit}
-        onClose={() => setShowEdit(false)}
+        isOpen={openComponent === "edit"}
+        onClose={() => setOpenComponent(null)}
         user={userData}
       />
     </>

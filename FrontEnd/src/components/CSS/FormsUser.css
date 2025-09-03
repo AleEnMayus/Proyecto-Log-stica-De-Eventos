@@ -291,21 +291,6 @@ select.form-input {
   text-decoration: underline;
 }
 
-/* Contrato */
-
-.contrato-item {
-  display: flex;
-  align-items:  center;
-  padding: 5px 10px;
-  border-radius: 15px;
-  border: 1px solid #e9ecef;
-  gap: 12;
-}
-
-/* Margenes personalizadas */
-.mt-10 {
-  margin-top: 10vh !important;
-}
 
 @media (max-width: 500px) {
   .login-content {

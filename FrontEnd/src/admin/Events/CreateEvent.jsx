@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 👈 Importa useNavigate
+import { useNavigate } from 'react-router-dom';
 import HeaderAdm from "../../components/HeaderAdm";
+import AssignResources from "../Resource/AllocateResources";
 import '../../components/components.css';
 import '../../components/CSS/FormsUser.css';
+import '../../components/CSS/Modals.css'; // asegúrate de tener el css del modal
 
 const CreateEvent = () => {
-  const navigate = useNavigate(); // 👈 Inicializa navigate
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     eventName: '',
@@ -25,13 +27,15 @@ const CreateEvent = () => {
     eventPrice: ''
   });
 
+  const [showModal, setShowModal] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (name.startsWith('paymentMethod.')) {
-      const paymentMethodKey = name.split('.')[1];
+      const key = name.split('.')[1];
       setFormData(prev => ({
         ...prev,
-        paymentMethod: { ...prev.paymentMethod, [paymentMethodKey]: checked }
+        paymentMethod: { ...prev.paymentMethod, [key]: checked }
       }));
     } else {
       setFormData(prev => ({
@@ -43,26 +47,23 @@ const CreateEvent = () => {
 
   const handleSubmit = () => {
     console.log('Form data:', formData);
+    alert('Evento agendado exitosamente');
   };
 
   const handleCancel = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   return (
     <>
       <HeaderAdm />
-      <div className="login-container ps-lg-5 pe-lg-5 ps-1 pe-1">
-        <div className="login-content ps-lg-5 pe-lg-5 ms-lg-5 me-lg-5">
-          <button className="back-btn" onClick={() => window.history.back()}>
-            ←
-          </button>
-
+      <div className="login-container d-flex justify-content-center" style={{ marginTop: "80px", padding: "20px" }}>
+        <div className="form-container-custom">
           <h1 className="login-title">AGENDAR EVENTO</h1>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
-            <div className="row">
-              <div className="col-md-6 mb-3">
+            <div className="form-row">
+              <div className="form-col">
                 <label className="form-label">
                   Nombre del evento <span className="text-danger">*</span>
                 </label>
@@ -73,9 +74,10 @@ const CreateEvent = () => {
                   placeholder="Ingresa el nombre del evento"
                   value={formData.eventName}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="form-col">
                 <label className="form-label">
                   Número de documento <span className="text-danger">*</span>
                 </label>
@@ -86,12 +88,13 @@ const CreateEvent = () => {
                   placeholder="Ej: 1234567890"
                   value={formData.documentNumber}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-md-6 mb-3">
+            <div className="form-row">
+              <div className="form-col">
                 <label className="form-label">
                   Nombre del cliente <span className="text-danger">*</span>
                 </label>
@@ -102,9 +105,10 @@ const CreateEvent = () => {
                   placeholder="Ingresa el nombre del cliente"
                   value={formData.clientName}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="form-col">
                 <label className="form-label">
                   Dirección <span className="text-danger">*</span>
                 </label>
@@ -115,12 +119,13 @@ const CreateEvent = () => {
                   placeholder="Ingresa la dirección del evento"
                   value={formData.address}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-md-6 mb-3">
+            <div className="form-row">
+              <div className="form-col">
                 <label className="form-label">
                   Teléfono celular <span className="text-danger">*</span>
                 </label>
@@ -131,9 +136,10 @@ const CreateEvent = () => {
                   placeholder="Ej: +57 300 123 4567"
                   value={formData.cellPhone}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="form-col">
                 <label className="form-label">
                   Segundo contacto <span className="text-danger">*</span>
                 </label>
@@ -144,12 +150,13 @@ const CreateEvent = () => {
                   placeholder="Ej: +57 300 987 6543"
                   value={formData.secondContact}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-md-6 mb-3">
+            <div className="form-row">
+              <div className="form-col">
                 <label className="form-label">
                   Fecha del evento <span className="text-danger">*</span>
                 </label>
@@ -159,9 +166,10 @@ const CreateEvent = () => {
                   className="form-input"
                   value={formData.eventDate}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="form-col">
                 <label className="form-label">
                   Capacidad del evento <span className="text-danger">*</span>
                 </label>
@@ -172,12 +180,13 @@ const CreateEvent = () => {
                   placeholder="Ej: 50 personas"
                   value={formData.eventCapacity}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-md-6 mb-3">
+            <div className="form-row">
+              <div className="form-col">
                 <label className="form-label">
                   Precio o paquete del evento <span className="text-danger">*</span>
                 </label>
@@ -188,86 +197,89 @@ const CreateEvent = () => {
                   placeholder="Ej: $500,000 COP"
                   value={formData.eventPrice}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="form-col">
                 <label className="form-label">
                   Asignar recursos <span className="text-danger">*</span>
                 </label>
-                <button 
+                <button
                   type="button"
                   className="btn-secondary-custom"
                   style={{ width: '100%' }}
-                  onClick={() => navigate("/AssignResources")} 
+                  onClick={() => setShowModal(true)}
                 >
                   Seleccionar recursos
                 </button>
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-md-12 mb-3">
-                <label className="form-label">
-                  Descripción del evento <span className="text-danger">*</span>
-                </label>
-                <textarea
-                  name="eventDescription"
-                  className="form-input"
-                  placeholder="Describe los detalles del evento..."
-                  value={formData.eventDescription}
-                  onChange={handleInputChange}
-                  rows={4}
-                  style={{ resize: 'vertical' }}
-                />
-              </div>
+            <div className="mb-3">
+              <label className="form-label">
+                Descripción del evento <span className="text-danger">*</span>
+              </label>
+              <textarea
+                name="eventDescription"
+                className="form-input"
+                placeholder="Describe los detalles del evento..."
+                value={formData.eventDescription}
+                onChange={handleInputChange}
+                rows={4}
+                style={{ resize: 'vertical' }}
+                required
+              />
             </div>
 
             <div className="row">
               <div className="col-md-12 mb-3">
-                <label className="form-label">
+                <label className="form-label d-block mb-2">
                   Método de pago <span className="text-danger">*</span>
                 </label>
-                <div className="payment-options" style={{ 
-                  display: 'flex', 
-                  gap: '20px', 
-                  flexWrap: 'wrap',
-                  marginTop: '10px'
-                }}>
-                  <label className="payment-option" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                <div
+                  className="payment-options d-flex justify-content-center gap-5 flex-wrap"
+                  style={{ marginTop: "10px" }}
+                >
+                  <label className="checkbox-wrapper">
                     <input
                       type="checkbox"
                       name="paymentMethod.cash"
                       checked={formData.paymentMethod.cash}
                       onChange={handleInputChange}
-                      style={{ margin: '0' }}
+                      className="custom-checkbox"
                     />
-                    Efectivo
+                    <span className="checkmark"></span>
+                    <span className="ms-2">Efectivo</span>
                   </label>
-                  <label className="payment-option" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+
+                  <label className="checkbox-wrapper">
                     <input
                       type="checkbox"
                       name="paymentMethod.card"
                       checked={formData.paymentMethod.card}
                       onChange={handleInputChange}
-                      style={{ margin: '0' }}
+                      className="custom-checkbox"
                     />
-                    Tarjeta
+                    <span className="checkmark"></span>
+                    <span className="ms-2">Tarjeta</span>
                   </label>
-                  <label className="payment-option" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+
+                  <label className="checkbox-wrapper">
                     <input
                       type="checkbox"
                       name="paymentMethod.transfer"
                       checked={formData.paymentMethod.transfer}
                       onChange={handleInputChange}
-                      style={{ margin: '0' }}
+                      className="custom-checkbox"
                     />
-                    Transferencia
+                    <span className="checkmark"></span>
+                    <span className="ms-2">Transferencia</span>
                   </label>
                 </div>
               </div>
             </div>
 
-            <div className="d-flex justify-content-between mt-4">
+            <div className="form-actions">
               <button
                 type="button"
                 className="btn-cancel"
@@ -279,12 +291,25 @@ const CreateEvent = () => {
                 type="submit"
                 className="btn-primary-custom"
               >
-                Confirmar Evento
+                Agendar Evento
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {/* Modal con AssignResources */}
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="profile-modal">
+            <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
+            <div className="pm-body">
+              <h3 className="text-center mb-3">Asignar Recursos</h3>
+              <AssignResources />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

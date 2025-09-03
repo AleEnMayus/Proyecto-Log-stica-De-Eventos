@@ -10,7 +10,7 @@
   width: 100%;
   padding: 22px;
   margin: 0 auto;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(84, 84, 84, 0.2);
 }
 
 .profile-modal .close-btn {
@@ -209,3 +209,4 @@
   font-size: 14px;
   font-weight: 500;
 }
+

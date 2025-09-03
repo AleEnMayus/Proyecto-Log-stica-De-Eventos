@@ -24,7 +24,8 @@ import {
   CreateEvent,
   EditEvent,
   AssingResources,
-  Secondaryresources,
+  ListResource,
+  CreateResource,
   Survay,
   CreateSurvay,
   Notification,
@@ -70,7 +71,8 @@ const routeConfig = {
     
     // Recursos
     { path: '/AssignResources', component: AssingResources },
-    { path: '/SecondaryResources', component: Secondaryresources },
+    { path: '/HomeResources', component: ListResource },
+    {path: '/CreateResource', component: CreateResource },
     
     // Encuestas
     { path: '/SurvayHome', component: Survay },

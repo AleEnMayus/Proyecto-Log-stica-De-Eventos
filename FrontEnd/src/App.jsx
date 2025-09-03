@@ -23,7 +23,7 @@ import {
   EventDetailsA,
   CreateEvent,
   EditEvent,
-  Mainresources,
+  AssingResources,
   Secondaryresources,
   Survay,
   CreateSurvay,
@@ -69,7 +69,7 @@ const routeConfig = {
     { path: '/NotificationsAdmin', component: Notification },
     
     // Recursos
-    { path: '/MainResources', component: Mainresources },
+    { path: '/AssignResources', component: AssingResources },
     { path: '/SecondaryResources', component: Secondaryresources },
     
     // Encuestas

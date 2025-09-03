@@ -89,7 +89,7 @@ const routeConfig = {
     { path: '/CalendarAdmin', component: AdminCalendar },
     
     // Contratos
-    { path: '/HomeContractsAdmin', component: ContractsAdmin },
+    { path: '/SendContractsAdmin', component: ContractsAdmin },
     { path: '/ListContracts', component: ContractsList },
     
     // Eventos

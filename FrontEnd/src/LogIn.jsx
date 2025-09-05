@@ -76,7 +76,7 @@ const LoginPage = () => {
     <div className="login-container">
       <header className="bg-white shadow-sm sticky-top header-container">
         <div className="container">
-          <div className="row align-items-center py-3">
+          <div className="row align-items-center py-3 justify-content-between">
             <div className="col-6">
               <div className="d-flex align-items-center">
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
@@ -87,8 +87,8 @@ const LoginPage = () => {
                 </div>
               </div>
             </div>
-            <div className="col-6 text-end">
-              <a href="/Register" className="btn-primary-custom btn">
+            <div className="col-6 text-end w-auto">
+              <a href="/Register" className="btn-primary-custom btn ">
                 Registrarse
               </a>
             </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../CSS/Modals.css";
-import DocModal from './DocumentModal';
+import RequestModal from '../RequestModal';
 
 const EditModal = ({ isOpen, onClose, user }) => {
   const navigate = useNavigate();
@@ -161,10 +161,13 @@ const EditModal = ({ isOpen, onClose, user }) => {
           )}
         </div>
       </div>
-      <DocModal 
-        isOpen={showDocModal}
-        onClose={() => setShowDocModal(false)}
-        user={user}/>
+      <RequestModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        user={user}
+        requestType="document_change" // configurable: schedule_appointment, cancel_event, document_change
+      />
+
     </div>
     );
 };

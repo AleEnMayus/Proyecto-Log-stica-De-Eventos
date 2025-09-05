@@ -216,6 +216,10 @@ input:focus {
     padding: 4px 8px;
     font-size: 0.75rem;
   }
+  .list-container{
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
 }
 
 .checkbox-wrapper {

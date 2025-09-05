@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';  
+import { Link, useNavigate } from 'react-router-dom';
 import HeaderCl from '../../components/HeaderCl';
-import '../../components/components.css';
 import '../../components/CSS/Lists.css';
+import '../../components/components.css';
 
 const ListEventsC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -10,98 +10,70 @@ const ListEventsC = () => {
   const navigate = useNavigate();
   const eventsPerPage = 5;
 
-  const events = [
+  const eventos = [
     {
       id: 1,
-      date: '15/12/2024',
-      time: '14:30',
-      eventName: 'Conferencia de Marketing Digital',
-      createdBy: 'Juan Pérez',
-      status: 'En planeación'
+      fecha: '15/12/2024',
+      hora: '14:30',
+      nombreEvento: 'Conferencia de Marketing Digital',
+      agendadoPor: 'Juan Pérez',
+      estado: 'En planeación'
     },
     {
       id: 2,
-      date: '20/12/2024',
-      time: '10:00',
-      eventName: 'Workshop de React',
-      createdBy: 'Juan Pérez',
-      status: 'En ejecución'
+      fecha: '20/12/2024',
+      hora: '10:00',
+      nombreEvento: 'Workshop de React',
+      agendadoPor: 'Juan Pérez',
+      estado: 'En ejecución'
     }
   ];
 
-  const filteredEvents = events.filter(event =>
-    event.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    event.createdBy.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    event.status.toLowerCase().includes(searchTerm.toLowerCase())
+  const eventosFiltrados = eventos.filter(evento =>
+    evento.nombreEvento.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    evento.agendadoPor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    evento.estado.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
+  const getEstadoColor = (estado) => {
+    switch (estado.toLowerCase()) {
       case 'terminado':
         return { color: '#ff0000ff' };
       case 'en planeación':
-        return { color: '#03ff25ff' };
+        return { color: '#13a927ff' };
       case 'en ejecución':
         return { color: '#ffae00ff' };
       default:
-        return { color: '#4b5563' };
+        return { color: '#6c757d' };
     }
   };
 
-  const getInitials = (name) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  const handleVerEvento = (eventId) => {
+    navigate(`/EventsHome/Details/${eventId}`);
   };
 
-  const handleViewEvent = (eventId) => {
-    navigate(`/EventDetails/${eventId}`);
-  };
-
+  // Paginación
   const indexOfLastEvent = currentPage * eventsPerPage;
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
-  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-
-  const paginationContainer = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: '20px 0',
-    gap: '8px'
-  };
-
-  const paginationBtn = (isActive = false) => ({
-    border: 'none',
-    outline: 'none',
-    cursor: 'pointer',
-    width: '38px',
-    height: '38px',
-    borderRadius: '50%',
-    fontSize: '14px',
-    fontWeight: isActive ? '600' : '500',
-    color: isActive ? '#fff' : '#333',
-    background: isActive
-      ? 'linear-gradient(135deg, #00aaff, #0077ff)'
-      : '#f0f0f0',
-    transition: 'all 0.3s ease'
-  });
-
-  const paginationArrow = {
-    ...paginationBtn(),
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  };
+  const currentEvents = eventosFiltrados.slice(indexOfFirstEvent, indexOfLastEvent);
+  const totalPages = Math.ceil(eventosFiltrados.length / eventsPerPage);
 
   return (
-    <div className="list-container mle-0">
+    <div className="list-container">
       <HeaderCl />
 
       {/* Header */}
       <div className="list-header mt-5 pt-5">
-        <h2 className="list-title">LISTADO DE EVENTOS</h2>
+        <h2 className="list-title">LISTADO DE TUS EVENTOS</h2>
+        <Link to="/Schedule" className="btn-create">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">
+            <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+          </svg>
+          Agendar Cita
+        </Link>
       </div>
 
-      {/* Search */}
+      {/* Search Bar */}
       <div className="search-container mb-4 w-50-lg">
         <span className="search-label">Buscar eventos</span>
         <div className="search-input-group">
@@ -128,43 +100,36 @@ const ListEventsC = () => {
             <tr>
               <th>Fecha</th>
               <th>Nombre del evento</th>
-              <th>Organizador</th>
               <th>Estado</th>
               <th>Ver</th>
             </tr>
           </thead>
           <tbody>
-            {currentEvents.map((event) => (
-              <tr key={event.id}>
+            {currentEvents.map((evento) => (
+              <tr key={evento.id}>
                 <td>
                   <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontWeight: '600', color: '#2c3e50' }}>{event.date}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#6c757d' }}>{event.time}</div>
+                    <div style={{ fontWeight: '600', color: '#2c3e50' }}>{evento.fecha}</div>
+                    <div style={{ fontSize: '0.85rem', color: '#6c757d' }}>{evento.hora}</div>
                   </div>
                 </td>
                 <td>
                   <span style={{ fontWeight: '500', color: '#2c3e50' }}>
-                    {event.eventName}
+                    {evento.nombreEvento}
                   </span>
-                </td>
-                <td>
-                  <div className="user-info">
-                    <div className="user-avatar">{getInitials(event.createdBy)}</div>
-                    <span className="user-name">{event.createdBy}</span>
-                  </div>
                 </td>
                 <td>
                   <span
                     className="btn-custom btn-status-custom"
-                    style={getStatusColor(event.status)}
+                    style={getEstadoColor(evento.estado)}
                   >
-                    {event.status}
+                    {evento.estado}
                   </span>
                 </td>
                 <td>
                   <button
                     className="btn-custom btn-view-custom"
-                    onClick={() => handleViewEvent(event.id)}
+                    onClick={() => handleVerEvento(evento.id)}
                   >
                     Ver
                   </button>
@@ -176,20 +141,22 @@ const ListEventsC = () => {
       </div>
 
       {/* Pagination */}
-      <div style={paginationContainer}>
+      <div className="pagination">
         <button
-          style={paginationArrow}
+          className="pagination-arrow"
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          &lt;
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+          </svg>
         </button>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="pagination-numbers">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i + 1}
-              style={paginationBtn(currentPage === i + 1)}
+              className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
               onClick={() => setCurrentPage(i + 1)}
             >
               {i + 1}
@@ -198,16 +165,18 @@ const ListEventsC = () => {
         </div>
 
         <button
-          style={paginationArrow}
+          className="pagination-arrow"
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
         >
-          &gt;
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+          </svg>
         </button>
       </div>
 
-      {/* Empty state */}
-      {filteredEvents.length === 0 && (
+      {/* Empty State */}
+      {eventosFiltrados.length === 0 && (
         <div className="empty-state">
           <p>No se encontraron eventos que coincidan con tu búsqueda.</p>
         </div>

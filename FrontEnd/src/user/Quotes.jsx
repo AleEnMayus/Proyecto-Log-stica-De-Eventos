@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './LogIn.css'; // Puedes usar el mismo estilo base
+import '../components/components.css';
 
 const ScheduleAppointments = () => {
   const [name, setName] = useState('');

@@ -156,9 +156,7 @@
   color: #6b7280;
 }
 
-.w-10 {
-  width: 10% !important;
-}
+
 
 @media (max-width: 770px) {
   .title-headersb{

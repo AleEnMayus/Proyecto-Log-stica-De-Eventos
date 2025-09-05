@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import './Client.css';
 import HeaderCl from "../components/HeaderCl";
+import '../components/components.css';
 
-const Contracts = () => {
+const ClientSurvey = () => {
   const [experiencia, setExperiencia] = useState(0);
   const [atencion, setAtencion] = useState(0);
 
@@ -65,4 +65,4 @@ const Contracts = () => {
   );
 };
 
-export default Contracts;
+export default ClientSurvey;

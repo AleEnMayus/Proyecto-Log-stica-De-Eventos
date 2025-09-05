@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import "./Client.css"; // Importa el CSS separado
-import HeaderCl from "../components/HeaderCl"; // ya lo tienes
+import { useNavigate, useParams } from 'react-router-dom';
+import HeaderCl from "../components/HeaderCl";
+import "../components/components.css";
+import "../components/CSS/FormsUser.css";
 
 const Schedule = () => {
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [motivo, setMotivo] = useState("");
+
+  const navigate = useNavigate();
 
   const enviarSolicitud = (e) => {
     e.preventDefault();
@@ -16,49 +20,82 @@ const Schedule = () => {
     setMotivo("");
   };
 
+  const cancel = () => {
+    navigate(`/EventsHome`);
+
+  }
+
   return (
     <div>
       <HeaderCl />
 
-      <div className="schedule-container">
-        <h2 className="schedule-title">Agendar Cita</h2>
+      <div className="login-container">
+        <div className="login-content">
+          <div className="form-container-custom">
+            <h2 className="login-title">Agendar Cita</h2>
+            <p className="login-subtitle">
+              Selecciona fecha, hora y motivo de tu cita
+            </p>
 
-        <form className="schedule-form" onSubmit={enviarSolicitud}>
-          {/* Fecha */}
-          <label htmlFor="fecha">Fecha que desea la cita</label>
-          <input
-            type="date"
-            id="fecha"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            required
-          />
+            <form onSubmit={enviarSolicitud}>
+              {/* Fecha */}
+              <div className="form-group">
+                <label htmlFor="fecha" className="form-label">
+                  Fecha de la cita
+                </label>
+                <input
+                  type="date"
+                  id="fecha"
+                  className="form-input"
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                  required
+                />
+              </div>
 
-          {/* Hora */}
-          <label htmlFor="hora">Hora que desea la cita</label>
-          <input
-            type="time"
-            id="hora"
-            value={hora}
-            onChange={(e) => setHora(e.target.value)}
-            required
-          />
+              {/* Hora */}
+              <div className="form-group">
+                <label htmlFor="hora" className="form-label">
+                  Hora de la cita
+                </label>
+                <input
+                  type="time"
+                  id="hora"
+                  className="form-input"
+                  value={hora}
+                  onChange={(e) => setHora(e.target.value)}
+                  required
+                />
+              </div>
 
-          {/* Motivo */}
-          <label htmlFor="motivo">Motivo</label>
-          <textarea
-            id="motivo"
-            value={motivo}
-            onChange={(e) => setMotivo(e.target.value)}
-            placeholder="Escriba el motivo de la cita"
-            required
-          />
+              {/* Motivo */}
+              <div className="form-group">
+                <label htmlFor="motivo" className="form-label">
+                  Motivo
+                </label>
+                <textarea
+                  id="motivo"
+                  className="form-input"
+                  style={{ minHeight: "100px", resize: "none" }}
+                  value={motivo}
+                  onChange={(e) => setMotivo(e.target.value)}
+                  placeholder="Escriba el motivo de la cita"
+                  required
+                />
+              </div>
 
-          {/* Botón */}
-          <button type="submit" className="btn-submit">
-            Enviar solicitud
-          </button>
-        </form>
+              {/* Acciones */}
+              <div className="form-actions">
+                <button onClick={cancel} type="button" className="btn-cancel">
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-secondary-custom">
+                  Enviar solicitud
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

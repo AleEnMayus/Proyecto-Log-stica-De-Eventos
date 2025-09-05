@@ -122,7 +122,7 @@ const routeConfig = {
     { path: '/HomeContractsCl', component: ContractsClient },
     
     // Eventos
-    { path: '/EventDetails', component: EventDetailsC },
+    { path: '/EventsHome/Details/:eventId', component: EventDetailsC },
     { path: '/EventsHome', component: ListEventsC }
   ],
   

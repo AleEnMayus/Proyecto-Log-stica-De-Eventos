@@ -5,7 +5,6 @@ import RequestModal from '../RequestModal';
 
 const EditModal = ({ isOpen, onClose, user }) => {
   const navigate = useNavigate();
-  const [showDocModal, setShowDocModal] = useState(false); // 👈 mover arriba
 
   if (!isOpen) return null;
 

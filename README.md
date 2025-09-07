@@ -7,7 +7,7 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
 ## 🚀 Tecnologías Utilizadas
 
 - ⚛️ **React** — Frontend dinámico e interactivo  
-- 🟩 **Node.js** — Backend escalable y ligero  
+- 🟩 **Node.js con Express.js** — Backend escalable y ligero  
 - 🐬 **MySQL** — Base de datos relacional para gestión de información  
 - 🎨 **CSS con Bootstrap** — Diseño responsivo y estético
 

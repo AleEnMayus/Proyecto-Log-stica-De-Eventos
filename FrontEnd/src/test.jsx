@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './test.css';
-
+import HeaderAdm from "../../components/HeaderAdm";
+import '../../components/components.css';
 const TestC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -100,6 +100,7 @@ const TestC = () => {
 
   return (
     <div className="listado-container">
+      <HeaderAdm />
       <div className="listado-wrapper">
         {/* Título principal */}
         <h1 className="listado-title">Listado De Contratos</h1>
@@ -143,7 +144,7 @@ const TestC = () => {
         <div className="pagination">{renderPaginationButtons()}</div>
       </div>
     </div>
-  );
+  ); 
 };
 
 export default TestC;

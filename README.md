@@ -47,8 +47,16 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
    
 4. Ejecutar servidor:
 
-   En la carpeta creada FrontEnd ejecutar en la terminal
+   1- En la carpeta creada 'Frontend' ejecutar en la terminal
    ```bash
    npm run dev
+   ```
+
+   2- Crear database con el 'Schema.sql'
+   
+   3- y en la carpeta 'Backend'
+   ```bash
+   nodemon index.js
+   ```
       
 

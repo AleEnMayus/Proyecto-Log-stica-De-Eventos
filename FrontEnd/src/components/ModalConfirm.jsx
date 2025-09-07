@@ -1,5 +1,5 @@
 import React from "react";
-import "./AccountModal/PerfilModal.css"; // reutiliza tu css de .profile-modal
+import "./CSS/Modals.css"; // reutiliza tu css de .profile-modal
 
 const ConfirmModal = ({ 
   show, 

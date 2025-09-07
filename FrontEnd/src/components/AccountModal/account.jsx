@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./PerfilModal.css";
+import "../CSS/Modals.css";
 
 const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
   const navigate = useNavigate();
   
-
   if (!isOpen) return null;
 
   const stop = (e) => e.stopPropagation();
@@ -14,15 +13,15 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
   const {
     fullName,
     email,
-    phoneNumber,
     birthDate,
     identificationType,
     documentNumber,
-    profilePicture,
+    photo,
     role
   } = user || {};
 
   const rolLegible = role === "admin" ? "Administrador" : "Cliente";
+  const onlyDate = birthDate.split("T")[0];
 
   return (
     <>
@@ -42,9 +41,9 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
 
           <div className="pm-body d-flex flex-wrap">
             <div className="pm-photo">
-              {profilePicture ? (
+              {photo ? (
                 <img
-                  src={profilePicture}
+                  src={photo}
                   alt="Avatar del usuario"
                   className="img-pf rounded-circle"
                   onError={(e) => {
@@ -90,15 +89,8 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
 
               <div className="field-row">
                 <div className="field">
-                  <div className="field-label">Número de teléfono</div>
-                  <div className="field-value">{phoneNumber}</div>
-                </div>
-              </div>
-
-              <div className="field-row">
-                <div className="field">
                   <div className="field-label">Fecha de nacimiento</div>
-                  <div className="field-value">{birthDate}</div>
+                  <div className="field-value">{onlyDate}</div>
                 </div>
               </div>
 

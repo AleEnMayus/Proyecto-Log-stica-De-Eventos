@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
+<<<<<<<< HEAD:FrontEnd/src/Uadmin/Contracts/ListContrats.jsx
 import HeaderAdm from "../../components/HeaderAdm";
 import '../../components/components.css';
 import './ContractsList.css';
+========
+import './test.css';
+>>>>>>>> frontend2:FrontEnd/src/test.jsx
 
-const ListadoContratosComponent = () => {
+const TestC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   
@@ -149,4 +153,8 @@ const ListadoContratosComponent = () => {
   );
 };
 
+<<<<<<<< HEAD:FrontEnd/src/Uadmin/Contracts/ListContrats.jsx
 export default ListadoContratosComponent;
+========
+export default TestC;
+>>>>>>>> frontend2:FrontEnd/src/test.jsx

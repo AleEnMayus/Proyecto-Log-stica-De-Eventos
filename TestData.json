@@ -11,7 +11,7 @@
         "birthDate": "1985-03-15",
         "identificationType": "cedula",
         "documentNumber": "123456789",
-        "profilePicture": "https://randomuser.me/api/portraits/women/45.jpg"
+        "photo": "https://randomuser.me/api/portraits/women/45.jpg"
       }
     },
     "user@happyart.com": {
@@ -25,7 +25,7 @@
         "birthDate": "1992-07-20",
         "identificationType": "cedula",
         "documentNumber": "987654321",
-        "profilePicture": "https://randomuser.me/api/portraits/men/46.jpg"
+        "photo": "https://randomuser.me/api/portraits/men/46.jpg"
       }
     }
   }

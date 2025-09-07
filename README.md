@@ -24,7 +24,7 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
 
 ## 📌 Estado del Proyecto
 
-> 🚧 **En desarrollo** — Fecha estimada de entrega: *inicios de septiembre*
+> 🚧 **En desarrollo** — Fecha estimada de entrega: *finales de septiembre*
 
 ---
 

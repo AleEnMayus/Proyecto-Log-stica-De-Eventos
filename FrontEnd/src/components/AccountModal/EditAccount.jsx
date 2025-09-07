@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import "./PerfilModal.css";
-import DocModal from './DocumentModal';
+import "../CSS/Modals.css";
+import RequestModal from '../RequestModal';
 
 const EditModal = ({ isOpen, onClose, user }) => {
   const navigate = useNavigate();
-  const [showDocModal, setShowDocModal] = useState(false); // 👈 mover arriba
 
   if (!isOpen) return null;
 
@@ -15,7 +14,6 @@ const EditModal = ({ isOpen, onClose, user }) => {
   const {
     fullName,
     email,
-    phoneNumber,
     birthDate,
     identificationType,
     documentNumber,
@@ -84,20 +82,6 @@ const EditModal = ({ isOpen, onClose, user }) => {
                   type="email"
                   className="field-value field-disabled"
                   defaultValue={email}
-                  disabled={true}
-                  readOnly={true}
-                />
-              </div>
-            </div>
-
-            {/* Teléfono - Siempre editable */}
-            <div className="field-row">
-              <div className="field">
-                <div className="field-label">Número de teléfono (Opcional)</div>
-                <input
-                  type="tel"
-                  className="field-value"
-                  defaultValue={phoneNumber}
                 />
               </div>
             </div>
@@ -164,7 +148,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
           <button className="btn-secondary-custom w-100"
             onClick={() => {
               onClose();
-              navigate("/change-password");}}>
+              navigate("/updatePassword");}}>
 
             Cambiar contraseña
           </button>
@@ -176,10 +160,13 @@ const EditModal = ({ isOpen, onClose, user }) => {
           )}
         </div>
       </div>
-      <DocModal 
-        isOpen={showDocModal}
-        onClose={() => setShowDocModal(false)}
-        user={user}/>
+      <RequestModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        user={user}
+        requestType="document_change" // configurable: schedule_appointment, cancel_event, document_change
+      />
+
     </div>
     );
 };

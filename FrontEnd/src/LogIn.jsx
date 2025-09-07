@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './LogIn.css';
+import "./components/CSS/FormsUser.css";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -35,9 +35,10 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("user", JSON.stringify(data));
-        console.log("✅ Login exitoso:", data);
-        navigate("/");
+        localStorage.setItem("authToken", data.token); // 🔑 Token
+        localStorage.setItem("user", JSON.stringify(data.user)); // 👤 Datos usuario
+        console.log("✅ Login exitoso:", data.user);
+        navigate(0);
       } else {
         setError(data.message || "Error al iniciar sesión");
       }
@@ -75,7 +76,7 @@ const LoginPage = () => {
     <div className="login-container">
       <header className="bg-white shadow-sm sticky-top header-container">
         <div className="container">
-          <div className="row align-items-center py-3">
+          <div className="row align-items-center py-3 justify-content-between">
             <div className="col-6">
               <div className="d-flex align-items-center">
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
@@ -86,8 +87,8 @@ const LoginPage = () => {
                 </div>
               </div>
             </div>
-            <div className="col-6 text-end">
-              <a href="/Register" className="btn-primary-custom btn">
+            <div className="col-6 text-end w-auto">
+              <a href="/Register" className="btn-primary-custom btn ">
                 Registrarse
               </a>
             </div>
@@ -95,7 +96,7 @@ const LoginPage = () => {
         </div>
       </header>
 
-      <div className="login-content mt-4">
+      <div className="login-content mt-4 mt-10">
         <div className="login-form-card">
           <h1 className="login-title">Iniciar Sesión</h1>
           <p className="login-subtitle">

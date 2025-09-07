@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
     // Revisar si ya existe correo o documento
     const [existingUser] = await db
       .promise()
-      .query("SELECT * FROM usuario WHERE CorreoElect = ? OR NumDocumento = ?", [email, documentNumber]);
+      .query("SELECT * FROM user WHERE Email = ? OR DocumentNumber = ?", [email, documentNumber]);
 
     if (existingUser.length > 0) {
       return res.status(400).json({ message: "El correo o número de documento ya está registrado" });
@@ -36,9 +36,9 @@ router.post("/register", async (req, res) => {
 
     // Insertar en la tabla
     await db.promise().query(
-        `INSERT INTO Usuario 
-            (Nombres, TipoDocumento, NumDocumento, FechaNacimiento, CorreoElect, Contraseña, Estado, Rol) 
-        VALUES (?, ?, ?, ?, ?, ?, 'activo', 'user')`,
+        `INSERT INTO User
+            (Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role) 
+        VALUES (?, ?, ?, ?, ?, ?, 'active', 'user')`,
         [fullName, identificationType, documentNumber, birthDate, email, hashedPassword]
     );
 
@@ -57,35 +57,39 @@ router.post("/login", async (req, res) => {
   }
 
   try {
-    const [rows] = await db
-      .promise()
-      .query("SELECT * FROM Usuario WHERE CorreoElect = ?", [email]);
+      const [rows] = await db
+        .promise()
+        .query("SELECT * FROM User WHERE Email = ?", [email]);
 
-    if (rows.length === 0) {
-      return res.status(401).json({ message: "Credenciales incorrectas" });
+      if (rows.length === 0) {
+        return res.status(401).json({ message: "Credenciales incorrectas" });
+      }
+
+      const user = rows[0];
+      const passwordMatch = await bcrypt.compare(password, user.Password);
+
+      if (!passwordMatch) {
+        return res.status(401).json({ message: "Credenciales incorrectas" });
+      }
+
+      // Generar un JWT, por ahora solo devolvemos datos básicos
+      res.json({
+        token: 'token',
+        user: {
+          id: user.UserId,
+          fullName: user.Names,
+          identificationType: user.DocumentType,
+          documentNumber: user.DocumentNumber,
+          email: user.Email,
+          birthDate: user.BirthDate,
+          role: user.Role,
+          photo: user.Photo
+        }
+      });
+    } catch (error) {
+      console.error("❌ Error en login:", error);
+      res.status(500).json({ message: "Error en el servidor" });
     }
-
-    const user = rows[0];
-    const passwordMatch = await bcrypt.compare(password, user.Contraseña);
-
-    if (!passwordMatch) {
-      return res.status(401).json({ message: "Credenciales incorrectas" });
-    }
-
-    // 🔹 Aquí podrías generar un JWT, por ahora solo devolvemos datos básicos
-    res.json({
-      id: user.IdUsuario,
-      nombre: user.Nombres,
-      email: user.CorreoElect,
-      rol: user.Rol,
-      birthDate: user.FechaNacimiento,
-      documentNumber: user.NumDocumento,
-      identificationType: user.TipoDocumento
-    });
-  } catch (error) {
-    console.error("❌ Error en login:", error);
-    res.status(500).json({ message: "Error en el servidor" });
-  }
 });
 
 module.exports = router;

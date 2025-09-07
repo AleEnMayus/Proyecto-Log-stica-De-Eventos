@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './LogIn.css'; // Importar el archivo CSS
+import './components/CSS/FormsUser.css'; // Importar el archivo CSS
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -98,7 +98,7 @@ const RegisterPage = () => {
         </div>
       </header>
 
-      <div className="login-content mt-4">
+      <div className="login-content mt-4 mt-10">
         <div className="login-form-card">
           <h1 className="login-title">Registrarse</h1>
           <p className="login-subtitle">

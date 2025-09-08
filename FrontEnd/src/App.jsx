@@ -26,6 +26,7 @@ import {
   AssingResources,
   ListResource,
   CreateResource,
+  EditResource,
   Survay,
   CreateSurvay,
   Notification,
@@ -73,6 +74,7 @@ const routeConfig = {
     { path: '/AssignResources', component: AssingResources },
     { path: '/HomeResources', component: ListResource },
     {path: '/CreateResource', component: CreateResource },
+    {path: '/EditResource', component: EditResource },
     
     // Encuestas
     { path: '/SurvayHome', component: Survay },

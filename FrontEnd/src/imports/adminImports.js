@@ -13,6 +13,7 @@ export { default as EditAccountPage } from '../admin/ManageAcc/EditAccAdmin'
 export { default as AssingResources } from '../admin/Resource/AllocateResources'
 export { default as ListResource } from '../admin/Resource/HomeResource'
 export { default as CreateResource } from '../admin/Resource/CreateResource'
+export { default as EditResource } from '../admin/Resource/EditResource'
 // Gestión galeria
 export { default as ImageGallery } from '../admin/gallery/gallery2'
 export { default as ManagerImageGallery } from '../admin/gallery/galleryof'

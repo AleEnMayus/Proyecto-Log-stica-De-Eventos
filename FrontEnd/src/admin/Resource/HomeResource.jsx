@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import HeaderAdm from '../../components/HeaderAdm';
 import ConfirmModal from "../../components/ModalConfirm";
+import EditResource from "./EditResource"; // 👈 Importa el modal de edición
 import '../../components/CSS/Lists.css';
 import '../../components/components.css';
 
 const ListResource = () => {
+  const navigate = useNavigate();
+
   const [recursos, setRecursos] = useState([
     { id: 1, nombre: "Proyector", codigo: "PRJ-01", cantidad: 3, estado: "Disponible" },
     { id: 2, nombre: "Micrófono", codigo: "MIC-01", cantidad: 5, estado: "En uso" },
@@ -22,27 +26,29 @@ const ListResource = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const resourcesPerPage = 5;
 
-  // Filtrar por búsqueda
   const filteredResources = recursos.filter(r =>
     r.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.estado.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Paginación
   const indexOfLast = currentPage * resourcesPerPage;
   const indexOfFirst = indexOfLast - resourcesPerPage;
   const currentResources = filteredResources.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredResources.length / resourcesPerPage);
-  
+
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({});
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedResource, setSelectedResource] = useState(null);
+
   const handleDelete = (rId) => {
     setModalConfig({
       message: "¿Seguro quieres eliminar el recurso?",
       confirmText: "Eliminar",
       onConfirm: () => {
         console.log("Recurso eliminado:", rId);
+        setRecursos(recursos.filter(r => r.id !== rId));
         setShowModal(false);
       }
     });
@@ -50,11 +56,20 @@ const ListResource = () => {
   };
 
   const handleEdit = (id) => {
-    alert(`Editar recurso con ID: ${id}`);
+    const resource = recursos.find(r => r.id === id);
+    setSelectedResource(resource);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = (updatedResource) => {
+    setRecursos(prev =>
+      prev.map(r => (r.id === updatedResource.id ? updatedResource : r))
+    );
+    setShowEditModal(false);
   };
 
   const handleCreate = () => {
-    alert("Crear nuevo recurso");
+    navigate('/CreateResource');
   };
 
   return (
@@ -187,6 +202,8 @@ const ListResource = () => {
           </button>
         </nav>
       )}
+
+      {/* Modal eliminar */}
       <ConfirmModal
         show={showModal}
         onClose={() => setShowModal(false)}
@@ -194,8 +211,17 @@ const ListResource = () => {
         message={modalConfig.message}
         confirmText={modalConfig.confirmText}
       />
-    </div>
 
+      {/* Modal editar */}
+      {showEditModal && selectedResource && (
+        <EditResource
+          show={showEditModal}
+          onClose={() => setShowEditModal(false)}
+          resource={selectedResource}
+          onSave={handleSaveEdit}
+        />
+      )}
+    </div>
   );
 };
 

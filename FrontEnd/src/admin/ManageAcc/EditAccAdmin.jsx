@@ -119,7 +119,7 @@ const EditAccountPage = () => {
         </button>
 
         <div className="login-form-card">
-          <h1 className="login-title">CREAR CUENTA</h1>
+          <h1 className="login-title">EDITAR CUENTA</h1>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <div className="row">

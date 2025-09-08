@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './components/CSS/FormsUser.css'; // Importar el archivo CSS
+import '../../components/CSS/FormsUser.css'; // Importar el archivo CSS
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({

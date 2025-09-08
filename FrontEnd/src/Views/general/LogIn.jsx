@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import "./components/CSS/FormsUser.css";
+import "../../components/CSS/FormsUser.css";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({

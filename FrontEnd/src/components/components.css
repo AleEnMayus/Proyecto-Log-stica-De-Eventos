@@ -1,113 +1,37 @@
-/* Header Styles */
-.header-container {
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  z-index: 1060;
-  background: white !important;
+/* Css Generales */
+/* img y link */
+.img-50 {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
 }
 
-.menu-btn {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  padding: 10px;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.menu-btn:hover {
-  background: rgba(21, 165, 231, 0.1);
-  color: rgb(21, 165, 231);
-}
-
-.logo-text {
-  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241), rgb(255, 103, 141));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: bold;
-  font-size: 1.5rem;
-}
-
-.register-btn {
-  border-radius: 20px !important;
+.logolink {
+  text-decoration: none;
+  color: inherit;
+  align-items: center;
 }
 
 .btn-primary-custom {
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
   border: none;
   border-radius: 25px;
-  padding: 12px 30px;
+  padding: 10px 22px;
   font-weight: 600;
-  transition: all 0.3s ease;
   color: white;
+  transition: all 0.3s ease;
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .btn-primary-custom:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(21, 165, 231, 0.3);
-  background: linear-gradient(135deg, rgb(177, 121, 241), rgb(21, 165, 231));
+  box-shadow: 0 6px 20px rgba(21, 165, 231, 0.3);
 }
 
-/* Sidebar Styles */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: -300px;
-  width: 300px;
-  height: 100vh;
-  background-color: #ffffff;
-  transition: left 0.3s ease-in-out;
-  z-index: 1050;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-}
-
-.sidebar.open {
-  left: 0;
-}
-
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0,0,0,0.5);
-  z-index: 1040;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.sidebar-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.close-btn {
-  font-size: 1.5rem;
-}
-
-.sidebar-menu-item {
-  color: rgba(0, 0, 0, 0.904);
-  text-decoration: none;
-  padding: 15px 25px;
-  display: block;
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  margin: 5px 15px;
-}
-
-.sidebar-menu-item:hover {
-  background: rgba(151, 151, 151, 0.2);
-  color: rgb(21, 165, 231);
-  transform: translateX(10px);
-}
-
-/* Botones adicionales */
 .btn-secondary-custom {
   background: rgb(255, 83, 121);
   border: none;
@@ -116,6 +40,7 @@
   font-weight: 500;
   transition: all 0.3s ease;
   color: white;
+  cursor: pointer;
 }
 
 .btn-secondary-custom:hover {
@@ -124,103 +49,127 @@
   background: rgb(255, 103, 141);
 }
 
-/* Carrusel Styles */
-.carousel-container {
-  position: relative;
-  height: 400px;
-  overflow: hidden;
+
+/* Margenes personalizadas */
+.mt-10 {
+  margin-top: 10vh !important;
+}
+
+
+/* Contrato */
+
+.contrato-card {
+  background: #ffffff;
+  font-weight: bolder ;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  gap: 20px;
+  border: 1px solid #e9ecef;
   border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-}
-
-.carousel-track {
-  display: flex;
-  transition: transform 0.5s ease-in-out;
-  height: 100%;
-}
-
-.carousel-slide {
-  min-width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, #e9ecef, #dee2e6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: #6c757d;
-}
-
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  z-index: 10;
-}
-
-.carousel-btn:hover {
-  background: white;
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-}
-
-.carousel-btn.prev {
-  left: 20px;
-}
-
-.carousel-btn.next {
-  right: 20px;
-}
-
-/* Tarjetas de promociones */
-.promo-card {
-  background: white;
-  border-radius: 15px;
-  padding: 25px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contrato-card .contrato-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contrato-item {
+  display: flex;
+  align-items:  center;
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: 1px solid #e9ecef;
+  gap: 12;
+}
+
+
+/* ------------------ PAGINACIÓN OPTIMIZADA ------------------ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 0;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.pagination-numbers {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-btn, .pagination-arrow {
+  padding: 0.5rem 0.75rem;
+  min-width: 40px;
+  height: 40px;
+  font-size: 0.875rem;
+  text-align: center;
+  border-radius: 20px !important;
+  background-color: #f8f9fa !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover, .pagination-arrow:hover {
+  background-color: #e2e6ea !important;
+}
+
+.pagination-btn.active {
+  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(121, 219, 241));
+  color: #ffffff !important;
+  border: none;
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
   transition: all 0.3s ease;
-  border-left: 4px solid rgb(21, 165, 231);
 }
 
-.promo-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-  border-left-color: rgb(255, 83, 121);
+.pagination-btn.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(21, 165, 231, 0.3);
+  background: linear-gradient(135deg, rgb(59, 133, 230), rgb(21, 165, 231));
 }
 
-/* Sección de contacto */
-.contact-section {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border-radius: 5px;
-  padding: 40px;
+.pagination-arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* Títulos de sección */
-.section-title {
-  color: #2c3e50;
-  font-weight: 700;
-  margin-bottom: 30px;
-  position: relative;
+.pagination-dots {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #6b7280;
 }
 
-.section-title::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 60px;
-  height: 3px;
-  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
-  border-radius: 2px;
+
+
+@media (max-width: 770px) {
+  .title-headersb{
+    display: none;
+  }
+  .logo-text{
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .mle-0 {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
 }

@@ -7,7 +7,7 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
 ## 🚀 Tecnologías Utilizadas
 
 - ⚛️ **React** — Frontend dinámico e interactivo  
-- 🟩 **Node.js** — Backend escalable y ligero  
+- 🟩 **Node.js con Express.js** — Backend escalable y ligero  
 - 🐬 **MySQL** — Base de datos relacional para gestión de información  
 - 🎨 **CSS con Bootstrap** — Diseño responsivo y estético
 
@@ -24,7 +24,7 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
 
 ## 📌 Estado del Proyecto
 
-> 🚧 **En desarrollo** — Fecha estimada de entrega: *inicios de septiembre*
+> 🚧 **En desarrollo** — Fecha estimada de entrega: *finales de septiembre*
 
 ---
 
@@ -47,8 +47,16 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
    
 4. Ejecutar servidor:
 
-   En la carpeta creada FrontEnd ejecutar en la terminal
+   1- En la carpeta creada 'Frontend' ejecutar en la terminal
    ```bash
    npm run dev
+   ```
+
+   2- Crear database con el 'Schema.sql'
+   
+   3- y en la carpeta 'Backend'
+   ```bash
+   nodemon index.js
+   ```
       
 

@@ -41,6 +41,7 @@ Interfaz web desarrollada con **React** para la gestión inteligente de eventos.
 
 ## 📂 Estructura de Carpetas
 
+```text
 FrontEnd/
   ├── public/                # Recursos públicos y estáticos
   ├── src/                   # Código fuente principal
@@ -54,6 +55,7 @@ FrontEnd/
   ├── package.json           # Dependencias y scripts del proyecto
   ├── vite.config.js         # Configuración de Vite
   └── eslint.config.js       # Reglas de estilo y linting
+```
 
 ---
 

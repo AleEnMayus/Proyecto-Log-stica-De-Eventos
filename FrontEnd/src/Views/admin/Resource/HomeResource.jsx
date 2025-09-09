@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import HeaderAdm from '../../components/HeaderAdm';
-import ConfirmModal from "../../components/ModalConfirm";
+import HeaderAdm from '../../../components/HeaderAdm';
+import ConfirmModal from "../../../components/ModalConfirm";
 import '../../components/CSS/Lists.css';
 import '../../components/components.css';
 

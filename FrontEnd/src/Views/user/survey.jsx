@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import HeaderCl from "../components/HeaderCl";
+import HeaderCl from "../../components/HeaderCl";
 import '../components/components.css';
 
 const ClientSurvey = () => {

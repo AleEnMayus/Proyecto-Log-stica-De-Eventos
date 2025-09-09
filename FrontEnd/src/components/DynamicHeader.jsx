@@ -2,6 +2,7 @@ import React from 'react';
 import HeaderSidebar from './HeaderSidebar';
 import HeaderCl from './HeaderCl';
 import HeaderAdm from './HeaderAdm';
+import './CSS/HeaderSB.css';
 
 const DynamicHeader = ({ user, onLogin, onLogout }) => {
   // Si no hay usuario, mostrar header de invitado

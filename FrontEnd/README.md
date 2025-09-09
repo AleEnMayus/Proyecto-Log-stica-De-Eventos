@@ -29,11 +29,11 @@ Interfaz web desarrollada con **React** para la gestión inteligente de eventos.
    ```bash
    cd Frontend
    ```
-3.
+3. Instala las dependencias:
    ```bash
    npm install
    ```
-4.
+4. Ejecuta el servidor de desarrollo:
    ```bash
    npm run dev
    ```

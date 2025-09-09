@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import HeaderCl from "../../components/HeaderCl";
-import '../../components/components.css';
+import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
+import '../../CSS/components.css';
 
 const ContractsClient = () => {
   const [contrato, setContrato] = useState('');

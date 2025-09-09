@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import HeaderCl from "../components/HeaderAdm";
+import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 
 const Notifications = () => {
   const [activeTab, setActiveTab] = useState("Todo");

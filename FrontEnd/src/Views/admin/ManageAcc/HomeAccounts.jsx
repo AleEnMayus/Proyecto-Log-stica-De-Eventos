@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import HeaderAdm from '../../components/HeaderAdm';
-import ConfirmModal from "../../components/ModalConfirm";
-import ModalState from "../../components/ModalState";
-import '../../components/CSS/Lists.css'; // CSS universal
-import '../../components/components.css';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
+import ConfirmModal from "../../../components/Modals/ModalConfirm";
+import ModalState from "../../../components/Modals/ModalState";
+import '../../CSS/Lists.css'; // CSS universal
+import '../../CSS/components.css';
 
 const AdminAccountsList = () => {
   const [users, setUsers] = useState([

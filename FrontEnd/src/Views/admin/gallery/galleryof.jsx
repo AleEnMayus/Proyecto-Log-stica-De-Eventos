@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './galleryof.css';
-import HeaderAdm from '../../components/HeaderAdm';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 const ManagerImageGallery = () => {
   const [images, setImages] = useState(Array(9).fill(null));

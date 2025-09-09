@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import HeaderCl from '../../components/HeaderCl';
-import RequestModal from '../../components/RequestModal';
-import '../../components/components.css';
-import '../../components/CSS/DetailsEvt.css';
+import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
+import RequestModal from '../../../components/Modals/RequestModal';
+import '../../CSS/components.css';
+import '../../CSS/DetailsEvt.css';
 
 const EventDetailsC = () => {
   const { eventId } = useParams();

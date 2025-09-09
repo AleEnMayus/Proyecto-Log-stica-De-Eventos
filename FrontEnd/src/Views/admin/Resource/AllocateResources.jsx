@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
-import "../../components/components.css";
-import "../../components/CSS/Lists.css";
-import "../../components/CSS/modals.css"; // usa tu archivo de modals
+import "../../CSS/components.css";
+import "../../CSS/Lists.css";
+import "../../CSS/modals.css"; // usa tu archivo de modals
 
 const AssignResourcesModal = ({ onClose, onSave, preselectedIds = [] }) => {
   const [busqueda, setBusqueda] = useState("");

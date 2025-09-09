@@ -1,8 +1,8 @@
 import React, { useState } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
-import '../../components/components.css';
-import '../../components/CSS/Lists.css'; // Archivo CSS universal
-import HeaderAdm from '../../components/HeaderAdm';
+import '../../CSS/components.css';
+import '../../CSS/Lists.css'; // Archivo CSS universal
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 const ListEventsA = () => {
   const [searchTerm, setSearchTerm] = useState('');

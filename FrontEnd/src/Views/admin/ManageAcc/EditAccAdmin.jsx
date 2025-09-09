@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../components/CSS/FormsUser.css'
+import '../../CSS/FormsUser.css'
 
 // Componente del formulario de edición como página independiente
 const EditAccountPage = () => {

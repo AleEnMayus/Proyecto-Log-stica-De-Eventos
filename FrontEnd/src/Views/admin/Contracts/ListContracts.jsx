@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import HeaderAdm from "../../components/HeaderAdm";
-import "../../components/components.css";
-import "../../components/CSS/FormsUser.css";
+import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
+import "../../CSS/components.css";
+import "../../CSS/FormsUser.css";
 
 const ContractsList = () => {
   const [searchTerm, setSearchTerm] = useState('');

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import HeaderAdm from "../../components/HeaderAdm";
-import '../../components/components.css';
-import '../../components/CSS/FormsUser.css';
+import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
+import '../../CSS/components.css';
+import '../../CSS/FormsUser.css';
 
 const EditEvent = () => {
   const { eventId } = useParams();

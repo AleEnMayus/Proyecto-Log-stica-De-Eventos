@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './gallery2.css';
-import HeaderAdm from '../../components/HeaderAdm';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 
 

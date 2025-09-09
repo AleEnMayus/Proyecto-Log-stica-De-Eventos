@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import HeaderAdm from "../../components/HeaderAdm";
-import "../../components/CSS/Lists.css"; // CSS universal
+import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
+import "../../CSS/Lists.css"; // CSS universal
 
 const Survey = () => {
   // Simulación de tabla "Answers" con relación a Questions, User y Events

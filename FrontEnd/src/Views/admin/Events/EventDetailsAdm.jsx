@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import '../../components/components.css';
-import '../../components/CSS/DetailsEvt.css';
-import HeaderAdm from '../../components/HeaderAdm';
-import ModalState from '../../components/ModalState';
+import '../../CSS/components.css';
+import '../../CSS/DetailsEvt.css';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
+import ModalState from '../../../components/Modals/ModalState';
 
 const EventDetailsA = () => {
   const { eventId } = useParams();

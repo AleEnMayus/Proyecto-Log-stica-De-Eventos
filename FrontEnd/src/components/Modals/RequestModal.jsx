@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./CSS/Modals.css";
+import "../Views/CSS/Modals.css";
 
 const RequestModal = ({ isOpen, onClose, user, requestType }) => {
   const [reason, setReason] = useState("");

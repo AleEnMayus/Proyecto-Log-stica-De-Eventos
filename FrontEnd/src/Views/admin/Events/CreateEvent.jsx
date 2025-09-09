@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import HeaderAdm from "../../components/HeaderAdm";
+import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import AssignResources from "../Resource/AllocateResources";
-import '../../components/components.css';
-import '../../components/CSS/FormsUser.css';
-import '../../components/CSS/Modals.css'; // asegúrate de tener el css del modal
+import '../../CSS/components.css';
+import '../../CSS/FormsUser.css';
+import '../../CSS/Modals.css'; // asegúrate de tener el css del modal
 
 const CreateEvent = () => {
   const navigate = useNavigate();

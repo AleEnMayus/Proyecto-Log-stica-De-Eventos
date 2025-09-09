@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import '../components/components.css';
+import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
+import '../CSS/components.css';
 
 const Calendarclient = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -24,6 +25,7 @@ const Calendarclient = () => {
 
   return (
     <div className="calendar-container">
+      <HeaderCl />
       {/* Título */}
       <h2 className="calendar-title">Calendario</h2>
 

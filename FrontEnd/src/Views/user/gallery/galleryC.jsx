@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './galleryC.css';
-import HeaderCl from "../../components/HeaderCl";
+import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 
 const ImageGalleryC = () => {
   const [images, setImages] = useState(Array(9).fill(null));

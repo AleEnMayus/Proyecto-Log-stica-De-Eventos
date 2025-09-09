@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../CSS/Modals.css";
+import "../../Views/CSS/Modals.css";
 
 const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
   const navigate = useNavigate();

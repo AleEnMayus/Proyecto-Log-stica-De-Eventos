@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Admin.css";
 
 const Calendaradmin = () => {
   const [selectedDate, setSelectedDate] = useState(null);

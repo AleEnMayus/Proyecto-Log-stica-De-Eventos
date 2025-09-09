@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './galleryC2.css';
-import HeaderAdm from '../../components/HeaderAdm';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 const ImageGalleryViewerC = () => {
   const [currentImage, setCurrentImage] = useState(0);

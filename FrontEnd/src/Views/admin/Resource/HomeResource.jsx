@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import HeaderAdm from '../../../components/HeaderAdm';
-import ConfirmModal from "../../../components/ModalConfirm";
-import '../../components/CSS/Lists.css';
-import '../../components/components.css';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
+import ConfirmModal from "../../../components/Modals/ModalConfirm";
+import '../../CSS/Lists.css';
+import '../../CSS/components.css';
 
 const ListResource = () => {
   const [recursos, setRecursos] = useState([

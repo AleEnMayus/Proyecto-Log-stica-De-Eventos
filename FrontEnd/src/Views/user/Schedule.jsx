@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
-import HeaderCl from "../components/HeaderCl";
-import "../components/components.css";
-import "../components/CSS/FormsUser.css";
+import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
+import '../CSS/components.css';
+import "../CSS/FormsUser.css";
 
 const Schedule = () => {
   const [fecha, setFecha] = useState("");

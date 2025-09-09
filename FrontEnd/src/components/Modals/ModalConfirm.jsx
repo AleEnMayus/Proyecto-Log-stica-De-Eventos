@@ -1,5 +1,5 @@
 import React from "react";
-import "./CSS/Modals.css"; // reutiliza tu css de .profile-modal
+import "../Views/CSS/Modals.css";
 
 const ConfirmModal = ({ 
   show, 

@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Endpoint de prueba
 app.get("/api/usuarios", (req, res) => {
-  db.query("SELECT * FROM usuarios", (err, results) => {
+  db.query("SELECT * FROM user", (err, results) => {
     if (err) {
       console.error("Error en consulta:", err);
       res.status(500).json({ error: "Error al obtener usuarios" });
@@ -22,6 +22,10 @@ app.get("/api/usuarios", (req, res) => {
     }
   });
 });
+
+// Rutas
+const authRoutes = require("./routes/auth");
+app.use("/api", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor backend corriendo en http://localhost:${PORT}`);

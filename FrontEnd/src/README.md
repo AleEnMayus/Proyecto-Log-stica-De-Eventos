@@ -23,7 +23,7 @@ Cada subcarpeta dentro de `src` está diseñada para mantener el código modular
 
 ## 📌 Estado
 
-> 🚧 **En desarrollo activo** — Últimos cambios incluyen reorganización de imports y mejoras en la estructura de vistas
+> 🚧 **En desarrollo activo** 
 
 ---
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import "../../Views/CSS/Modals.css";
+import "../../../Views/CSS/Modals.css";
 import RequestModal from '../RequestModal';
 
 const EditModal = ({ isOpen, onClose, user }) => {

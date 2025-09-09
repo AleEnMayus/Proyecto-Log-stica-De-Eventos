@@ -1,5 +1,5 @@
 import React from "react";
-import "../Views/CSS/Modals.css";
+import "../../Views/CSS/Modals.css";
 
 const ConfirmModal = ({ 
   show, 

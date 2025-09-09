@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import "../Views/CSS/Modals.css";
+import "../../Views/CSS/Modals.css";
 
 const ModalState = ({ 
   show, 

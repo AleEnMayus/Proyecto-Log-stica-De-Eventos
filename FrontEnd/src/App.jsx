@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 // Importación de estilos y vistas
-import './components/components.css'
+import './Views/CSS/components.css'
 
 // Importaciones organizadas por tipo
 import {
@@ -11,7 +11,7 @@ import {
   RegisterPage,
   RecoverPassword,
   Logout,
-  UpdatePassword,
+  UpdatePassword, 
   TestC
 } from './imports/commonImports'
 

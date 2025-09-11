@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import '../../components/components.css';
-import '../../components/CSS/Home.css';
-import DynamicHeader from '../../components/DynamicHeader';
+import '../CSS/components.css';
+import '../CSS/Home.css';
+import DynamicHeader from '../../components/HeaderSidebar/DynamicHeader';
 
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);

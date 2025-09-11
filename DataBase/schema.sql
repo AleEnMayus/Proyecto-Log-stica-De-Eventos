@@ -65,6 +65,7 @@ CREATE TABLE EventResources (
     FOREIGN KEY (ResourceId) REFERENCES Resources(ResourceId)
 );
 
+/*
 CREATE TABLE Appointments (
     AppointmentId int PRIMARY KEY AUTO_INCREMENT,
     AppointmentDate datetime,
@@ -73,6 +74,7 @@ CREATE TABLE Appointments (
     FOREIGN KEY (RequestId) REFERENCES Requests(RequestId),
     FOREIGN KEY (UserId) REFERENCES User(UserId)
 );
+*/
 
 CREATE TABLE MultimediaFile (
     FileId int PRIMARY KEY AUTO_INCREMENT,

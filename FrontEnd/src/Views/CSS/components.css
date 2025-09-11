@@ -1,0 +1,175 @@
+/* Css Generales */
+/* img y link */
+.img-50 {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.logolink {
+  text-decoration: none;
+  color: inherit;
+  align-items: center;
+}
+
+.btn-primary-custom {
+  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
+  border: none;
+  border-radius: 25px;
+  padding: 10px 22px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn-primary-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(21, 165, 231, 0.3);
+}
+
+.btn-secondary-custom {
+  background: rgb(255, 83, 121);
+  border: none;
+  border-radius: 25px;
+  padding: 10px 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-secondary-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 83, 121, 0.3);
+  background: rgb(255, 103, 141);
+}
+
+
+/* Margenes personalizadas */
+.mt-10 {
+  margin-top: 10vh !important;
+}
+
+
+/* Contrato */
+
+.contrato-card {
+  background: #ffffff;
+  font-weight: bolder ;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  gap: 20px;
+  border: 1px solid #e9ecef;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contrato-card .contrato-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contrato-item {
+  display: flex;
+  align-items:  center;
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: 1px solid #e9ecef;
+  gap: 12;
+}
+
+
+/* ------------------ PAGINACIÓN OPTIMIZADA ------------------ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 0;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.pagination-numbers {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination-btn, .pagination-arrow {
+  padding: 0.5rem 0.75rem;
+  min-width: 40px;
+  height: 40px;
+  font-size: 0.875rem;
+  text-align: center;
+  border-radius: 20px !important;
+  background-color: #f8f9fa !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover, .pagination-arrow:hover {
+  background-color: #e2e6ea !important;
+}
+
+.pagination-btn.active {
+  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(121, 219, 241));
+  color: #ffffff !important;
+  border: none;
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn.active:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(21, 165, 231, 0.3);
+  background: linear-gradient(135deg, rgb(59, 133, 230), rgb(21, 165, 231));
+}
+
+.pagination-arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-dots {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+
+
+@media (max-width: 770px) {
+  .title-headersb{
+    display: none;
+  }
+  .logo-text{
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .mle-0 {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+}

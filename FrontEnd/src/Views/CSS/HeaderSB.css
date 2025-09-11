@@ -1,24 +1,29 @@
 .header-container {
   position: fixed !important;
-  height: 80px;
   top: 0;
   left: 0;
   right: 0;
+  height: 80px;
   width: 100%;
   z-index: 1060;
   background: white !important;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 /* Botones Header */
 .menu-btn {
   background: transparent;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   padding: 10px;
   border-radius: 8px;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .menu-btn:hover {
   background: rgba(21, 165, 231, 0.1);
   color: rgb(21, 165, 231);
@@ -45,13 +50,18 @@
 }
 
 /* Logo texto Header */
+.logolink {
+  text-decoration: none;
+  align-items: center;
+}
 .logo-text {
+  margin-left: 10px;
+  font-weight: bold;
+  font-size: 1.5rem;
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241), rgb(255, 103, 141));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-weight: bold;
-  font-size: 1.5rem;
 }
 
 /* Sidebar */
@@ -168,11 +178,11 @@
 }
 
 
-@media (max-width: 770px) {
-  .title-headersb {
-    display: none;
-  }
+@media (max-width: 768px) {
   .logo-text {
-    display: none;
+    display: none; /* Oculta texto largo del logo */
+  }
+  .title-headersb {
+    display: none; /* Oculta el nombre del usuario, deja solo avatar */
   }
 }

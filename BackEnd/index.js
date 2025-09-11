@@ -44,5 +44,5 @@ app.get("/api/encuesta", authMiddleware, (req, res) => {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`-----Servidor backend corriendo en http://localhost:${PORT}-----`);
+  console.log(`----- Servidor backend corriendo en http://localhost:${PORT} -----`);
 });

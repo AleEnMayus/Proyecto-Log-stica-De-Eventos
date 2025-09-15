@@ -7,7 +7,6 @@ const {
   createMultipleQuestions
 } = require("../../controllers/QuestionController");
 
-router.post("", createQuestion);
 router.post("/bulk", createMultipleQuestions);
 router.get("", getAllQuestions);
 

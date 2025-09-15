@@ -1,44 +1,6 @@
 const db = require("../db"); // conexión a la base de datos
 const Question = require("../models/Question"); // importar modelo
 
-// Crear una pregunta
-const createQuestion = async (req, res) => {
-  try {
-    const { QuestionText } = req.body;
-
-    // Validar que se envíe texto
-    if (!QuestionText || QuestionText.trim() === "") {
-      return res
-        .status(400)
-        .json({ error: "El texto de la pregunta es obligatorio" });
-    }
-
-    // Verificar cuántas preguntas hay ya en la BD
-    const [rows] = await db.query("SELECT COUNT(*) AS total FROM questions");
-    const total = rows[0].total;
-
-    if (total >= 5) {
-      return res
-        .status(400)
-        .json({ error: "No se pueden agregar más de 5 preguntas" });
-    }
-
-    // Insertar la nueva pregunta
-    const [result] = await db.query(
-      "INSERT INTO questions (QuestionText) VALUES (?)",
-      [QuestionText.trim()]
-    );
-
-    res.status(201).json({
-      message: "Pregunta agregada con éxito",
-      question: { id: result.insertId, text: QuestionText.trim() },
-    });
-  } catch (err) {
-    console.error("Error al crear pregunta:", err);
-    res.status(500).json({ error: "Error interno al crear la pregunta" });
-  }
-};
-
 // Crear varias preguntas a la vez
 const createMultipleQuestions = async (req, res) => {
   try {
@@ -88,7 +50,6 @@ const getAllQuestions = async (req, res) => {
 };
 
 module.exports = {
-  createQuestion,
   getAllQuestions,
   createMultipleQuestions
 };

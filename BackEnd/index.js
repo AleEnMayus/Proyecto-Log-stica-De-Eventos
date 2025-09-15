@@ -8,11 +8,9 @@ const db = require("./db"); // conexión a la base de datos
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// --- Rutas ---
 app.get("/", (req, res) => {
   res.send(" Backend de logística de eventos funcionando!");
 });
@@ -40,6 +38,11 @@ app.use("/api/questions", questionRoutes);
 const resourceRoutes = require("./routes/Admin/Resources");
 app.use("/api/resources", resourceRoutes);
 
+// ✅ Rutas de eventos (AGREGADO)
+const eventRoutes = require("./routes/Admin/Events");
+app.use("/api", eventRoutes);
+
+// Ruta protegida de ejemplo (requiere token)
 // Ruta protegida desactivada temporalmente
 /*
 const authMiddleware = require("./middlewares/authMiddleware");
@@ -48,7 +51,6 @@ app.get("/api/encuesta", authMiddleware, (req, res) => {
 });
 */
 
-// Iniciar servidor
 app.listen(PORT, () => {
   console.log(` Servidor backend corriendo en http://localhost:${PORT}`);
 });

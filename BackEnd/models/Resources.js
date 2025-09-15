@@ -1,4 +1,3 @@
-// models/Resource.js
 const db = require('../db');
 
 async function addResource(ResourceName, Quantity, StatusDescription, Status, Price) {
@@ -7,11 +6,12 @@ async function addResource(ResourceName, Quantity, StatusDescription, Status, Pr
     [ResourceName, Quantity, StatusDescription, Status, Price]
   );
   return { ResourceId: result.insertId, ResourceName, Quantity, StatusDescription, Status, Price };
-}
+} 
 
 async function getAllResources() {
-  const [rows] = await db.execute('SELECT * FROM Resources ORDER BY ResourceId DESC');
-  return rows;
+  const result = await db.execute('SELECT * FROM Resources ORDER BY ResourceId DESC');
+  console.log('Resultado de db.execute:', result);
+  return result[0]; // si es un array, esto debería funcionar
 }
 
 async function updateResource(ResourceId, ResourceName, Quantity, StatusDescription, Status, Price) {
@@ -29,4 +29,9 @@ async function deleteResource(ResourceId) {
   return result.affectedRows > 0;
 }
 
-module.exports = { addResource, getAllResources, updateResource, deleteResource };
+module.exports = { 
+  addResource, 
+  getAllResources, 
+  updateResource, 
+  deleteResource 
+};

@@ -6,6 +6,7 @@ async function getResources(req, res) {
     const resources = await Resource.getAllResources();
     res.json(resources);
   } catch (err) {
+    console.error('Error en getResources:', err); // 👈 Esto ayuda mucho
     res.status(500).json({ error: 'Error obteniendo recursos' });
   }
 }

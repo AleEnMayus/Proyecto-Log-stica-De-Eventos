@@ -3,8 +3,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const db = require("./db");
-const authMiddleware = require("./middleware/authMiddleware");
+const db = require("./db"); // conexión a la base de datos
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -33,9 +32,9 @@ app.use("/api", authRoutes);
 
 // Rutas de preguntas/encuestas
 const questionRoutes = require("./routes/Admin/questions"); 
-app.use("/api", questionRoutes);
+app.use("/api/questions", questionRoutes);
 
-// ✅ Rutas de recursos
+// Rutas de recursos
 const resourceRoutes = require("./routes/Admin/Resources");
 app.use("/api/resources", resourceRoutes);
 
@@ -44,9 +43,13 @@ const eventRoutes = require("./routes/Admin/Events");
 app.use("/api", eventRoutes);
 
 // Ruta protegida de ejemplo (requiere token)
+// Ruta protegida desactivada temporalmente
+/*
+const authMiddleware = require("./middlewares/authMiddleware");
 app.get("/api/encuesta", authMiddleware, (req, res) => {
   res.json({ message: "Acceso autorizado a encuesta", user: req.user });
 });
+*/
 
 app.listen(PORT, () => {
   console.log(` Servidor backend corriendo en http://localhost:${PORT}`);

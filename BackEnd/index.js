@@ -15,7 +15,7 @@ app.use(express.json());
 
 // --- Rutas ---
 app.get("/", (req, res) => {
-  res.send("<center><h1>Backend de logística de eventos funcionando!</h1></center>");
+  res.send("✅ Backend de logística de eventos funcionando!");
 });
 
 // Ruta de usuarios de ejemplo
@@ -34,7 +34,7 @@ const authRoutes = require("./routes/auth");
 app.use("/api", authRoutes);
 
 // Rutas de preguntas/encuestas
-const questionRoutes = require("./routes/admin/questions");
+const questionRoutes = require("./routes/Admin/questions"); // ✅ ruta corregida
 app.use("/api", questionRoutes);
 
 // Ruta protegida de ejemplo (requiere token)
@@ -44,5 +44,5 @@ app.get("/api/encuesta", authMiddleware, (req, res) => {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`-----Servidor backend corriendo en http://localhost:${PORT}-----`);
+  console.log(`🚀 Servidor backend corriendo en http://localhost:${PORT}`);
 });

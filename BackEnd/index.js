@@ -13,7 +13,7 @@ app.use(express.json());
 
 // --- RUTA DE PRUEBA ---
 app.get("/", (req, res) => {
-  res.send(" Backend de logística de eventos funcionando!");
+  res.send(" <center><h1>Backend de logística de eventos funcionando!</h1></center> ");
 });
 
 // --- RUTAS DE AUTENTICACIÓN ---

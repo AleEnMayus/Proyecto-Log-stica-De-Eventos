@@ -31,16 +31,20 @@ const authRoutes = require("./routes/auth");
 app.use("/api", authRoutes);
 
 // Rutas de preguntas/encuestas
-const questionRoutes = require("./routes/Admin/questions"); 
+const questionRoutes = require("./routes/admin/questions"); 
 app.use("/api/questions", questionRoutes);
 
 // Rutas de recursos
-const resourceRoutes = require("./routes/Admin/Resources");
+const resourceRoutes = require("./routes/admin/Resources");
 app.use("/api/resources", resourceRoutes);
 
-// ✅ Rutas de eventos (AGREGADO)
-const eventRoutes = require("./routes/Admin/Events");
-app.use("/api", eventRoutes);
+// Rutas de eventos
+const eventRoutes = require("./routes/admin/Events");
+app.use("/api/events", eventRoutes);
+
+// Rutas de cuentas
+const accountRoutes = require("./routes/admin/accounts");
+app.use("/api/accounts", accountRoutes);
 
 // Ruta protegida de ejemplo (requiere token)
 // Ruta protegida desactivada temporalmente

@@ -1,4 +1,3 @@
-// models/Events.js
 const db = require("../db");
 
 const EventModel = {
@@ -18,21 +17,22 @@ const EventModel = {
     try {
       const sql = `
         INSERT INTO Events 
-        (EventName, EventStatus, Capacity, EventPrice, AdvancePaymentMethod, CreationDate, EventDateTime, Address, EventDescription, Contract, ContractNumber)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (EventName, ClientId, EventStatus, Capacity, EventPrice, AdvancePaymentMethod, CreationDate, EventDateTime, Address, EventDescription, Contract, ContractNumber)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
       const values = [
-        eventData.EventName,
-        eventData.EventStatus,
-        eventData.Capacity,
-        eventData.EventPrice,
-        eventData.AdvancePaymentMethod,
-        eventData.CreationDate,
-        eventData.EventDateTime,
-        eventData.Address,
-        eventData.EventDescription,
-        eventData.Contract,
-        eventData.ContractNumber
+        eventData.EventName || null,
+        eventData.ClientId || null,
+        eventData.EventStatus || "In planning",
+        eventData.Capacity || null,
+        eventData.EventPrice || null,
+        eventData.AdvancePaymentMethod || null,
+        eventData.CreationDate || new Date(),
+        eventData.EventDateTime || null,
+        eventData.Address || null,
+        eventData.EventDescription || null,
+        eventData.Contract || null,
+        eventData.ContractNumber || null
       ];
 
       const [result] = await db.query(sql, values);
@@ -53,20 +53,21 @@ const EventModel = {
   updateEvent: async (id, eventData) => {
     const sql = `
       UPDATE Events 
-      SET EventName=?, EventStatus=?, Capacity=?, EventPrice=?, AdvancePaymentMethod=?, EventDateTime=?, Address=?, EventDescription=?, Contract=?, ContractNumber=?
+      SET EventName=?, ClientId=?, EventStatus=?, Capacity=?, EventPrice=?, AdvancePaymentMethod=?, EventDateTime=?, Address=?, EventDescription=?, Contract=?, ContractNumber=?
       WHERE EventId=?
     `;
     const values = [
-      eventData.EventName,
-      eventData.EventStatus,
-      eventData.Capacity,
-      eventData.EventPrice,
-      eventData.AdvancePaymentMethod,
-      eventData.EventDateTime,
-      eventData.Address,
-      eventData.EventDescription,
-      eventData.Contract,
-      eventData.ContractNumber,
+      eventData.EventName || null,
+      eventData.ClientId || null,
+      eventData.EventStatus || "In planning",
+      eventData.Capacity || null,
+      eventData.EventPrice || null,
+      eventData.AdvancePaymentMethod || null,
+      eventData.EventDateTime || null,
+      eventData.Address || null,
+      eventData.EventDescription || null,
+      eventData.Contract || null,
+      eventData.ContractNumber || null,
       id
     ];
     const [result] = await db.query(sql, values);

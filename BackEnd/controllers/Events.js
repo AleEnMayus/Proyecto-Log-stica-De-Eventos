@@ -1,4 +1,5 @@
 const Event = require("../models/Events");
+const EventResources = require("../models/EventResources");
 
 // Obtener todos los eventos
 async function getEvents(req, res) {
@@ -11,35 +12,93 @@ async function getEvents(req, res) {
   }
 }
 
-// Crear evento
 async function createEvent(req, res) {
   try {
-    const { EventName, EventStatus, Capacity, EventPrice, AdvancePaymentMethod, CreationDate, EventDateTime, Address, EventDescription, ContractNumber } = req.body;
+    const {
+      EventName,
+      ClientId,
+      EventStatus,
+      Capacity,
+      EventPrice,
+      AdvancePaymentMethod,
+      CreationDate,
+      EventDateTime,
+      Address,
+      EventDescription,
+      Contract,
+      ContractNumber,
+      RequestId,
+      resources // 👈 opcional
+    } = req.body;
 
-    const newEvent = await Event.addEvent(
-      EventName, EventStatus, Capacity, EventPrice,
-      AdvancePaymentMethod, CreationDate, EventDateTime,
-      Address, EventDescription, ContractNumber
-    );
+    // 1️⃣ Insertar evento
+    const eventId = await Event.addEvent({
+      EventName,
+      ClientId,
+      EventStatus,
+      Capacity,
+      EventPrice,
+      AdvancePaymentMethod,
+      CreationDate,
+      EventDateTime,
+      Address,
+      EventDescription,
+      Contract,
+      ContractNumber,
+      RequestId
+    });
 
-    res.status(201).json(newEvent);
+    // 2️⃣ Obtener evento recién creado
+    const newEvent = await Event.getEventById(eventId);
+
+    // 3️⃣ Asignar recursos si vienen en el body
+    let resourceResult = [];
+    if (resources && resources.length > 0) {
+      resourceResult = await EventResources.assignResources(eventId, resources);
+    }
+
+    // 4️⃣ Responder con evento + recursos
+    res.status(201).json({
+      event: newEvent,
+      resources: resourceResult
+    });
+
   } catch (err) {
-    console.error("Error creando evento:", err);
-    res.status(500).json({ error: "Error creando evento" });
+    console.error("Error creando evento:", err); // 👈 esto ya lo tienes
+    res.status(500).json({ error: err.message }); // 👈 devuelve mensaje real
   }
 }
+
 
 // Actualizar evento
 async function updateEvent(req, res) {
   try {
     const { id } = req.params;
-    const { EventName, EventStatus, Capacity, EventPrice, AdvancePaymentMethod, EventDateTime, Address, EventDescription, ContractNumber } = req.body;
+    const {
+      EventName,
+      EventStatus,
+      Capacity,
+      EventPrice,
+      AdvancePaymentMethod,
+      EventDateTime,
+      Address,
+      EventDescription,
+      Contract,
+      ContractNumber
+    } = req.body;
 
-    const updatedEvent = await Event.updateEvent(
-      id, EventName, EventStatus, Capacity, EventPrice,
-      AdvancePaymentMethod, EventDateTime, Address,
-      EventDescription, ContractNumber
-    );
+    const updatedEvent = await Event.updateEvent(id, {
+      EventName,
+      EventStatus,
+      Capacity,
+      EventPrice,
+      AdvancePaymentMethod,
+      EventDateTime,
+      Address,
+      EventDescription,
+      Contract,
+      ContractNumber
+    });
 
     updatedEvent
       ? res.json(updatedEvent)

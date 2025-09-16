@@ -49,8 +49,6 @@ CREATE TABLE Events (
     EventDescription varchar(500),
     Contract BLOB,
     ContractNumber INT,
-    RequestId INT,
-    FOREIGN KEY (RequestId) REFERENCES Requests(RequestId),
     FOREIGN KEY (ClientId) REFERENCES User(UserId)
 );
 

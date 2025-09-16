@@ -1,5 +1,5 @@
 const Account = require("../models/Account");
-
+const bcrypt = require("bcrypt");
 // Crear cuenta
 const createAccount = async (req, res) => {
   try {
@@ -9,13 +9,16 @@ const createAccount = async (req, res) => {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
+    // Hashear la contraseña
+    const hashedPassword = await bcrypt.hash(Password, 10); // 10 salt rounds
+
     const result = await Account.create({
       Names,
       DocumentType,
       DocumentNumber,
       BirthDate,
       Email,
-      Password,
+      Password: hashedPassword,
       Status: Status || "active",
       Role: Role || "user"
     });
@@ -29,6 +32,7 @@ const createAccount = async (req, res) => {
     res.status(500).json({ error: "Error interno al crear cuenta" });
   }
 };
+
 
 // Obtener todas las cuentas
 const getAccounts = async (req, res) => {

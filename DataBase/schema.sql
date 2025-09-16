@@ -110,6 +110,12 @@ CREATE TABLE Comments (
     FOREIGN KEY (MultimediaFileId) REFERENCES MultimediaFile(FileId)
 );
 
+CREATE TABLE PasswordReset (
+  Email VARCHAR(255) PRIMARY KEY,
+  Code VARCHAR(10),
+  CreatedAt DATETIME
+);
+
 CREATE OR REPLACE VIEW EventSatisfactionView AS
 SELECT  e.EventId, e.EventName, Names AS Client, ROUND(AVG(a.NumericValue), 2) AS SatisfactionAverage, COUNT(a.AnswerId) AS TotalAnswers
 FROM Events e

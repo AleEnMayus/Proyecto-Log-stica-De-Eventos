@@ -47,7 +47,7 @@ CREATE TABLE Events (
     EventDateTime datetime,
     Address varchar(50),
     EventDescription varchar(500),
-    Contract BLOB,
+    ContractRoute varchar(100),
     ContractNumber INT,
     FOREIGN KEY (ClientId) REFERENCES User(UserId)
 );

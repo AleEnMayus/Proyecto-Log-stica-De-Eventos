@@ -36,17 +36,17 @@ app.use("/api/resources", resourceRoutes);
 const eventRoutes = require("./routes/Admin/Events");
 app.use("/api/events", eventRoutes);
 
-// --- RUTAS DE CITAS ---
-const scheduleRoutes = require("./routes/Admin/Schedule");
-app.use("/api/admin/schedules", scheduleRoutes);
-
 // --- RUTAS DE GESTIÓN DE CUENTAS ---
 const accountsRoutes = require("./routes/admin/accounts");
 app.use("/api/accounts", accountsRoutes);
 
 // --- RUTAS DE PERFIL ---
-const profileRoutes = require("./routes/Admin/Profile");
+const profileRoutes = require("./routes/Profile");
 app.use("/api/profile", profileRoutes);
+
+// --- RUTAS DE SOLICITUDES ---
+const requestRoutes = require("./routes/user/Request");
+app.use("/api/requests", requestRoutes);
 
 // --- SERVIDOR ---
 app.listen(PORT, () => {

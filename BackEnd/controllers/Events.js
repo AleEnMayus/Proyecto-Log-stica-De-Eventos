@@ -12,6 +12,24 @@ async function getEvents(req, res) {
   }
 }
 
+// Obtener un evento por id
+async function getEventById(req, res) {
+  try {
+    const { id } = req.params;
+    const event = await Event.getEventById(id);
+
+    if (!event) {
+      return res.status(404).json({ error: "Evento no encontrado" });
+    }
+
+    res.json(event);
+  } catch (err) {
+    console.error("Error obteniendo evento por ID:", err);
+    res.status(500).json({ error: "Error al obtener evento" });
+  }
+}
+
+// Crear un nuevo evento
 async function createEvent(req, res) {
   try {
     const {
@@ -28,10 +46,10 @@ async function createEvent(req, res) {
       Contract,
       ContractNumber,
       RequestId,
-      resources // 👈 opcional
+      resources // opcional
     } = req.body;
 
-    // 1️⃣ Insertar evento
+    // Insertar evento
     const eventId = await Event.addEvent({
       EventName,
       ClientId,
@@ -48,24 +66,24 @@ async function createEvent(req, res) {
       RequestId
     });
 
-    // 2️⃣ Obtener evento recién creado
+    // Obtener evento recién creado
     const newEvent = await Event.getEventById(eventId);
 
-    // 3️⃣ Asignar recursos si vienen en el body
+    // Asignar recursos si vienen en el body
     let resourceResult = [];
     if (resources && resources.length > 0) {
       resourceResult = await EventResources.assignResources(eventId, resources);
     }
 
-    // 4️⃣ Responder con evento + recursos
+    // Responder con evento + recursos
     res.status(201).json({
       event: newEvent,
       resources: resourceResult
     });
 
   } catch (err) {
-    console.error("Error creando evento:", err); // 👈 esto ya lo tienes
-    res.status(500).json({ error: err.message }); // 👈 devuelve mensaje real
+    console.error("Error creando evento:", err);
+    res.status(500).json({ error: err.message }); //  devuelve mensaje real
   }
 }
 
@@ -126,4 +144,4 @@ async function deleteEvent(req, res) {
   }
 }
 
-module.exports = { getEvents, createEvent, updateEvent, deleteEvent };
+module.exports = { getEvents, getEventById, createEvent, updateEvent, deleteEvent };

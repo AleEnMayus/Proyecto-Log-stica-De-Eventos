@@ -36,9 +36,13 @@ app.use("/api/events", eventRoutes);
 const scheduleRoutes = require("./routes/Admin/Schedule");
 app.use("/api/admin/schedules", scheduleRoutes);
 
-// --- RUTAS DE gestion de CUENTAS ---
+// --- RUTAS DE GESTIÓN DE CUENTAS ---
 const accountsRoutes = require("./routes/admin/accounts");
 app.use("/api/accounts", accountsRoutes);
+
+// --- RUTAS DE PERFIL ---
+const profileRoutes = require("./routes/Admin/Profile");
+app.use("/api/profile", profileRoutes);
 
 // --- SERVIDOR ---
 app.listen(PORT, () => {

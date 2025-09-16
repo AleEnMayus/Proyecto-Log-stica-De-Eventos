@@ -7,10 +7,11 @@ const Question = {
     db.query(query, [text], callback);
   },
 
-  findAll: (callback) => {
+  findAll: async () => {
     const query = "SELECT * FROM questions";
-    db.query(query, callback);
-  }
+    const [rows] = await db.query(query); // usando promesas
+    return rows;
+  },
 };
 
 module.exports = Question;

@@ -1,40 +1,35 @@
+// models/Schedule.js
 const db = require("../db");
 
-module.exports = {
-  // 📌 Crear cita
-  addSchedule: async (data) => {
-    try {
-      const [result] = await db.query(
-        `INSERT INTO Requests (RequestDate, RequestDescription, RequestType, RequestStatus, UserId)
-         VALUES (?, ?, ?, 'pending', ?)`,
-        [data.RequestDate, data.RequestDescription, data.RequestType, data.UserId]
-      );
-      return result;
-    } catch (err) {
-      throw err;
-    }
+const ScheduleModel = {
+  // 📌 Crear nueva cita
+  addSchedule: async ({ RequestDate, RequestDescription, RequestType, UserId }) => {
+    const sql = `
+      INSERT INTO Requests (RequestDate, RequestDescription, RequestType, RequestStatus, UserId)
+      VALUES (?, ?, ?, 'pending', ?)
+    `;
+    const [result] = await db.query(sql, [
+      RequestDate,
+      RequestDescription,
+      RequestType,
+      UserId
+    ]);
+    return result; // result.insertId disponible en controller
   },
 
   // 📌 Obtener todas las citas
   getAllSchedules: async () => {
-    try {
-      const [rows] = await db.query("SELECT * FROM Requests");
-      return rows;
-    } catch (err) {
-      throw err;
-    }
+    const sql = "SELECT * FROM Requests ORDER BY RequestDate DESC";
+    const [rows] = await db.query(sql);
+    return rows;
   },
 
-  // 📌 Cambiar estado
+  // 📌 Actualizar estado de una cita
   updateScheduleStatus: async (id, status) => {
-    try {
-      const [result] = await db.query(
-        "UPDATE Requests SET RequestStatus = ? WHERE RequestId = ?",
-        [status, id]
-      );
-      return result;
-    } catch (err) {
-      throw err;
-    }
-  },
+    const sql = "UPDATE Requests SET RequestStatus = ? WHERE RequestId = ?";
+    const [result] = await db.query(sql, [status, id]);
+    return result; // result.affectedRows disponible en controller
+  }
 };
+
+module.exports = ScheduleModel;

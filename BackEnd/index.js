@@ -36,6 +36,9 @@ app.use("/api/events", eventRoutes);
 const scheduleRoutes = require("./routes/Admin/Schedule");
 app.use("/api/admin/schedules", scheduleRoutes);
 
+// --- RUTAS DE gestion de CUENTAS ---
+const accountsRoutes = require("./routes/admin/accounts");
+app.use("/api/accounts", accountsRoutes);
 
 // --- SERVIDOR ---
 app.listen(PORT, () => {

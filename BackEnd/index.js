@@ -1,4 +1,3 @@
-// backend/index.js
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -11,11 +10,12 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
+// --- RUTA DE PRUEBA ---
 app.get("/", (req, res) => {
   res.send(" Backend de logística de eventos funcionando!");
 });
 
-// Ruta de usuarios de ejemplo
+// --- RUTA DE USUARIOS ---
 app.get("/api/usuarios", (req, res) => {
   db.query("SELECT * FROM user", (err, results) => {
     if (err) {
@@ -26,31 +26,31 @@ app.get("/api/usuarios", (req, res) => {
   });
 });
 
-// Rutas de autenticación
+// --- RUTAS DE AUTENTICACIÓN ---
 const authRoutes = require("./routes/auth");
 app.use("/api", authRoutes);
 
-// Rutas de preguntas/encuestas
-const questionRoutes = require("./routes/Admin/questions"); 
+// --- RUTAS DE PREGUNTAS/ENCUESTAS ---
+const questionRoutes = require("./routes/Admin/questions");
 app.use("/api/questions", questionRoutes);
 
-// Rutas de recursos
+// --- RUTAS DE RECURSOS ---
 const resourceRoutes = require("./routes/Admin/Resources");
 app.use("/api/resources", resourceRoutes);
 
-// ✅ Rutas de eventos (AGREGADO)
+// --- RUTAS DE EVENTOS ---
 const eventRoutes = require("./routes/Admin/Events");
-app.use("/api", eventRoutes);
+app.use("/api/events", eventRoutes);
 
-// Ruta protegida de ejemplo (requiere token)
-// Ruta protegida desactivada temporalmente
-/*
-const authMiddleware = require("./middlewares/authMiddleware");
-app.get("/api/encuesta", authMiddleware, (req, res) => {
-  res.json({ message: "Acceso autorizado a encuesta", user: req.user });
-});
-*/
 
+
+
+// Rutas
+const scheduleRoutes = require("./routes/Admin/Schedule");
+app.use("/api/admin/schedules", scheduleRoutes);
+
+
+// --- SERVIDOR ---
 app.listen(PORT, () => {
   console.log(` Servidor backend corriendo en http://localhost:${PORT}`);
 });

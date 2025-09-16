@@ -8,53 +8,57 @@ const db = require("./db"); // conexión a la base de datos
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// --- MIDDLEWARES ---
 app.use(cors());
 app.use(express.json());
 
+// --- RUTA DE PRUEBA ---
 app.get("/", (req, res) => {
   res.send(" Backend de logística de eventos funcionando!");
 });
 
-// Ruta de usuarios de ejemplo
-app.get("/api/usuarios", (req, res) => {
-  db.query("SELECT * FROM user", (err, results) => {
-    if (err) {
-      console.error("Error en consulta:", err);
-      return res.status(500).json({ error: "Error al obtener usuarios" });
-    }
+// --- RUTA DE USUARIOS ---
+app.get("/api/usuarios", async (req, res) => {
+  try {
+    const [results] = await db.query("SELECT * FROM user");
     res.json(results);
-  });
+  } catch (err) {
+    console.error("Error en consulta:", err);
+    res.status(500).json({ error: "Error al obtener usuarios" });
+  }
 });
 
-// Rutas de autenticación
+// --- RUTAS DE AUTENTICACIÓN ---
 const authRoutes = require("./routes/auth");
 app.use("/api", authRoutes);
 
-// Rutas de preguntas/encuestas
-const questionRoutes = require("./routes/admin/questions"); 
+// --- RUTAS DE PREGUNTAS/ENCUESTAS ---
+const questionRoutes = require("./routes/Admin/questions");
 app.use("/api/questions", questionRoutes);
 
-// Rutas de recursos
-const resourceRoutes = require("./routes/admin/Resources");
+// --- RUTAS DE RECURSOS ---
+const resourceRoutes = require("./routes/Admin/Resources");
 app.use("/api/resources", resourceRoutes);
 
-// Rutas de eventos
-const eventRoutes = require("./routes/admin/Events");
+// --- RUTAS DE EVENTOS ---
+const eventRoutes = require("./routes/Admin/Events");
 app.use("/api/events", eventRoutes);
 
-// Rutas de cuentas
+// --- RUTAS DE CUENTAS ---
 const accountRoutes = require("./routes/admin/accounts");
 app.use("/api/accounts", accountRoutes);
 
-// Ruta protegida de ejemplo (requiere token)
-// Ruta protegida desactivada temporalmente
-/*
-const authMiddleware = require("./middlewares/authMiddleware");
-app.get("/api/encuesta", authMiddleware, (req, res) => {
-  res.json({ message: "Acceso autorizado a encuesta", user: req.user });
-});
-*/
+// --- RUTAS DE CITAS (SCHEDULES) ---
+const scheduleRoutes = require("./routes/Admin/Schedule");
+app.use("/api/admin/schedules", scheduleRoutes);
 
+// --- RUTA PROTEGIDA (ejemplo, desactivada temporalmente) ---
+// const authMiddleware = require("./middlewares/authMiddleware");
+// app.get("/api/encuesta", authMiddleware, (req, res) => {
+//   res.json({ message: "Acceso autorizado a encuesta", user: req.user });
+// });
+
+// --- SERVIDOR ---
 app.listen(PORT, () => {
   console.log(` Servidor backend corriendo en http://localhost:${PORT}`);
 });

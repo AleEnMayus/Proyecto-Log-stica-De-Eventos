@@ -25,21 +25,23 @@ CREATE TABLE Resources(
 );
 
 CREATE TABLE Requests (
-    RequestId int PRIMARY KEY AUTO_INCREMENT,
-    RequestDate datetime,
-    ManagementDate datetime,
-    RequestDescription varchar(30),
-    RequestType ENUM ('schedule_appointment', 'cancel_event', 'document_change'),
-    RequestStatus ENUM ('pending', 'approved', 'rejected'),
-    UserId int,
-    FOREIGN KEY (UserId) REFERENCES User(UserId)
+    RequestId INT PRIMARY KEY AUTO_INCREMENT,
+    RequestDate DATETIME,
+    ManagementDate DATETIME,
+    RequestDescription VARCHAR(30),
+    RequestType ENUM('schedule_appointment', 'cancel_event', 'document_change'),
+    RequestStatus ENUM('pending', 'approved', 'rejected'),
+    UserId INT,
+    EventId INT NULL,
+    FOREIGN KEY (UserId) REFERENCES User(UserId),
+    FOREIGN KEY (EventId) REFERENCES Events(EventId)
 );
 
 CREATE TABLE Events (
     EventId int PRIMARY KEY AUTO_INCREMENT,
     EventName varchar(50),
     ClientId int,
-    EventStatus ENUM('In planning', 'In execution', 'Completed') DEFAULT 'In planning',
+    EventStatus ENUM('In planning', 'In execution', 'Completed', 'Canceled') DEFAULT 'In planning',
     Capacity varchar(25),
     EventPrice float,
     AdvancePaymentMethod enum('Cash','Transfer','Card'),

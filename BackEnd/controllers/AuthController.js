@@ -36,7 +36,7 @@ const login = async (req, res) => {
 
     const passwordMatch = await User.comparePassword(password, user.Password);
     if (!passwordMatch) return res.status(401).json({ message: "Credenciales incorrectas" });
-
+    
     const token = jwt.sign(
       { id: user.UserId, email: user.Email, role: user.Role, fullName: user.Names },
       process.env.JWT_SECRET,

@@ -37,7 +37,8 @@ const eventRoutes = require("./routes/Admin/Events");
 app.use("/api/events", eventRoutes);
 
 // --- RUTAS DE GESTIÓN DE CUENTAS ---
-const accountsRoutes = require("./routes/admin/accounts");
+const accountsRoutes = 
+require("./routes/admin/accounts");
 app.use("/api/accounts", accountsRoutes);
 
 // --- RUTAS DE PERFIL ---
@@ -50,5 +51,5 @@ app.use("/api/requests", requestRoutes);
 
 // --- SERVIDOR ---
 app.listen(PORT, () => {
-  console.log(` Servidor backend corriendo en http://localhost:${PORT}`);
+  console.log( 'Servidor backend corriendo en http://localhost:${PORT}');
 });

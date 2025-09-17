@@ -5,47 +5,61 @@ import "../../CSS/components.css";
 import "../../CSS/FormsUser.css";
 
 const CreateSurvay = () => {
-  const [questions, setQuestions] = useState([""]); // primer input por defecto
+  const [questions, setQuestions] = useState([""]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Agregar nueva pregunta (máximo 5)
   const addQuestion = () => {
     if (questions.length < 5) {
       setQuestions((prev) => [...prev, ""]);
     }
   };
 
-  // Eliminar pregunta (decolorea estrellas al reducir length)
   const removeQuestion = (index) => {
-    if (questions.length === 1) return; // al menos 1
+    if (questions.length === 1) return;
     setQuestions((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Actualizar valor de cada pregunta
   const handleQuestionChange = (index, value) => {
     const updated = [...questions];
     updated[index] = value;
     setQuestions(updated);
   };
 
-  // Enviar datos con validación
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (questions.some((q) => q.trim() === "")) {
       setError("Llena todos los campos de Pregunta.");
       return;
     }
     setError("");
-    console.log("Encuesta creada:", questions);
-    navigate("/SurvayHome");
+
+    try {
+      // ✅ Enviar preguntas al backend
+      const response = await fetch("http://localhost:4000/api/questions/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questions }), // el backend espera { questions: [...] }
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Error al guardar encuesta");
+      }
+
+      const data = await response.json();
+      console.log("Respuesta del backend:", data);
+
+      navigate("/SurvayHome"); // redirigir al home
+    } catch (err) {
+      console.error(err);
+      setError("No se pudo crear la encuesta. Intenta de nuevo.");
+    }
   };
 
-  // Cancelar → volver a SurvayHome
   const handleCancel = () => {
     navigate("/SurvayHome");
   };
 
-  // Estrellas según cantidad de preguntas creadas
   const starCount = Math.min(questions.length, 5);
 
   return (
@@ -54,8 +68,11 @@ const CreateSurvay = () => {
       <div className="login-form-card mt-5">
         <h2 className="login-title">Crear Encuesta</h2>
 
-        {/* Estrellas dinámicas (se colorean al AGREGAR o ELIMINAR preguntas) */}
-        <div className="survay-stars" style={{ textAlign: "center", marginBottom: "20px" }}>
+        {/* Estrellas dinámicas */}
+        <div
+          className="survay-stars"
+          style={{ textAlign: "center", marginBottom: "20px" }}
+        >
           {[...Array(5)].map((_, i) => (
             <svg
               key={i}
@@ -73,7 +90,7 @@ const CreateSurvay = () => {
           ))}
         </div>
 
-        {/* Inputs de preguntas con opción de eliminar (excepto la primera) */}
+        {/* Inputs de preguntas */}
         {questions.map((q, index) => (
           <div key={index} style={{ position: "relative" }}>
             <input
@@ -95,23 +112,26 @@ const CreateSurvay = () => {
                   transform: "translateY(-50%)",
                   background: "transparent",
                   border: "none",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
                 title="Eliminar pregunta"
               >
-                {/* ícono X */}
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#888">
-                  <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12l-4.9 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.9a1 1 0 0 0 1.41-1.41L13.41 12l4.9-4.89a1 1 0 0 0-.01-1.4z"/>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="#888"
+                >
+                  <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12l-4.9 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.9a1 1 0 0 0 1.41-1.41L13.41 12l4.9-4.89a1 1 0 0 0-.01-1.4z" />
                 </svg>
               </button>
             )}
           </div>
         ))}
 
-        {/* Mensaje de error */}
         {error && <p className="text-danger">{error}</p>}
 
-        {/* Botón para agregar preguntas (máximo 5) */}
         {questions.length < 5 && (
           <div className="form-actions">
             <button type="button" className="btn-cancel" onClick={addQuestion}>
@@ -120,9 +140,12 @@ const CreateSurvay = () => {
           </div>
         )}
 
-        {/* Botones finales */}
         <div className="form-actions">
-          <button type="button" className="btn-primary-custom" onClick={handleSubmit}>
+          <button
+            type="button"
+            className="btn-primary-custom"
+            onClick={handleSubmit}
+          >
             Crear
           </button>
           <button type="button" className="btn-cancel" onClick={handleCancel}>

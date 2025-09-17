@@ -31,7 +31,7 @@
     "mongoose": "^7.5.0",
     "multer": "^2.0.2",
     "mysql2": "^3.14.3",
-    "nodemailer": "^6.9.4",
+    "nodemailer": "^6.10.1",
     "superagent": "^10.2.3",
     "uuid": "^9.0.0"
   },

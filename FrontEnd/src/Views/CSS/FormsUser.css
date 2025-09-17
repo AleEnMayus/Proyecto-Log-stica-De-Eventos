@@ -70,12 +70,13 @@
 }
 
 .login-form-card {
-  background: white;
-  border-radius: 15px;
-  padding: 40px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  max-width: 700px;
-  margin: 0 auto;
+  width: 100% !important;
+  max-width: 800px !important;   /* límite del ancho */
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin: 0 auto;     /* asegura centrado horizontal */
 }
 
 .login-title {
@@ -292,22 +293,14 @@ select.form-input {
 }
 
 .login-container {
-  min-height: 100vh;  /* siempre ocupa el alto completo de la ventana */
+  min-height: 100vh;  
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;      /* pequeño espacio interno para que no quede pegado */
-  background-color: #f9f9f9; /* opcional, para diferenciar */
+  padding: 20px;
+  background: #f9f9f9;
 }
 
-.login-form-card {
-  width: 100%;
-  max-width: 800px;  /* límite de ancho */
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
 
 .form-container-custom {
   background: #fff;              /* mantiene el estilo limpio */

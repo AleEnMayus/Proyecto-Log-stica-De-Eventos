@@ -12,32 +12,37 @@ const HeaderSidebar = () => {
   return (
     <>
       <header className="bg-white shadow-sm sticky-top header-container">
-        <div className="container">
-          <div className="row align-items-center py-3">
-            <div className="col-6">
-              <div className="d-flex align-items-center">
-                <button className="menu-btn me-3" onClick={toggleMenu}>
-                  ☰
-                </button>
-                <a href="/" className="navbar-brand d-flex align-items-center">
-                <img src="/HAE_logo.png" className='img-50'/>
-                <div className="logo-text">
-                  Happy-Art Eventos
-                </div>
-                </a>
-              </div>
-            </div>
-            <div className="col-6 text-end">
-              <a href='/Register' className="btn btn-outline-primary me-2 register-btn mb-1 mb-lg-0">
-                Registrarse
-              </a>
-              <Link to="/login" className="btn-primary-custom btn">
-                Iniciar Sesión
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+  <div className="container d-flex justify-content-between align-items-center py-3">
+    
+    {/* Logo + menú */}
+    <div className="d-flex align-items-center">
+      <button className="menu-btn me-3" onClick={toggleMenu}>
+        ☰
+      </button>
+      <a href="/" className="navbar-brand d-flex align-items-center">
+        <img src="/HAE_logo.png" className="img-50" alt="Logo" />
+        <div className="logo-text ms-2">Happy-Art Eventos</div>
+      </a>
+    </div>
+
+    {/* Botones de acción */}
+    <div className="d-flex align-items-center gap-2">
+      <a 
+        href="/Register" 
+        className="btn btn-outline-primary register-btn"
+      >
+        Registrarse
+      </a>
+      <Link 
+        to="/login" 
+        className="btn btn-primary-custom"
+      >
+        Iniciar Sesión
+      </Link>
+    </div>
+  </div>
+</header>
+
 
       {/* Fondo oscuro cuando el menú está abierto */}
       <div

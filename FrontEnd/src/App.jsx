@@ -23,7 +23,7 @@ import {
   EventDetailsA,
   CreateEvent,
   EditEvent,
-  AssingResources,
+  AssingResourcesModal,
   ListResource,
   CreateResource,
   EditResource,
@@ -71,7 +71,7 @@ const routeConfig = {
     { path: '/NotificationsAdmin', component: Notification },
     
     // Recursos
-    { path: '/AssignResources', component: AssingResources },
+    { path: '/AssignResources', component: AssingResourcesModal},
     { path: '/HomeResources', component: ListResource },
     {path: '/CreateResource', component: CreateResource },
     {path: '/EditResource', component: EditResource },

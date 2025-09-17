@@ -5,17 +5,26 @@ import "../../CSS/modals.css";
 
 const EditResource = ({ resource, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
-    id: "",
-    name: "",
-    code: "",
-    quantity: "",
-    status: "Disponible",
-    description: "",
+    ResourceId: "",
+    ResourceName: "",
+    ResourceCode: "",
+    Quantity: "",
+    Status: "Available",
+    StatusDescription: "",
+    Price: "",
   });
 
   useEffect(() => {
     if (resource) {
-      setFormData(resource);
+      setFormData({
+        ResourceId: resource.ResourceId,
+        ResourceName: resource.ResourceName || "",
+        ResourceCode: resource.ResourceCode || "",
+        Quantity: resource.Quantity || "",
+        Status: resource.Status || "Available",
+        StatusDescription: resource.StatusDescription || "",
+        Price: resource.Price || "",
+      });
     }
   }, [resource]);
 
@@ -27,9 +36,35 @@ const EditResource = ({ resource, onSave, onCancel }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/resources/${formData.ResourceId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ResourceName: formData.ResourceName,
+            Quantity: formData.Quantity,
+            StatusDescription: formData.StatusDescription,
+            Status: formData.Status,
+            Price: formData.Price,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Error al actualizar el recurso");
+      }
+
+      const data = await res.json();
+      onSave(data); // notifica al padre
+    } catch (err) {
+      console.error("Error actualizando recurso:", err);
+    }
   };
 
   return (
@@ -46,24 +81,14 @@ const EditResource = ({ resource, onSave, onCancel }) => {
                   <label className="field-label">Nombre</label>
                   <input
                     type="text"
-                    name="name"
+                    name="ResourceName"
                     className="field-value"
-                    value={formData.name}
+                    value={formData.ResourceName}
                     onChange={handleChange}
                     required
                   />
                 </div>
-                <div className="field">
-                  <label className="field-label">Código</label>
-                  <input
-                    type="text"
-                    name="code"
-                    className="field-value"
-                    value={formData.code}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                
               </div>
 
               <div className="field-row two-cols">
@@ -71,9 +96,9 @@ const EditResource = ({ resource, onSave, onCancel }) => {
                   <label className="field-label">Cantidad</label>
                   <input
                     type="number"
-                    name="quantity"
+                    name="Quantity"
                     className="field-value"
-                    value={formData.quantity}
+                    value={formData.Quantity}
                     onChange={handleChange}
                     required
                   />
@@ -81,14 +106,14 @@ const EditResource = ({ resource, onSave, onCancel }) => {
                 <div className="field">
                   <label className="field-label">Estado</label>
                   <select
-                    name="status"
+                    name="Status"
                     className="field-value"
-                    value={formData.status}
+                    value={formData.Status}
                     onChange={handleChange}
                   >
-                    <option value="Disponible">Disponible</option>
-                    <option value="En uso">En uso</option>
-                    <option value="Mantenimiento">Mantenimiento</option>
+                    <option value="Available">Dispeonibl</option>
+                    <option value="In use">En uso</option>
+                    
                   </select>
                 </div>
               </div>
@@ -96,9 +121,21 @@ const EditResource = ({ resource, onSave, onCancel }) => {
               <div className="field">
                 <label className="field-label">Descripción</label>
                 <textarea
-                  name="description"
+                  name="StatusDescription"
                   className="field-value min-h-200px"
-                  value={formData.description}
+                  value={formData.StatusDescription}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="field">
+                <label className="field-label">Precio</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  name="Price"
+                  className="field-value"
+                  value={formData.Price}
                   onChange={handleChange}
                 />
               </div>

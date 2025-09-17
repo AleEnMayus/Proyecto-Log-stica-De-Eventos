@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "../../components/components.css";
-import "../../components/CSS/Lists.css";
-import "../../components/CSS/modals.css";
+import "../../CSS/components.css";
+import "../../CSS/Lists.css";
+import "../../CSS/modals.css";
 
 const EditResource = ({ resource, onSave, onCancel }) => {
   const [formData, setFormData] = useState({

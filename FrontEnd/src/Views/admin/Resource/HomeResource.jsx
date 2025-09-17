@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD:FrontEnd/src/admin/Resource/HomeResource.jsx
 import { useNavigate } from 'react-router-dom';
-import HeaderAdm from '../../components/HeaderAdm';
-import ConfirmModal from "../../components/ModalConfirm";
-import EditResource from "./EditResource"; // 👈 Importa el modal de edición
-import '../../components/CSS/Lists.css';
-import '../../components/components.css';
-=======
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
+import EditResource from "./EditResource"; 
 import '../../CSS/Lists.css';
 import '../../CSS/components.css';
->>>>>>> 1c04d19fc188fbf7dd979bc213b83d63ab621623:FrontEnd/src/Views/admin/Resource/HomeResource.jsx
 
 const ListResource = () => {
   const navigate = useNavigate();

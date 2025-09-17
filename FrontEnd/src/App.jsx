@@ -23,10 +23,6 @@ import {
   EventDetailsA,
   CreateEvent,
   EditEvent,
-<<<<<<< HEAD
-  AssingResourcesModal,
-=======
->>>>>>> 7fd3787a61046f988f2e2e00e4251264fafeedde
   ListResource,
   CreateResource,
   Survay,
@@ -73,12 +69,7 @@ const routeConfig = {
     { path: '/NotificationsAdmin', component: Notification },
     
     // Recursos
-<<<<<<< HEAD
-    { path: '/AssignResources', component: AssingResourcesModal},
-    { path: '/HomeResources', component: ListResource },
-=======
     {path: '/HomeResources', component: ListResource },
->>>>>>> 7fd3787a61046f988f2e2e00e4251264fafeedde
     {path: '/CreateResource', component: CreateResource },
     
     // Encuestas

@@ -28,13 +28,31 @@ const HeaderCl = () => {
     setOpenComponent("perfil");
   };
 
-  const userImageUrl = userData?.profilePicture || null;
+  // Función para guardar cambios del perfil
+  const handleSaveProfile = (updatedData) => {
+    const updatedUser = {
+      ...userData,
+      ...updatedData
+    };
+    
+    setUserData(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // Aquí puedes agregar llamada a API si necesitas
+    console.log('Perfil actualizado:', updatedData);
+    
+    // Opcional: mostrar mensaje de éxito
+    // alert('Perfil actualizado correctamente');
+  };
+
+  const userImageUrl = userData?.photo || null; // Cambié profilePicture por photo para consistencia
 
   const getUserLabel = () => {
     if (userData?.role === 'admin') return 'admin';
     if (userData) return 'Cliente';
     return '?';
   };
+
   return (
     <>
       <header className="bg-white shadow-sm sticky-top header-container">
@@ -97,7 +115,7 @@ const HeaderCl = () => {
                       <div className="text-muted small">{userData.email}</div>
                       <div className="badge bg-secondary small mt-1">{getUserLabel()}</div>
                     </div>
-                    <Link
+                    <button
                       className="dropdown-item-custom"
                       onClick={() => {
                         openPerfil();
@@ -105,7 +123,7 @@ const HeaderCl = () => {
                       }}
                     >
                       Ver perfil
-                    </Link> 
+                    </button> 
                     <Link to="/logout" className="dropdown-item-custom">
                       Cerrar sesión
                     </Link>
@@ -162,6 +180,7 @@ const HeaderCl = () => {
         isOpen={openComponent === "edit"}
         onClose={() => setOpenComponent(null)}
         user={userData}
+        onSave={handleSaveProfile}
       />
     </>
   );

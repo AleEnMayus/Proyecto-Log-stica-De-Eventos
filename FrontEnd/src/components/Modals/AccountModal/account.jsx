@@ -1,15 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../../Views/CSS/Modals.css";
 
-const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
+const PerfilModal = ({ isOpen, onClose, onEdit }) => {
   const navigate = useNavigate();
-  
-  if (!isOpen) return null;
+  const [user, setUser] = useState({}); // Inicializa con un objeto vacío
+
+  useEffect(() => {
+    if (isOpen) {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          console.error("No se encontraron datos de usuario en localStorage.");
+          onClose();
+        }
+      } catch (error) {
+        console.error("Error al obtener el usuario de localStorage:", error);
+        onClose();
+      }
+    }
+  }, [isOpen, onClose]);
+
+  // Si el modal no está abierto, no renderices nada
+  if (!isOpen) {
+    return null;
+  }
 
   const stop = (e) => e.stopPropagation();
 
-  // Sacamos los datos del user que viene del localStorage
+  // Acceso seguro a las propiedades del objeto 'user'
   const {
     fullName,
     email,
@@ -17,15 +38,16 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
     identificationType,
     documentNumber,
     photo,
-    role
-  } = user || {};
+    role,
+  } = user;
+
+  // Manejo de la fecha: utiliza un valor predeterminado si 'birthDate' no existe
+  const onlyDate = birthDate ? new Date(birthDate).toISOString().split("T")[0] : '';
 
   const rolLegible = role === "admin" ? "Administrador" : "Cliente";
-  const onlyDate = birthDate.split("T")[0];
 
   return (
     <>
-      {/* Modal Perfil */}
       <div className="sidebar-overlay active" onClick={onClose}>
         <div
           className="profile-modal"
@@ -108,11 +130,13 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
           </div>
 
           <div className="pm-footer">
-            <button className="btn-primary-custom w-100"
+            <button
+              className="btn-primary-custom w-100"
               onClick={() => {
                 onClose();
-                onEdit();   // Abre el EditModal desde el padre
-              }}>
+                onEdit();
+              }}
+            >
               Editar perfil
             </button>
             <button
@@ -120,7 +144,8 @@ const PerfilModal = ({ isOpen, onClose, user, onEdit  }) => {
               onClick={() => {
                 onClose();
                 navigate("/logout");
-              }}>
+              }}
+            >
               Cerrar sesión
             </button>
           </div>

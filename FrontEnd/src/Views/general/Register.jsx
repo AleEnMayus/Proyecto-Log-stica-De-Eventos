@@ -41,7 +41,7 @@ const RegisterPage = () => {
       });
 
       if (response.ok) {
-        setErrorMessage('✅ Registro exitoso. Ahora puedes iniciar sesión.');
+        setErrorMessage(' Registro exitoso. Ahora puedes iniciar sesión.');
         setFormData({
           fullName: '',
           birthDate: '',

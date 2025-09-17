@@ -9,7 +9,7 @@ const EditResource = ({ resource, onSave, onCancel }) => {
     ResourceName: "",
     ResourceCode: "",
     Quantity: "",
-    Status: "Available",
+    Status: "Disponible",
     StatusDescription: "",
     Price: "",
   });
@@ -21,7 +21,7 @@ const EditResource = ({ resource, onSave, onCancel }) => {
         ResourceName: resource.ResourceName || "",
         ResourceCode: resource.ResourceCode || "",
         Quantity: resource.Quantity || "",
-        Status: resource.Status || "Available",
+        Status: resource.Status || "Disponible",
         StatusDescription: resource.StatusDescription || "",
         Price: resource.Price || "",
       });
@@ -88,7 +88,17 @@ const EditResource = ({ resource, onSave, onCancel }) => {
                     required
                   />
                 </div>
-                
+                <div className="field">
+                  <label className="field-label">Código</label>
+                  <input
+                    type="text"
+                    name="ResourceCode"
+                    className="field-value"
+                    value={formData.ResourceCode}
+                    onChange={handleChange}
+                    disabled // no existe en el modelo actual
+                  />
+                </div>
               </div>
 
               <div className="field-row two-cols">
@@ -111,9 +121,9 @@ const EditResource = ({ resource, onSave, onCancel }) => {
                     value={formData.Status}
                     onChange={handleChange}
                   >
-                    <option value="Available">Dispeonibl</option>
-                    <option value="In use">En uso</option>
-                    
+                    <option value="Disponible">Disponible</option>
+                    <option value="En uso">En uso</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
                   </select>
                 </div>
               </div>

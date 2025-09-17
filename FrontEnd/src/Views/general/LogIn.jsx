@@ -35,10 +35,10 @@ const LoginPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem("authToken", data.token); // 🔑 Token
-        localStorage.setItem("user", JSON.stringify(data.user)); // 👤 Datos usuario
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         console.log("✅ Login exitoso:", data.user);
-        navigate(0);
+        navigate("/");
       } else {
         setError(data.message || "Error al iniciar sesión");
       }
@@ -48,7 +48,6 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
-
 
   const handleGoBackBrowser = () => {
     window.history.back();

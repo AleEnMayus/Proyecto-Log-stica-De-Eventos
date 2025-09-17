@@ -1,20 +1,29 @@
+// Importaciones de React y hooks
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// Importación de componentes y estilos
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import '../../CSS/components.css';
 import '../../CSS/FormsUser.css';
 
+/**
+ * Componente: CreateResource
+ * Permite crear un nuevo recurso mediante un formulario.
+ */
 const CreateResource = () => {
   const navigate = useNavigate();
 
+  // Estado local del formulario
   const [formData, setFormData] = useState({
-    resourceName: '',
-    resourceCode: '',
-    quantity: '',
-    status: 'Disponible', // Estado por defecto
-    description: ''
+    resourceName: '',     // Nombre del recurso
+    quantity: '',         // Cantidad disponible
+    status: 'Available', // Estado por defecto
+    description: '',      // Descripción del recurso
+    price: ''             // Precio (opcional)
   });
 
+  // Maneja cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -23,24 +32,50 @@ const CreateResource = () => {
     }));
   };
 
-  const handleSubmit = () => {
-    console.log('Form data:', formData);
-    alert('Recurso creado exitosamente');
+  // Enviar datos a la API
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("http://localhost:4000/api/resources", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ResourceName: formData.resourceName,
+          Quantity: formData.quantity,
+          StatusDescription: formData.description,
+          Status: formData.status,
+          Price: formData.price || 0
+        })
+      });
+
+      if (!response.ok) throw new Error("Error al crear recurso");
+
+      const newResource = await response.json();
+      console.log("Recurso creado:", newResource);
+
+      alert(" Recurso creado exitosamente");
+      navigate("/HomeResources");
+    } catch (error) {
+      console.error("Error creando recurso:", error);
+      alert(" Ocurrió un error al crear el recurso");
+    }
   };
 
+  // Cancelar y volver atrás
   const handleCancel = () => {
-    navigate(-1); // Más limpio que window.history.back()
+    navigate(-1);
   };
 
   return (
     <>
       <HeaderAdm />
-      <div className="login-container d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
 
+      <div className="login-container d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
         <div className="login-form-card w-100">
           <h1 className="login-title">CREAR RECURSO</h1>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+            
+            {/* Nombre y Cantidad */}
             <div className="form-row">
               <div className="form-col">
                 <label className="form-label">
@@ -58,27 +93,10 @@ const CreateResource = () => {
               </div>
               <div className="form-col">
                 <label className="form-label">
-                  Código del recurso <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="resourceCode"
-                  className="form-input"
-                  placeholder="Ej: PRJ-01, MIC-01, SLL-01..."
-                  value={formData.resourceCode}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-col">
-                <label className="form-label">
                   Cantidad <span className="text-danger">*</span>
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="quantity"
                   className="form-input"
                   placeholder="Ej: 10"
@@ -88,6 +106,10 @@ const CreateResource = () => {
                   required
                 />
               </div>
+            </div>
+
+            {/* Estado y Precio */}
+            <div className="form-row">
               <div className="form-col">
                 <label className="form-label">
                   Estado <span className="text-danger">*</span>
@@ -99,14 +121,27 @@ const CreateResource = () => {
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="Disponible">Disponible</option>
-                  <option value="En uso">En uso</option>
-                  <option value="Mantenimiento">Mantenimiento</option>
-                  <option value="Fuera de servicio">Fuera de servicio</option>
+                  <option value="Available">Disponible</option>
+                  <option value="In use">En uso</option>
                 </select>
+              </div>
+              <div className="form-col">
+                <label className="form-label">
+                  Precio (opcional)
+                </label>
+                <input
+                  type="number"
+                  name="price"
+                  className="form-input"
+                  placeholder="Ej: 50000"
+                  min="0"
+                  value={formData.price}
+                  onChange={handleInputChange}
+                />
               </div>
             </div>
 
+            {/* Descripción */}
             <div className="mb-3">
               <label className="form-label">
                 Descripción del recurso <span className="text-danger">*</span>
@@ -114,7 +149,7 @@ const CreateResource = () => {
               <textarea
                 name="description"
                 className="form-input"
-                placeholder="Describe las características, especificaciones técnicas o detalles importantes del recurso..."
+                placeholder="Describe características o detalles importantes del recurso..."
                 value={formData.description}
                 onChange={handleInputChange}
                 rows={4}
@@ -123,6 +158,7 @@ const CreateResource = () => {
               />
             </div>
 
+            {/* Botones */}
             <div className="form-actions">
               <button
                 type="button"

@@ -12,14 +12,20 @@ const RecoverPassword = () => {
   
   const codeRefs = useRef([]);
 
-  // Manejo del cambio de valor en los inputs del código
+  
+  /**
+   * Manejo del cambio de valor en los inputs del código de verificación.
+   * - Valida que el valor sea un dígito.
+   * - Actualiza el estado con el nuevo valor.
+   * - Cambia el foco al siguiente o anterior input automáticamente.
+   * 🔗 No requiere API.
+   */
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
 
-      // Enfocar al siguiente campo automáticamente
       if (value && index < code.length - 1) {
         codeRefs.current[index + 1].focus();
       } else if (!value && index > 0) {
@@ -28,7 +34,13 @@ const RecoverPassword = () => {
     }
   };
 
-  // Función para enviar el código de verificación al correo
+  /**
+   * Envía un código de recuperación al correo ingresado.
+   * - Valida que exista un email.
+   * - Llama a la API con método POST -> /send-recovery-code.
+   * - Muestra alertas o errores según la respuesta.
+   * 🔗 Requiere API.
+   */
   const handleSendCode = async () => {
     if (!email) {
       setErrorMessage('Por favor ingresa tu correo.');
@@ -36,10 +48,10 @@ const RecoverPassword = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/send-recovery-code', {
+      const response = await fetch('http://localhost:4000/api/password/send-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email }),
       });
 
       if (response.ok) {
@@ -53,7 +65,15 @@ const RecoverPassword = () => {
     }
   };
 
-  // Función para manejar la actualización de la contraseña
+
+  /**
+   * Envía la nueva contraseña junto al código de verificación.
+   * - Valida que las contraseñas coincidan.
+   * - Llama a la API con método POST -> /reset-password.
+   * - Envía: email, código y nueva contraseña.
+   * - Muestra alertas o errores según la respuesta.
+   * 🔗 Requiere API.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -63,7 +83,7 @@ const RecoverPassword = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/reset-password', {
+      const response = await fetch('http://localhost:4000/api/password/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -84,6 +104,10 @@ const RecoverPassword = () => {
     }
   };
 
+  /**
+   * Regresa a la página anterior en el navegador.
+   * 🔗 No requiere API.
+   */
   const handleGoBackBrowser = () => {
     window.history.back();
   };
@@ -112,6 +136,7 @@ const RecoverPassword = () => {
           {errorMessage && <div className="error-message">{errorMessage}</div>}
 
           <form onSubmit={handleSubmit}>
+            {/* Correo */}
             <div className="form-group mb-3">
               <label>Correo</label>
               <div className="d-flex">
@@ -134,6 +159,7 @@ const RecoverPassword = () => {
               </div>
             </div>
 
+            {/* Código */}
             <div className="code-inputs mb-3">
               {code.map((digit, index) => (
                 <input
@@ -147,6 +173,7 @@ const RecoverPassword = () => {
               ))}
             </div>
 
+            {/* Nueva contraseña */}
             <div className="form-group mb-3 password-group">
               <label>Nueva Contraseña</label>
               <div className="input-with-icon">
@@ -162,11 +189,24 @@ const RecoverPassword = () => {
                   className="toggle-visibility-inside"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
-                  {showNewPassword ? '🙈' : '👁️'}
+                  {showNewPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                      <path d="M1 1l22 22" />
+                    </svg>
+                  )}
                 </span>
               </div>
             </div>
 
+            {/* Confirmar contraseña */}
             <div className="form-group mb-4 password-group">
               <label>Confirmar Contraseña</label>
               <div className="input-with-icon">
@@ -182,7 +222,19 @@ const RecoverPassword = () => {
                   className="toggle-visibility-inside"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showConfirmPassword ? '🙈' : '👁️'}
+                  {showConfirmPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                      <path d="M1 1l22 22" />
+                    </svg>
+                  )}
                 </span>
               </div>
             </div>

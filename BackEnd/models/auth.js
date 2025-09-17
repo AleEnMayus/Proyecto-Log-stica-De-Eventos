@@ -18,17 +18,35 @@ const auth = {
     return rows[0];
   },
 
+  // AGREGAR ESTE MÉTODO
+  findById: async (userId) => {
+    const [rows] = await db.query(
+      "SELECT * FROM User WHERE UserId = ?",
+      [userId]
+    );
+    return rows[0];
+  },
+
   create: async ({ fullName, identificationType, documentNumber, birthDate, email, password }) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     await db.query(
-      `INSERT INTO User (Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role) 
-       VALUES (?, ?, ?, ?, ?, ?, 'active', 'user')`,
+      `INSERT INTO User (Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role)
+        VALUES (?, ?, ?, ?, ?, ?, 'active', 'user')`,
       [fullName, identificationType, documentNumber, birthDate, email, hashedPassword]
     );
   },
 
   comparePassword: async (password, hashedPassword) => {
     return await bcrypt.compare(password, hashedPassword);
+  },
+
+  // AGREGAR ESTE MÉTODO PARA ACTUALIZAR CONTRASEÑA
+  updatePassword: async (userId, newPasswordHash) => {
+    const [result] = await db.query(
+      "UPDATE User SET Password = ? WHERE UserId = ?",
+      [newPasswordHash, userId]
+    );
+    return result;
   },
 };
 

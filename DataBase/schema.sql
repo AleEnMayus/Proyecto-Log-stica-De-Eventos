@@ -2,28 +2,49 @@ DROP DATABASE IF EXISTS ProyectoLogisticaEventos;
 CREATE DATABASE ProyectoLogisticaEventos;
 USE ProyectoLogisticaEventos;
 
-CREATE TABLE User(
-    UserId int PRIMARY KEY AUTO_INCREMENT,
-    Names varchar(50),
-    DocumentType enum('CC', 'CE', 'PP'),
-    DocumentNumber varchar(20),
-    BirthDate date,
-    Email varchar(50),
-    Password varchar(255),
-    Status enum('active', 'inactive'),
-    Role enum('user','admin'),
-    Photo varchar(255)
+-- Tabla de usuarios
+CREATE TABLE User (
+    UserId INT PRIMARY KEY AUTO_INCREMENT,
+    Names VARCHAR(50),
+    DocumentType ENUM('CC', 'CE', 'PP'),
+    DocumentNumber VARCHAR(20),
+    BirthDate DATE,
+    Email VARCHAR(50),
+    Password VARCHAR(255),
+    Status ENUM('active', 'inactive'),
+    Role ENUM('user','admin'),
+    Photo VARCHAR(255)
 );
 
-CREATE TABLE Resources(
-    ResourceId int PRIMARY KEY AUTO_INCREMENT,
-    ResourceName varchar(50),
-    Quantity varchar(40),
-    StatusDescription varchar(150),
-    Status enum('In use','Available'),
-    Price float
+-- Tabla de recursos
+CREATE TABLE Resources (
+    ResourceId INT PRIMARY KEY AUTO_INCREMENT,
+    ResourceName VARCHAR(50),
+    Quantity VARCHAR(40),
+    StatusDescription VARCHAR(150),
+    Status ENUM('In use','Available'),
+    Price FLOAT
 );
 
+-- Tabla de eventos
+CREATE TABLE Events (
+    EventId INT PRIMARY KEY AUTO_INCREMENT,
+    EventName VARCHAR(50),
+    ClientId INT,
+    EventStatus ENUM('In planning', 'In execution', 'Completed', 'Canceled') DEFAULT 'In planning',
+    Capacity VARCHAR(25),
+    EventPrice FLOAT,
+    AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
+    CreationDate DATETIME,
+    EventDateTime DATETIME,
+    Address VARCHAR(50),
+    EventDescription VARCHAR(500),
+    ContractRoute VARCHAR(100),
+    ContractNumber INT,
+    FOREIGN KEY (ClientId) REFERENCES User(UserId)
+);
+
+-- Tabla de solicitudes
 CREATE TABLE Requests (
     RequestId INT PRIMARY KEY AUTO_INCREMENT,
     RequestDate DATETIME,
@@ -37,95 +58,80 @@ CREATE TABLE Requests (
     FOREIGN KEY (EventId) REFERENCES Events(EventId)
 );
 
-CREATE TABLE Events (
-    EventId int PRIMARY KEY AUTO_INCREMENT,
-    EventName varchar(50),
-    ClientId int,
-    EventStatus ENUM('In planning', 'In execution', 'Completed', 'Canceled') DEFAULT 'In planning',
-    Capacity varchar(25),
-    EventPrice float,
-    AdvancePaymentMethod enum('Cash','Transfer','Card'),
-    CreationDate datetime,
-    EventDateTime datetime,
-    Address varchar(50),
-    EventDescription varchar(500),
-    ContractRoute varchar(100),
-    ContractNumber INT,
-    FOREIGN KEY (ClientId) REFERENCES User(UserId)
-);
-
+-- Tabla de recursos asignados a eventos
 CREATE TABLE EventResources (
-    EventResourceId int PRIMARY KEY AUTO_INCREMENT,
-    AssignedQuantity int,
-    AssignmentStatus enum('reserved', 'assigned', 'returned'),
-    EventId int,
-    ResourceId int,
-    Prices float,
+    EventResourceId INT PRIMARY KEY AUTO_INCREMENT,
+    AssignedQuantity INT,
+    AssignmentStatus ENUM('reserved', 'assigned', 'returned'),
+    EventId INT,
+    ResourceId INT,
+    Prices FLOAT,
     FOREIGN KEY (EventId) REFERENCES Events(EventId),
     FOREIGN KEY (ResourceId) REFERENCES Resources(ResourceId)
 );
 
-/*
-CREATE TABLE Appointments (
-    AppointmentId int PRIMARY KEY AUTO_INCREMENT,
-    AppointmentDate datetime,
-    RequestId int,
-    UserId int,
-    FOREIGN KEY (RequestId) REFERENCES Requests(RequestId),
+-- Tabla de archivos multimedia
+CREATE TABLE MultimediaFile (
+    FileId INT PRIMARY KEY AUTO_INCREMENT,
+    FileName VARCHAR(50),
+    FilePath VARCHAR(256),
+    Extension ENUM('JPG','PNG'),
+    UserId INT,
     FOREIGN KEY (UserId) REFERENCES User(UserId)
 );
-*/
 
-CREATE TABLE MultimediaFile (
-    FileId int PRIMARY KEY AUTO_INCREMENT,
-    FileName varchar(50),
-    FilePath varchar(256),
-    Extension enum('JPG','PNG'),
-    UserId int,
-FOREIGN KEY (UserId) REFERENCES User(UserId)
-);
-
+-- Tabla de respuestas
 CREATE TABLE Answers (
-    AnswerId int PRIMARY KEY AUTO_INCREMENT,
-    NumericValue int,
-    EventId int,
-    UserId int,
+    AnswerId INT PRIMARY KEY AUTO_INCREMENT,
+    NumericValue INT,
+    EventId INT,
+    UserId INT,
     FOREIGN KEY (EventId) REFERENCES Events(EventId),
     FOREIGN KEY (UserId) REFERENCES User(UserId)
 );
 
+-- Tabla de preguntas
 CREATE TABLE Questions (
-    QuestionId int PRIMARY KEY AUTO_INCREMENT,
-    QuestionText text,
+    QuestionId INT PRIMARY KEY AUTO_INCREMENT,
+    QuestionText TEXT,
     AnswerId INT,
     FOREIGN KEY (AnswerId) REFERENCES Answers(AnswerId)
 );
 
+-- Tabla de comentarios
 CREATE TABLE Comments (
-    CommentId int PRIMARY KEY AUTO_INCREMENT,
-    CommentText text,
-    CommentStatus enum('pending', 'selected', 'rejected') DEFAULT 'pending',
-    PublicationDate datetime,
-    UserId int,
-    MultimediaFileId int,
+    CommentId INT PRIMARY KEY AUTO_INCREMENT,
+    CommentText TEXT,
+    CommentStatus ENUM('pending', 'selected', 'rejected') DEFAULT 'pending',
+    PublicationDate DATETIME,
+    UserId INT,
+    MultimediaFileId INT,
     FOREIGN KEY (UserId) REFERENCES User(UserId),
     FOREIGN KEY (MultimediaFileId) REFERENCES MultimediaFile(FileId)
 );
 
+-- Tabla para recuperación de contraseña
 CREATE TABLE PasswordReset (
-  Email VARCHAR(255) PRIMARY KEY,
-  Code VARCHAR(10),
-  CreatedAt DATETIME
+    Email VARCHAR(255) PRIMARY KEY,
+    Code VARCHAR(10),
+    CreatedAt DATETIME
 );
 
+-- Vista de satisfacción de eventos
 CREATE OR REPLACE VIEW EventSatisfactionView AS
-SELECT  e.EventId, e.EventName, Names AS Client, ROUND(AVG(a.NumericValue), 2) AS SatisfactionAverage, COUNT(a.AnswerId) AS TotalAnswers
+SELECT 
+    e.EventId, 
+    e.EventName, 
+    u.Names AS Client, 
+    ROUND(AVG(a.NumericValue), 2) AS SatisfactionAverage, 
+    COUNT(a.AnswerId) AS TotalAnswers
 FROM Events e
 JOIN User u ON e.ClientId = u.UserId
 JOIN Answers a ON e.EventId = a.EventId
 GROUP BY e.EventId, e.EventName, Client
 ORDER BY SatisfactionAverage DESC;
 
+-- Procedimiento almacenado para filtrar eventos por satisfacción
 DELIMITER //
 
 CREATE PROCEDURE GetEventsBySatisfaction (
@@ -138,3 +144,5 @@ BEGIN
     ORDER BY SatisfactionAverage DESC;
 END;
 //
+
+DELIMITER ;

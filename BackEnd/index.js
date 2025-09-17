@@ -20,8 +20,8 @@ app.get("/", (req, res) => {
 const authRoutes = require("./routes/auth");
 app.use("/api", authRoutes);
 
-// --- RUTAS DE CONTRASEÑAS (recuperación y cambio desde perfil) ---
-const passwordChangeRoutes = require("./routes/Admin/PasswordChange");
+// --- RUTAS DE CONTRASEÑAS (cambio desde perfil) ---
+const passwordChangeRoutes = require("./routes/PasswordChange");
 app.use("/api/password", passwordChangeRoutes);
 
 // --- RUTAS DE PREGUNTAS/ENCUESTAS ---

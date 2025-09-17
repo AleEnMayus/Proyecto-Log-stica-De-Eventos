@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const Account = {
   // Crear usuario con contraseña hasheada
   create: async ({ Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status = "active", Role = "user" }) => {
+    if (!Password) throw new Error("Password is required");
     const hashedPassword = await bcrypt.hash(Password, 10);
 
     const sql = `
@@ -20,9 +21,9 @@ const Account = {
       Status,
       Role
     ]);
-    return result;
+    return result.insertId; // devuelve id del usuario creado
   },
-
+  
   findAll: async () => {
     const sql = "SELECT UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Status, Role FROM User";
     const [rows] = await db.query(sql);

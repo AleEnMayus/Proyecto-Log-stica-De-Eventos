@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import HeaderAdm from '../../components/HeaderAdm';
 import ConfirmModal from "../../components/ModalConfirm";
 import EditResource from "./EditResource"; // 👈 Importa el modal de edición
 import '../../components/CSS/Lists.css';
 import '../../components/components.css';
+=======
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
+import ConfirmModal from "../../../components/Modals/ModalConfirm";
+import EditResource from "./EditResource"; 
+import '../../CSS/Lists.css';
+import '../../CSS/components.css';
+>>>>>>> 7fd3787a61046f988f2e2e00e4251264fafeedde
 
 const ListResource = () => {
   const navigate = useNavigate();

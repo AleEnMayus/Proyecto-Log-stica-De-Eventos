@@ -10,10 +10,15 @@ export { default as AdminAccountsList } from '../Views/admin/ManageAcc/HomeAccou
 export { default as CreateAccountForm } from '../Views/admin/ManageAcc/CreateAcc'
 export { default as EditAccountPage } from '../Views/admin/ManageAcc/EditAccAdmin'
 // Registro de Recuros
+<<<<<<< HEAD
 export { default as AssingResources } from '../Views/admin/Resource/AllocateResources'
 export { default as ListResource } from '../Views/admin/Resource/HomeResource'
 export { default as CreateResource } from '../Views/admin/Resource/CreateResource'
 export { default as EditResource } from '../Views/admin/Resource/EditResource'
+=======
+export { default as CreateResource } from '../Views/admin/Resource/CreateResource'
+export { default as ListResource } from '../Views/admin/Resource/HomeResource'
+>>>>>>> 7fd3787a61046f988f2e2e00e4251264fafeedde
 // Gestión galeria
 export { default as ImageGallery } from '../Views/admin/gallery/gallery2'
 export { default as ManagerImageGallery } from '../Views/admin/gallery/galleryof'

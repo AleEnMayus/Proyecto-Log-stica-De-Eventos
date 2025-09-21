@@ -105,6 +105,49 @@ button.dropdown-item-custom:focus {
   text-decoration: none;
 }
 
+/* Contraseña */
+
+/* Contenedor de la contraseña con botón */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Input con espacio a la derecha para el icono */
+.password-wrapper input {
+  width: 100%;
+  padding-right: 40px; /* espacio para el botón del ojo */
+  box-sizing: border-box;
+}
+
+/* Botón del ojo */
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666; /* color base */
+  transition: color 0.2s ease-in-out;
+}
+
+/* Hover en el botón */
+.password-toggle:hover {
+  color: #007bff; /* azul en hover */
+}
+
+/* SVG dentro del botón */
+.password-toggle svg {
+  pointer-events: none; /* evita que el click se capture en el SVG */
+}
+
+
 /* Contrato */
 
 .contrato-card {

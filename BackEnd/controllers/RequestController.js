@@ -43,8 +43,8 @@ const requestController = {
         return res.status(400).json({ error: "Tipo de solicitud inválido" });
       }
 
-      if (['cancel_event', 'schedule_appointment'].includes(RequestType) && !EventId) {
-        return res.status(400).json({ error: "EventId es obligatorio para este tipo de solicitud" });
+      if (RequestType === 'cancel_event' && !EventId) {
+        return res.status(400).json({ error: "EventId es obligatorio para cancelar un evento" });
       }
 
       // Formatear la fecha

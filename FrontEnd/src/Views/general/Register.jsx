@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../CSS/FormsUser.css'; // Importar el archivo CSS
+import '../CSS/FormsUser.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -13,9 +13,22 @@ const RegisterPage = () => {
     confirmPassword: ''
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const errorRef = useRef(null);
+
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    return re.test(password);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,11 +41,45 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validar email
+    if (!validateEmail(formData.email)) {
+      setErrorMessage('El correo no tiene un formato válido');
+      return;
+    }
+
+    // Validar contraseña
+    if (!validatePassword(formData.password)) {
+      setErrorMessage('La contraseña debe tener mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.');
+      return;
+    }
+
+    // Validar confirmación de contraseña
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage('Las contraseñas no coinciden');
       return;
     }
 
+    // 🔹 Validar mayoría de edad
+    const birthDate = new Date(formData.birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    if (age < 18) {
+      setErrorMessage('Debes ser mayor de 18 años para registrarte');
+      return;
+    }
+
+    // 🔹 Validar documento (mín 10 máx 20 caracteres)
+    if (formData.documentNumber.length < 10 || formData.documentNumber.length > 20) {
+      setErrorMessage('El número de documento debe tener entre 10 y 20 caracteres');
+      return;
+    }
+
+    // Enviar al backend
     try {
       const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
@@ -41,7 +88,7 @@ const RegisterPage = () => {
       });
 
       if (response.ok) {
-        setErrorMessage(' Registro exitoso. Ahora puedes iniciar sesión.');
+        setErrorMessage('Registro exitoso. Ahora puedes iniciar sesión.');
         setFormData({
           fullName: '',
           birthDate: '',
@@ -50,11 +97,10 @@ const RegisterPage = () => {
           email: '',
           password: '',
           confirmPassword: ''
-        });  
+        });
         setTimeout(() => {
-            navigate('/login');
-        }, 1500); // 1.5 segundos para que el usuario vea el mensaje
-    
+          navigate('/login');
+        }, 1500);
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Error en el registro');
@@ -105,10 +151,11 @@ const RegisterPage = () => {
             Crea tu cuenta en Happy-Art Eventos
           </p>
 
-          {errorMessage && 
-          <div className="error-message" ref={errorRef}
-          tabIndex="-1">{errorMessage}
-          </div>}
+          {errorMessage &&
+            <div className="error-message" ref={errorRef} tabIndex="-1">
+              {errorMessage}
+            </div>
+          }
 
           <form onSubmit={handleSubmit}>
             <div className="row">
@@ -185,34 +232,74 @@ const RegisterPage = () => {
             <div className="row">
               <div className="col-md-6">
                 <label className="form-label">Contraseña</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Crear una contraseña"
-                  required
-                />
+                <div className="password-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Crear una contraseña"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                        <path d="M1 1l22 22" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
+
               <div className="col-md-6">
                 <label className="form-label">Confirmar Contraseña</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Repetir la contraseña"
-                  required
-                />
+                <div className="password-wrapper">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Repetir la contraseña"
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                        <path d="M1 1l22 22" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="btn-primary-custom login-btn"
-            >
+            <button type="submit" className="btn-primary-custom login-btn">
               Registrarse
             </button>
           </form>

@@ -9,8 +9,10 @@ const LoginPage = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  // Manejar cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -20,25 +22,25 @@ const LoginPage = () => {
     if (error) setError('');
   };
 
+  // Enviar datos de login al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
     try {
       const response = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
-
       const data = await response.json();
-
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        console.log("✅ Login exitoso:", data.user);
-        navigate("/");
+        console.log("Login exitoso:", data.user);
+
+        // Recargar la página después de iniciar sesión
+        window.location.reload();
       } else {
         setError(data.message || "Error al iniciar sesión");
       }
@@ -49,10 +51,12 @@ const LoginPage = () => {
     }
   };
 
+  // Volver atrás con el navegador
   const handleGoBackBrowser = () => {
     window.history.back();
   };
 
+  // Simulación de login con Google
   const handleGoogleLogin = () => {
     const googleUser = {
       id: 4,
@@ -65,10 +69,12 @@ const LoginPage = () => {
       documentNumber: '',
       profilePicture: 'https://randomuser.me/api/portraits/men/50.jpg'
     };
-    
+
     localStorage.setItem('user', JSON.stringify(googleUser));
     console.log('Login con Google:', googleUser);
-    navigate('/');
+
+    // Recargar la página después de login con Google
+    window.location.reload();
   };
 
   return (
@@ -122,16 +128,37 @@ const LoginPage = () => {
             />
             
             <label className="form-label">Contraseña</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              className="form-input"
-              placeholder="••••••••"
-              required
-              disabled={isLoading}
-            />
+            <div className="password-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="••••••••"
+                required
+                disabled={isLoading}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                ) : (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                    <path d="M1 1l22 22" />
+                  </svg>
+                )}
+              </button>
+            </div>
             
             <div className="form-options">
               <Link to="/recover" className="forgot-password">

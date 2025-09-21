@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import '../CSS/components.css';
 import "../CSS/FormsUser.css";
@@ -8,27 +8,78 @@ const Schedule = () => {
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
   const [motivo, setMotivo] = useState("");
-
   const navigate = useNavigate();
 
-  const enviarSolicitud = (e) => {
+  // Validar que la fecha sea válida (no antes de hoy, ni fuera de rango lógico)
+  const validarFecha = (fechaSeleccionada) => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // resetear hora a inicio del día
+    const fechaIngresada = new Date(fechaSeleccionada);
+
+    if (fechaIngresada < hoy) {
+      alert("No puedes seleccionar una fecha anterior a hoy.");
+      return false;
+    }
+
+    const year = fechaIngresada.getFullYear();
+    if (year < 1900 || year > 2100) {
+      alert("Por favor selecciona una fecha válida.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const enviarSolicitud = async (e) => {
     e.preventDefault();
-    console.log("Solicitud enviada:", { fecha, hora, motivo });
-    alert("✅ Tu cita ha sido enviada correctamente");
-    setFecha("");
-    setHora("");
-    setMotivo("");
+
+    if (!validarFecha(fecha)) {
+      return;
+    }
+
+    try {
+      // Combinar fecha y hora en formato ISO
+      const fechaHora = `${fecha}T${hora}:00`;
+
+      const response = await fetch("http://localhost:4000/api/requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          RequestDate: fechaHora,
+          RequestDescription: motivo,
+          RequestType: "schedule_appointment", 
+          UserId: 1, // aquí deberías poner el id del usuario logueado
+          EventId: null 
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Tu cita ha sido enviada correctamente");
+        console.log("Solicitud creada:", data);
+        setFecha("");
+        setHora("");
+        setMotivo("");
+        navigate("/EventsHome");
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Hubo un problema al enviar la solicitud");
+    }
   };
 
   const cancel = () => {
     navigate(`/EventsHome`);
-
-  }
+  };
 
   return (
     <div>
       <HeaderCl />
-
       <div className="login-container">
         <div className="login-content">
           <div className="form-container-custom">
@@ -38,11 +89,9 @@ const Schedule = () => {
             </p>
 
             <form onSubmit={enviarSolicitud}>
-              {/* Fecha */}
+              {/* Campo de fecha */}
               <div className="form-group">
-                <label htmlFor="fecha" className="form-label">
-                  Fecha de la cita
-                </label>
+                <label htmlFor="fecha" className="form-label">Fecha de la cita</label>
                 <input
                   type="date"
                   id="fecha"
@@ -53,11 +102,9 @@ const Schedule = () => {
                 />
               </div>
 
-              {/* Hora */}
+              {/* Campo de hora */}
               <div className="form-group">
-                <label htmlFor="hora" className="form-label">
-                  Hora de la cita
-                </label>
+                <label htmlFor="hora" className="form-label">Hora de la cita</label>
                 <input
                   type="time"
                   id="hora"
@@ -68,11 +115,9 @@ const Schedule = () => {
                 />
               </div>
 
-              {/* Motivo */}
+              {/* Campo de motivo */}
               <div className="form-group">
-                <label htmlFor="motivo" className="form-label">
-                  Motivo
-                </label>
+                <label htmlFor="motivo" className="form-label">Motivo</label>
                 <textarea
                   id="motivo"
                   className="form-input"
@@ -84,7 +129,7 @@ const Schedule = () => {
                 />
               </div>
 
-              {/* Acciones */}
+              {/* Botones de acción */}
               <div className="form-actions">
                 <button onClick={cancel} type="button" className="btn-cancel">
                   Cancelar

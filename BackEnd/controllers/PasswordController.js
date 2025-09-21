@@ -1,8 +1,9 @@
 const PasswordReset = require("../models/PasswordReset");
 const nodemailer = require("nodemailer");
+const db = require("../db");
 require("dotenv").config();
 
-// Configurar Nodemailer
+// Configuración de Nodemailer
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
@@ -13,15 +14,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Enviar código
+// Enviar código de recuperación
 const sendResetCode = async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: "Email requerido" });
 
   try {
+    // Validar que el correo exista en la base de datos
+    const [user] = await db.query("SELECT * FROM User WHERE Email = ?", [email]);
+    if (user.length === 0) {
+      return res.status(404).json({ message: "El correo no está registrado" });
+    }
+
+    // Generar y guardar el código
     const code = Math.floor(1000 + Math.random() * 9000);
     await PasswordReset.createResetCode(email, code);
 
+    // Enviar correo con el código
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -31,12 +40,12 @@ const sendResetCode = async (req, res) => {
 
     res.json({ message: "Código enviado al email" });
   } catch (error) {
-    console.error("❌ Error enviando código:", error);
+    console.error("Error enviando código:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
 };
 
-// Verificar código
+// Verificar código ingresado por el usuario
 const verifyCode = async (req, res) => {
   const { email, code } = req.body;
   if (!email || !code)
@@ -47,25 +56,27 @@ const verifyCode = async (req, res) => {
     if (!record) return res.status(400).json({ message: "Código inválido" });
     res.json({ message: "Código verificado" });
   } catch (error) {
-    console.error("❌ Error verificando código:", error);
+    console.error("Error verificando código:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
 };
 
-// Cambiar contraseña
+// Cambiar contraseña del usuario
 const resetPassword = async (req, res) => {
   const { email, code, newPassword } = req.body;
   if (!email || !code || !newPassword)
     return res.status(400).json({ message: "Todos los campos son requeridos" });
 
   try {
+    // Validar que el código sea correcto
     const record = await PasswordReset.verifyCode(email, code);
     if (!record) return res.status(400).json({ message: "Código inválido" });
 
+    // Actualizar la contraseña
     await PasswordReset.updatePassword(email, newPassword);
     res.json({ message: "Contraseña actualizada exitosamente" });
   } catch (error) {
-    console.error("❌ Error cambiando contraseña:", error);
+    console.error("Error cambiando contraseña:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
 };

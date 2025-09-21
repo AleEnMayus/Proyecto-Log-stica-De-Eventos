@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import '../CSS/FormsUser.css'; // Reutilizamos los estilos del login
+import React, { useState, useRef, useEffect } from 'react';
+import '../CSS/FormsUser.css';
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
@@ -9,17 +9,20 @@ const RecoverPassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [codeTimer, setCodeTimer] = useState(0); // tiempo en segundos
   
   const codeRefs = useRef([]);
 
-  
-  /**
-   * Manejo del cambio de valor en los inputs del código de verificación.
-   * - Valida que el valor sea un dígito.
-   * - Actualiza el estado con el nuevo valor.
-   * - Cambia el foco al siguiente o anterior input automáticamente.
-   * 🔗 No requiere API.
-   */
+  // Manejo del temporizador del código
+  useEffect(() => {
+    if (codeTimer <= 0) return;
+    const interval = setInterval(() => {
+      setCodeTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [codeTimer]);
+
+  // Manejo del cambio en inputs de código
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) {
       const newCode = [...code];
@@ -34,13 +37,7 @@ const RecoverPassword = () => {
     }
   };
 
-  /**
-   * Envía un código de recuperación al correo ingresado.
-   * - Valida que exista un email.
-   * - Llama a la API con método POST -> /send-recovery-code.
-   * - Muestra alertas o errores según la respuesta.
-   * 🔗 Requiere API.
-   */
+  // Enviar código al correo ingresado
   const handleSendCode = async () => {
     if (!email) {
       setErrorMessage('Por favor ingresa tu correo.');
@@ -56,6 +53,8 @@ const RecoverPassword = () => {
 
       if (response.ok) {
         alert(`Código enviado a ${email}`);
+        setErrorMessage('');
+        setCodeTimer(300); // 5 minutos
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Error al enviar el código');
@@ -65,20 +64,17 @@ const RecoverPassword = () => {
     }
   };
 
-
-  /**
-   * Envía la nueva contraseña junto al código de verificación.
-   * - Valida que las contraseñas coincidan.
-   * - Llama a la API con método POST -> /reset-password.
-   * - Envía: email, código y nueva contraseña.
-   * - Muestra alertas o errores según la respuesta.
-   * 🔗 Requiere API.
-   */
+  // Enviar nueva contraseña junto con el código
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
       setErrorMessage('Las contraseñas no coinciden.');
+      return;
+    }
+
+    if (codeTimer <= 0) {
+      setErrorMessage('El código ha expirado. Solicita uno nuevo.');
       return;
     }
 
@@ -95,6 +91,7 @@ const RecoverPassword = () => {
 
       if (response.ok) {
         alert('Contraseña actualizada exitosamente');
+        setErrorMessage('');
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Error al actualizar la contraseña');
@@ -104,12 +101,16 @@ const RecoverPassword = () => {
     }
   };
 
-  /**
-   * Regresa a la página anterior en el navegador.
-   * 🔗 No requiere API.
-   */
+  // Regresa a la página anterior
   const handleGoBackBrowser = () => {
     window.history.back();
+  };
+
+  // Mostrar tiempo restante en formato mm:ss
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   };
 
   return (
@@ -150,11 +151,11 @@ const RecoverPassword = () => {
                 />
                 <button
                   type="button"
-                  className="btn-primary-custom"
+                  className="btn-send-code"
                   onClick={handleSendCode}
-                  style={{ whiteSpace: 'nowrap' }}
+                  disabled={codeTimer > 0}
                 >
-                  Enviar código
+                  {codeTimer > 0 ? `Reenviar en ${formatTime(codeTimer)}` : 'Enviar código'}
                 </button>
               </div>
             </div>
@@ -190,13 +191,13 @@ const RecoverPassword = () => {
                   onClick={() => setShowNewPassword(!showNewPassword)}
                 >
                   {showNewPassword ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />
                     </svg>
                   ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
                       <path d="M1 1l22 22" />
@@ -223,13 +224,13 @@ const RecoverPassword = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                       <circle cx="12" cy="12" r="3" />
                     </svg>
                   ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" 
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
                       <path d="M1 1l22 22" />

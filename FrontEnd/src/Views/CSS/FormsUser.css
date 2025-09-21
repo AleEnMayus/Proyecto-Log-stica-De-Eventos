@@ -1,4 +1,29 @@
 /* Botones adicionales */
+/* Botón enviar código */
+.btn-send-code {
+  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
+  color: white;
+  border: none;
+  padding: 5px;            
+  border-radius: 10px;
+  font-size: 16px;                     
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  width: 50%;               
+  box-sizing: border-box;
+  height: 60px;
+}
+
+.btn-send-code:hover:not(:disabled) {
+  background-color: rgb(15, 145, 201);  
+  transform: translateY(-2px);
+}
+
+.btn-send-code:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .btn-secondary-custom {
   background: rgb(255, 83, 121);
   border: none;

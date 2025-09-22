@@ -9,7 +9,7 @@ const EventModel = {
   addEvent: async (eventData) => {
     const sql = `
       INSERT INTO Events 
-      (EventName, ClientId, EventStatus, Capacity, EventPrice, AdvancePaymentMethod, CreationDate, EventDateTime, Address, EventDescription, Contract, ContractNumber)
+      (EventName, ClientId, EventStatus, Capacity, EventPrice, AdvancePaymentMethod, CreationDate, EventDateTime, Address, EventDescription, ContractRoute, ContractNumber)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [

@@ -71,7 +71,7 @@ const ClientSurvey = () => {
           </div>
 
           {/* Botón para enviar la encuesta */}
-          {/* ⚡ Aquí es donde se dispara handleSubmit, que debería llamar a la API */}
+          {/* Aquí es donde se dispara handleSubmit, que debería llamar a la API */}
           <button type="submit" className="encuesta-btn">
             Enviar Encuesta
           </button>

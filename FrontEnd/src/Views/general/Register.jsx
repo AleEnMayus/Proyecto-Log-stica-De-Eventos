@@ -59,7 +59,7 @@ const RegisterPage = () => {
       return;
     }
 
-    // 🔹 Validar mayoría de edad
+    // Validar mayoría de edad
     const birthDate = new Date(formData.birthDate);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -73,7 +73,7 @@ const RegisterPage = () => {
       return;
     }
 
-    // 🔹 Validar documento (mín 10 máx 20 caracteres)
+    // Validar documento (mín 10 máx 20 caracteres)
     if (formData.documentNumber.length < 10 || formData.documentNumber.length > 20) {
       setErrorMessage('El número de documento debe tener entre 10 y 20 caracteres');
       return;
@@ -124,7 +124,7 @@ const RegisterPage = () => {
     <div className="login-container">
       <header className="bg-white shadow-sm sticky-top header-container">
         <div className="container">
-          <div className="row align-items-center py-3">
+          <div className="row align-items-center py-3 justify-content-between">
             <div className="col-6">
               <div className="d-flex align-items-center">
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
@@ -135,7 +135,7 @@ const RegisterPage = () => {
                 </div>
               </div>
             </div>
-            <div className="col-6 text-end">
+            <div className="col-6 text-end w-auto">
               <a href="/login" className="btn-primary-custom btn">
                 Iniciar Sesión
               </a>

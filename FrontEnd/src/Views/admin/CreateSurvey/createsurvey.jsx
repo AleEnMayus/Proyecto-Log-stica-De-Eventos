@@ -34,7 +34,7 @@ const CreateSurvay = () => {
     setError("");
 
     try {
-      // ✅ Enviar preguntas al backend
+      // Enviar preguntas al backend
       const response = await fetch("http://localhost:4000/api/questions/bulk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

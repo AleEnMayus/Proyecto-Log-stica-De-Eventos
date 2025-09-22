@@ -199,7 +199,6 @@ button.dropdown-item-custom:focus {
 .pagination-numbers {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
 }
 
 .pagination-btn, .pagination-arrow {
@@ -215,6 +214,7 @@ button.dropdown-item-custom:focus {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #909499 !important;
 }
 
 .pagination-btn:hover, .pagination-arrow:hover {
@@ -224,7 +224,7 @@ button.dropdown-item-custom:focus {
 .pagination-btn.active {
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(121, 219, 241));
   color: #ffffff !important;
-  border: none;
+  border: none !important;
   border-radius: 25px;
   padding: 0.75rem 1.5rem;
   font-weight: 600;

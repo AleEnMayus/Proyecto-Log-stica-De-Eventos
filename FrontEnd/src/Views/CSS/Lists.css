@@ -106,22 +106,7 @@ input:focus {
 .user-info {
   display: flex;
   align-items: center;
-  justify-content: start;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-weight: bold;
-  background-color: #e3f2fd;
-  color: #1976d2;
 }
 
 .user-name {
@@ -206,10 +191,6 @@ input:focus {
   .list-table td {
     padding: 10px;
     font-size: 0.85rem;
-  }
-
-  .user-name {
-    display: none; /* solo foto en móvil */
   }
 
   .btn-custom {

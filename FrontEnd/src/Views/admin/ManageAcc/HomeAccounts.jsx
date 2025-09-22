@@ -1,87 +1,17 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { capitalize } from "../../../utils/FormatText";
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
 import ModalState from "../../../components/Modals/ModalState";
-import '../../CSS/Lists.css'; // CSS universal
+import '../../CSS/Lists.css';
 import '../../CSS/components.css';
 
+const API_URL = "http://localhost:4000/api/accounts";
+
 const AdminAccountsList = () => {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      fullName: 'Admin Usuario',
-      role: 'admin',
-      email: 'admin@happyart.com',
-      phoneNumber: '300 9876543',
-      birthDate: '1985-03-15',
-      identificationType: 'cedula',
-      documentNumber: '123456789',
-      profilePicture: 'https://randomuser.me/api/portraits/men/32.jpg',
-      estado: 'Activo'
-    },
-    {
-      id: 2,
-      fullName: 'Juan Pérez',
-      role: 'user',
-      email: 'user@happyart.com',
-      phoneNumber: '300 1234567',
-      birthDate: '1992-07-20',
-      identificationType: 'cedula',
-      documentNumber: '987654321',
-      profilePicture: 'https://randomuser.me/api/portraits/men/46.jpg',
-      estado: 'Activo'
-    },
-    {
-      id: 3,
-      fullName: 'María González',
-      role: 'user',
-      email: 'maria@happyart.com',
-      phoneNumber: '300 5555555',
-      birthDate: '1990-11-08',
-      identificationType: 'cedula',
-      documentNumber: '555666777',
-      profilePicture: 'https://randomuser.me/api/portraits/women/44.jpg',
-      estado: 'Activo'
-    },
-    {
-      id: 4,
-      fullName: 'Carlos Rodríguez',
-      role: 'user',
-      email: 'carlos@happyart.com',
-      phoneNumber: '300 7777777',
-      birthDate: '1988-05-22',
-      identificationType: 'cedula',
-      documentNumber: '111222333',
-      profilePicture: 'https://randomuser.me/api/portraits/men/68.jpg',
-      estado: 'Activo'
-    },
-    {
-      id: 5,
-      fullName: 'Ana Martínez',
-      role: 'user',
-      email: 'ana@happyart.com',
-      phoneNumber: '300 8888888',
-      birthDate: '1995-09-12',
-      identificationType: 'cedula',
-      documentNumber: '444555666',
-      profilePicture: 'https://randomuser.me/api/portraits/women/65.jpg',
-      estado: 'Activo'
-    },
-    {
-      id: 6,
-      fullName: 'Pedro López',
-      role: 'user',
-      email: 'pedro@happyart.com',
-      phoneNumber: '300 9999999',
-      birthDate: '1987-02-28',
-      identificationType: 'cedula',
-      documentNumber: '777888999',
-      profilePicture: 'https://randomuser.me/api/portraits/men/54.jpg',
-      estado: 'Activo'
-    }
-  ]);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({});
@@ -92,6 +22,25 @@ const AdminAccountsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
 
+  // --- Cargar cuentas desde API ---
+  const fetchAccounts = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error("Error cargando cuentas:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  // --- Eliminar cuenta ---
   const handleDelete = (userId) => {
     setModalConfig({
       message: "¿Seguro quieres eliminar la cuenta?",
@@ -104,59 +53,66 @@ const AdminAccountsList = () => {
     setShowModal(true);
   };
 
+  // Abrir modal de estado
   const handleOpenStatusModal = (userId, currentStatus) => {
     setSelectedUser({ id: userId, status: currentStatus });
     setShowStateModal(true);
   };
 
-  // Función que maneja la confirmación desde el ModalState
+  // Confirmar cambio de estado desde ModalState
+  // Confirmar cambio de estado desde ModalState
   const handleStatusChangeFromModal = (userId, newStatus) => {
-    const user = users.find(u => u.id === userId);
-    const userName = user ? user.fullName : 'Usuario';
+    const user = users.find(u => u.UserId === userId);
+    const userName = user ? user.Names : 'Usuario';
 
-    // Cerramos el modal de estado
     setShowStateModal(false);
 
-    // Configuramos el modal de confirmación con los valores directos
     setModalConfig({
       message: `¿Estás seguro de cambiar el estado del usuario "${userName}" a "${newStatus}"?`,
       confirmText: "Confirmar cambio",
-      onConfirm: () => {
-        // Ejecutamos el cambio real con los valores capturados
-        executeStatusChange(userId, newStatus);
-        setShowModal(false);
+      onConfirm: async () => {
+        try {
+          // Llamada al backend
+          const res = await fetch(`${API_URL}/${userId}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ Status: newStatus })
+          });
+
+          if (!res.ok) throw new Error("Error al cambiar estado");
+
+          // Actualizamos el front
+          executeStatusChange(userId, newStatus);
+          setShowModal(false);
+        } catch (err) {
+          console.error("Error cambiando estado:", err);
+          alert("No se pudo cambiar el estado");
+        }
       }
     });
 
-    // Mostramos el modal de confirmación
     setShowModal(true);
   };
 
-  // Función que ejecuta el cambio de estado real
+  // Ejecutar cambio de estado real
   const executeStatusChange = (userId, newStatus) => {
     console.log("Estado cambiado:", userId, "->", newStatus);
 
-    // Actualizar el estado local
     setUsers(prevUsers =>
       prevUsers.map(user =>
-        user.id === userId ? { ...user, estado: newStatus } : user
+        user.UserId === userId ? { ...user, Status: newStatus } : user
       )
     );
-
-    // Aquí harías tu request al backend
-    // try {
-    //   await updateUserStatus(userId, newStatus);
-    // } catch (error) {
-    //   console.error('Error al cambiar estado:', error);
-    // }
   };
 
+  // Filtro de búsqueda
   const filteredUsers = users.filter(user =>
-    user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.id.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    user.Names.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.Email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.UserId.toString().toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Paginación
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
@@ -165,7 +121,7 @@ const AdminAccountsList = () => {
   const navigate = useNavigate();
 
   const handleEdit = (userId) => {
-    navigate(`/ManageAccounts/edit/${userId}`); // Redirige a la página de edición
+    navigate(`/ManageAccounts/edit/${userId}`);
   };
 
   return (
@@ -203,69 +159,68 @@ const AdminAccountsList = () => {
         </div>
       </div>
 
-            {/* Table */}
+      {/* Tabla */}
       <div className="table-container">
-        <table className="table list-table">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Nombre usuario</th>
-              <th>Estado</th>
-              <th>Editar</th>
-              <th>Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentUsers.map((user) => (
-              <tr key={user.id}>
-                <td>
-                  <span className="user-type">{user.id}</span>
-                </td>
-                <td>
-                  <div className="user-info">
-                    <img
-                      src={user.profilePicture}
-                      alt={user.fullName}
-                      className="user-avatar me-2"
-                    />
-                    <span className="user-name">{user.fullName}</span>
-                  </div>
-                </td>
-                <td>
-                  <button
-                    className="btn-custom btn-status-custom  d-flex align-items-center mx-auto"
-                    onClick={() => handleOpenStatusModal(user.id, user.estado)}
-                  >
-                    {user.estado}
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn-custom btn-edit-custom  d-flex align-items-center mx-auto"
-                    onClick={() => handleEdit(user.id)}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
-                    </svg>
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn-custom btn-delete-custom d-flex align-items-center mx-auto"
-                    onClick={() => handleDelete(user.id)}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">
-                      <path d="M269-86q-53 0-89.5-36.5T143-212v-497H80v-126h257v-63h284v63h259v126h-63v497q0 53-36.5 89.5T691-86H269Zm422-623H269v497h422v-497ZM342-281h103v-360H342v360Zm173 0h103v-360H515v360ZM269-709v497-497Z" />
-                    </svg>
-                  </button>
-                </td>
+        {loading ? (
+          <div className="empty-state">Cargando cuentas...</div>
+        ) : (
+          <table className="table list-table">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Nombre usuario</th>
+                <th>Estado</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentUsers.map((user) => (
+                <tr key={user.UserId}>
+                  <td>
+                    <span className="user-type">{user.UserId}</span>
+                  </td>
+                  <td>
+                    <div className="user-info">
+                      <span className="user-name">{user.Names}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      className="btn-custom btn-status-custom d-flex align-items-center mx-auto"
+                      onClick={() => handleOpenStatusModal(user.UserId, user.Status)}
+                    >
+                      {capitalize(user.Status)}
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="btn-custom btn-edit-custom d-flex align-items-center mx-auto"
+                      onClick={() => handleEdit(user.UserId)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
+                        <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
+                      </svg>
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="btn-custom btn-delete-custom d-flex align-items-center mx-auto"
+                      onClick={() => handleDelete(user.UserId)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">
+                        <path d="M269-86q-53 0-89.5-36.5T143-212v-497H80v-126h257v-63h284v63h259v126h-63v497q0 53-36.5 89.5T691-86H269Zm422-623H269v497h422v-497ZM342-281h103v-360H342v360Zm173 0h103v-360H515v360ZM269-709v497-497Z" />
+                      </svg>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      {/* Pagination */}
+      {/* Paginación */}
       {totalPages > 1 && (
         <nav className="pagination">
           <button
@@ -298,7 +253,6 @@ const AdminAccountsList = () => {
         </nav>
       )}
 
-
       {/* Modal de Confirmación */}
       <ConfirmModal
         show={showModal}
@@ -312,14 +266,14 @@ const AdminAccountsList = () => {
       <ModalState
         show={showStateModal}
         onClose={() => setShowStateModal(false)}
-        onConfirm={handleStatusChangeFromModal} // Cambiado el nombre de la función
+        onConfirm={handleStatusChangeFromModal}
         currentStatus={selectedUser?.status}
         entityId={selectedUser?.id}
-        options={["Activo", "Inactivo"]}
+        options={["Active", "Inactive"]}
         title="Cambiar estado de usuario"
       />
     </div>
   );
 };
 
-export default AdminAccountsList
+export default AdminAccountsList;

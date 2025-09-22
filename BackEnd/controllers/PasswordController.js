@@ -20,7 +20,7 @@ const sendResetCode = async (req, res) => {
   if (!email) return res.status(400).json({ message: "Email requerido" });
 
   try {
-    // Validar que el correo exista en la base de datos
+    // Validar que el correo exista
     const [user] = await db.query("SELECT * FROM User WHERE Email = ?", [email]);
     if (user.length === 0) {
       return res.status(404).json({ message: "El correo no está registrado" });
@@ -28,9 +28,10 @@ const sendResetCode = async (req, res) => {
 
     // Generar y guardar el código
     const code = Math.floor(1000 + Math.random() * 9000);
+
     await PasswordReset.createResetCode(email, code);
 
-    // Enviar correo con el código
+    // Enviar correo
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -40,6 +41,9 @@ const sendResetCode = async (req, res) => {
 
     res.json({ message: "Código enviado al email" });
   } catch (error) {
+    if (error.sqlState === "45000") {
+      return res.status(429).json({ message: error.sqlMessage }); // Límite alcanzado
+    }
     console.error("Error enviando código:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
@@ -54,6 +58,7 @@ const verifyCode = async (req, res) => {
   try {
     const record = await PasswordReset.verifyCode(email, code);
     if (!record) return res.status(400).json({ message: "Código inválido" });
+
     res.json({ message: "Código verificado" });
   } catch (error) {
     console.error("Error verificando código:", error);
@@ -68,12 +73,13 @@ const resetPassword = async (req, res) => {
     return res.status(400).json({ message: "Todos los campos son requeridos" });
 
   try {
-    // Validar que el código sea correcto
+    // Verificar el código antes de actualizar la contraseña
     const record = await PasswordReset.verifyCode(email, code);
     if (!record) return res.status(400).json({ message: "Código inválido" });
 
-    // Actualizar la contraseña
+    // Actualizar contraseña y borrar registros
     await PasswordReset.updatePassword(email, newPassword);
+
     res.json({ message: "Contraseña actualizada exitosamente" });
   } catch (error) {
     console.error("Error cambiando contraseña:", error);

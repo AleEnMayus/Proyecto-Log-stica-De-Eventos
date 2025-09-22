@@ -24,12 +24,12 @@ const ClientSurvey = () => {
             q?.questionId ??
             q?.id ??
             q?._id ??
-            `q_${idx}`;
+            q_${idx};
           const text =
             q?.QuestionText ??
             q?.questionText ??
             q?.text ??
-            `Pregunta ${idx + 1}`;
+            Pregunta ${idx + 1};
           return { ...q, _qid: id, _text: text };
         });
 
@@ -59,7 +59,7 @@ const ClientSurvey = () => {
       const value = i + 1;
       return (
         <svg
-          key={`${questionId}-${i}`}
+          key={${questionId}-${i}}
           onClick={() =>
             setAnswers((prev) => ({ ...prev, [questionId]: value }))
           }
@@ -102,7 +102,7 @@ const ClientSurvey = () => {
       if (!res.ok) throw new Error("Error al enviar la encuesta");
 
       const result = await res.json();
-      alert('✅ Encuesta enviada con éxito\n${JSON.stringify(result)}');
+      alert(✅ Encuesta enviada con éxito\n${JSON.stringify(result)});
 
       // Resetear estrellas
       const reset = {};

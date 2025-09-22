@@ -50,7 +50,7 @@ const PerfilModal = ({ isOpen, onClose, onEdit }) => {
     <>
       <div className="sidebar-overlay active" onClick={onClose}>
         <div
-          className="profile-modal"
+          className="profile-modal w-800"
           onClick={stop}
           role="dialog"
           aria-modal="true"

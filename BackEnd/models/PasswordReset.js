@@ -2,26 +2,39 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 
 const PasswordReset = {
+  // Genera un nuevo código SOLO si no ha superado el límite diario
   createResetCode: async (email, code) => {
-    await db.query(
-      `INSERT INTO PasswordReset (Email, Code, CreatedAt)
-       VALUES (?, ?, NOW())
-       ON DUPLICATE KEY UPDATE Code = ?, CreatedAt = NOW()`,
-      [email, code, code]
-    );
-  },
-
-  verifyCode: async (email, code) => {
+    // 1. Contar cuántos códigos ha generado hoy este email
     const [rows] = await db.query(
-      `SELECT * FROM PasswordReset WHERE Email = ? AND Code = ?`,
+      `SELECT COUNT(*) AS total FROM PasswordReset 
+       WHERE Email = ? AND DATE(CreatedAt) = CURDATE()`,
+      [email]
+    );
+
+    if (rows[0].total >= 5) {
+      throw new Error("Has alcanzado el límite de 5 códigos por hoy.");
+    }
+
+    // 2. Insertar un nuevo registro (no sobreescribimos, para poder contar bien)
+    await db.query(
+      `INSERT INTO PasswordReset (Email, Code, CreatedAt, Attempts)
+       VALUES (?, ?, NOW(), 0)`,
       [email, code]
     );
-    return rows[0];
   },
 
+  // Llama al procedimiento almacenado en MySQL
+  verifyCodeProcedure: async (email, code) => {
+    return db.query("CALL VerifyResetCode(?, ?)", [email, code]);
+  },
+
+  // Actualiza contraseña y borra el registro de reset
   updatePassword: async (email, newPassword) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await db.query(`UPDATE User SET Password = ? WHERE Email = ?`, [hashedPassword, email]);
+    await db.query(`UPDATE User SET Password = ? WHERE Email = ?`, [
+      hashedPassword,
+      email,
+    ]);
     await db.query(`DELETE FROM PasswordReset WHERE Email = ?`, [email]);
   },
 };

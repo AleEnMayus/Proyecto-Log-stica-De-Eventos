@@ -1,39 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // ⚡ Capturar el eventId desde la URL
+import { useParams } from "react-router-dom";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import "../CSS/FormsUser.css";
 
-const ClientSurvey = () => {
-  const { eventId } = useParams(); // Captura el ID del evento de la ruta (ej: /survey/5)
+const ClientSurvey = ({ userId }) => {
+  const { eventId } = useParams();
 
-  const [questions, setQuestions] = useState([]); // preguntas normalizadas
-  const [answers, setAnswers] = useState({});     // { questionId: 0..5 }
-  const [hover, setHover] = useState({});         // preview al pasar el mouse
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [hover, setHover] = useState({});
 
-  // Cargar preguntas desde el backend
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const res = await fetch("http://localhost:4000/api/questions");
         const data = await res.json();
 
-        // Normalizar IDs y textos
         const normalized = data.map((q, idx) => {
-          const id =
-            q?.QuestionID ??
-            q?.questionId ??
-            q?.id ??
-            q?._id ??
-            q_${idx};
-          const text =
-            q?.QuestionText ??
-            q?.questionText ??
-            q?.text ??
-            Pregunta ${idx + 1};
+          const id = q?.QuestionId ?? q?._id ?? `q_${idx}`;
+          const text = q?.QuestionText ?? `Pregunta ${idx + 1}`;
           return { ...q, _qid: id, _text: text };
         });
 
-        // Inicializar respuestas
         const initialAnswers = {};
         normalized.forEach((q) => {
           initialAnswers[q._qid] = 0;
@@ -49,7 +37,6 @@ const ClientSurvey = () => {
     fetchQuestions();
   }, []);
 
-  // Renderizar estrellas
   const renderStars = (questionId) => {
     const rating = answers[questionId] ?? 0;
     const preview = hover[questionId] ?? 0;
@@ -59,7 +46,7 @@ const ClientSurvey = () => {
       const value = i + 1;
       return (
         <svg
-          key={${questionId}-${i}}
+          key={`${questionId}-${i}`}
           onClick={() =>
             setAnswers((prev) => ({ ...prev, [questionId]: value }))
           }
@@ -89,20 +76,23 @@ const ClientSurvey = () => {
     });
   };
 
-  // Enviar respuestas al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await fetch("http://localhost:4000/api/survey", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eventId, answers }), // 🔗 enviamos evento + respuestas
+        body: JSON.stringify({
+          EventId: eventId,
+          UserId: userId,
+          Answers: answers,
+        }),
       });
 
       if (!res.ok) throw new Error("Error al enviar la encuesta");
 
       const result = await res.json();
-      alert(✅ Encuesta enviada con éxito\n${JSON.stringify(result)});
+      alert(`Encuesta enviada con éxito\n${JSON.stringify(result)}`);
 
       // Resetear estrellas
       const reset = {};
@@ -110,7 +100,7 @@ const ClientSurvey = () => {
       setAnswers(reset);
     } catch (err) {
       console.error("Error:", err);
-      alert("❌ No se pudo enviar la encuesta");
+      alert("No se pudo enviar la encuesta");
     }
   };
 

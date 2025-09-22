@@ -20,13 +20,17 @@ app.get("/", (req, res) => {
 const authRoutes = require("./routes/auth");
 app.use("/api", authRoutes);
 
-// --- RUTAS DE CONTRASEÑAS (cambio desde perfil) ---
+// --- RUTAS DE CONTRASEÑAS ---
 const passwordChangeRoutes = require("./routes/PasswordChange");
 app.use("/api/password", passwordChangeRoutes);
 
 // --- RUTAS DE PREGUNTAS/ENCUESTAS ---
 const questionRoutes = require("./routes/Admin/questions");
 app.use("/api/questions", questionRoutes);
+
+// --- RUTAS DE PREGUNTAS/ENCUESTAS ---
+const surveyRoutes = require("./routes/user/Survey");
+app.use("/api", surveyRoutes);
 
 // --- RUTAS DE RECURSOS ---
 const resourceRoutes = require("./routes/Admin/Resources");
@@ -50,5 +54,5 @@ app.use("/api/requests", requestRoutes);
 
 // --- SERVIDOR ---
 app.listen(PORT, () => {
-  console.log (`Servidor backend corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
 });

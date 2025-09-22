@@ -20,9 +20,9 @@ CREATE TABLE User (
 CREATE TABLE Resources (
     ResourceId INT PRIMARY KEY AUTO_INCREMENT,
     ResourceName VARCHAR(50),
-    Quantity VARCHAR(40),
+    Quantity INT,
     StatusDescription VARCHAR(150),
-    Status ENUM('In use','Available'),
+    Status ENUM('In_use','Available'),
     Price FLOAT
 );
 
@@ -31,8 +31,8 @@ CREATE TABLE Events (
     EventId INT PRIMARY KEY AUTO_INCREMENT,
     EventName VARCHAR(50),
     ClientId INT,
-    EventStatus ENUM('In planning', 'In execution', 'Completed', 'Canceled') DEFAULT 'In planning',
-    Capacity VARCHAR(25),
+    EventStatus ENUM('In_planning', 'In_execution', 'Completed', 'Canceled') DEFAULT 'In_planning',
+    Capacity INT,
     EventPrice FLOAT,
     AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
     CreationDate DATETIME,
@@ -80,22 +80,22 @@ CREATE TABLE MultimediaFile (
     FOREIGN KEY (UserId) REFERENCES User(UserId)
 );
 
+-- Tabla de preguntas
+CREATE TABLE Questions (
+    QuestionId INT PRIMARY KEY AUTO_INCREMENT,
+    QuestionText TEXT
+);
+
 -- Tabla de respuestas
 CREATE TABLE Answers (
     AnswerId INT PRIMARY KEY AUTO_INCREMENT,
     NumericValue INT,
     EventId INT,
     UserId INT,
+    QuestionId INT,
     FOREIGN KEY (EventId) REFERENCES Events(EventId),
-    FOREIGN KEY (UserId) REFERENCES User(UserId)
-);
-
--- Tabla de preguntas
-CREATE TABLE Questions (
-    QuestionId INT PRIMARY KEY AUTO_INCREMENT,
-    QuestionText TEXT,
-    AnswerId INT,
-    FOREIGN KEY (AnswerId) REFERENCES Answers(AnswerId)
+    FOREIGN KEY (UserId) REFERENCES User(UserId),
+    FOREIGN KEY (QuestionId) REFERENCES Questions(QuestionId)
 );
 
 -- Tabla de comentarios

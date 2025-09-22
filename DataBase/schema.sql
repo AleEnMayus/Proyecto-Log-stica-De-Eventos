@@ -49,7 +49,7 @@ CREATE TABLE Requests (
     RequestId INT PRIMARY KEY AUTO_INCREMENT,
     RequestDate DATETIME,
     ManagementDate DATETIME,
-    RequestDescription VARCHAR(100),
+    RequestDescription VARCHAR(500),
     RequestType ENUM('schedule_appointment', 'cancel_event', 'document_change'),
     RequestStatus ENUM('pending', 'approved', 'rejected'),
     UserId INT,

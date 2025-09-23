@@ -24,8 +24,8 @@ function fileFilter(req, file, cb) {
 
 const upload = multer({ storage, fileFilter });
 
-/**
- * 📤 Subir contrato PDF y guardarlo en evento
+/** 
+ *  Subir contrato PDF y guardarlo en evento
  */
 router.post("/upload-contract/:eventId", upload.single("pdf"), async (req, res) => {
   try {
@@ -51,7 +51,7 @@ router.post("/upload-contract/:eventId", upload.single("pdf"), async (req, res) 
 });
 
 /**
- * 📋 Obtener lista de contratos con cliente y evento
+ * Obtener lista de contratos con cliente y evento
  */
 router.get("/contracts", async (req, res) => {
   try {
@@ -69,7 +69,7 @@ router.get("/contracts", async (req, res) => {
 });
 
 /**
- * ⬇ Descargar contrato por EventId
+ * Descargar contrato por EventId
  */
 router.get("/contracts/:eventId/download", async (req, res) => {
   try {
@@ -90,7 +90,7 @@ router.get("/contracts/:eventId/download", async (req, res) => {
 });
 
 /**
- * ❌ Borrar contrato (ruta y en disco)
+ * Borrar contrato (ruta y en disco)
  */
 router.delete("/contracts/:eventId", async (req, res) => {
   try {

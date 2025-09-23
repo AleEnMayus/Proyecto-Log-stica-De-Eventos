@@ -7,10 +7,10 @@ const AssignResourcesModal = ({ onClose, onSave, preselectedIds = [] }) => {
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
   const [seleccion, setSeleccion] = useState(new Set(preselectedIds));
-  const [recursos, setRecursos] = useState([]); // 👈 ahora vienen de API
+  const [recursos, setRecursos] = useState([]); // ahora vienen de API
   const recursosPorPagina = 5;
 
-  // 🔹 Función para traer los recursos desde APIrouter.get('/', resourceController.getResources);
+  // Función para traer los recursos desde APIrouter.get('/', resourceController.getResources);
 const fetchRecursos = async () => {
   try {
     const response = await fetch("http://localhost:4000/api/resources"); 
@@ -23,12 +23,12 @@ const fetchRecursos = async () => {
 };
 
 
-  // 🔹 Cargar recursos cuando se abre el modal
+  // Cargar recursos cuando se abre el modal
   useEffect(() => {
     fetchRecursos();
   }, []);
 
-  // 🔍 Filtrado de recursos
+  //  Filtrado de recursos
   const recursosFiltrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
     if (!q) return recursos;

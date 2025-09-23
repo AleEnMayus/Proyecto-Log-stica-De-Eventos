@@ -1,4 +1,18 @@
 /* Css Generales */
+/* Dropzone Subir contrato */
+.dropzone {
+  color: #666;
+  border: 2px dashed #888;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.dropzone:hover {
+  background-color: #d4d4d4;
+}
+
 /* img y link */
 .img-50 {
   width: 50px;

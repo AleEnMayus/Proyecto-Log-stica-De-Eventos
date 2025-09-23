@@ -139,18 +139,45 @@ CREATE PROCEDURE CreatePasswordResetCode(
     IN pCode VARCHAR(10)
 )
 BEGIN
-    DECLARE vCount INT;
+    DECLARE codes_today INT;
 
-    SELECT COUNT(*) INTO vCount
+    -- Borrar códigos anteriores de este email (opcional, si quieres solo un código activo)
+    DELETE FROM PasswordReset WHERE Email = pEmail;
+
+    -- Contar cuántos códigos se han generado hoy
+    SELECT COUNT(*) INTO codes_today
     FROM PasswordReset
     WHERE Email = pEmail AND DATE(CreatedAt) = CURDATE();
 
-    IF vCount >= 5 THEN
+    IF codes_today >= 5 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Has alcanzado el límite de 5 solicitudes de código por hoy.';
+        SET MESSAGE_TEXT = 'Has alcanzado el límite de 5 códigos de recuperación para hoy.';
     ELSE
         INSERT INTO PasswordReset (Email, Code, CreatedAt)
         VALUES (pEmail, pCode, NOW());
+    END IF;
+END //
+
+DELIMITER ;
+
+-- Procedimiento para verificar códigos de recuperación
+DELIMITER //
+CREATE PROCEDURE CheckResetCode(
+    IN pEmail VARCHAR(255),
+    IN pCode VARCHAR(10)
+)
+BEGIN
+    DECLARE code_count INT;
+
+    SELECT COUNT(*) INTO code_count
+    FROM PasswordReset
+    WHERE Email = pEmail 
+      AND Code = pCode
+      AND CreatedAt >= NOW() - INTERVAL 15 MINUTE; -- Código válido 15 minutos
+
+    IF code_count = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Código inválido o expirado.';
     END IF;
 END //
 

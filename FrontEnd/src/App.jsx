@@ -107,7 +107,7 @@ const routeConfig = {
     { path: '/Schedule', component: Schedule },
     
     // Encuestas
-    { path: '/Survey', component: SurvayClient },
+    { path: '/Survey/:eventId', component: SurvayClient },
     
     // Galería
     { path: '/GalleryView', component: ImageGalleryViewerC },

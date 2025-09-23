@@ -20,9 +20,9 @@ CREATE TABLE User (
 CREATE TABLE Resources (
     ResourceId INT PRIMARY KEY AUTO_INCREMENT,
     ResourceName VARCHAR(50),
-    Quantity VARCHAR(40),
+    Quantity INT, -- unificar a INT para consistencia
     StatusDescription VARCHAR(150),
-    Status ENUM('In use','Available'),
+    Status ENUM('In_use','Available'), -- valores sin espacios
     Price FLOAT
 );
 
@@ -31,8 +31,8 @@ CREATE TABLE Events (
     EventId INT PRIMARY KEY AUTO_INCREMENT,
     EventName VARCHAR(50),
     ClientId INT,
-    EventStatus ENUM('In planning', 'In execution', 'Completed', 'Canceled') DEFAULT 'In planning',
-    Capacity VARCHAR(25),
+    EventStatus ENUM('In_planning', 'In_execution', 'Completed', 'Canceled') DEFAULT 'In_planning',
+    Capacity INT, -- unificar a INT
     EventPrice FLOAT,
     AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
     CreationDate DATETIME,
@@ -94,7 +94,7 @@ CREATE TABLE Answers (
 CREATE TABLE Questions (
     QuestionId INT PRIMARY KEY AUTO_INCREMENT,
     QuestionText TEXT,
-    AnswerId INT,
+    AnswerId INT NULL,
     FOREIGN KEY (AnswerId) REFERENCES Answers(AnswerId)
 );
 
@@ -112,7 +112,7 @@ CREATE TABLE Comments (
 
 -- Tabla para recuperación de contraseña
 CREATE TABLE PasswordReset (
-    Email VARCHAR(255) PRIMARY KEY,
+    Email VARCHAR(255),
     Code VARCHAR(10),
     CreatedAt DATETIME
 );
@@ -131,18 +131,27 @@ JOIN Answers a ON e.EventId = a.EventId
 GROUP BY e.EventId, e.EventName, Client
 ORDER BY SatisfactionAverage DESC;
 
--- Procedimiento almacenado para filtrar eventos por satisfacción
+-- Procedimiento para creación de códigos de recuperación con límite diario
 DELIMITER //
 
-CREATE PROCEDURE GetEventsBySatisfaction (
-    IN pMinimumAverage DECIMAL(3,2)
+CREATE PROCEDURE CreatePasswordResetCode(
+    IN pEmail VARCHAR(255),
+    IN pCode VARCHAR(10)
 )
 BEGIN
-    SELECT *
-    FROM EventSatisfactionView
-    WHERE SatisfactionAverage >= pMinimumAverage
-    ORDER BY SatisfactionAverage DESC;
-END;
-//
+    DECLARE vCount INT;
+
+    SELECT COUNT(*) INTO vCount
+    FROM PasswordReset
+    WHERE Email = pEmail AND DATE(CreatedAt) = CURDATE();
+
+    IF vCount >= 5 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Has alcanzado el límite de 5 solicitudes de código por hoy.';
+    ELSE
+        INSERT INTO PasswordReset (Email, Code, CreatedAt)
+        VALUES (pEmail, pCode, NOW());
+    END IF;
+END //
 
 DELIMITER ;

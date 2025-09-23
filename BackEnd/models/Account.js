@@ -66,6 +66,13 @@ const Account = {
     const [result] = await db.query(sql, [id]);
     return result;
   },
+  // Cambiar estado (activo/inactivo)
+  changeStatus: async (id, status) => {
+    const sql = "UPDATE User SET Status = ? WHERE UserId = ?";
+    const [result] = await db.query(sql, [status, id]);
+    return result;
+  },
+
 };
 
 module.exports = Account;

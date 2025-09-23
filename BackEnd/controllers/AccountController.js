@@ -98,10 +98,35 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+const changeAccountStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { Status } = req.body;
+    const statusLower = Status.toLowerCase();
+
+    if (!Status) {
+      return res.status(400).json({ error: "El campo Status es requerido" });
+    }
+
+    const result = await Account.changeStatus(id, statusLower);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Cuenta no encontrada" });
+    }
+
+    res.json({ message: `Estado actualizado a ${Status}` });
+  } catch (error) {
+    console.error("Error al cambiar status:", error);
+    res.status(500).json({ error: "Error interno al cambiar status" });
+  }
+};
+
+
 module.exports = {
   createAccount,
   getAccounts,
   getAccountById,
   updateAccount,
   deleteAccount,
+  changeAccountStatus
 };

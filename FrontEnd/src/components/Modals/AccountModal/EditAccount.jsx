@@ -14,16 +14,15 @@ const API_FIELD_MAPPING = {
 const EditModal = ({ isOpen, onClose, user }) => {
   const navigate = useNavigate();
 
-  // Estados del modal de solicitud de documento
+  // Estados
   const [isRequestModalOpen, setRequestModalOpen] = useState(false);
-
-  // Estados para los campos del formulario
   const [formData, setFormData] = useState({});
   const [originalUser, setOriginalUser] = useState({});
+  const [errors, setErrors] = useState({});
 
-  // EFECTO: Cargar datos de localStorage y rellenar formulario
+  // Efecto inicial
   useEffect(() => {
-    const storedUser = localStorage.getItem("user"); //  usamos la misma clave que en LoginPage
+    const storedUser = localStorage.getItem("user");
 
     if (storedUser) {
       try {
@@ -49,87 +48,122 @@ const EditModal = ({ isOpen, onClose, user }) => {
       } catch (err) {
         console.error("⚠️ Error al parsear user de localStorage:", err);
       }
-    } else {
-      console.warn("⚠️ No se encontró información del usuario en localStorage.");
     }
   }, []);
 
   if (!isOpen) return null;
 
   const stopPropagation = (e) => e.stopPropagation();
-
-  const role = user?.role || "user"; // fallback por si no viene el rol
+  const role = user?.role || "user";
   const rolLegible = role === "admin" ? "Administrador" : "Cliente";
+
+  // Validaciones
+  const validateField = (name, value) => {
+    let error = "";
+
+    if (name === "fullName" && (!value || value.trim().length < 3)) {
+      error = "El nombre debe tener al menos 3 caracteres.";
+    }
+
+    if (name === "documentNumber" && value && !/^[0-9]+$/.test(value)) {
+      error = "El número de documento debe contener solo números.";
+    }
+
+    if (name === "photo" && value && !/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(value)) {
+      error = "La URL debe ser una imagen válida.";
+    }
+
+    if (name === "birthDate" && value) {
+      const birthDate = new Date(value);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      const dayDiff = today.getDate() - birthDate.getDate();
+
+      const isMinor =
+        age < 18 ||
+        (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)));
+
+      if (isMinor) {
+        error = "Debes ser mayor de edad (mínimo 18 años).";
+      }
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: error }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    validateField(name, value);
   };
 
+  // Guardar cambios
   const handleSaveChanges = async () => {
-  // ✅ Ahora busca el objeto correcto
-  const storedUser = localStorage.getItem("user");
-
-  if (!storedUser) {
-    console.error("No se encontró información de usuario en localStorage.");
-    onClose();
-    return;
-  }
-
-  const user = JSON.parse(storedUser);
-
-  // ✅ El ID está como "id", no "UserId"
-  const userId = user.id;
-  if (!userId) {
-    console.error("No se pudo encontrar el ID de usuario para actualizar el perfil.");
-    onClose();
-    return;
-  }
-
-  const changes = {};
-  Object.keys(formData).forEach((key) => {
-    if (formData[key] !== originalUser[key]) {
-      const apiFieldName = API_FIELD_MAPPING[key];
-      if (apiFieldName) {
-        changes[apiFieldName] = formData[key];
-      }
-    }
-  });
-
-  if (Object.keys(changes).length === 0) {
-    console.log("No se detectaron cambios.");
-    onClose();
-    return;
-  }
-
-  try {
-    const response = await fetch(`http://localhost:4000/api/profile/${userId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(changes),
+    // Validar todo antes de enviar
+    Object.keys(formData).forEach((key) => {
+      validateField(key, formData[key]);
     });
 
-    if (response.ok) {
-      console.log("Perfil actualizado correctamente.");
-
-      //  Combinar cambios con el user original
-      const updatedUser = { ...user, ...formData };
-      localStorage.setItem("userData", JSON.stringify(updatedUser));
-      setOriginalUser(formData);
-
-      onClose();
-    } else {
-      const errorData = await response.json();
-      console.error("Error de la API al actualizar el perfil:", errorData.message);
+    const hasErrors = Object.values(errors).some((err) => err);
+    if (hasErrors) {
+      console.error("Hay errores en el formulario.");
+      return;
     }
-  } catch (error) {
-    console.error("Error de red o conexión:", error);
-  }
-};
 
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      console.error("No se encontró información de usuario en localStorage.");
+      onClose();
+      return;
+    }
+
+    const parsedUser = JSON.parse(storedUser);
+    const userId = parsedUser.id;
+    if (!userId) {
+      console.error("No se pudo encontrar el ID de usuario.");
+      onClose();
+      return;
+    }
+
+    const changes = {};
+    Object.keys(formData).forEach((key) => {
+      if (formData[key] !== originalUser[key]) {
+        const apiFieldName = API_FIELD_MAPPING[key];
+        if (apiFieldName) {
+          changes[apiFieldName] = formData[key];
+        }
+      }
+    });
+
+    if (Object.keys(changes).length === 0) {
+      console.log("No se detectaron cambios.");
+      onClose();
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:4000/api/profile/${userId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(changes),
+      });
+
+      if (response.ok) {
+        console.log("Perfil actualizado correctamente.");
+
+        const updatedUser = { ...parsedUser, ...formData };
+        localStorage.setItem("userData", JSON.stringify(updatedUser));
+        setOriginalUser(formData);
+        onClose();
+      } else {
+        const errorData = await response.json();
+        console.error("Error de la API:", errorData.message);
+      }
+    } catch (error) {
+      console.error("Error de red o conexión:", error);
+    }
+  };
 
   const openRequestModal = () => setRequestModalOpen(true);
   const closeRequestModal = () => setRequestModalOpen(false);
@@ -138,7 +172,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
     <>
       <div className="sidebar-overlay active" onClick={onClose}>
         <div
-          className="profile-modal"
+          className="profile-modal w-800"
           onClick={stopPropagation}
           role="dialog"
           aria-modal="true"
@@ -174,21 +208,17 @@ const EditModal = ({ isOpen, onClose, user }) => {
               )}
             </div>
 
-            <div className="pm-fields">
+            <div className="pm-fields" style={{ maxWidth: "800px" }}>
               <div className="field-row">
                 <div className="field">
-                  <div className="badge bg-secondary small mt-3">
-                    {rolLegible}
-                  </div>
+                  <div className="badge bg-secondary small mt-3">{rolLegible}</div>
                 </div>
               </div>
 
               {/* Nombre completo */}
               <div className="field-row">
                 <div className="field">
-                  <div className="field-label">
-                    Nombre completo
-                  </div>
+                  <div className="field-label">Nombre completo</div>
                   <input
                     type="text"
                     name="fullName"
@@ -196,6 +226,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                   />
+                  {errors.fullName && <small className="error-text">{errors.fullName}</small>}
                 </div>
               </div>
 
@@ -203,8 +234,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
               <div className="field-row">
                 <div className="field">
                   <div className="field-label">
-                    Correo
-                    <span className="text-muted ms-2">(Campo protegido)</span>
+                    Correo <span className="text-muted ms-2">(Campo protegido)</span>
                   </div>
                   <input
                     type="email"
@@ -227,6 +257,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
                     value={formData.birthDate}
                     onChange={handleInputChange}
                   />
+                  {errors.birthDate && <small className="error-text">{errors.birthDate}</small>}
                 </div>
               </div>
 
@@ -241,9 +272,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
                   </div>
                   <select
                     name="identificationType"
-                    className={`field-value ${
-                      role === "user" ? "field-disabled" : ""
-                    }`}
+                    className={`field-value ${role === "user" ? "field-disabled" : ""}`}
                     value={formData.identificationType}
                     onChange={handleInputChange}
                     disabled={role === "user"}
@@ -265,13 +294,14 @@ const EditModal = ({ isOpen, onClose, user }) => {
                   <input
                     type="text"
                     name="documentNumber"
-                    className={`field-value ${
-                      role === "user" ? "field-disabled" : ""
-                    }`}
+                    className={`field-value ${role === "user" ? "field-disabled" : ""}`}
                     value={formData.documentNumber}
                     onChange={handleInputChange}
                     disabled={role === "user"}
                   />
+                  {errors.documentNumber && (
+                    <small className="error-text">{errors.documentNumber}</small>
+                  )}
                 </div>
               </div>
 
@@ -287,6 +317,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
                     onChange={handleInputChange}
                     placeholder="https://ejemplo.com/foto.jpg"
                   />
+                  {errors.photo && <small className="error-text">{errors.photo}</small>}
                 </div>
               </div>
             </div>
@@ -308,10 +339,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
             </button>
 
             {role === "user" && (
-              <button
-                className="btn-secondary-custom w-100"
-                onClick={openRequestModal}
-              >
+              <button className="btn-secondary-custom w-100" onClick={openRequestModal}>
                 Solicitar cambio de documento
               </button>
             )}

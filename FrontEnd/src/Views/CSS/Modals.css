@@ -6,11 +6,21 @@
   z-index: 100;
   background: #fff;
   border-radius: 8px;
-  max-width: 800px;
+  max-width: 500px;
   width: 100%;
   padding: 22px;
   margin: 0 auto;
   box-shadow: 0 10px 30px rgba(84, 84, 84, 0.2);
+}
+
+.profile-modal.w-800 {
+  max-width: 800px;
+  width: 100%;
+}
+
+.error-text {
+  color: red;
+  font-size: 12px;
 }
 
 .profile-modal .close-btn {
@@ -160,7 +170,6 @@
   justify-content: center;
   margin: 20px 0;
 }
-
 .status-option {
   display: flex;
   align-items: center;
@@ -170,6 +179,7 @@
   border-radius: 6px;
   transition: all 0.3s ease;
   background: #f8f9fa;
+  border: 1px solid transparent;
 }
 
 .status-option:hover {
@@ -177,7 +187,7 @@
 }
 
 .status-option.selected {
-  background: #e8e5ff;
+  background: #f5f0ff;
   border: 1px solid #6c5ce7;
   color: #6c5ce7;
 }
@@ -197,16 +207,8 @@
 .status-option.selected .status-box {
   border-color: #6c5ce7;
   background: #6c5ce7;
-  color: #fff;
 }
-
-.checkmark {
-  font-size: 14px;
-  font-weight: bold;
-}
-
 .status-label {
   font-size: 14px;
   font-weight: 500;
 }
-

@@ -31,7 +31,7 @@ const ModalState = ({
 
   return (
     <div className="sidebar-overlay active">
-      <div className="profile-modal w-50 position-absolute top-50 start-50 translate-middle">
+      <div className="profile-modal position-absolute top-50 start-50 translate-middle">
         <button className="close-btn" onClick={onClose}>×</button>
 
         <h2 className="modal-title text-center">{title}</h2>
@@ -45,7 +45,11 @@ const ModalState = ({
               className={`status-option ${selectedStatus === status ? "selected" : ""}`}
             >
               <div className="status-box">
-                {selectedStatus === status && <span className="checkmark">✓</span>}
+                {selectedStatus === status && 
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill='#f5f0ff'>
+                  <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+                  </svg>
+                }
               </div>
               <span className="status-label">{status}</span>
             </div>

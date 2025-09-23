@@ -1,78 +1,128 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
-import '../CSS/components.css';
+import "../CSS/FormsUser.css";
 
-const ClientSurvey = () => {
-  // Estados locales para guardar las calificaciones
-  // experiencia: valoración general del evento
-  // atencion: valoración del personal
-  const [experiencia, setExperiencia] = useState(0);
-  const [atencion, setAtencion] = useState(0);
+const ClientSurvey = ({ userId }) => {
+  const { eventId } = useParams();
 
-  // Función que se ejecuta al enviar el formulario
-  // Actualmente muestra un alert con los valores seleccionados
-  // ⚡ Aquí se recomienda llamar a una API (POST) para guardar los datos en la BD
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(
-      `Encuesta enviada:\nExperiencia: ${experiencia} estrellas\nAtención: ${atencion} estrellas`
-    );
-  };
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [hover, setHover] = useState({});
 
-  // Función para renderizar estrellas clicables (rating de 1 a 5)
-  // Cambia de color según si están seleccionadas o no
-  // ❌ No necesita API, solo cambia estado en el frontend
-  const renderStars = (selected, setSelected) => {
-    return [...Array(5)].map((_, index) => {
-      const value = index + 1;
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/questions");
+        const data = await res.json();
+
+        const normalized = data.map((q, idx) => {
+          const id = q?.QuestionId ?? q?._id ?? `q_${idx}`;
+          const text = q?.QuestionText ?? `Pregunta ${idx + 1}`;
+          return { ...q, _qid: id, _text: text };
+        });
+
+        const initialAnswers = {};
+        normalized.forEach((q) => {
+          initialAnswers[q._qid] = 0;
+        });
+
+        setQuestions(normalized);
+        setAnswers(initialAnswers);
+      } catch (err) {
+        console.error("Error al obtener preguntas:", err);
+      }
+    };
+
+    fetchQuestions();
+  }, []);
+
+  const renderStars = (questionId) => {
+    const rating = answers[questionId] ?? 0;
+    const preview = hover[questionId] ?? 0;
+    const display = preview || rating;
+
+    return Array.from({ length: 5 }, (_, i) => {
+      const value = i + 1;
       return (
-        <span
-          key={value}
-          onClick={() => setSelected(value)} // Al hacer clic se actualiza el estado
+        <svg
+          key={`${questionId}-${i}`}
+          onClick={() =>
+            setAnswers((prev) => ({ ...prev, [questionId]: value }))
+          }
+          onMouseEnter={() =>
+            setHover((prev) => ({ ...prev, [questionId]: value }))
+          }
+          onMouseLeave={() =>
+            setHover((prev) => ({ ...prev, [questionId]: 0 }))
+          }
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          width="28"
+          height="28"
           style={{
+            margin: "0 3px",
             cursor: "pointer",
-            fontSize: "2rem",
-            marginRight: "8px",
-            color: value <= selected ? "#000000" : "#ffffff",
-            WebkitTextStroke: "1px #000000", // Borde negro cuando la estrella está "vacía"
+            color: value <= display ? "#ffc107" : "#e0e0e0",
+            transition: "color 0.2s ease",
           }}
         >
-          ★
-        </span>
+          <path
+            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+            fill="currentColor"
+          />
+        </svg>
       );
     });
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:4000/api/survey", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          EventId: eventId,
+          UserId: userId,
+          Answers: answers,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Error al enviar la encuesta");
+
+      const result = await res.json();
+      alert(`Encuesta enviada con éxito\n${JSON.stringify(result)}`);
+
+      // Resetear estrellas
+      const reset = {};
+      Object.keys(answers).forEach((k) => (reset[k] = 0));
+      setAnswers(reset);
+    } catch (err) {
+      console.error("Error:", err);
+      alert("No se pudo enviar la encuesta");
+    }
+  };
+
   return (
-    <div className="contratos-container">
-      {/* Cabecera del cliente (sidebar/header) */}
+    <div className="survey-main-container">
       <HeaderCl />
+      <div className="survey-container">
+        <h2 className="survey-title">Encuesta de Satisfacción</h2>
+        <p className="survey-subtitle">Evento ID: {eventId}</p>
+        <form onSubmit={handleSubmit} className="survey-form">
+          {questions.length > 0 ? (
+            questions.map((q) => (
+              <div key={q._qid} className="survey-question-block">
+                <p className="survey-question">{q._text}</p>
+                <div className="stars">{renderStars(q._qid)}</div>
+              </div>
+            ))
+          ) : (
+            <p>No hay preguntas disponibles.</p>
+          )}
 
-      <div className="encuesta-container">
-        <h2 className="encuesta-titulo">Encuesta De Satisfacción</h2>
-
-        {/* Formulario principal de la encuesta */}
-        <form onSubmit={handleSubmit} className="encuesta-form">
-
-          {/* Pregunta 1: Experiencia en el evento */}
-          <p className="encuesta-pregunta">
-            Querido usuario, del 1 al 5 ¿cómo fue su experiencia en el evento?
-          </p>
-          <div className="estrellas">
-            {renderStars(experiencia, setExperiencia)}
-          </div>
-
-          {/* Pregunta 2: Atención del personal */}
-          <p className="encuesta-pregunta">
-            ¿Cómo estuvo la atención del personal del evento?
-          </p>
-          <div className="estrellas">
-            {renderStars(atencion, setAtencion)}
-          </div>
-
-          {/* Botón para enviar la encuesta */}
-          {/* ⚡ Aquí es donde se dispara handleSubmit, que debería llamar a la API */}
-          <button type="submit" className="encuesta-btn">
+          <button type="submit" className="survey-btn">
             Enviar Encuesta
           </button>
         </form>
@@ -82,4 +132,3 @@ const ClientSurvey = () => {
 };
 
 export default ClientSurvey;
-

@@ -10,7 +10,7 @@ const RecoverPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [codeTimer, setCodeTimer] = useState(0); // tiempo en segundos
-  
+
   const codeRefs = useRef([]);
 
   // Manejo del temporizador del código
@@ -54,7 +54,7 @@ const RecoverPassword = () => {
       if (response.ok) {
         alert(`Código enviado a ${email}`);
         setErrorMessage('');
-        setCodeTimer(300); // 5 minutos
+        setCodeTimer(180); // ⏳ CAMBIO: ahora son 3 minutos (180 segundos)
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Error al enviar el código');

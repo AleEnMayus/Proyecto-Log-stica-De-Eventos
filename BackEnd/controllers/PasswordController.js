@@ -3,7 +3,6 @@ const nodemailer = require("nodemailer");
 const db = require("../db");
 require("dotenv").config();
 
-// Configuración de Nodemailer
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
@@ -14,24 +13,23 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Enviar código de recuperación
+// --- Enviar código ---
 const sendResetCode = async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: "Email requerido" });
 
   try {
-    // Validar que el correo exista
     const [user] = await db.query("SELECT * FROM User WHERE Email = ?", [email]);
     if (user.length === 0) {
       return res.status(404).json({ message: "El correo no está registrado" });
     }
 
-    // Generar y guardar el código
     const code = Math.floor(1000 + Math.random() * 9000);
 
+    // Llama al procedimiento que valida el límite de 5 códigos por día
     await PasswordReset.createResetCode(email, code);
 
-    // Enviar correo
+    // Envía el código por correo
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -41,23 +39,26 @@ const sendResetCode = async (req, res) => {
 
     res.json({ message: "Código enviado al email" });
   } catch (error) {
-    if (error.sqlState === "45000") {
-      return res.status(429).json({ message: error.sqlMessage }); // Límite alcanzado
+    // Si el procedimiento lanza SIGNAL (cuando se pasa del límite)
+    if (error.message.includes("Has alcanzado")) {
+      return res.status(429).json({ message: error.message }); // 429 = Too Many Requests
     }
     console.error("Error enviando código:", error);
     res.status(500).json({ message: "Error en el servidor" });
   }
 };
 
-// Verificar código ingresado por el usuario
+// --- Verificar código ingresado por el usuario ---
 const verifyCode = async (req, res) => {
   const { email, code } = req.body;
   if (!email || !code)
     return res.status(400).json({ message: "Email y código requeridos" });
 
   try {
-    const record = await PasswordReset.verifyCode(email, code);
-    if (!record) return res.status(400).json({ message: "Código inválido" });
+    const result = await PasswordReset.verifyCodeProcedure(email, code);
+    if (!result.success) {
+      return res.status(400).json({ message: result.message || "Código inválido o ya usado." });
+    }
 
     res.json({ message: "Código verificado" });
   } catch (error) {
@@ -66,20 +67,20 @@ const verifyCode = async (req, res) => {
   }
 };
 
-// Cambiar contraseña del usuario
+
 const resetPassword = async (req, res) => {
   const { email, code, newPassword } = req.body;
   if (!email || !code || !newPassword)
     return res.status(400).json({ message: "Todos los campos son requeridos" });
 
   try {
-    // Verificar el código antes de actualizar la contraseña
-    const record = await PasswordReset.verifyCode(email, code);
-    if (!record) return res.status(400).json({ message: "Código inválido" });
+    // Verifica y borra el código antes de actualizar contraseña
+    const result = await PasswordReset.verifyCodeProcedure(email, code);
+    if (!result.success) {
+      return res.status(400).json({ message: result.message || "Código inválido o ya usado." });
+    }
 
-    // Actualizar contraseña y borrar registros
     await PasswordReset.updatePassword(email, newPassword);
-
     res.json({ message: "Contraseña actualizada exitosamente" });
   } catch (error) {
     console.error("Error cambiando contraseña:", error);

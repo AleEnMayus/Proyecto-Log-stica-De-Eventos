@@ -15,6 +15,10 @@ const UpdatePassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  
+  const storedUser = localStorage.getItem('user');
+  const user = JSON.parse(storedUser);
+  const userId = user.id;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -56,36 +60,38 @@ const UpdatePassword = () => {
       return;
     }
 
-    // Simulamos la actualización de contraseña
-    setTimeout(() => {
-      // Aquí iría la lógica real para actualizar la contraseña
-      const currentUser = JSON.parse(localStorage.getItem('user'));
-      
-      if (currentUser) {
-        // Simulamos validación de contraseña actual
-        const isCurrentPasswordValid = formData.currentPassword === 'admin123' || formData.currentPassword === 'user123';
-        
-        if (isCurrentPasswordValid) {
-          setSuccess('¡Contraseña actualizada exitosamente!');
-          setFormData({
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-          });
-          
-          // Redirigir después de 2 segundos
-          setTimeout(() => {
-            navigate('/');
-          }, 2000);
-        } else {
-          setError('La contraseña actual no es correcta');
-        }
+    try {
+      const response = await fetch(`http://localhost:4000/api/password/${userId}/change-password`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess('¡Contraseña actualizada exitosamente!');
+        setFormData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
       } else {
-        setError('Usuario no encontrado. Por favor, inicia sesión nuevamente.');
+        setError(data.error || 'No se pudo actualizar la contraseña');
       }
-      
+    } catch (err) {
+      console.error(err);
+      setError('Error de conexión con el servidor');
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const handleGoBackBrowser = () => {

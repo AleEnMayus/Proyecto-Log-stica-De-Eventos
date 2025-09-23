@@ -109,7 +109,6 @@ const ClientSurvey = ({ userId }) => {
       <HeaderCl />
       <div className="survey-container">
         <h2 className="survey-title">Encuesta de Satisfacción</h2>
-        <p className="survey-subtitle">Evento ID: {eventId}</p>
         <form onSubmit={handleSubmit} className="survey-form">
           {questions.length > 0 ? (
             questions.map((q) => (

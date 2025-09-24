@@ -52,6 +52,10 @@ app.use("/api/profile", profileRoutes);
 const requestRoutes = require("./routes/user/Request");
 app.use("/api/requests", requestRoutes);
 
+// --- RUTAS DE SUBIDA DE CONTRATOS ---
+const uploadRoutes = require("./routes/Admin/contractRoutes");
+app.use("/api", uploadRoutes);
+
 // --- SERVIDOR ---
 app.listen(PORT, () => {
   console.log(`Servidor backend corriendo en http://localhost:${PORT}`);

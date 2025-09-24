@@ -1,57 +1,62 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
-import AssignResources from "../Resource/AllocateResources";
+import AssignResourcesModal from "../Resource/AllocateResources";
 import '../../CSS/components.css';
 import '../../CSS/FormsUser.css';
-import '../../CSS/Modals.css'; // asegúrate de tener el css del modal
+import '../../CSS/Modals.css';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    eventName: '',
-    documentNumber: '',
-    clientName: '',
-    address: '',
-    cellPhone: '',
-    secondContact: '',
-    eventDate: '',
-    eventDescription: '',
-    paymentMethod: {
-      cash: false,
-      card: false,
-      transfer: false
-    },
-    eventCapacity: '',
-    eventPrice: ''
+    EventName: '',
+    ClientId: null, // puede ser null
+    Address: '',
+    Capacity: '',
+    EventPrice: '',
+    EventDateTime: '',
+    EventDescription: '',
+    AdvancePaymentMethod: '', // será string (Cash, Transfer, Card)
+    Contract: null, // puede ser null
+    ContractNumber: '',
+    resources: [] // puede estar vacío
   });
 
   const [showModal, setShowModal] = useState(false);
 
+  // Manejo de cambios
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (name.startsWith('paymentMethod.')) {
-      const key = name.split('.')[1];
-      setFormData(prev => ({
-        ...prev,
-        paymentMethod: { ...prev.paymentMethod, [key]: checked }
-      }));
+
+    if (name.startsWith("AdvancePaymentMethod.")) {
+      const key = name.split(".")[1];
+      setFormData(prev => {
+        let method = prev.AdvancePaymentMethod;
+
+        if (checked) method = key; // solo un método seleccionado
+        else method = ''; 
+
+        return { ...prev, AdvancePaymentMethod: method };
+      });
     } else {
       setFormData(prev => ({
         ...prev,
-        [name]: type === 'checkbox' ? checked : value
+        [name]: type === 'number' ? Number(value) : value
       }));
     }
   };
 
+  // Submit
   const handleSubmit = () => {
-    console.log('Form data:', formData);
-    alert('Evento agendado exitosamente');
-  };
+    const payload = {
+      ...formData,
+      CreationDate: new Date().toISOString().slice(0, 19).replace('T', ' '), // formato YYYY-MM-DD hh:mm:ss
+    };
 
-  const handleCancel = () => {
-    navigate(-1);
+    console.log("Payload enviado:", payload);
+    alert("Evento agendado exitosamente");
+    // Aquí va el fetch/axios para enviar al backend
   };
 
   return (
@@ -62,31 +67,26 @@ const CreateEvent = () => {
           <h1 className="login-title">AGENDAR EVENTO</h1>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+            
             <div className="form-row">
               <div className="form-col">
-                <label className="form-label">
-                  Nombre del evento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Nombre del evento *</label>
                 <input
                   type="text"
-                  name="eventName"
+                  name="EventName"
                   className="form-input"
-                  placeholder="Ingresa el nombre del evento"
-                  value={formData.eventName}
+                  value={formData.EventName}
                   onChange={handleInputChange}
                   required
                 />
               </div>
               <div className="form-col">
-                <label className="form-label">
-                  Número de documento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Dirección *</label>
                 <input
                   type="text"
-                  name="documentNumber"
+                  name="Address"
                   className="form-input"
-                  placeholder="Ej: 1234567890"
-                  value={formData.documentNumber}
+                  value={formData.Address}
                   onChange={handleInputChange}
                   required
                 />
@@ -95,90 +95,23 @@ const CreateEvent = () => {
 
             <div className="form-row">
               <div className="form-col">
-                <label className="form-label">
-                  Nombre del cliente <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Fecha y hora *</label>
                 <input
-                  type="text"
-                  name="clientName"
+                  type="datetime-local"
+                  name="EventDateTime"
                   className="form-input"
-                  placeholder="Ingresa el nombre del cliente"
-                  value={formData.clientName}
+                  value={formData.EventDateTime}
                   onChange={handleInputChange}
                   required
                 />
               </div>
               <div className="form-col">
-                <label className="form-label">
-                  Dirección <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  className="form-input"
-                  placeholder="Ingresa la dirección del evento"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-col">
-                <label className="form-label">
-                  Teléfono celular <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="cellPhone"
-                  className="form-input"
-                  placeholder="Ej: +57 300 123 4567"
-                  value={formData.cellPhone}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-col">
-                <label className="form-label">
-                  Segundo contacto <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="secondContact"
-                  className="form-input"
-                  placeholder="Ej: +57 300 987 6543"
-                  value={formData.secondContact}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-col">
-                <label className="form-label">
-                  Fecha del evento <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="date"
-                  name="eventDate"
-                  className="form-input"
-                  value={formData.eventDate}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-col">
-                <label className="form-label">
-                  Capacidad del evento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Capacidad *</label>
                 <input
                   type="number"
-                  name="eventCapacity"
+                  name="Capacity"
                   className="form-input"
-                  placeholder="Ej: 50 personas"
-                  value={formData.eventCapacity}
+                  value={formData.Capacity}
                   onChange={handleInputChange}
                   required
                 />
@@ -187,23 +120,18 @@ const CreateEvent = () => {
 
             <div className="form-row">
               <div className="form-col">
-                <label className="form-label">
-                  Precio o paquete del evento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Precio *</label>
                 <input
-                  type="text"
-                  name="eventPrice"
+                  type="number"
+                  name="EventPrice"
                   className="form-input"
-                  placeholder="Ej: $500,000 COP"
-                  value={formData.eventPrice}
+                  value={formData.EventPrice}
                   onChange={handleInputChange}
                   required
                 />
               </div>
               <div className="form-col">
-                <label className="form-label">
-                  Asignar recursos <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Asignar recursos</label>
                 <button
                   type="button"
                   className="btn-secondary-custom"
@@ -216,98 +144,65 @@ const CreateEvent = () => {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">
-                Descripción del evento <span className="text-danger">*</span>
-              </label>
+              <label className="form-label">Descripción *</label>
               <textarea
-                name="eventDescription"
+                name="EventDescription"
                 className="form-input"
-                placeholder="Describe los detalles del evento..."
-                value={formData.eventDescription}
+                value={formData.EventDescription}
                 onChange={handleInputChange}
                 rows={4}
-                style={{ resize: 'vertical' }}
                 required
               />
             </div>
 
-            <div className="row">
-              <div className="col-md-12 mb-3">
-                <label className="form-label d-block mb-2">
-                  Método de pago <span className="text-danger">*</span>
+            <div className="mb-3">
+              <label className="form-label d-block">Método de pago *</label>
+              <div className="payment-options d-flex gap-4">
+                <label>
+                  <input
+                    type="radio"
+                    name="AdvancePaymentMethod.cash"
+                    checked={formData.AdvancePaymentMethod === "Cash"}
+                    onChange={handleInputChange}
+                  /> Efectivo
                 </label>
-                <div
-                  className="payment-options d-flex justify-content-center gap-5 flex-wrap"
-                  style={{ marginTop: "10px" }}
-                >
-                  <label className="checkbox-wrapper">
-                    <input
-                      type="checkbox"
-                      name="paymentMethod.cash"
-                      checked={formData.paymentMethod.cash}
-                      onChange={handleInputChange}
-                      className="custom-checkbox"
-                    />
-                    <span className="checkmark"></span>
-                    <span className="ms-2">Efectivo</span>
-                  </label>
-
-                  <label className="checkbox-wrapper">
-                    <input
-                      type="checkbox"
-                      name="paymentMethod.card"
-                      checked={formData.paymentMethod.card}
-                      onChange={handleInputChange}
-                      className="custom-checkbox"
-                    />
-                    <span className="checkmark"></span>
-                    <span className="ms-2">Tarjeta</span>
-                  </label>
-
-                  <label className="checkbox-wrapper">
-                    <input
-                      type="checkbox"
-                      name="paymentMethod.transfer"
-                      checked={formData.paymentMethod.transfer}
-                      onChange={handleInputChange}
-                      className="custom-checkbox"
-                    />
-                    <span className="checkmark"></span>
-                    <span className="ms-2">Transferencia</span>
-                  </label>
-                </div>
+                <label>
+                  <input
+                    type="radio"
+                    name="AdvancePaymentMethod.card"
+                    checked={formData.AdvancePaymentMethod === "Card"}
+                    onChange={handleInputChange}
+                  /> Tarjeta
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="AdvancePaymentMethod.transfer"
+                    checked={formData.AdvancePaymentMethod === "Transfer"}
+                    onChange={handleInputChange}
+                  /> Transferencia
+                </label>
               </div>
             </div>
 
             <div className="form-actions">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick={handleCancel}
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="btn-primary-custom"
-              >
-                Agendar Evento
-              </button>
+              <button type="button" className="btn-cancel" onClick={() => navigate(-1)}>Cancelar</button>
+              <button type="submit" className="btn-primary-custom">Agendar Evento</button>
             </div>
           </form>
         </div>
       </div>
 
-      {/* Modal con AssignResources */}
       {showModal && (
         <div className="modal-overlay">
-          <div className="profile-modal">
-            <button className="close-btn" onClick={() => setShowModal(false)}>×</button>
-            <div className="pm-body">
-              <h3 className="text-center mb-3">Asignar Recursos</h3>
-              <AssignResources />
-            </div>
-          </div>
+          <AssignResourcesModal
+            onClose={() => setShowModal(false)}
+            onSave={(ids) => {
+              console.log("Resources guardados:", ids);
+              setFormData(prev => ({ ...prev, resources: ids }));
+              setShowModal(false);
+            }}
+          />
         </div>
       )}
     </>

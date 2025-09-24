@@ -182,3 +182,35 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER DecreaseResourceQuantityAfteInsert
+AFTER INSERT ON EventResources
+FOR EACH ROW
+BEGIN
+  UPDATE Resources
+  SET Quantity = Quantity - NEW.AssignedQuantity
+  WHERE ResourceId = NEW.ResourceId;
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER ReturnResourcesAfterEventUpdate
+AFTER UPDATE ON Events
+FOR EACH ROW
+BEGIN
+
+  IF (NEW.EventStatus IN ('Completed', 'Canceled') AND OLD.EventStatus <> NEW.EventStatus) THEN
+    
+    UPDATE Resources r
+    JOIN EventResources er ON r.ResourceId = er.ResourceId
+    SET r.Quantity = r.Quantity + er.AssignedQuantity
+    WHERE er.EventId = NEW.EventId;
+
+  END IF;
+END//
+
+DELIMITER ;

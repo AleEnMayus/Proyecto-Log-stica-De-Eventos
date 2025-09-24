@@ -66,6 +66,14 @@ const EventModel = {
     return result.affectedRows;
   },
 
+  updateEventStatus: async (id, status) => {
+    const sql = `UPDATE Events SET EventStatus = ? WHERE EventId = ?`;
+    const [result] = await db.query(sql, [status, id]);
+    return result.affectedRows;
+  },  
+
+
+
   deleteEvent: async (id) => {
     const [result] = await db.query("DELETE FROM Events WHERE EventId = ?", [id]);
     return result.affectedRows;

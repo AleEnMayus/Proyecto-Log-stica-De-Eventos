@@ -87,6 +87,26 @@ async function createEvent(req, res) {
   }
 }
 
+async function updateEventStatus(req, res) {
+  try {
+    const { id } = req.params;
+    const { EventStatus } = req.body;
+
+    if (!EventStatus) {
+      return res.status(400).json({ error: "Debes enviar el nuevo estado" });
+    }
+
+    const updated = await Event.updateEventStatus(id, EventStatus);
+
+    updated
+      ? res.json({ message: "Estado actualizado correctamente" })
+      : res.status(404).json({ error: "Evento no encontrado" });
+
+  } catch (err) {
+    console.error("Error actualizando estado del evento:", err);
+    res.status(500).json({ error: "Error actualizando estado" });
+  }
+}
 
 // Actualizar evento
 async function updateEvent(req, res) {
@@ -144,4 +164,4 @@ async function deleteEvent(req, res) {
   }
 }
 
-module.exports = { getEvents, getEventById, createEvent, updateEvent, deleteEvent };
+module.exports = { getEvents, getEventById, createEvent, updateEvent, deleteEvent, updateEventStatus };

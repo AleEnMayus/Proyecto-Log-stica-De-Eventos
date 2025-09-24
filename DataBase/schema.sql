@@ -26,6 +26,18 @@ CREATE TABLE Resources (
     Price FLOAT
 );
 
+-- Tabla de recursos asignados a eventos
+CREATE TABLE EventResources (
+    EventResourceId INT PRIMARY KEY AUTO_INCREMENT,
+    AssignedQuantity INT,
+    AssignmentStatus ENUM('reserved', 'assigned', 'returned'),
+    EventId INT,
+    ResourceId INT,
+    Prices FLOAT,
+    FOREIGN KEY (EventId) REFERENCES Events(EventId),
+    FOREIGN KEY (ResourceId) REFERENCES Resources(ResourceId)
+);
+
 -- Tabla de eventos
 CREATE TABLE Events (
     EventId INT PRIMARY KEY AUTO_INCREMENT,
@@ -56,18 +68,6 @@ CREATE TABLE Requests (
     EventId INT NULL,
     FOREIGN KEY (UserId) REFERENCES User(UserId),
     FOREIGN KEY (EventId) REFERENCES Events(EventId)
-);
-
--- Tabla de recursos asignados a eventos
-CREATE TABLE EventResources (
-    EventResourceId INT PRIMARY KEY AUTO_INCREMENT,
-    AssignedQuantity INT,
-    AssignmentStatus ENUM('reserved', 'assigned', 'returned'),
-    EventId INT,
-    ResourceId INT,
-    Prices FLOAT,
-    FOREIGN KEY (EventId) REFERENCES Events(EventId),
-    FOREIGN KEY (ResourceId) REFERENCES Resources(ResourceId)
 );
 
 -- Tabla de archivos multimedia

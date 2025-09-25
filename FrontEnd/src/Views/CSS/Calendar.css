@@ -1,0 +1,125 @@
+/* Colores base */
+:root {
+  --color-primary: #ff4ec7;   /* Rosa vibrante */
+  --color-secondary: #7a5cff; /* Morado */
+  --color-accent: #4ecbff;    /* Azul celeste */
+  --color-light: #f4f6fb;     /* Fondo claro */
+  --color-dark: #333;
+}
+
+/* Contenedor principal */
+.calendar-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px; /* espacio entre calendario y eventos */
+  flex-wrap: wrap;
+}
+
+/* Caja del calendario */
+.calendar-box {
+  background: #ffffff;
+  padding: 15px; /* más pequeño */
+  border-radius: 14px;
+  box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.1);
+  min-width: 360px; /* más compacto */
+  border-top: 4px solid var(--color-primary);
+}
+
+/* Encabezado del calendario */
+.calendar-header {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--color-dark);
+}
+
+/* Grid del calendario */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Nombres de los días */
+.day-name {
+  font-weight: bold;
+  padding: 10px;
+  font-size: 0.95rem;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-accent));
+  color: white;
+  border-radius: 6px;
+}
+
+/* Días del calendario */
+.day {
+  padding: 16px; /* grande pero cuadro ajustado */
+  font-size: 1rem;
+  background-color: var(--color-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  border: 1px solid transparent;
+  font-weight: 500;
+  color: var(--color-dark);
+}
+
+/* Hover en los días */
+.day:hover {
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+  color: white;
+  border: 1px solid var(--color-secondary);
+  transform: scale(1.05);
+}
+
+/* Día seleccionado */
+.day.selected {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white;
+  font-weight: bold;
+  border: 2px solid var(--color-dark);
+}
+
+/* Días vacíos */
+.day.empty {
+  background: transparent;
+  pointer-events: none;
+}
+
+/* Caja de eventos */
+.event-box {
+  background: #ffffff;
+  padding: 15px; /* más pequeño */
+  border-radius: 14px;
+  box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.1);
+  min-width: 260px; /* más compacto */
+  max-width: 300px;
+  border-left: 4px solid var(--color-secondary);
+}
+
+/* Texto de los eventos */
+.event-box p {
+  margin: 10px 0;
+  font-size: 0.95rem;
+  color: var(--color-dark);
+}
+
+.event-box strong {
+  color: var(--color-primary);
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .calendar-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .calendar-box,
+  .event-box {
+    width: 100%;
+    max-width: 400px;
+  }
+}

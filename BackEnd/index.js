@@ -56,6 +56,10 @@ app.use("/api/requests", requestRoutes);
 const uploadRoutes = require("./routes/Admin/contractRoutes");
 app.use("/api", uploadRoutes);
 
+// --- RUTAS DE RECURSOS ASIGNADOS A EVENTOS --- 
+const eventResourcesRoutes = require("./routes/Admin/EventResourceRoutes");
+app.use("/api/event-resources", eventResourcesRoutes);
+
 // --- SERVIDOR ---
 app.listen(PORT, () => {
   console.log(`Servidor backend corriendo en http://localhost:${PORT}`);

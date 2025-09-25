@@ -1,85 +1,56 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { eraseUnderscore } from '../../../utils/FormatText';
 import '../../CSS/components.css';
-import '../../CSS/Lists.css'; // Archivo CSS universal
+import '../../CSS/Lists.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 const ListEventsA = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [eventos, setEventos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const eventsPerPage = 5;
 
-  const eventos = [
-    {
-      id: 1,
-      fecha: '15/12/2024',
-      hora: '14:30',
-      nombreEvento: 'Conferencia de Marketing Digital',
-      agendadoPor: 'Maria Muñoz',
-      estado: 'En planeación'
-    },
-    {
-      id: 2,
-      fecha: '20/12/2024',
-      hora: '10:00',
-      nombreEvento: 'Workshop de React',
-      agendadoPor: 'Juan Pérez',
-      estado: 'En ejecución'
-    },
-    {
-      id: 3,
-      fecha: '22/12/2024',
-      hora: '16:00',
-      nombreEvento: 'Seminario de UX/UI',
-      agendadoPor: 'Ana García',
-      estado: 'Terminado'
-    },
-    {
-      id: 4,
-      fecha: '25/12/2024',
-      hora: '09:00',
-      nombreEvento: 'Taller de JavaScript',
-      agendadoPor: 'Carlos López',
-      estado: 'En planeación'
-    },
-    {
-      id: 5,
-      fecha: '28/12/2024',
-      hora: '11:30',
-      nombreEvento: 'Conferencia de IA',
-      agendadoPor: 'Sofia Martín',
-      estado: 'En ejecución'
-    },
-    {
-      id: 6,
-      fecha: '30/12/2024',
-      hora: '15:00',
-      nombreEvento: 'Workshop de Node.js',
-      agendadoPor: 'Miguel Torres',
-      estado: 'En planeación'
-    }
-  ];
+  // Traer eventos desde API
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/events");
+        if (!res.ok) throw new Error("Error al obtener eventos");
+        const data = await res.json();
+        setEventos(data);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEventos();
+  }, []);
 
+  // Filtro
   const eventosFiltrados = eventos.filter(evento =>
-    evento.nombreEvento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    evento.agendadoPor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    evento.estado.toLowerCase().includes(searchTerm.toLowerCase())
+    evento.EventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    evento.EventStatus?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Colores de estado
   const getEstadoColor = (estado) => {
-    switch(estado.toLowerCase()) {
-      case 'terminado':
-        return { color: '#ff0000ff' }; 
-      case 'en planeación':
-        return { color: '#13a927ff' }; 
-      case 'en ejecución':
-        return { color: '#ffae00ff' }; 
-      default:
+    switch (estado?.toLowerCase()) {
+      case 'completed':
+        return { color: '#ff0000ff' };
+      case 'in_planning':
+        return { color: '#13a927ff' };
+      case 'in_execution':
         return { color: '#ffae00ff' };
+      default:
+        return { color: '#6c757d' };
     }
   };
 
+  // Ver evento
   const handleVerEvento = (eventId) => {
     navigate(`/EventsHomeAdmin/Details/${eventId}`);
   };
@@ -90,10 +61,20 @@ const ListEventsA = () => {
   const currentEvents = eventosFiltrados.slice(indexOfFirstEvent, indexOfLastEvent);
   const totalPages = Math.ceil(eventosFiltrados.length / eventsPerPage);
 
+  // Loading
+  if (loading) {
+    return (
+      <div className="list-container mle-0">
+        <HeaderAdm />
+        <p className="mt-5 pt-5 text-center">Cargando eventos...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="list-container mle-0">
-      <HeaderAdm/>
-      
+      <HeaderAdm />
+
       {/* Header */}
       <div className="list-header mt-5 pt-5">
         <h2 className="list-title">LISTADO DE EVENTOS</h2>
@@ -115,7 +96,7 @@ const ListEventsA = () => {
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar por evento, organizador o estado..."
+            placeholder="Buscar por evento o estado..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -132,43 +113,54 @@ const ListEventsA = () => {
             <tr>
               <th>Fecha</th>
               <th>Nombre del evento</th>
+              <th>Cliente</th> {/* nueva columna */}
               <th>Estado</th>
               <th>Ver</th>
             </tr>
           </thead>
-          <tbody>
-            {currentEvents.map((evento) => (
-              <tr key={evento.id}>
-                <td>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontWeight: '600', color: '#2c3e50' }}>{evento.fecha}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#6c757d' }}>{evento.hora}</div>
-                  </div>
-                </td>
-                <td>
-                  <span style={{ fontWeight: '500', color: '#2c3e50' }}>
-                    {evento.nombreEvento}
-                  </span>
-                </td>
 
-                <td>
-                  <span 
-                    className="btn-custom btn-status-custom"
-                    style={getEstadoColor(evento.estado)}
-                  >
-                    {evento.estado}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="btn-custom btn-view-custom"
-                    onClick={() => handleVerEvento(evento.id)}
-                  >
-                    Ver
-                  </button>
-                </td>
-              </tr>
-            ))}
+          <tbody>
+            {currentEvents.map((evento) => {
+              const fecha = new Date(evento.EventDateTime).toLocaleDateString();
+              const hora = new Date(evento.EventDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+              return (
+                <tr key={evento.EventId}>
+                  <td>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontWeight: '600', color: '#2c3e50' }}>{fecha}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#6c757d' }}>{hora}</div>
+                    </div>
+                  </td>
+                  <td>
+                    <span style={{ fontWeight: '500', color: '#2c3e50' }}>
+                      {evento.EventName}
+                    </span>
+                  </td>
+                  <td>
+                    <span style={{ fontWeight: '500', color: '#34495e' }}>
+                      {evento.ClientName || "Desconocido"}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className="btn-custom btn-status-custom"
+                      style={getEstadoColor(evento.EventStatus)}
+                    >
+                      {eraseUnderscore(evento.EventStatus)}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className="btn-custom btn-edit-custom d-flex align-items-center mx-auto"
+                      onClick={() => handleVerEvento(evento.EventId)}
+                    >
+                      Ver
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -180,9 +172,7 @@ const ListEventsA = () => {
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
-            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
-          </svg>
+          ◀
         </button>
 
         <div className="pagination-numbers">
@@ -202,9 +192,7 @@ const ListEventsA = () => {
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
-            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
-          </svg>
+          ▶
         </button>
       </div>
 

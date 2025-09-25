@@ -45,9 +45,21 @@ const AdminAccountsList = () => {
     setModalConfig({
       message: "¿Seguro quieres eliminar la cuenta?",
       confirmText: "Eliminar",
-      onConfirm: () => {
-        console.log("Usuario eliminado:", userId);
-        setShowModal(false);
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`${API_URL}/${userId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          if (!res.ok) throw new Error("Error al eliminar cuenta");
+
+          setUsers(prev => prev.filter(u => u.UserId !== userId));
+          setShowModal(false);
+        } catch (err) {
+          console.error("Error eliminando cuenta:", err);
+          alert("No se pudo eliminar la cuenta");
+        }
       }
     });
     setShowModal(true);

@@ -122,7 +122,7 @@ const CreateResource = () => {
                   required
                 >
                   <option value="Available">Disponible</option>
-                  <option value="In use">En uso</option>
+                  <option value="In_use">En uso</option>
                 </select>
               </div>
               <div className="form-col">

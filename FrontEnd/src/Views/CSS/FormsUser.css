@@ -95,13 +95,16 @@
 }
 
 .login-form-card {
-  width: 100% !important;
-  max-width: 800px !important;   /* límite del ancho */
   background: #fff;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   margin: 0 auto;     /* asegura centrado horizontal */
+}
+
+.w-800 {
+  max-width: 800px !important;
+  width: 100% !important;
 }
 
 .login-title {

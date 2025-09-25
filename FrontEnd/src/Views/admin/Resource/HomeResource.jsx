@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { eraseUnderscore } from '../../../utils/FormatText';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
 import EditResource from "./EditResource";
@@ -160,7 +161,7 @@ const ListResource = () => {
                   <td>{r.ResourceId}</td>
                   <td>{r.ResourceName}</td>
                   <td>{r.Quantity}</td>
-                  <td>{r.Status}</td>
+                  <td>{eraseUnderscore(r.Status)}</td>
                   <td>{r.StatusDescription}</td>
                   <td>{r.Price}</td>
                   <td>

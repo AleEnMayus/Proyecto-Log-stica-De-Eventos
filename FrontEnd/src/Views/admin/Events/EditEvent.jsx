@@ -7,7 +7,7 @@ import '../../CSS/FormsUser.css';
 const EditEvent = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     eventName: '',
     documentNumber: '',
@@ -39,11 +39,11 @@ const EditEvent = () => {
   const fetchEventData = async (id) => {
     try {
       setLoading(true);
-      
+
       // DATOS DE PRUEBA - Reemplaza con tu API
       if (process.env.NODE_ENV === 'development') {
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         const mockData = {
           eventName: 'Cumpleaños Numero 36',
           documentNumber: '123456789',
@@ -61,7 +61,7 @@ const EditEvent = () => {
           eventCapacity: '50',
           eventPrice: '500000'
         };
-        
+
         setFormData(mockData);
         setLoading(false);
         return;
@@ -109,7 +109,7 @@ const EditEvent = () => {
       // Validar campos requeridos
       const requiredFields = ['eventName', 'documentNumber', 'clientName', 'address', 'cellPhone', 'eventDate', 'eventCapacity', 'eventPrice'];
       const missingFields = requiredFields.filter(field => !formData[field]);
-      
+
       if (missingFields.length > 0) {
         alert('Por favor complete todos los campos requeridos');
         return;
@@ -123,7 +123,7 @@ const EditEvent = () => {
       }
 
       console.log('Actualizando evento:', formData);
-      
+
       // Aquí harías la llamada a tu API para actualizar
       // const response = await fetch(`/api/events/${eventId}`, {
       //   method: 'PUT',
@@ -137,11 +137,11 @@ const EditEvent = () => {
       //   alert('Evento actualizado exitosamente');
       //   navigate(`/EventsHomeAdmin/Details/${eventId}`);
       // }
-      
+
       // Simulación de éxito
       alert('Evento actualizado exitosamente');
       navigate(`/EventsHomeAdmin/Details/${eventId}`);
-      
+
     } catch (error) {
       console.error('Error al actualizar evento:', error);
       alert('Error al actualizar el evento');
@@ -176,8 +176,8 @@ const EditEvent = () => {
             <div style={{ textAlign: 'center', padding: '50px' }}>
               Error: {error}
               <br />
-              <button 
-                onClick={() => fetchEventData(eventId)} 
+              <button
+                onClick={() => fetchEventData(eventId)}
                 className="btn-primary-custom"
                 style={{ marginTop: '20px' }}
               >
@@ -193,8 +193,8 @@ const EditEvent = () => {
   return (
     <>
       <HeaderAdm />
-      <div className="login-container ps-lg-5 pe-lg-5 ps-1 pe-1">
-        <div className="login-content ps-lg-5 pe-lg-5 ms-lg-5 me-lg-5">
+      <div className="login-container container  mt-10">
+        <div className="login-form-card w-800">
           <button className="back-btn" onClick={() => window.history.back()}>
             ←
           </button>
@@ -335,7 +335,7 @@ const EditEvent = () => {
                 <label className="form-label">
                   Asignar recursos <span className="text-danger">*</span>
                 </label>
-                <button 
+                <button
                   type="button"
                   className="btn-secondary-custom"
                   style={{ width: '100%' }}
@@ -367,58 +367,18 @@ const EditEvent = () => {
                 <label className="form-label">
                   Método de pago <span className="text-danger">*</span>
                 </label>
-                <div className="payment-options" style={{ 
-                  display: 'flex', 
-                  gap: '20px', 
-                  flexWrap: 'wrap',
-                  marginTop: '10px'
-                }}>
-                  <label className="payment-option" style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '8px',
-                    cursor: 'pointer'
-                  }}>
-                    <input
-                      type="checkbox"
-                      name="paymentMethod.cash"
-                      checked={formData.paymentMethod.cash}
-                      onChange={handleInputChange}
-                      style={{ margin: '0' }}
-                    />
-                    Efectivo
-                  </label>
-                  <label className="payment-option" style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '8px',
-                    cursor: 'pointer'
-                  }}>
-                    <input
-                      type="checkbox"
-                      name="paymentMethod.card"
-                      checked={formData.paymentMethod.card}
-                      onChange={handleInputChange}
-                      style={{ margin: '0' }}
-                    />
-                    Tarjeta
-                  </label>
-                  <label className="payment-option" style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '8px',
-                    cursor: 'pointer'
-                  }}>
-                    <input
-                      type="checkbox"
-                      name="paymentMethod.transfer"
-                      checked={formData.paymentMethod.transfer}
-                      onChange={handleInputChange}
-                      style={{ margin: '0' }}
-                    />
-                    Transferencia
-                  </label>
-                </div>
+                <select
+                  name="AdvancePaymentMethod"
+                  className="form-select form-input"
+                  value={formData.AdvancePaymentMethod}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Seleccione un método</option>
+                  <option value="Cash">Efectivo</option>
+                  <option value="Card">Tarjeta</option>
+                  <option value="Transfer">Transferencia</option>
+                </select>
               </div>
             </div>
 

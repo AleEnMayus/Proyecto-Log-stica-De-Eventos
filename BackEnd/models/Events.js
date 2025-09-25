@@ -1,83 +1,117 @@
 const db = require("../db");
 
-const EventModel = {
-  getAllEvents: async () => {
-    const [rows] = await db.query("SELECT * FROM Events");
-    return rows;
-  },
+// Obtener listado resumido de eventos
+async function getEvents() {
+  const [rows] = await db.query(`
+    SELECT 
+      e.EventId,
+      e.EventDateTime,
+      e.EventName,
+      e.EventStatus,
+      u.Names AS ClientName
+    FROM Events e
+    LEFT JOIN User u ON e.ClientId = u.UserId
+    ORDER BY e.CreationDate DESC
+  `);
+  return rows;
+}
 
-  addEvent: async (eventData) => {
-    const sql = `
-      INSERT INTO Events 
-      (EventName, ClientId, EventStatus, Capacity, EventPrice, AdvancePaymentMethod, CreationDate, EventDateTime, Address, EventDescription, ContractRoute, ContractNumber)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [
-      eventData.EventName || null,
-      eventData.ClientId || null,
-      eventData.EventStatus || "In planning",
-      eventData.Capacity || null,
-      eventData.EventPrice || null,
-      eventData.AdvancePaymentMethod || null,
-      eventData.CreationDate || new Date(),
-      eventData.EventDateTime || null,
-      eventData.Address || null,
-      eventData.EventDescription || null,
-      eventData.Contract || null,
-      eventData.ContractNumber || null
-    ];
-    const [result] = await db.query(sql, values);
-    return result.insertId;
-  },
+// Obtener evento por ID con detalles completos
+async function getEventById(id) {
+  const [rows] = await db.query(`
+    SELECT 
+      e.EventId,
+      e.EventName,
+      u.Names AS ClientName,
+      e.EventStatus,
+      e.Capacity,
+      e.EventPrice,
+      e.AdvancePaymentMethod,
+      e.CreationDate,
+      e.EventDateTime,
+      e.Address,
+      e.EventDescription,
+      e.ContractRoute,
+      e.ContractNumber
+    FROM Events e
+    LEFT JOIN User u ON e.ClientId = u.UserId
+    WHERE e.EventId = ?
+  `, [id]);
 
-  getEventById: async (id) => {
-    const [rows] = await db.query("SELECT * FROM Events WHERE EventId = ?", [id]);
-    return rows[0];
-  },
+  return rows.length > 0 ? rows[0] : null;
+}
 
-  updateEvent: async (id, eventData) => {
-    const fields = [];
-    const values = [];
+// Crear evento
+async function addEvent(event) {
+  const [result] = await db.query(
+    `INSERT INTO Events 
+      (EventName, ClientId, EventStatus, Capacity, EventPrice, 
+       AdvancePaymentMethod, CreationDate, EventDateTime, 
+       Address, EventDescription, ContractRoute, ContractNumber) 
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      event.EventName,
+      event.ClientId,
+      event.EventStatus,
+      event.Capacity,
+      event.EventPrice,
+      event.AdvancePaymentMethod,
+      event.CreationDate,
+      event.EventDateTime,
+      event.Address,
+      event.EventDescription,
+      event.Contract,
+      event.ContractNumber
+    ]
+  );
+  return result.insertId;
+}
 
-    for (const key of [
-      "EventName",
-      "ClientId",
-      "EventStatus",
-      "Capacity",
-      "EventPrice",
-      "AdvancePaymentMethod",
-      "EventDateTime",
-      "Address",
-      "EventDescription",
-      "Contract",
-      "ContractNumber"
-    ]) {
-      if (eventData[key] !== undefined) {
-        fields.push(`${key} = ?`);
-        values.push(eventData[key]);
-      }
-    }
+// Actualizar estado
+async function updateEventStatus(id, status) {
+  const [result] = await db.query(
+    "UPDATE Events SET EventStatus = ? WHERE EventId = ?",
+    [status, id]
+  );
+  return result.affectedRows > 0;
+}
 
-    if (fields.length === 0) return 0;
+// Actualizar evento completo
+async function updateEvent(id, event) {
+  const [result] = await db.query(
+    `UPDATE Events 
+     SET EventName=?, EventStatus=?, Capacity=?, EventPrice=?, 
+         AdvancePaymentMethod=?, EventDateTime=?, Address=?, 
+         EventDescription=?, ContractRoute=?, ContractNumber=? 
+     WHERE EventId=?`,
+    [
+      event.EventName,
+      event.EventStatus,
+      event.Capacity,
+      event.EventPrice,
+      event.AdvancePaymentMethod,
+      event.EventDateTime,
+      event.Address,
+      event.EventDescription,
+      event.Contract,
+      event.ContractNumber,
+      id
+    ]
+  );
+  return result.affectedRows > 0;
+}
 
-    values.push(id);
-    const sql = `UPDATE Events SET ${fields.join(", ")} WHERE EventId = ?`;
-    const [result] = await db.query(sql, values);
-    return result.affectedRows;
-  },
+// Eliminar evento
+async function deleteEvent(id) {
+  const [result] = await db.query("DELETE FROM Events WHERE EventId = ?", [id]);
+  return result.affectedRows > 0;
+}
 
-  updateEventStatus: async (id, status) => {
-    const sql = `UPDATE Events SET EventStatus = ? WHERE EventId = ?`;
-    const [result] = await db.query(sql, [status, id]);
-    return result.affectedRows;
-  },  
-
-
-
-  deleteEvent: async (id) => {
-    const [result] = await db.query("DELETE FROM Events WHERE EventId = ?", [id]);
-    return result.affectedRows;
-  }
+module.exports = {
+  getEvents,
+  getEventById,
+  addEvent,
+  updateEvent,
+  updateEventStatus,
+  deleteEvent
 };
-
-module.exports = EventModel;

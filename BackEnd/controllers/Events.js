@@ -1,10 +1,11 @@
 const Event = require("../models/Events");
 const EventResources = require("../models/EventResources");
+const db = require("../db");
 
-// Obtener todos los eventos
+// Listado de eventos (resumido)
 async function getEvents(req, res) {
   try {
-    const events = await Event.getAllEvents();
+    const events = await Event.getEvents();
     res.json(events);
   } catch (err) {
     console.error("Error obteniendo eventos:", err);
@@ -12,7 +13,7 @@ async function getEvents(req, res) {
   }
 }
 
-// Obtener un evento por id
+// Detalle de un evento por ID
 async function getEventById(req, res) {
   try {
     const { id } = req.params;
@@ -29,11 +30,12 @@ async function getEventById(req, res) {
   }
 }
 
-// Crear un nuevo evento
+// Crear nuevo evento
 async function createEvent(req, res) {
   try {
     const {
       EventName,
+      ClientIdentifier,
       ClientId,
       EventStatus,
       Capacity,
@@ -46,13 +48,32 @@ async function createEvent(req, res) {
       Contract,
       ContractNumber,
       RequestId,
-      resources // opcional
+      resources
     } = req.body;
 
-    // Insertar evento
+    let resolvedClientId = ClientId;
+
+    if (!resolvedClientId && ClientIdentifier) {
+      const [rows] = await db.query(
+        `SELECT UserId FROM User 
+         WHERE Email = ? OR DocumentNumber = ? 
+         LIMIT 1`,
+        [ClientIdentifier, ClientIdentifier]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "Cliente no encontrado" });
+      }
+      resolvedClientId = rows[0].UserId;
+    }
+
+    if (!resolvedClientId) {
+      return res.status(400).json({ error: "Debe especificar un cliente" });
+    }
+
     const eventId = await Event.addEvent({
       EventName,
-      ClientId,
+      ClientId: resolvedClientId,
       EventStatus,
       Capacity,
       EventPrice,
@@ -66,24 +87,17 @@ async function createEvent(req, res) {
       RequestId
     });
 
-    // Obtener evento recién creado
     const newEvent = await Event.getEventById(eventId);
 
-    // Asignar recursos si vienen en el body
     let resourceResult = [];
     if (resources && resources.length > 0) {
       resourceResult = await EventResources.assignResources(eventId, resources);
     }
 
-    // Responder con evento + recursos
-    res.status(201).json({
-      event: newEvent,
-      resources: resourceResult
-    });
-
+    res.status(201).json({ event: newEvent, resources: resourceResult });
   } catch (err) {
     console.error("Error creando evento:", err);
-    res.status(500).json({ error: err.message }); //  devuelve mensaje real
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -97,71 +111,47 @@ async function updateEventStatus(req, res) {
     }
 
     const updated = await Event.updateEventStatus(id, EventStatus);
-
     updated
       ? res.json({ message: "Estado actualizado correctamente" })
       : res.status(404).json({ error: "Evento no encontrado" });
 
   } catch (err) {
-    console.error("Error actualizando estado del evento:", err);
+    console.error("Error actualizando estado:", err);
     res.status(500).json({ error: "Error actualizando estado" });
   }
 }
 
-// Actualizar evento
 async function updateEvent(req, res) {
   try {
     const { id } = req.params;
-    const {
-      EventName,
-      EventStatus,
-      Capacity,
-      EventPrice,
-      AdvancePaymentMethod,
-      EventDateTime,
-      Address,
-      EventDescription,
-      Contract,
-      ContractNumber
-    } = req.body;
-
-    const updatedEvent = await Event.updateEvent(id, {
-      EventName,
-      EventStatus,
-      Capacity,
-      EventPrice,
-      AdvancePaymentMethod,
-      EventDateTime,
-      Address,
-      EventDescription,
-      Contract,
-      ContractNumber
-    });
-
-    updatedEvent
-      ? res.json(updatedEvent)
+    const updated = await Event.updateEvent(id, req.body);
+    updated
+      ? res.json({ message: "Evento actualizado correctamente" })
       : res.status(404).json({ error: "Evento no encontrado" });
-
   } catch (err) {
     console.error("Error actualizando evento:", err);
     res.status(500).json({ error: "Error actualizando evento" });
   }
 }
 
-// Eliminar evento
 async function deleteEvent(req, res) {
   try {
     const { id } = req.params;
     const success = await Event.deleteEvent(id);
-
     success
       ? res.json({ message: "Evento eliminado correctamente" })
       : res.status(404).json({ error: "Evento no encontrado" });
-
   } catch (err) {
     console.error("Error eliminando evento:", err);
     res.status(500).json({ error: "Error eliminando evento" });
   }
 }
 
-module.exports = { getEvents, getEventById, createEvent, updateEvent, deleteEvent, updateEventStatus };
+module.exports = {
+  getEvents,
+  getEventById,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  updateEventStatus
+};

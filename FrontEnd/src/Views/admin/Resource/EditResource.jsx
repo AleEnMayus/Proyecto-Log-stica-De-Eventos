@@ -111,8 +111,8 @@ const EditResource = ({ resource, onSave, onCancel }) => {
                     value={formData.Status}
                     onChange={handleChange}
                   >
-                    <option value="Available">Dispeonibl</option>
-                    <option value="In use">En uso</option>
+                    <option value="Available">Disponible</option>
+                    <option value="In_use">En uso</option>
                     
                   </select>
                 </div>

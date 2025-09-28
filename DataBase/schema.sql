@@ -16,6 +16,24 @@ CREATE TABLE User (
     Photo VARCHAR(255)
 );
 
+-- Tabla de eventos
+CREATE TABLE Events (
+    EventId INT PRIMARY KEY AUTO_INCREMENT,
+    EventName VARCHAR(50),
+    ClientId INT,
+    EventStatus ENUM('In_planning', 'In_execution', 'Completed', 'Canceled') DEFAULT 'In_planning',
+    Capacity INT, -- unificar a INT
+    EventPrice FLOAT,
+    AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
+    CreationDate DATETIME,
+    EventDateTime DATETIME,
+    Address VARCHAR(50),
+    EventDescription VARCHAR(500),
+    ContractRoute VARCHAR(100),
+    ContractNumber INT,
+    FOREIGN KEY (ClientId) REFERENCES User(UserId)
+);
+
 -- Tabla de recursos
 CREATE TABLE Resources (
     ResourceId INT PRIMARY KEY AUTO_INCREMENT,
@@ -36,24 +54,6 @@ CREATE TABLE EventResources (
     Prices FLOAT,
     FOREIGN KEY (EventId) REFERENCES Events(EventId),
     FOREIGN KEY (ResourceId) REFERENCES Resources(ResourceId)
-);
-
--- Tabla de eventos
-CREATE TABLE Events (
-    EventId INT PRIMARY KEY AUTO_INCREMENT,
-    EventName VARCHAR(50),
-    ClientId INT,
-    EventStatus ENUM('In_planning', 'In_execution', 'Completed', 'Canceled') DEFAULT 'In_planning',
-    Capacity INT, -- unificar a INT
-    EventPrice FLOAT,
-    AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
-    CreationDate DATETIME,
-    EventDateTime DATETIME,
-    Address VARCHAR(50),
-    EventDescription VARCHAR(500),
-    ContractRoute VARCHAR(100),
-    ContractNumber INT,
-    FOREIGN KEY (ClientId) REFERENCES User(UserId)
 );
 
 -- Tabla de solicitudes
@@ -210,6 +210,23 @@ BEGIN
     SET r.Quantity = r.Quantity + er.AssignedQuantity
     WHERE er.EventId = NEW.EventId;
 
+  END IF;
+END//
+
+DELIMITER ;
+
+-- Trigger para actualizar el estado del recurso a 'In_use' si la cantidad llega a cero
+
+DELIMITER //
+
+CREATE TRIGGER SetResourceInUseWhenZero
+AFTER UPDATE ON Resources
+FOR EACH ROW
+BEGIN
+  IF NEW.Quantity = 0 AND NEW.Status <> 'In_use' THEN
+    UPDATE Resources
+    SET Status = 'In_use'
+    WHERE ResourceId = NEW.ResourceId;
   END IF;
 END//
 

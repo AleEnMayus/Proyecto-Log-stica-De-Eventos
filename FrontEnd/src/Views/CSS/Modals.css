@@ -1,6 +1,6 @@
 .profile-modal {
   position: fixed !important;
-  top: 15vh;
+  top: 10vh;
   left: 0;
   right: 0;
   z-index: 100;
@@ -211,4 +211,24 @@
 .status-label {
   font-size: 14px;
   font-weight: 500;
+}
+
+/* Recursos desabilitados */
+/* Fila deshabilitada */
+.disabled-row {
+  opacity: 0.6;
+  background-color: #f5f5f5;
+  pointer-events: none; /* evita clicks */
+}
+
+/* Checkbox deshabilitado */
+input[type="checkbox"]:disabled + .checkmark {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Input deshabilitado */
+input:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
 }

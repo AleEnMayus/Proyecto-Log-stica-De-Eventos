@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import AssignResourcesModal from "../Resource/AllocateResources";
+
+// Importar el hook y el componente ToastContainer
+import { useToast } from "../../../hooks/useToast"; 
+import ToastContainer from "../../../components/ToastContainer";
+
 import '../../CSS/components.css';
 import '../../CSS/FormsUser.css';
 import '../../CSS/Modals.css';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
+  const { toasts, addToast, removeToast } = useToast();
 
   const [formData, setFormData] = useState({
     EventName: '',
@@ -17,15 +23,15 @@ const CreateEvent = () => {
     EventPrice: '',
     EventDateTime: '',
     EventDescription: '',
-    AdvancePaymentMethod: '', // será string (Cash, Transfer, Card)
-    Contract: null, // puede ser null
+    AdvancePaymentMethod: '',
+    Contract: null,
     ContractNumber: '',
-    resources: [] // puede estar vacío
+    resources: []
   });
 
   const [showModal, setShowModal] = useState(false);
 
-  // Manejo de cambios
+  // Manejo de cambios en los inputs
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -33,10 +39,7 @@ const CreateEvent = () => {
       const key = name.split(".")[1];
       setFormData(prev => {
         let method = prev.AdvancePaymentMethod;
-
-        if (checked) method = key; // solo un método seleccionado
-        else method = '';
-
+        method = checked ? key : '';
         return { ...prev, AdvancePaymentMethod: method };
       });
     } else {
@@ -47,16 +50,14 @@ const CreateEvent = () => {
     }
   };
 
-  // Submit
+  // Envío del formulario
   const handleSubmit = async () => {
     try {
       const payload = {
         ...formData,
-        EventStatus: "In_planning", // tu API lo espera
-        CreationDate: new Date().toISOString().slice(0, 19).replace('T', ' ')
+        EventStatus: "In_planning",
+        CreationDate: new Date().toISOString().slice(0, 19).replace("T", " ")
       };
-
-      console.log("Payload enviado:", payload);
 
       const response = await fetch("http://localhost:4000/api/events", {
         method: "POST",
@@ -66,21 +67,28 @@ const CreateEvent = () => {
         body: JSON.stringify(payload)
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        throw new Error(data.error || `Error ${response.status}`);
       }
 
-      const data = await response.json();
       console.log("Respuesta backend:", data);
 
-      alert("Evento agendado exitosamente");
-      navigate("/EventsHomeAdmin");
+      // Notificación de éxito
+      
+      addToast(data.message || "Evento creado", "success");
+
+      setTimeout(() => {
+        navigate("/EventsHomeAdmin");
+      }, 2000);
     } catch (error) {
       console.error("Error enviando evento:", error);
-      alert("Hubo un problema al agendar el evento");
+
+      // Notificación de error
+      addToast(error.message || "Error inesperado ", "danger");
     }
   };
-
 
   const handleCancel = () => {
     navigate('/EventsHomeAdmin');
@@ -249,6 +257,8 @@ const CreateEvent = () => {
         />
       </div>
     )}
+    {/* ... tu formulario */}
+    <ToastContainer toasts={toasts} removeToast={removeToast} /> {/* Render */}
   </>
   );
 };

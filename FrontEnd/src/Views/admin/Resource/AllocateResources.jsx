@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import { eraseUnderscore } from "../../../utils/FormatText";
 import "../../CSS/components.css";
 import "../../CSS/Lists.css";
 import "../../CSS/modals.css";
@@ -6,9 +7,9 @@ import "../../CSS/modals.css";
 const AssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
-  const [seleccion, setSeleccion] = useState(new Map()); // resourceId -> { quantity, status, price, max }
+  const [seleccion, setSeleccion] = useState(new Map());
   const [recursos, setRecursos] = useState([]);
-  const recursosPorPagina = 5;
+  const recursosPorPagina = 4;
 
   // Cargar recursos
   const fetchRecursos = async () => {
@@ -120,7 +121,7 @@ const AssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
   };
 
   return (
-    <div className="profile-modal w-800">
+    <div className="profile-modal w-800 ">
       {/* Botón de cierre */}
       <button className="close-btn" onClick={onClose}>
         &times;
@@ -159,8 +160,10 @@ const AssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
             {recursosActuales.length > 0 ? (
               recursosActuales.map((r) => {
                 const selected = seleccion.get(r.ResourceId);
+                const isDisabled = r.Status === "In_use";
+
                 return (
-                  <tr key={r.ResourceId}>
+                  <tr key={r.ResourceId} className={isDisabled ? "disabled-row" : ""}>
                     <td>
                       <label className="checkbox-wrapper">
                         <input
@@ -168,6 +171,7 @@ const AssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
                           className="custom-checkbox"
                           checked={!!selected}
                           onChange={() => toggleSeleccion(r)}
+                          disabled={isDisabled}
                         />
                         <span className="checkmark"></span>
                       </label>
@@ -186,17 +190,16 @@ const AssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
                             onChange={(e) =>
                               updateQuantity(r.ResourceId, e.target.value, r.Quantity)
                             }
+                            disabled={isDisabled}
                           />
-                          <small className="text-muted">
-                            máx: {r.Quantity}
-                          </small>
+                          <small className="text-muted">máx: {r.Quantity}</small>
                         </div>
                       ) : (
                         "-"
                       )}
                     </td>
                     <td>
-                      {r.Status} <br />
+                      {eraseUnderscore(r.Status)} <br />
                       <small className="text-muted">{r.StatusDescription}</small>
                     </td>
                     <td>${r.Price}</td>

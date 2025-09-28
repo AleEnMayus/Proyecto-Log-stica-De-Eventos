@@ -43,6 +43,8 @@ async function getEventById(id) {
 
 // Crear evento
 async function addEvent(event) {
+  const CreationDate = new Date();
+
   const [result] = await db.query(
     `INSERT INTO Events 
       (EventName, ClientId, EventStatus, Capacity, EventPrice, 
@@ -52,16 +54,16 @@ async function addEvent(event) {
     [
       event.EventName,
       event.ClientId,
-      event.EventStatus,
+      event.EventStatus || "In_planning",
       event.Capacity,
       event.EventPrice,
       event.AdvancePaymentMethod,
-      event.CreationDate,
+      CreationDate,
       event.EventDateTime,
       event.Address,
       event.EventDescription,
-      event.Contract,
-      event.ContractNumber
+      event.ContractRoute || null,
+      event.ContractNumber || null
     ]
   );
   return result.insertId;
@@ -93,7 +95,7 @@ async function updateEvent(id, event) {
       event.EventDateTime,
       event.Address,
       event.EventDescription,
-      event.Contract,
+      event.ContractRoute,
       event.ContractNumber,
       id
     ]

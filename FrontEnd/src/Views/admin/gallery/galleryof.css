@@ -1,110 +1,103 @@
-:root {
-  --bg-main: #f0f2ff;          /* fondo general */
-  --bg-light: #ebe6f9;         /* fondo de tarjetas */
-  --text-dark: #2d2f38;        /* texto general oscuro */
-  --primary: #7c3aed;          /* morado principal */
-  --accent: #f472b6;           /* rosa (hover) */
-  --text-white: #ffffff;
-  --gradient: linear-gradient(to right, #7c3aed, #ec4899); /* morado a rosado */
-}
-
+/* ====== CONTENEDOR PRINCIPAL ====== */
 .gallery-manager {
-  display: flex;
-  padding: 2rem;
-  background-color: var(--bg-main);
-  gap: 2rem;
+  display: flex;                  /* Galería a la izquierda, barra a la derecha */
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 20px;
+  background: #f8f9fa;             /* Fondo gris claro */
+  min-height: 100vh;               /* Altura completa de la pantalla */
+  box-sizing: border-box;
 }
 
-/* Contenedor de galería */
+/* ====== SECCIÓN IZQUIERDA (GALERÍA) ====== */
 .gallery-left {
-  flex: 1;
-}
-
-/* Encabezado */
-.gallery-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Grid de imágenes */
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-
-/* Tarjeta de imagen */
-.image-card {
-  position: relative;
-  background-color: var(--bg-light);
-  height: 150px;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-/* Imagen (icono o preview) */
-.preview-image {
-  width: 64px;
-  height: 64px;
-  opacity: 0.6;
-}
-
-/* Icono de eliminar */
-.btn-delete {
-  position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
-  background-color: var(--primary);
-  color: var(--text-white);
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  font-size: 0.75rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-.btn-delete:hover {
-  background-color: var(--accent);
-}
-
-/* Barra lateral */
-.sidebar {
-  width: 200px;
+  flex: 1;                         /* Ocupa el resto del espacio */
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 }
 
-/* Botones */
-.sidebar button {
-  background: var(--gradient);
-  color: var(--text-white);
+.gallery-title {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: left;
+}
+
+/* ====== GRID DE IMÁGENES ====== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.image-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  padding: 10px;
+}
+
+.preview-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.btn-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 0, 0, 0.8);
+  color: #fff;
   border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
+  border-radius: 4px;
+  padding: 4px 6px;
   cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.sidebar button:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 10px rgba(124, 58, 237, 0.3);
+  font-size: 0.9rem;
+  transition: background 0.2s;
 }
 
-/* Ocultar input */
-.hidden-input {
-  display: none;
+.btn-delete:hover {
+  background: rgba(200, 0, 0, 0.9);
+}
+
+/* ====== BARRA LATERAL DERECHA ====== */
+.sidebar {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+  background: #ffffff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ====== ESTILO DE BOTONES ====== */
+.btn {
+  display: inline-block;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-dark {
+  background: #343a40;
+  color: #fff;
+}
+
+.btn-dark:hover {
+  background: #23272b;
 }

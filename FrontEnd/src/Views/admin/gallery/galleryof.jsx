@@ -23,19 +23,6 @@ const ManagerImageGallery = () => {
     setImages(updated);
   };
 
-  const handleClearAll = () => {
-    setImages(Array(9).fill(null));
-  };
-
-  const handlePreview = () => {
-    const existingImages = images.filter(img => img !== null);
-    if (existingImages.length > 0) {
-      alert(`Tienes ${existingImages.length} imagen(es) cargadas.`);
-    } else {
-      alert('No hay imágenes cargadas.');
-    }
-  };
-
   const handleSave = () => {
     alert('Cambios guardados correctamente.');
   };
@@ -43,15 +30,24 @@ const ManagerImageGallery = () => {
   return (
     <div className="gallery-manager">
       <HeaderAdm />
+
+      {/* Galería de imágenes */}
       <div className="gallery-left">
-        <h2 className="gallery-title">Gestionar Galeria de Eventos</h2>
+        <br /><br /><br />
+        <h2 className="gallery-title">Gestionar Galería de Eventos</h2>
+        <br /><br /><br />
+
         <div className="gallery-grid">
           {images.map((img, idx) => (
             <div key={idx} className="image-card">
               {img ? (
                 <img src={img} alt={`imagen-${idx}`} className="preview-image" />
               ) : (
-                <img src="https://via.placeholder.com/64?text=🖼️" alt="placeholder" className="preview-image" />
+                <img
+                  src="https://via.placeholder.com/64?text=🖼️"
+                  alt="placeholder"
+                  className="preview-image"
+                />
               )}
               <button className="btn-delete" onClick={() => handleDelete(idx)}>🗑️</button>
             </div>
@@ -59,20 +55,33 @@ const ManagerImageGallery = () => {
         </div>
       </div>
 
+      {/* Barra lateral con los botones */}
       <div className="sidebar">
-        <label htmlFor="image-upload" className="btn btn-dark">⬆ Subir imagen</label>
+        {/* Input real oculto para subir */}
         <input
           id="image-upload"
           type="file"
           accept="image/*"
           multiple
           onChange={handleUpload}
-          className="hidden-input"
+          style={{ display: 'none' }}
         />
 
-        <button className="btn btn-dark" onClick={handleSave}>Guardar</button>
-        <button className="btn btn-dark" onClick={handlePreview}>👁️ Previsualizar</button>
-        <button className="btn btn-dark" onClick={handleClearAll}>🧹 Vaciar galería</button>
+        {/* ✅ Botón Subir Imagen */}
+        <button
+          className="btn btn-dark"
+          onClick={() => document.getElementById('image-upload').click()}
+        >
+          Subir Imagen
+        </button>
+
+        {/* ✅ Botón Guardar Cambios */}
+        <button
+          className="btn btn-dark"
+          onClick={handleSave}
+        >
+          Guardar Cambios
+        </button>
       </div>
     </div>
   );

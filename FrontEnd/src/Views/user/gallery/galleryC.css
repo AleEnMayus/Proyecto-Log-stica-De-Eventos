@@ -1,94 +1,100 @@
 :root {
-  --bg-main: #f0f2ff;          /* fondo general */
-  --bg-light: #ebe6f9;         /* fondo de tarjetas */
-  --text-dark: #2d2f38;        /* texto general oscuro */
-  --primary: #7c3aed;          /* morado principal */
-  --accent: #f472b6;           /* rosa (hover) */
+  --bg-main: #f9faff;
+  --bg-card: #ffffff;
+  --primary: #7c3aed;    /* morado */    
+  --text-dark: #2d2f38;
   --text-white: #ffffff;
-  --gradient: linear-gradient(to right, #7c3aed, #ec4899); /* morado a rosado */
+  --gradient: linear-gradient(to right, #000000);
 }
 
-.gallery-manager {
-  display: flex;
-  padding: 2rem;
-  background-color: var(--bg-main);
-  gap: 2rem;
-}
-
-/* Contenedor de galería */
+/* 🔖 Contenedor del body */
 .gallery-left {
   flex: 1;
+  padding: 2rem;
+  background: var(--bg-main);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
 }
 
-/* Encabezado */
+/* 🔖 Encabezado */
+.gallery-header {
+  display: flex;
+  justify-content: flex-start; /* ⬅️ todo alineado a la izquierda */
+  align-items: center;
+  gap: 1rem; /* espacio entre título y botón */
+  margin-bottom: 2rem;
+  padding-right: 20px;
+}
+
 .gallery-title {
   font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
+  font-weight: 800;
   background: var(--gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin: 0;
 }
 
-/* Grid de imágenes */
+/* Botón de editar */
+.gallery-header .btn {
+  background: var(--gradient);
+  border: none;
+  color: var(--text-white);
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.gallery-header .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* 🖼️ Grid */
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+
 }
 
-/* Tarjeta de imagen */
+/* 📸 Tarjetas */
 .image-card {
   position: relative;
-  background-color: var(--bg-light);
-  height: 150px;
-  border-radius: 0.5rem;
+  background: var(--bg-card);
+  height: 160px;
+  border-radius: 0.75rem;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.image-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
 }
 
-/* Imagen (icono o preview) */
+/* Imagen preview */
 .preview-image {
-  width: 64px;
-  height: 64px;
-  opacity: 0.6;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 0.5rem;
 }
 
-/* Icono de eliminar */
-.btn-delete {
-  position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
-  background-color: var(--primary);
-  color: var(--text-white);
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  font-size: 0.75rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-.btn-delete:hover {
-  background-color: var(--accent);
-}
-
-/* Barra lateral */
+/* ⚙️ Sidebar de edición */
 .sidebar {
-  width: 200px;
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* Botones */
-.sidebar button {
+/* Botones de la sidebar */
+.sidebar button,
+.sidebar label {
   background: var(--gradient);
   color: var(--text-white);
   border: none;
@@ -96,12 +102,14 @@
   border-radius: 0.5rem;
   cursor: pointer;
   font-weight: 600;
+  text-align: center;
   box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.sidebar button:hover {
-  transform: scale(1.03);
-  box-shadow: 0 6px 10px rgba(124, 58, 237, 0.3);
+.sidebar button:hover,
+.sidebar label:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(124, 58, 237, 0.3);
 }
 
 /* Ocultar input */

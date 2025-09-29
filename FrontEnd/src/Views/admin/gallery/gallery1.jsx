@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
-import "../gallery/galleryC.css";
+import "../gallery/gallery1.css";
 import { useNavigate } from "react-router-dom"; 
 
 const ImageGalleryC = () => {
@@ -36,9 +36,15 @@ const ImageGalleryC = () => {
     setImages(Array(9).fill(null));
   };
 
-  // 👇 Nuevo: redirigir al hacer clic en una imagen
+  // Redirigir al hacer clic en una imagen
   const handleImageClick = (idx) => {
     navigate("/galleryview", { state: { selectedImage: images[idx] } });
+  };
+
+  // 👉 Nuevo: activar/desactivar modo edición
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+    alert(isEditing ? "Modo edición desactivado" : "Modo edición activado");
   };
 
   return (
@@ -47,19 +53,21 @@ const ImageGalleryC = () => {
 
       <div className="gallery-left">
         <div className="gallery-header">
-          <br />
-          <br />
-          <br />
-          <br />
+          <br /><br /><br /><br />
           <h2 className="gallery-title">Galería de Eventos</h2>
+
+          {/* ✅ Botón Editar Galería */}
+          <button className="btn btn-dark" onClick={toggleEdit}>
+            {isEditing ? "Salir de Edición" : "Editar Galería"}
+          </button>
         </div>
 
         <div className="gallery-grid">
           {images.map((img, idx) => (
-            <div 
-              key={idx} 
-              className="image-card" 
-              onClick={() => handleImageClick(idx)} // 👈 click en la imagen
+            <div
+              key={idx}
+              className="image-card"
+              onClick={() => handleImageClick(idx)}
               style={{ cursor: "pointer" }}
             >
               {img ? (

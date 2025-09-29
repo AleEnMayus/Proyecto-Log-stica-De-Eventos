@@ -46,6 +46,7 @@ import {
   ClientCalendar,
   ContractsClient
 } from './imports/clientImports'
+import ImageGalleryA from './Views/admin/gallery/gallery1'
 
 // Configuración de rutas
 const routeConfig = {
@@ -77,6 +78,7 @@ const routeConfig = {
     { path: '/SurvayHome/create', component: CreateSurvay },
     
     // Galería
+    { path: '/GalleryAdmin2', component: ImageGalleryA },
     { path: '/GalleryViewAdmin', component: ImageGallery },
     { path: '/GalleryAdmin', component: ManagerImageGallery },
     

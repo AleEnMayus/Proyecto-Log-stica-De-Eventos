@@ -11,10 +11,9 @@ const API_FIELD_MAPPING = {
   documentNumber: "DocumentNumber",
 };
 
-const EditModal = ({ isOpen, onClose, user }) => {
+const EditModal = ({ isOpen, onClose, user, onSave }) => { // <-- 🔥 se agrega onSave
   const navigate = useNavigate();
 
-  // Estados
   const [isRequestModalOpen, setRequestModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [originalUser, setOriginalUser] = useState({});
@@ -23,7 +22,6 @@ const EditModal = ({ isOpen, onClose, user }) => {
   // Efecto inicial
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
@@ -153,8 +151,16 @@ const EditModal = ({ isOpen, onClose, user }) => {
         console.log("Perfil actualizado correctamente.");
 
         const updatedUser = { ...parsedUser, ...formData };
-        localStorage.setItem("userData", JSON.stringify(updatedUser));
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        // 🔥 Notificamos al Header para que se actualice
+        if (onSave) {
+          onSave(updatedUser);
+        }
+
         setOriginalUser(formData);
+        setFormData(formData);
+
         onClose();
       } else {
         const errorData = await response.json();
@@ -170,20 +176,14 @@ const EditModal = ({ isOpen, onClose, user }) => {
 
   return (
     <>
+      {/* Modal */}
       <div className="sidebar-overlay active" onClick={onClose}>
-        <div
-          className="profile-modal w-800"
-          onClick={stopPropagation}
-          role="dialog"
-          aria-modal="true"
-        >
-          <button className="close-btn" aria-label="Cerrar" onClick={onClose}>
-            ×
-          </button>
-
+        <div className="profile-modal w-800" onClick={stopPropagation}>
+          <button className="close-btn" onClick={onClose}>×</button>
           <h4 className="modal-title text-center mb-3">Editar Perfil</h4>
 
           <div className="pm-body d-flex flex-wrap">
+            {/* Foto */}
             <div className="pm-photo">
               {formData.photo ? (
                 <img
@@ -196,26 +196,22 @@ const EditModal = ({ isOpen, onClose, user }) => {
                   }}
                 />
               ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="50px"
-                  viewBox="0 -960 960 960"
-                  width="50px"
-                  fill="#0e40b68b"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 -960 960 960" width="50px" fill="#0e40b68b">
                   <path d="M222-255q63-40 124.5-60.5T480-336q72 0 134 20.5T739-255q44-54 62.5-109T820-480q0-145-97.5-242.5T480-820q-145 0-242.5 97.5T140-480q0 61 19 116t63 109Zm257.81-195q-57.81 0-97.31-39.69-39.5-39.68-39.5-97.5 0-57.81 39.69-97.31 39.68-39.5 97.5-39.5 57.81 0 97.31 39.69 39.5 39.68 39.5 97.5 0 57.81-39.69 97.31-39.68 39.5-97.5 39.5Zm-.21 370q-83.15 0-156.28-31.5t-127.22-86Q142-252 111-324.84 80-397.68 80-480.5t31.5-155.66Q143-709 197.5-763t127.34-85.5Q397.68-880 480.5-880t155.66 31.5Q709-817 763-763t85.5 127Q880-563 880-480.27q0 82.74-31.5 155.5Q817-252 763-197.5t-127.13 86Q562.74-80 479.6-80Z" />
                 </svg>
               )}
             </div>
 
+            {/* Campos */}
             <div className="pm-fields" style={{ maxWidth: "800px" }}>
+              {/* Rol */}
               <div className="field-row">
                 <div className="field">
                   <div className="badge bg-secondary small mt-3">{rolLegible}</div>
                 </div>
               </div>
 
-              {/* Nombre completo */}
+              {/* Nombre */}
               <div className="field-row">
                 <div className="field">
                   <div className="field-label">Nombre completo</div>
@@ -266,9 +262,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
                 <div className="field">
                   <div className="field-label">
                     Tipo de documento
-                    {role === "user" && (
-                      <span className="text-muted ms-2">(Campo protegido)</span>
-                    )}
+                    {role === "user" && <span className="text-muted ms-2">(Campo protegido)</span>}
                   </div>
                   <select
                     name="identificationType"
@@ -287,9 +281,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
                 <div className="field">
                   <div className="field-label">
                     Número de documento
-                    {role === "user" && (
-                      <span className="text-muted ms-2">(Campo protegido)</span>
-                    )}
+                    {role === "user" && <span className="text-muted ms-2">(Campo protegido)</span>}
                   </div>
                   <input
                     type="text"
@@ -299,9 +291,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
                     onChange={handleInputChange}
                     disabled={role === "user"}
                   />
-                  {errors.documentNumber && (
-                    <small className="error-text">{errors.documentNumber}</small>
-                  )}
+                  {errors.documentNumber && <small className="error-text">{errors.documentNumber}</small>}
                 </div>
               </div>
 
@@ -323,6 +313,7 @@ const EditModal = ({ isOpen, onClose, user }) => {
             </div>
           </div>
 
+          {/* Footer */}
           <div className="pm-footer d-flex flex-column gap-2">
             <button className="btn-primary-custom w-100" onClick={handleSaveChanges}>
               Guardar Cambios

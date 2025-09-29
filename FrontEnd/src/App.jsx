@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
+// Importación del servicio de auto-logout 👇
+import autoLogoutService from "./services/autoLogoutService"
+
 // Importación de estilos y vistas
 import './Views/CSS/components.css'
 
@@ -65,34 +68,19 @@ const routeConfig = {
   ],
   
   admin: [
-    // Notificaciones
     { path: '/NotificationsAdmin', component: Notification },
-    
-    // Recursos
-    {path: '/HomeResources', component: ListResource },
-    {path: '/CreateResource', component: CreateResource },
-    
-    // Encuestas
+    { path: '/HomeResources', component: ListResource },
+    { path: '/CreateResource', component: CreateResource },
     { path: '/SurvayHome', component: Survay },
     { path: '/SurvayHome/create', component: CreateSurvay },
-    
-    // Galería
     { path: '/GalleryViewAdmin', component: ImageGallery },
     { path: '/GalleryAdmin', component: ManagerImageGallery },
-    
-    // Cuentas
     { path: '/ManageAccounts', component: AdminAccountsList },
     { path: '/CreateAccount', component: CreateAccountForm },
     { path: '/ManageAccounts/edit/:userId', component: EditAccountPage },
-    
-    // Calendario
     { path: '/CalendarAdmin', component: AdminCalendar },
-    
-    // Contratos
     { path: '/SendContractsAdmin', component: ContractsAdmin },
     { path: '/ListContracts', component: ContractsList },
-    
-    // Eventos
     { path: '/EventsHomeAdmin', component: ListEventsA },
     { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
@@ -100,26 +88,13 @@ const routeConfig = {
   ],
   
   client: [
-    // Notificaciones
     { path: '/Notifications', component: Notifications },
-    
-    // Citas
     { path: '/Schedule', component: Schedule },
-    
-    // Encuestas
     { path: '/Survey/:eventId', component: SurvayClient },
-    
-    // Galería
     { path: '/GalleryView', component: ImageGalleryViewerC },
     { path: '/Gallery', component: ImageGalleryC },
-    
-    // Calendario
     { path: '/Calendar', component: ClientCalendar },
-    
-    // Contratos
     { path: '/HomeContractsCl', component: ContractsClient },
-    
-    // Eventos
     { path: '/EventsHome/Details/:eventId', component: EventDetailsC },
     { path: '/EventsHome', component: ListEventsC }
   ],
@@ -131,53 +106,45 @@ const routeConfig = {
 
 // Hook de autenticación
 const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [userRole, setUserRole] = useState(null)
+  const [userData, setUserData] = useState(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const checkAuth = () => {
       try {
-        const token = localStorage.getItem("authToken");
-        const storedUser = localStorage.getItem("user");
+        const token = localStorage.getItem("authToken")
+        const storedUser = localStorage.getItem("user")
 
         if (token && storedUser) {
-          setIsAuthenticated(true);
-          const parsedUser = JSON.parse(storedUser);
-          setUserData(parsedUser);
-          setUserRole(parsedUser.role);
+          setIsAuthenticated(true)
+          const parsedUser = JSON.parse(storedUser)
+          setUserData(parsedUser)
+          setUserRole(parsedUser.role)
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
+        console.error("Error checking authentication:", error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    checkAuth();
-  }, []);
+    checkAuth()
+  }, [])
 
-  return { isAuthenticated, userRole, userData, loading };
-};
+  return { isAuthenticated, userRole, userData, loading }
+}
 
 // Componentes de protección de rutas
 const ProtectedRoute = ({ children, requiredRole, userRole, isAuthenticated }) => {
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-  
-  if (requiredRole && userRole !== requiredRole) {
-    return <Navigate to="/" replace />
-  }
-  
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (requiredRole && userRole !== requiredRole) return <Navigate to="/" replace />
   return children
 }
 
 const PublicOnlyRoute = ({ children, isAuthenticated }) => {
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />
-  }
+  if (isAuthenticated) return <Navigate to="/" replace />
   return children
 }
 
@@ -185,74 +152,43 @@ const PublicOnlyRoute = ({ children, isAuthenticated }) => {
 const renderRoutes = (routes, routeType, authProps = {}) => {
   return routes.map(({ path, component: Component }) => {
     const element = <Component />
-    
     switch (routeType) {
       case 'public':
         return <Route key={path} path={path} element={element} />
-      
       case 'publicOnly':
         return (
-          <Route 
-            key={path} 
-            path={path} 
-            element={
-              <PublicOnlyRoute isAuthenticated={authProps.isAuthenticated}>
-                {element}
-              </PublicOnlyRoute>
-            } 
-          />
+          <Route key={path} path={path} element={
+            <PublicOnlyRoute isAuthenticated={authProps.isAuthenticated}>
+              {element}
+            </PublicOnlyRoute>
+          }/>
         )
-      
       case 'authenticated':
         return (
-          <Route 
-            key={path} 
-            path={path} 
-            element={
-              <ProtectedRoute isAuthenticated={authProps.isAuthenticated}>
-                {element}
-              </ProtectedRoute>
-            } 
-          />
+          <Route key={path} path={path} element={
+            <ProtectedRoute isAuthenticated={authProps.isAuthenticated}>
+              {element}
+            </ProtectedRoute>
+          }/>
         )
-      
       case 'admin':
         return (
-          <Route 
-            key={path} 
-            path={path} 
-            element={
-              <ProtectedRoute 
-                requiredRole="admin" 
-                userRole={authProps.userRole} 
-                isAuthenticated={authProps.isAuthenticated}
-              >
-                {element}
-              </ProtectedRoute>
-            } 
-          />
+          <Route key={path} path={path} element={
+            <ProtectedRoute requiredRole="admin" userRole={authProps.userRole} isAuthenticated={authProps.isAuthenticated}>
+              {element}
+            </ProtectedRoute>
+          }/>
         )
-      
       case 'user':
         return (
-          <Route 
-            key={path} 
-            path={path} 
-            element={
-              <ProtectedRoute 
-                requiredRole="user" 
-                userRole={authProps.userRole} 
-                isAuthenticated={authProps.isAuthenticated}
-              >
-                {element}
-              </ProtectedRoute>
-            } 
-          />
+          <Route key={path} path={path} element={
+            <ProtectedRoute requiredRole="user" userRole={authProps.userRole} isAuthenticated={authProps.isAuthenticated}>
+              {element}
+            </ProtectedRoute>
+          }/>
         )
-      
       case 'development':
         return <Route key={path} path={path} element={element} />
-      
       default:
         return null
     }
@@ -263,12 +199,21 @@ const renderRoutes = (routes, routeType, authProps = {}) => {
 function App() {
   const { isAuthenticated, userRole, loading } = useAuth()
 
+  // 👇 Auto Logout por inactividad
+  useEffect(() => {
+    if (isAuthenticated) {
+      autoLogoutService.start(() => {
+        console.log("⏳ Sesión cerrada por inactividad")
+        localStorage.removeItem("authToken")
+        localStorage.removeItem("user")
+        window.location.href = "/login"
+      }, 30 * 60 * 1000) // 5 minutos
+    }
+    return () => autoLogoutService.stop()
+  }, [isAuthenticated])
+
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div>Cargando...</div>
-      </div>
-    )
+    return <div className="loading-container"><div>Cargando...</div></div>
   }
 
   const authProps = { isAuthenticated, userRole }
@@ -277,25 +222,12 @@ function App() {
     <div className="Aplicacion">
       <BrowserRouter>
         <Routes>
-          {/* Rutas públicas */}
           {renderRoutes(routeConfig.public, 'public')}
-          
-          {/* Rutas solo para no autenticados */}
           {renderRoutes(routeConfig.publicOnly, 'publicOnly', authProps)}
-          
-          {/* Rutas para usuarios autenticados */}
           {renderRoutes(routeConfig.authenticated, 'authenticated', authProps)}
-          
-          {/* Rutas de administrador */}
           {renderRoutes(routeConfig.admin, 'admin', authProps)}
-          
-          {/* Rutas de cliente */}
           {renderRoutes(routeConfig.client, 'user', authProps)}
-          
-          {/* Rutas de desarrollo */}
           {renderRoutes(routeConfig.development, 'development')}
-          
-          {/* Ruta 404 */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const db = require("./db"); // conexión a la base de datos
+const db = require("./db");
+const { startEventCompletionJob } = require('./jobs/eventCompletionJob');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -56,7 +57,11 @@ app.use("/api/requests", requestRoutes);
 const uploadRoutes = require("./routes/Admin/contractRoutes");
 app.use("/api", uploadRoutes);
 
+// --- INICIAR JOBS AUTOMÁTICOS ---
+startEventCompletionJob();
+
 // --- SERVIDOR ---
 app.listen(PORT, () => {
   console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+  console.log('Job de eventos completados activado');
 });

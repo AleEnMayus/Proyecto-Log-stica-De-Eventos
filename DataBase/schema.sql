@@ -229,3 +229,25 @@ BEGIN
 END//
 
 DELIMITER ;
+
+-- Activar el scheduler
+SET GLOBAL event_scheduler = ON;
+-- Verificar que está activo
+SHOW VARIABLES LIKE 'event_scheduler';
+
+
+-- Crear el evento corregido
+DELIMITER //
+
+CREATE EVENT AutoCompleteEvents
+ON SCHEDULE EVERY 1 DAY
+STARTS CONCAT(CURDATE() + INTERVAL 1 DAY, ' 00:00:00')
+DO
+BEGIN
+  UPDATE Events
+  SET EventStatus = 'Completed'
+  WHERE EventStatus = 'In_execution' 
+    AND EventDateTime < NOW();
+END//
+
+DELIMITER ;

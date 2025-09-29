@@ -1,8 +1,23 @@
-const bcrypt = require("bcrypt");
+// Crear archivo test-email.js en la raíz del proyecto
+require('dotenv').config();
+const { sendEventCompletedEmail } = require('./services/emailService');
 
-(async () => {
-  const hash = "$2b$10$5T4ZWBSEEG9LTAakSLEizuLysHaoKZ.pnbHYKh1kcoHEDfU6eEj.C";
-  const plain = "miSecreta1234"; // lo mismo que mandaste en Postman
-  const match = await bcrypt.compare(plain, hash);
-  console.log("Result:", match);
-})();
+const testEmail = async () => {
+  const fakeEvent = {
+    EventName: 'Evento de Prueba',
+    EventDateTime: new Date(),
+    Address: 'Calle 123',
+    Capacity: 50
+  };
+
+  const fakeUser = {
+    Email: 'diegopandi9@gmail.com', // CAMBIA ESTO
+    Names: 'Usuario Prueba'
+  };
+
+  const sent = await sendEventCompletedEmail(fakeEvent, fakeUser);
+  console.log(sent ? 'Email enviado' : 'Error al enviar');
+  process.exit();
+};
+
+testEmail();

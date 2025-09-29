@@ -1,6 +1,7 @@
 const Event = require("../models/Events");
 const EventResources = require("../models/EventResources");
 const db = require("../db");
+const { sendEventCompletedEmail } = require("../services/emailService");
 
 // Listado de eventos (resumido)
 async function getEvents(req, res) {
@@ -147,10 +148,51 @@ async function updateEventStatus(req, res) {
       return res.status(400).json({ error: "Debes enviar el nuevo estado" });
     }
 
+    // 1. Obtener el estado actual antes de actualizar
+    const [currentEvent] = await db.query(
+      "SELECT EventStatus FROM Events WHERE EventId = ?",
+      [id]
+    );
+
+    if (currentEvent.length === 0) {
+      return res.status(404).json({ error: "Evento no encontrado" });
+    }
+
+    const oldStatus = currentEvent[0].EventStatus;
+
+    // 2. Actualizar el estado
     const updated = await Event.updateEventStatus(id, EventStatus);
-    updated
-      ? res.json({ message: "Estado actualizado correctamente" })
-      : res.status(404).json({ error: "Evento no encontrado" });
+
+    if (!updated) {
+      return res.status(404).json({ error: "Evento no encontrado" });
+    }
+
+    // 3. Si cambió a "Completed", enviar email
+    if (EventStatus === "Completed" && oldStatus !== "Completed") {
+      try {
+        // Obtener datos completos del evento y usuario
+        const [eventData] = await db.query(`
+          SELECT e.*, u.Email, u.Names 
+          FROM Events e
+          JOIN User u ON e.ClientId = u.UserId
+          WHERE e.EventId = ?
+        `, [id]);
+
+        if (eventData.length > 0) {
+          const event = eventData[0];
+          await sendEventCompletedEmail(event, {
+            Email: event.Email,
+            Names: event.Names
+          });
+          console.log(`Email de completado enviado para evento ${id}`);
+        }
+      } catch (emailError) {
+        console.error("Error al enviar email:", emailError);
+        // No fallar la respuesta si el email falla
+      }
+    }
+
+    res.json({ message: "Estado actualizado correctamente" });
 
   } catch (err) {
     console.error("Error actualizando estado:", err);

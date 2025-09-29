@@ -75,9 +75,7 @@ CREATE TABLE MultimediaFile (
     FileId INT PRIMARY KEY AUTO_INCREMENT,
     FileName VARCHAR(50),
     FilePath VARCHAR(256),
-    Extension ENUM('JPG','PNG'),
-    UserId INT,
-    FOREIGN KEY (UserId) REFERENCES User(UserId)
+    Extension ENUM('JPG','PNG')
 );
 
 -- Tabla de respuestas

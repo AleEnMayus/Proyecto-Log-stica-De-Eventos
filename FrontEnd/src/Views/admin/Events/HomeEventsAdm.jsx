@@ -5,6 +5,35 @@ import '../../CSS/components.css';
 import '../../CSS/Lists.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
+const EstadoBadge = ({ estado }) => {
+  const normalizado = estado?.toLowerCase();
+
+  const estilos = {
+    completed: { background: "#ffe6e6", color: "#ff0000", border: "1px solid #ff0000" },
+    "in planning": { background: "#e6ffe6", color: "#13a927", border: "1px solid #13a927" },
+    "in execution": { background: "#fff4e0", color: "#ffae00", border: "1px solid #ffae00" },
+    canceled: { background: "#f0f0f0", color: "#6c757d", border: "1px solid #6c757d" },
+  };
+
+  const estilo = estilos[normalizado] || { background: "#f0f0f0", color: "#6c757d" };
+
+  return (
+    <span
+      style={{
+        padding: "4px 10px",
+        borderRadius: "12px",
+        fontWeight: "600",
+        fontSize: "0.85rem",
+        display: "inline-block",
+        textTransform: "capitalize",
+        ...estilo,
+      }}
+    >
+      {estado || "N/A"}
+    </span>
+  );
+};
+
 const ListEventsA = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,7 +142,7 @@ const ListEventsA = () => {
             <tr>
               <th>Fecha</th>
               <th>Nombre del evento</th>
-              <th>Cliente</th> {/* nueva columna */}
+              <th>Cliente</th>
               <th>Estado</th>
               <th>Ver</th>
             </tr>
@@ -143,12 +172,7 @@ const ListEventsA = () => {
                     </span>
                   </td>
                   <td>
-                    <span
-                      className="btn-custom btn-status-custom"
-                      style={getEstadoColor(evento.EventStatus)}
-                    >
-                      {eraseUnderscore(evento.EventStatus)}
-                    </span>
+                    <EstadoBadge estado={eraseUnderscore(evento.EventStatus)} />
                   </td>
                   <td>
                     <button

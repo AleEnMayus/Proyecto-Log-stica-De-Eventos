@@ -1,189 +1,120 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
-import '../../CSS/components.css';
-import '../../CSS/FormsUser.css';
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/ToastContainer";
+import EditAssignResourcesModal from "../Resource/EditAllocateResources";
+
+import "../../CSS/components.css";
+import "../../CSS/FormsUser.css";
 
 const EditEvent = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const { toasts, addToast, removeToast } = useToast();
 
   const [formData, setFormData] = useState({
-    eventName: '',
-    documentNumber: '',
-    clientName: '',
-    address: '',
-    cellPhone: '',
-    secondContact: '',
-    eventDate: '',
-    eventDescription: '',
-    paymentMethod: {
-      cash: false,
-      card: false,
-      transfer: false
-    },
-    eventCapacity: '',
-    eventPrice: ''
+    EventName: "",
+    ClientIdentifier: "",
+    Address: "",
+    Capacity: "",
+    EventPrice: "",
+    EventDateTime: "",
+    EventDescription: "",
+    AdvancePaymentMethod: "",
+    resources: [],
   });
 
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Cargar datos del evento al montar el componente
-  useEffect(() => {
-    if (eventId) {
-      fetchEventData(eventId);
-    }
-  }, [eventId]);
-
+  // Obtener evento existente
   const fetchEventData = async (id) => {
     try {
       setLoading(true);
-
-      // DATOS DE PRUEBA - Reemplaza con tu API
-      if (process.env.NODE_ENV === 'development') {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const mockData = {
-          eventName: 'Cumpleaños Numero 36',
-          documentNumber: '123456789',
-          clientName: 'Juan Pérez',
-          address: 'Avenida 68 Num°123, Bogotá D.C.',
-          cellPhone: '3123213456',
-          secondContact: '3109876543',
-          eventDate: '2023-10-15',
-          eventDescription: 'Celebración de cumpleaños número 36 con decoración temática',
-          paymentMethod: {
-            cash: false,
-            card: true,
-            transfer: false
-          },
-          eventCapacity: '50',
-          eventPrice: '500000'
-        };
-
-        setFormData(mockData);
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch(`/api/events/${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+      const response = await fetch(`http://localhost:4000/api/events/${id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       });
 
-      if (!response.ok) {
-        throw new Error('Error al cargar los datos del evento');
-      }
+      if (!response.ok) throw new Error("Error al cargar el evento");
 
       const data = await response.json();
+      
+      // Formatear la fecha para datetime-local
+      if (data.EventDateTime) {
+        const date = new Date(data.EventDateTime);
+        data.EventDateTime = date.toISOString().slice(0, 16);
+      }
+      
       setFormData(data);
     } catch (err) {
-      setError(err.message);
-      console.error('Error fetching event data:', err);
+      addToast(err.message || "Error cargando evento", "danger");
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (eventId) fetchEventData(eventId);
+  }, [eventId]);
+
+  // Manejar cambios de input
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (name.startsWith('paymentMethod.')) {
-      const paymentMethodKey = name.split('.')[1];
-      setFormData(prev => ({
-        ...prev,
-        paymentMethod: { ...prev.paymentMethod, [paymentMethodKey]: checked }
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value
-      }));
-    }
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
 
+  // Guardar cambios
   const handleSubmit = async () => {
     try {
-      // Validar campos requeridos
-      const requiredFields = ['eventName', 'documentNumber', 'clientName', 'address', 'cellPhone', 'eventDate', 'eventCapacity', 'eventPrice'];
-      const missingFields = requiredFields.filter(field => !formData[field]);
+      const response = await fetch(
+        `http://localhost:4000/api/events/${eventId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
-      if (missingFields.length > 0) {
-        alert('Por favor complete todos los campos requeridos');
-        return;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || `Error ${response.status}`);
       }
 
-      // Verificar que al menos un método de pago esté seleccionado
-      const hasPaymentMethod = Object.values(formData.paymentMethod).some(method => method === true);
-      if (!hasPaymentMethod) {
-        alert('Por favor seleccione al menos un método de pago');
-        return;
-      }
-
-      console.log('Actualizando evento:', formData);
-
-      // Aquí harías la llamada a tu API para actualizar
-      // const response = await fetch(`/api/events/${eventId}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(formData)
-      // });
-
-      // if (response.ok) {
-      //   alert('Evento actualizado exitosamente');
-      //   navigate(`/EventsHomeAdmin/Details/${eventId}`);
-      // }
-
-      // Simulación de éxito
-      alert('Evento actualizado exitosamente');
-      navigate(`/EventsHomeAdmin/Details/${eventId}`);
-
+      addToast(data.message || "Evento actualizado", "success");
+      setTimeout(() => navigate(`/EventsHomeAdmin/Details/${eventId}`), 2000);
     } catch (error) {
-      console.error('Error al actualizar evento:', error);
-      alert('Error al actualizar el evento');
+      console.error("Error actualizando evento:", error);
+      addToast(error.message || "Error al actualizar el evento", "danger");
     }
   };
 
-  const handleCancel = () => {
-    navigate(-1);
+  const handleCancel = () => navigate(-1);
+
+  // Formatear recursos para el modal
+  const getPreselectedResources = () => {
+    if (!formData.resources || formData.resources.length === 0) return [];
+    
+    return formData.resources.map(resource => ({
+      resourceId: resource.ResourceId,
+      quantity: resource.AssignedQuantity,
+      status: resource.AssignmentStatus,
+      price: resource.Prices
+    }));
   };
 
   if (loading) {
     return (
       <>
         <HeaderAdm />
-        <div className="login-container ps-lg-5 pe-lg-5 ps-1 pe-1">
-          <div className="login-content ps-lg-5 pe-lg-5 ms-lg-5 me-lg-5">
-            <div style={{ textAlign: 'center', padding: '50px' }}>
-              Cargando datos del evento...
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <HeaderAdm />
-        <div className="login-container ps-lg-5 pe-lg-5 ps-1 pe-1">
-          <div className="login-content ps-lg-5 pe-lg-5 ms-lg-5 me-lg-5">
-            <div style={{ textAlign: 'center', padding: '50px' }}>
-              Error: {error}
-              <br />
-              <button
-                onClick={() => fetchEventData(eventId)}
-                className="btn-primary-custom"
-                style={{ marginTop: '20px' }}
-              >
-                Reintentar
-              </button>
-            </div>
+        <div className="login-container">
+          <div className="login-content text-center p-5">
+            Cargando datos del evento...
           </div>
         </div>
       </>
@@ -193,7 +124,7 @@ const EditEvent = () => {
   return (
     <>
       <HeaderAdm />
-      <div className="login-container container  mt-10">
+      <div className="login-container container mt-10">
         <div className="login-form-card w-800">
           <button className="back-btn" onClick={() => window.history.back()}>
             ←
@@ -201,165 +132,95 @@ const EditEvent = () => {
 
           <h1 className="login-title">EDITAR EVENTO</h1>
 
-          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
             <div className="row">
               <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Nombre del evento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Nombre del evento *</label>
                 <input
                   type="text"
-                  name="eventName"
+                  name="EventName"
                   className="form-input"
-                  placeholder="Ingresa el nombre del evento"
-                  value={formData.eventName}
+                  value={formData.EventName}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Número de documento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Dirección *</label>
                 <input
                   type="text"
-                  name="documentNumber"
+                  name="Address"
                   className="form-input"
-                  placeholder="Ej: 1234567890"
-                  value={formData.documentNumber}
+                  value={formData.Address}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
 
             <div className="row">
               <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Nombre del cliente <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Fecha y hora *</label>
                 <input
-                  type="text"
-                  name="clientName"
+                  type="datetime-local"
+                  name="EventDateTime"
                   className="form-input"
-                  placeholder="Ingresa el nombre del cliente"
-                  value={formData.clientName}
+                  value={formData.EventDateTime}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
               <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Dirección <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  className="form-input"
-                  placeholder="Ingresa la dirección del evento"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Teléfono celular <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="cellPhone"
-                  className="form-input"
-                  placeholder="Ej: +57 300 123 4567"
-                  value={formData.cellPhone}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Segundo contacto <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="secondContact"
-                  className="form-input"
-                  placeholder="Ej: +57 300 987 6543"
-                  value={formData.secondContact}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Fecha del evento <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="date"
-                  name="eventDate"
-                  className="form-input"
-                  value={formData.eventDate}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Capacidad del evento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Capacidad *</label>
                 <input
                   type="number"
-                  name="eventCapacity"
+                  name="Capacity"
                   className="form-input"
-                  placeholder="Ej: 50 personas"
-                  value={formData.eventCapacity}
+                  value={formData.Capacity}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
 
             <div className="row">
               <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Precio o paquete del evento <span className="text-danger">*</span>
-                </label>
+                <label className="form-label">Precio *</label>
                 <input
-                  type="text"
-                  name="eventPrice"
+                  type="number"
+                  name="EventPrice"
                   className="form-input"
-                  placeholder="Ej: $500,000 COP"
-                  value={formData.eventPrice}
+                  value={formData.EventPrice}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Asignar recursos <span className="text-danger">*</span>
-                </label>
+              <div className="col-md-6 mb-3 d-flex align-items-center">
                 <button
                   type="button"
-                  className="btn-secondary-custom"
-                  style={{ width: '100%' }}
+                  className="btn-secondary-custom w-100"
+                  onClick={() => setShowModal(true)}
                 >
-                  Seleccionar recursos
+                  Seleccionar recursos ({formData.resources?.length || 0})
                 </button>
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-md-12 mb-3">
-                <label className="form-label">
-                  Descripción del evento <span className="text-danger">*</span>
-                </label>
-                <textarea
-                  name="eventDescription"
-                  className="form-input"
-                  placeholder="Describe los detalles del evento..."
-                  value={formData.eventDescription}
-                  onChange={handleInputChange}
-                  rows={4}
-                  style={{ resize: 'vertical' }}
-                />
-              </div>
+            <div className="mb-3">
+              <label className="form-label">Descripción *</label>
+              <textarea
+                name="EventDescription"
+                className="form-input"
+                value={formData.EventDescription}
+                onChange={handleInputChange}
+                rows={4}
+                required
+              />
             </div>
 
             <div className="row">
@@ -390,16 +251,37 @@ const EditEvent = () => {
               >
                 Cancelar
               </button>
-              <button
-                type="submit"
-                className="btn-primary-custom"
-              >
+              <button type="submit" className="btn-primary-custom">
                 Actualizar Evento
               </button>
             </div>
           </form>
         </div>
       </div>
+      
+      {showModal && (
+        <div className="modal-overlay">
+          <EditAssignResourcesModal
+            onClose={() => setShowModal(false)}
+            preselected={getPreselectedResources()}
+            onSave={(selectedResources) => {
+              console.log("Resources guardados:", selectedResources);
+              setFormData(prev => ({ 
+                ...prev, 
+                resources: selectedResources.map(r => ({
+                  ResourceId: r.resourceId,
+                  AssignedQuantity: r.quantity,
+                  AssignmentStatus: r.status,
+                  Prices: r.price
+                }))
+              }));
+              setShowModal(false);
+              addToast("Recursos actualizados", "success");
+            }}
+          />
+        </div>
+      )}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 };

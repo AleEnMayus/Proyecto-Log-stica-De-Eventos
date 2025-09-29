@@ -13,6 +13,36 @@ async function getEvents(req, res) {
   }
 }
 
+// Nuevo: Obtener eventos de un usuario por su ID
+async function getEventsByUserId(req, res) {
+  try {
+    const { userId } = req.params;
+
+    // Traer todos los eventos del usuario
+    const [events] = await db.query(
+      "SELECT * FROM Events WHERE ClientId = ?",
+      [userId]
+    );
+
+    if (events.length === 0) {
+      return res.status(404).json({ error: "No se encontraron eventos para este usuario" });
+    }
+
+    // Para cada evento, traer sus recursos
+    const eventsWithResources = await Promise.all(
+      events.map(async (event) => {
+        const resources = await EventResources.getResourcesByEvent(event.EventId);
+        return { ...event, resources: resources || [] };
+      })
+    );
+
+    res.json(eventsWithResources);
+  } catch (err) {
+    console.error("Error obteniendo eventos por usuario:", err);
+    res.status(500).json({ error: "Error al obtener eventos del usuario" });
+  }
+}
+
 // Detalle de un evento por ID
 async function getEventById(req, res) {
   try {
@@ -23,7 +53,14 @@ async function getEventById(req, res) {
       return res.status(404).json({ error: "Evento no encontrado" });
     }
 
-    res.json(event);
+    // Obtener recursos vinculados al evento
+    const resources = await EventResources.getResourcesByEvent(id);
+
+    // Devolver evento + recursos
+    res.json({
+      ...event,
+      resources: resources || []
+    });
   } catch (err) {
     console.error("Error obteniendo evento por ID:", err);
     res.status(500).json({ error: "Error al obtener evento" });
@@ -150,6 +187,7 @@ async function deleteEvent(req, res) {
 module.exports = {
   getEvents,
   getEventById,
+  getEventsByUserId,
   createEvent,
   updateEvent,
   deleteEvent,

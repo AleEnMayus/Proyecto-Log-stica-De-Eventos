@@ -1,9 +1,11 @@
+/* --- Contenedor general --- */
 .content-container {
-  padding: 100px 2rem 2rem 2rem;
+  padding: 100px 1.5rem 2rem 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* --- Tarjeta de usuario --- */
 .user-card {
   display: flex;
   align-items: center;
@@ -12,11 +14,13 @@
   background-color: #ffffff;
   padding: 20px;
   border-radius: 12px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
 }
 
 .user-info {
   display: flex;
   align-items: center;
+  gap: 15px;
 }
 
 .avatar {
@@ -27,7 +31,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 15px;
   color: white;
   font-size: 20px;
   font-weight: 600;
@@ -40,19 +43,13 @@
   margin: 0 0 4px 0;
 }
 
-.user-name {
-  color: #111827;
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-}
-
 .user-email {
   color: #111827;
   font-size: 14px;
   margin: 0;
 }
 
+/* --- Estado del evento --- */
 .event-status {
   text-align: right;
 }
@@ -72,9 +69,9 @@
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #03ff25ff;
+  width: 10px;
+  height: 10px;
+  background-color: #16a34a; /* verde */
   border-radius: 50%;
 }
 
@@ -84,6 +81,7 @@
   font-weight: 500;
 }
 
+/* --- Detalles del evento --- */
 .details-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -92,7 +90,7 @@
 }
 
 .detail-item {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .detail-label {
@@ -100,7 +98,7 @@
   color: #374151;
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .detail-box {
@@ -108,129 +106,26 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 12px;
-  color: #6b7280;
+  color: #374151;
+  font-size: 15px;
 }
 
+/* --- Botones --- */
 .button-container {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
   width: 100%;
 }
 
 .back-button {
-  padding: 12px 60px;
+  padding: 12px 40px;
   font-size: 16px;
 }
 
-.list-container {
-  padding: 100px 2rem 2rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-size: 2.5rem;
-}
-
-.search-container {
-  margin-bottom: 30px;
-}
-
-.search-wrapper {
-  position: relative;
-  max-width: 400px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 18px;
-}
-
-
-.table-container {
-  overflow: hidden;
-}
-
-.table-wrapper {
-  overflow-x: auto;
-}
-
-.events-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.events-table thead tr {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border-bottom: 2px solid #dee2e6;
-}
-
-
-.user-cell {
-  display: flex;
-  align-items: center;
-}
-
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  background-color: #9ca3af;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 12px;
-}
-
-.user-avatar span {
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.user-name {
-  font-size: 14px;
-  color: #111827;
-  font-weight: 500;
-}
-
-.status-cell {
-  display: flex;
-  align-items: center;
-}
-
-.status-icon {
-  width: 16px;
-  height: 16px;
-  margin-right: 8px;
-  font-size: 14px;
-}
-
-.status-label {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.event-button {
-  padding: 10px 20px;
-  font-size: 14px;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px 0;
-}
-
-.empty-state p {
-  color: #6b7280;
-  font-size: 16px;
-}
-
+/* --- Responsividad --- */
 @media (max-width: 768px) {
   .details-grid {
     grid-template-columns: 1fr; /* una columna en tablets/móviles */
@@ -243,8 +138,8 @@
   }
 
   .event-status {
-    width: 100%;      /* ocupa todo el ancho */
-    text-align: left; /* alineación izquierda */
+    width: 100%;
+    text-align: left;
   }
 
   .status-indicator {
@@ -263,9 +158,9 @@
     padding: 8px;
   }
 
-  .btn-primary-custom,
-  .btn-secondary-custom {
-    width: 100%; /* botones ocupan todo el ancho en móviles */
-    max-width: 100%;
+  .btn-primary,
+  .btn-secondary,
+  .btn-warning {
+    width: 100%; /* botones full width en móvil */
   }
 }

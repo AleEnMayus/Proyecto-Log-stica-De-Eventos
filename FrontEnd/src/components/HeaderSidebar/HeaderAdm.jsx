@@ -10,7 +10,6 @@ const HeaderAdm = () => {
   const [openComponent, setOpenComponent] = useState(null); 
   // valores posibles: "sidebar", "perfil", "edit" o null
 
-
   useEffect(() => {
     // Obtener datos del usuario del localStorage
     const storedUser = localStorage.getItem('user');
@@ -57,7 +56,7 @@ const HeaderAdm = () => {
 
       {/* Botón de Notificaciones */}
       <Link 
-        to="/Notification" 
+        to="/NotificationsAdmin" 
         className="d-inline-flex align-items-center justify-content-center notification-trigger"
         style={{ textDecoration: 'none' }}
       >

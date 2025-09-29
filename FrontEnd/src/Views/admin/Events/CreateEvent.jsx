@@ -250,14 +250,14 @@ const CreateEvent = () => {
         <AssignResourcesModal
           onClose={() => setShowModal(false)}
           onSave={(ids) => {
-            console.log("Resources guardados:", ids);
             setFormData(prev => ({ ...prev, resources: ids }));
             setShowModal(false);
+            addToast("Recursos asignados correctamente", "success");
           }}
         />
       </div>
     )}
-    {/* ... tu formulario */}
+    {/*Toast */}
     <ToastContainer toasts={toasts} removeToast={removeToast} /> {/* Render */}
   </>
   );

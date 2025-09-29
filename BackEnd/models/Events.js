@@ -22,6 +22,7 @@ async function getEventById(id) {
     SELECT 
       e.EventId,
       e.EventName,
+      e.ClientId,
       u.Names AS ClientName,
       e.EventStatus,
       e.Capacity,

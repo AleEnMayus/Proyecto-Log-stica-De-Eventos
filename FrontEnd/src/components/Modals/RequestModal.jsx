@@ -24,7 +24,8 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
         RequestDescription: reason,
         RequestType: requestType,
         UserId: user?.id,
-        EventId: eventId || null,
+        // Aseguramos que si es cancel_event siempre incluya el EventId
+        ...(requestType === "cancel_event" && { EventId: eventId }),
       };
 
       const res = await fetch("http://localhost:4000/api/requests", {
@@ -39,14 +40,13 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
       const data = await res.json();
 
       if (res.ok) {
-        console.log("✅ Solicitud creada:", data);
         setReason("");
         onClose();
       } else {
         setError(data.error || "Error al crear la solicitud");
       }
     } catch (err) {
-      console.error("❌ Error de red:", err);
+      console.error("Error de red:", err);
       setError("No se pudo conectar con el servidor");
     } finally {
       setLoading(false);
@@ -59,7 +59,8 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
       placeholder: "Indique la fecha, hora y motivo de la cita...",
     },
     cancel_event: {
-      title: "Solicitud de cancelación de evento",
+      // Mostramos el ID del evento para más claridad
+      title: `Solicitud de cancelación de evento${eventId ? ` #${eventId}` : ""}`,
       placeholder: "Explique el motivo por el cual desea cancelar el evento...",
     },
     document_change: {
@@ -99,7 +100,7 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={4}
-                maxLength={100}
+                maxLength={500}
                 disabled={loading}
               />
             </div>
@@ -107,7 +108,7 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
         </div>
 
         <div className="text-start small text-muted mt-0 mb-3">
-          {100 - reason.length} caracteres restantes
+          {500 - reason.length} caracteres restantes
         </div>
 
         <button

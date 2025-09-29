@@ -8,5 +8,8 @@ router.get("/:id", eventController.getEventById);
 router.put("/:id", eventController.updateEvent);
 router.delete("/:id", eventController.deleteEvent);
 router.patch("/:id/status", eventController.updateEventStatus);
+// endpoint para obtener eventos por ID de usuario
+router.get("/user/:userId", eventController.getEventsByUserId);
+
 
 module.exports = router;

@@ -1,45 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
+import { eraseUnderscore } from "../../utils/FormatText";
 import "../CSS/Notification.css";
 
+const baseURL = "http://localhost:4000";
 
 const Notifications = () => {
   const [activeTab, setActiveTab] = useState("Todo");
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Simulamos notificaciones
-  const notificaciones = [
-    {
-      id: 1,
-      categoria: "Citas",
-      titulo: "Señor Cliente",
-      descripcion:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    },
-    {
-      id: 2,
-      categoria: "Cancelación",
-      titulo: "Señor Cliente",
-      descripcion:
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    },
-    {
-      id: 3,
-      categoria: "Documento",
-      titulo: "Señor Cliente",
-      descripcion:
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    },
-  ];
+  // Cargar notificaciones desde API
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const res = await fetch(`${baseURL}/api/requests`, {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+        });
 
-  // Filtrar notificaciones
+        if (!res.ok) throw new Error("Error al obtener solicitudes");
+        const data = await res.json();
+        setRequests(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, []);
+
+  // Cambiar estado de solicitud
+  const handleStatusChange = async (id, status) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const res = await fetch(`${baseURL}/api/requests/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) throw new Error("Error al actualizar estado");
+      const updated = await res.json();
+
+      // Actualizamos en el estado local
+      setRequests((prev) =>
+        prev.map((r) => (r.RequestId === id ? { ...r, RequestStatus: status } : r))
+      );
+    } catch (err) {
+      console.error("Error al actualizar estado:", err);
+    }
+  };
+
+  // Filtro por tabs
   const filtradas =
     activeTab === "Todo"
-      ? notificaciones
-      : notificaciones.filter((n) => n.categoria === activeTab);
+      ? requests
+      : requests.filter((n) => {
+          if (activeTab === "Citas") return n.RequestType === "schedule_appointment";
+          if (activeTab === "Cancelación") return n.RequestType === "cancel_event";
+          if (activeTab === "Documento") return n.RequestType === "document_change";
+          return true;
+        });
 
   return (
     <div className="contratos-container">
-      {/* 🔹 Header como en las otras páginas */}
       <HeaderCl />
 
       <div className="notificaciones-container">
@@ -58,15 +91,38 @@ const Notifications = () => {
           ))}
         </div>
 
-        {/* Lista de notificaciones */}
+        {/* Lista */}
         <div className="lista">
-          {filtradas.map((n) => (
-            <div key={n.id} className="card">
-              <h2>{n.titulo}</h2>
-              <p>{n.descripcion}</p>
-              <button className="btn">Ver Correo Electrónico</button>
-            </div>
-          ))}
+          {loading ? (
+            <p>Cargando...</p>
+          ) : filtradas.length === 0 ? (
+            <p>No hay notificaciones</p>
+          ) : (
+            filtradas.map((n) => (
+              <div key={n.RequestId} className="card">
+                <h2>{eraseUnderscore(n.RequestType)}</h2>
+                <p>{n.RequestDescription}</p>
+                <p className="estado">Estado: {n.RequestStatus}</p>
+
+                {n.RequestStatus === "pending" && (
+                  <div className="acciones">
+                    <button
+                      className="btn-aceptar"
+                      onClick={() => handleStatusChange(n.RequestId, "selected")}
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      className="btn-rechazar"
+                      onClick={() => handleStatusChange(n.RequestId, "rejected")}
+                    >
+                      Rechazar
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -1,10 +1,11 @@
 require('dotenv').config();
-// const { sendEventCompletedEmail } = require('./services/emailService');
+const { sendEventCompletedEmail } = require('./services/emailService');
 const { sendPasswordResetEmail } = require("./services/emailService");
 
 const testEmail = async () => {
+  /*
+  // Prueba de envío de email al completar evento
 
-  /* Prueba de envío de email al completar evento
   const fakeEvent = {
     EventName: 'Evento de Prueba',
     EventDateTime: new Date(),
@@ -12,8 +13,8 @@ const testEmail = async () => {
     Capacity: 50
   };
 
-  const fakeUser = {
-    Email: 'diegopandi9@gmail.com', // usuario de prueba
+  const fakeUser = {  // usuario de prueba
+    Email: 'apilogisticaeventos@gmail.com', 
     Names: 'Usuario Prueba'
   };
 
@@ -21,9 +22,11 @@ const testEmail = async () => {
   */
 
   // Prueba de envío de email con código de recuperación de contraseña
+  
   const fakeCode = 1234; // código de prueba
   const fakeUser = 'apilogisticaeventos@gmail.com'
   const sent = await sendPasswordResetEmail(fakeUser, fakeCode);
+  
 
   console.log(sent ? 'Email enviado' : 'Error al enviar');
   process.exit();

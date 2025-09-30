@@ -144,8 +144,8 @@ const RegisterPage = () => {
         </div>
       </header>
 
-      <div className="login-content mt-4 mt-10">
-        <div className="login-form-card">
+      <div className="login-content container mt-4 mt-10">
+        <div className="login-form-card w-800">
           <h1 className="login-title">Registrarse</h1>
           <p className="login-subtitle">
             Crea tu cuenta en Happy-Art Eventos

@@ -5,7 +5,7 @@ import AssignResourcesModal from "../Resource/AllocateResources";
 
 // Importar el hook y el componente ToastContainer
 import { useToast } from "../../../hooks/useToast"; 
-import ToastContainer from "../../../components/ToastContainer";
+import ToastContainer from "../../../components/ToastContainer";/////////
 
 import '../../CSS/components.css';
 import '../../CSS/FormsUser.css';
@@ -13,7 +13,7 @@ import '../../CSS/Modals.css';
 
 const CreateEvent = () => {
   const navigate = useNavigate();
-  const { toasts, addToast, removeToast } = useToast();
+  const { toasts, addToast, removeToast } = useToast();/////
 
   const [formData, setFormData] = useState({
     EventName: '',
@@ -77,7 +77,7 @@ const CreateEvent = () => {
 
       // Notificación de éxito
       
-      addToast(data.message || "Evento creado", "success");
+      addToast(data.message || "Evento creado", "success");/////mensaje, color
 
       setTimeout(() => {
         navigate("/EventsHomeAdmin");
@@ -86,7 +86,7 @@ const CreateEvent = () => {
       console.error("Error enviando evento:", error);
 
       // Notificación de error
-      addToast(error.message || "Error inesperado ", "danger");
+      addToast(error.message || "Error inesperado ", "danger");//info=azul-ms informa, success=verde, danger=rojo, warning=amarillo-alerta-se creo evento pero no se pudo asignar recursos
     }
   };
 
@@ -258,7 +258,7 @@ const CreateEvent = () => {
       </div>
     )}
     {/*Toast */}
-    <ToastContainer toasts={toasts} removeToast={removeToast} /> {/* Render */}
+    <ToastContainer toasts={toasts} removeToast={removeToast} /> {/* Render */}////
   </>
   );
 };

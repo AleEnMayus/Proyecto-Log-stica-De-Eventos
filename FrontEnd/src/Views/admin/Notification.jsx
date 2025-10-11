@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
-import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
-import { eraseUnderscore } from "../../utils/FormatText";
+import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm";
+import { translateRequestType, translateStatus } from "../../utils/FormatText";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ToastContainer";
 import "../CSS/Notification.css";
+import { socket } from "../../services/socket";
 
 const baseURL = "http://localhost:4000";
 
 const Notifications = () => {
   const [activeTab, setActiveTab] = useState("Todo");
+  const [showManaged, setShowManaged] = useState(false);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const { toasts, addToast, removeToast } = useToast();
 
-  // Cargar notificaciones desde API
+  // --- Cargar solicitudes desde API ---
   const fetchRequests = async () => {
     try {
       const token = localStorage.getItem("authToken");
@@ -29,21 +31,16 @@ const Notifications = () => {
       setRequests(data);
     } catch (err) {
       console.error(err);
-      addToast("Error al cargar notificaciones", "error");
+      addToast("Error al cargar notificaciones", "error"); // Solo toast de validación
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
-
-  // Cambiar estado de solicitud
+  // --- Actualizar estado de solicitud ---
   const handleStatusChange = async (id, newStatus) => {
     try {
       const token = localStorage.getItem("authToken");
-      
       if (!token) {
         addToast("No hay token de autenticación", "error");
         return;
@@ -60,33 +57,62 @@ const Notifications = () => {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        console.error("Error del servidor:", errorData);
         throw new Error(errorData.error || errorData.message || "Error al actualizar estado");
       }
-      
-      const data = await res.json();
-      console.log("Respuesta del servidor:", data);
-      
-      // Mostrar toast de éxito
-      const mensaje = newStatus === "approved" ? "Solicitud aceptada" : "Solicitud rechazada";
-      addToast(mensaje, "success");
 
-      // Recargar las notificaciones después de un breve delay
-      setTimeout(() => {
-        fetchRequests();
-      }, 500);
+      addToast(
+        newStatus === "approved" ? "Solicitud aceptada" : "Solicitud rechazada",
+        "success"
+      );
 
+      // Actualizar lista localmente sin recargar todo
+      setRequests(prev =>
+        prev.map(r =>
+          r.RequestId === id ? { ...r, RequestStatus: newStatus, ManagementDate: new Date() } : r
+        )
+      );
     } catch (err) {
-      console.error("Error al actualizar estado:", err);
+      console.error(err);
       addToast(err.message || "Error al actualizar la solicitud", "error");
     }
   };
 
-  // Filtro por tabs
+  // --- Inicializar solicitudes al montar ---
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  // --- Escuchar notificaciones en tiempo real ---
+  useEffect(() => {
+    socket.on("notification:admin", (data) => {
+      console.log("Nueva notificación admin:", data);
+
+      // Solo agregamos al listado, no usamos toast de validación
+      setRequests(prev => [
+        {
+          RequestId: data.requestId,
+          RequestType: data.requestType,
+          RequestDescription: data.message || "Nueva solicitud (Recargar para detalles)",
+          RequestStatus: "pending",
+          UserId: data.userId,
+          RequestDate: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+    });
+
+    return () => socket.off("notification:admin");
+  }, []);
+
+  // --- Filtrar solicitudes por estado y tipo ---
+  const pendingRequests = requests.filter(n => n.RequestStatus === "pending");
+  const managedRequests = requests.filter(n => n.RequestStatus !== "pending");
+  const currentRequests = showManaged ? managedRequests : pendingRequests;
+
   const filtradas =
     activeTab === "Todo"
-      ? requests
-      : requests.filter((n) => {
+      ? currentRequests
+      : currentRequests.filter((n) => {
           if (activeTab === "Citas") return n.RequestType === "schedule_appointment";
           if (activeTab === "Cancelación") return n.RequestType === "cancel_event";
           if (activeTab === "Documento") return n.RequestType === "document_change";
@@ -95,14 +121,29 @@ const Notifications = () => {
 
   return (
     <div className="contratos-container">
-      <HeaderCl />
+      <HeaderAdm />
 
       <div className="notificaciones-container">
-        <h1 className="titulo">Notificaciones</h1>
+        <div className="header-notificaciones">
+          <h1 className="titulo">Notificaciones</h1>
+          <div className="toggle-section">
+            <button
+              className={`toggle-btn ${!showManaged ? "active" : ""}`}
+              onClick={() => setShowManaged(false)}
+            >
+              Pendientes ({pendingRequests.length})
+            </button>
+            <button
+              className={`toggle-btn ${showManaged ? "active" : ""}`}
+              onClick={() => setShowManaged(true)}
+            >
+              Gestionadas ({managedRequests.length})
+            </button>
+          </div>
+        </div>
 
-        {/* Tabs */}
         <div className="tabs">
-          {["Todo", "Citas", "Cancelación", "Documento"].map((tab) => (
+          {["Todo", "Citas", "Cancelación", "Documento"].map(tab => (
             <button
               key={tab}
               className={`tab-btn ${activeTab === tab ? "active" : ""}`}
@@ -113,35 +154,44 @@ const Notifications = () => {
           ))}
         </div>
 
-        {/* Lista */}
         <div className="lista">
           {loading ? (
             <p>Cargando...</p>
           ) : filtradas.length === 0 ? (
-            <p>No hay notificaciones</p>
+            <p>No hay notificaciones {showManaged ? "gestionadas" : "pendientes"}</p>
           ) : (
             filtradas.map((n) => (
-              <div key={n.RequestId} className="card">
-                <h2>{eraseUnderscore(n.RequestType)}</h2>
+              <div
+                key={n.RequestId}
+                className={`card ${n.RequestStatus !== "pending" ? `card-${n.RequestStatus}` : ""}`}
+              >
+                <h2>{translateRequestType(n.RequestType)}</h2>
                 <p>{n.RequestDescription}</p>
-                <p className="estado">Estado: {n.RequestStatus}</p>
+                <p className={`estado estado-${n.RequestStatus}`}>
+                  Estado: {translateStatus(n.RequestStatus)}
+                </p>
 
-                {/* Solo mostrar botones si está pendiente */}
                 {n.RequestStatus === "pending" && (
                   <div className="acciones">
                     <button
-                      className="btn-aceptar"
+                      className="btn-primary-custom"
                       onClick={() => handleStatusChange(n.RequestId, "approved")}
                     >
                       Aceptar
                     </button>
                     <button
-                      className="btn-rechazar"
+                      className="btn-secondary-custom"
                       onClick={() => handleStatusChange(n.RequestId, "rejected")}
                     >
                       Rechazar
                     </button>
                   </div>
+                )}
+
+                {n.ManagementDate && (
+                  <p className="fecha-gestion">
+                    Gestionada: {new Date(n.ManagementDate).toLocaleDateString("es-ES")}
+                  </p>
                 )}
               </div>
             ))
@@ -149,7 +199,7 @@ const Notifications = () => {
         </div>
       </div>
 
-      {/* Toast */}
+      {/* Toasts de validación */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );

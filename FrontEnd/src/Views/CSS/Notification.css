@@ -1,8 +1,18 @@
+/* Estilos Generales */
+
+/* Contenedor principal de notificaciones */
 .notificaciones-container {
   margin-top: 6rem;
   padding: 20px;
+  max-width: 1320px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-height: 80vh; /* Altura máxima del contenedor */
+  overflow-y: auto; /* Barra de scroll vertical solo si el contenido es largo */
 }
 
+/* Título principal */
 .titulo {
   font-size: 2rem;
   font-weight: 700;
@@ -11,7 +21,7 @@
   text-align: center;
 }
 
-/* Tabs */
+/* Pestañas (Tabs) */
 .tabs {
   display: flex;
   gap: 0.5rem;
@@ -45,7 +55,7 @@
   font-weight: 600;
 }
 
-/* Lista de notificaciones */
+/* Lista de Notificaciones */
 .lista {
   display: flex;
   flex-direction: column;
@@ -59,7 +69,7 @@
   font-size: 1.1rem;
 }
 
-/* Cards */
+/* Estilos de las Cards */
 .card {
   background: white;
   border-radius: 12px;
@@ -106,45 +116,7 @@
   flex-wrap: wrap;
 }
 
-.btn-aceptar,
-.btn-rechazar {
-  padding: 0.625rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-aceptar {
-  background: #10b981;
-  color: white;
-}
-
-.btn-aceptar:hover {
-  background: #059669;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.btn-rechazar {
-  background: #ef4444;
-  color: white;
-}
-
-.btn-rechazar:hover {
-  background: #dc2626;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
-
-.btn-aceptar:active,
-.btn-rechazar:active {
-  transform: translateY(0);
-}
-
-/* Estados específicos por tipo */
+/* Estados de las Cards */
 .card[data-status="pending"] {
   border-left-color: #fbbf24;
 }
@@ -160,7 +132,7 @@
   opacity: 0.7;
 }
 
-/* Responsive */
+/* Estilos Responsive */
 @media (max-width: 768px) {
   .notificaciones-container {
     padding: 1rem;
@@ -189,9 +161,108 @@
   .acciones {
     flex-direction: column;
   }
+}
 
-  .btn-aceptar,
-  .btn-rechazar {
+/* Header de Notificaciones */
+.header-notificaciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.header-notificaciones .titulo {
+  margin-bottom: 0;
+}
+
+/* Toggle entre Pendientes y Gestionadas */
+.toggle-section {
+  display: flex;
+  gap: 0.5rem;
+  background: #f8f9fa;
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.toggle-btn {
+  padding: 0.625rem 1.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #6c757d;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.toggle-btn:hover {
+  color: #3b82f6;
+}
+
+.toggle-btn.active {
+  background: white;
+  color: #3b82f6;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos de Cards por Estado */
+.card-approved {
+  border-left-color: #10b981;
+  background: #f0fdf4;
+}
+
+.card-rejected {
+  border-left-color: #ef4444;
+  background: #fef2f2;
+}
+
+/* Colores de Estados */
+.estado-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.estado-approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.estado-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Fecha de Gestión */
+.fecha-gestion {
+  font-size: 0.875rem;
+  color: #6c757d;
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* Responsive para Header */
+
+@media (max-width: 768px) {
+  .header-notificaciones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-notificaciones .titulo {
+    text-align: center;
+  }
+
+  .toggle-section {
     width: 100%;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
   }
 }

@@ -8,7 +8,7 @@ const HeaderCl = () => {
   const [userData, setUserData] = useState(null);
   const [openComponent, setOpenComponent] = useState(null); // "sidebar" | "perfil" | "edit" | null
 
-  // 🔄 Cargar usuario desde localStorage y escuchar cambios
+  // Cargar usuario desde localStorage y escuchar cambios
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUserData(JSON.parse(storedUser));

@@ -1,35 +1,56 @@
-require('dotenv').config();
-const { sendEventCompletedEmail } = require('./services/emailService');
-const { sendPasswordResetEmail } = require("./services/emailService");
+// testNotifications.js
+const { io } = require("socket.io-client");
 
-const testEmail = async () => {
-  /*
-  // Prueba de envío de email al completar evento
-
-  const fakeEvent = {
-    EventName: 'Evento de Prueba',
-    EventDateTime: new Date(),
-    Address: 'Calle 123',
-    Capacity: 50
-  };
-
-  const fakeUser = {  // usuario de prueba
-    Email: 'apilogisticaeventos@gmail.com', 
-    Names: 'Usuario Prueba'
-  };
-
-  const sent = await sendEventCompletedEmail(fakeEvent, fakeUser);
-  */
-
-  // Prueba de envío de email con código de recuperación de contraseña
-  
-  const fakeCode = 1234; // código de prueba
-  const fakeUser = 'apilogisticaeventos@gmail.com'
-  const sent = await sendPasswordResetEmail(fakeUser, fakeCode);
-  
-
-  console.log(sent ? 'Email enviado' : 'Error al enviar');
-  process.exit();
+// Cambia estos valores según el usuario/admin que quieras simular
+const user = {
+  UserId: 1,      // ID del usuario
+  role: "user"    // "user" o "admin"
 };
 
-testEmail();
+const socket = io("http://localhost:4000", {
+  auth: {
+    userId: user.UserId,
+    role: user.role
+  },
+  transports: ["websocket"]
+});
+
+socket.on("connect", () => {
+  console.log(`[${user.role}] Conectado con ID:`, socket.id);
+
+  // Unirse a la sala privada del usuario
+  if (user.role === "user") {
+    socket.emit("joinRoom", user.UserId);
+    console.log(`[${user.role}] Unido a sala: user_${user.UserId}`);
+  }
+
+  if (user.role === "admin") {
+    socket.join("admins"); // opcional si tu backend maneja sala admins
+    console.log(`[${user.role}] Unido a sala de admins`);
+  }
+
+  // Simular envío de notificación
+  setTimeout(() => {
+    if (user.role === "admin") {
+      console.log(`[${user.role}] Enviando notificación a clientes`);
+      socket.emit("notifyClient", 1); // Notificar al usuario 1
+    } else {
+      console.log(`[${user.role}] Enviando notificación a admins`);
+      socket.emit("notifyAdmin"); // Notificar a todos los admins
+    }
+  }, 3000);
+});
+
+// Escuchar notificaciones
+socket.on("notification:admin", (data) => {
+  console.log("[ADMIN RECEIVED]", data || "Nueva notificación admin");
+});
+
+socket.on("notification:client", (data) => {
+  console.log("[CLIENT RECEIVED]", data || "Nueva notificación cliente");
+});
+
+// Manejar desconexión
+socket.on("disconnect", () => {
+  console.log(`[${user.role}] Desconectado`);
+});

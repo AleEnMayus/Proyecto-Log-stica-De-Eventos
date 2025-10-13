@@ -4,6 +4,6 @@ const surveyController = require("../../controllers/Survey");
 
 // Rutas de la encuesta
 
-router.post("/survey", surveyController.submitSurvey);
+router.post("/", surveyController.submitSurvey);
 
 module.exports = router;

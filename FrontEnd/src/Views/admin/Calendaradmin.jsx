@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/ToastContainer";
 import './../CSS/components.css';
 import './../CSS/FormsUser.css';
 import '../CSS/Calendar.css';
@@ -10,6 +12,7 @@ const Calendaradmin = () => {
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
   const [eventos, setEventos] = useState({});
+  const { toasts, addToast, removeToast } = useToast();
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -31,11 +34,12 @@ const Calendaradmin = () => {
         setEventos(eventosPorFecha);
       } catch (error) {
         console.error("Error:", error);
+        addToast("Error al cargar los eventos", "error");
       }
     };
 
     fetchEventos();
-  }, []);
+  }, [addToast]);
 
   const months = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -190,6 +194,9 @@ const Calendaradmin = () => {
           </div>
         </div>
       </div>
+
+      {/* Toast container */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 };

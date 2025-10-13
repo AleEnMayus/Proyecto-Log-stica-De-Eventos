@@ -5,6 +5,8 @@ import '../../CSS/components.css';
 import '../../CSS/DetailsEvt.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import ModalState from '../../../components/Modals/ModalState';
+import { useToast } from '../../../hooks/useToast';
+import ToastContainer from '../../../components/ToastContainer';
 
 const EventDetailsA = () => {
   const { eventId } = useParams();
@@ -16,7 +18,8 @@ const EventDetailsA = () => {
   const [error, setError] = useState(null);
   const [showStateModal, setShowStateModal] = useState(false);
 
-  // Obtener detalles del evento
+  const { toasts, addToast, removeToast } = useToast();
+
   const fetchEventDetails = async (id) => {
     try {
       setLoading(true);
@@ -34,9 +37,17 @@ const EventDetailsA = () => {
     } catch (err) {
       console.error('Error fetching event details:', err);
       setError(`Error al cargar el evento: ${err.message}`);
+      addToast("No se pudo cargar el evento", "danger");
+    } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (eventId) {
+      fetchEventDetails(eventId);
+    }
+  }, [eventId]);
 
   // Obtener datos del cliente
   useEffect(() => {
@@ -50,9 +61,9 @@ const EventDetailsA = () => {
         const response = await fetch(
           `http://localhost:4000/api/accounts/${eventData.ClientId}`
         );
-        
+
         if (!response.ok) throw new Error("Error al cargar datos del cliente");
-        
+
         const userData = await response.json();
         setClientData({
           name: userData.Names || "N/A",
@@ -68,6 +79,7 @@ const EventDetailsA = () => {
           documentType: "",
           documentNumber: "",
         });
+        addToast("Error al cargar datos del cliente", "danger");
       } finally {
         setLoading(false);
       }
@@ -76,17 +88,8 @@ const EventDetailsA = () => {
     loadClientData();
   }, [eventData]);
 
-  useEffect(() => {
-    if (eventId) {
-      fetchEventDetails(eventId);
-    }
-  }, [eventId]);
-
-  // Navegación
   const handleEditEvent = () => navigate(`/EditEvent/${eventId}`);
   const handleGoBack = () => navigate(-1);
-
-  // Modal
   const handleOpenStatusModal = () => setShowStateModal(true);
 
   const handleStatusChangeFromModal = async (id, newStatus) => {
@@ -107,18 +110,20 @@ const EventDetailsA = () => {
       }));
 
       setShowStateModal(false);
+      addToast("Estado del evento actualizado correctamente", "success");
     } catch (err) {
       console.error('Error cambiando estado:', err);
-      alert(`No se pudo cambiar el estado: ${err.message}`);
+      addToast("No se pudo cambiar el estado del evento", "danger");
     }
   };
 
-  // Estados intermedios
+  // Renders intermedios
   if (loading) {
     return (
       <div className="content-container">
         <HeaderAdm />
         <div className="loading-message">Cargando detalles del evento...</div>
+        <ToastContainer toasts={toasts} removeToast={removeToast} />
       </div>
     );
   }
@@ -133,6 +138,7 @@ const EventDetailsA = () => {
             Reintentar
           </button>
         </div>
+        <ToastContainer toasts={toasts} removeToast={removeToast} />
       </div>
     );
   }
@@ -142,6 +148,7 @@ const EventDetailsA = () => {
       <div className="content-container">
         <HeaderAdm />
         <div className="no-data-message">No se encontraron detalles para este evento.</div>
+        <ToastContainer toasts={toasts} removeToast={removeToast} />
       </div>
     );
   }
@@ -237,6 +244,9 @@ const EventDetailsA = () => {
         options={["In_planning", "In_execution", "Completed", "Canceled"]}
         title="Cambiar estado de evento"
       />
+
+      {/* Toasts */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

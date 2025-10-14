@@ -7,10 +7,14 @@ import EditResource from "./EditResource";
 import '../../CSS/Lists.css';
 import '../../CSS/components.css';
 
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/ToastContainer";
+
 const API_URL = "http://localhost:4000/api/resources";
 
 const ListResource = () => {
   const navigate = useNavigate();
+  const { toasts, addToast, removeToast } = useToast();
 
   const [recursos, setRecursos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,10 +33,14 @@ const ListResource = () => {
     try {
       setLoading(true);
       const res = await fetch(API_URL);
+      if (!res.ok) {
+        throw new Error("No se pudieron cargar los recursos");
+      }
       const data = await res.json();
       setRecursos(data);
     } catch (err) {
       console.error("Error cargando recursos:", err);
+      addToast(err.message || "Error al cargar los recursos", "danger");
     } finally {
       setLoading(false);
     }
@@ -45,16 +53,21 @@ const ListResource = () => {
   // --- Eliminar recurso ---
   const handleDelete = (id) => {
     setModalConfig({
-      message: "¿Seguro quieres eliminar el recurso?",
+      message: "¿Seguro que quieres eliminar este recurso?",
       confirmText: "Eliminar",
       onConfirm: async () => {
         try {
           const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
           if (res.ok) {
-            setRecursos(recursos.filter(r => r.ResourceId !== id));
+            setRecursos(prev => prev.filter(r => r.ResourceId !== id));
+            addToast("Recurso eliminado correctamente", "success");
+          } else {
+            const data = await res.json();
+            addToast(data.error || "No se pudo eliminar el recurso", "danger");
           }
         } catch (err) {
           console.error("Error eliminando recurso:", err);
+          addToast(err.message || "Error inesperado", "danger");
         } finally {
           setShowModal(false);
         }
@@ -77,14 +90,20 @@ const ListResource = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedResource),
       });
+
       if (res.ok) {
         const saved = await res.json();
         setRecursos(prev =>
           prev.map(r => (r.ResourceId === saved.ResourceId ? saved : r))
         );
+        addToast("Recurso actualizado correctamente", "success");
+      } else {
+        const data = await res.json();
+        addToast(data.error || "Error al actualizar recurso", "danger");
       }
     } catch (err) {
       console.error("Error actualizando recurso:", err);
+      addToast(err.message || "Error inesperado", "danger");
     } finally {
       setShowEditModal(false);
     }
@@ -97,8 +116,8 @@ const ListResource = () => {
 
   // --- Filtros y paginación ---
   const filteredResources = recursos.filter(r =>
-    r.ResourceName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.Status?.toLowerCase().includes(searchTerm.toLowerCase())
+    (r.ResourceName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (r.Status || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLast = currentPage * resourcesPerPage;
@@ -251,6 +270,9 @@ const ListResource = () => {
           onSave={handleSaveEdit}
         />
       )}
+
+      {/* Toasts */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

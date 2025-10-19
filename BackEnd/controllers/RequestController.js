@@ -7,11 +7,11 @@ const io = getIo();
 function formatDateForMySQL(dateString) {
   const date = new Date(dateString);
   const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  const hh = String(date.getHours()).padStart(2, '0');
-  const min = String(date.getMinutes()).padStart(2, '0');
-  const ss = String(date.getSeconds()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const hh = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  const ss = String(date.getSeconds()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }
 
@@ -41,12 +41,12 @@ const requestController = {
     try {
       let { RequestDate, RequestDescription, RequestType, UserId, EventId } = req.body;
 
-      const validTypes = ['schedule_appointment', 'cancel_event', 'document_change'];
+      const validTypes = ["schedule_appointment", "cancel_event", "document_change"];
       if (!validTypes.includes(RequestType)) {
         return res.status(400).json({ error: "Tipo de solicitud inválido" });
       }
 
-      if (RequestType === 'cancel_event' && !EventId) {
+      if (RequestType === "cancel_event" && !EventId) {
         return res.status(400).json({ error: "EventId es obligatorio para cancelar un evento" });
       }
 
@@ -59,19 +59,18 @@ const requestController = {
         RequestDescription,
         RequestType,
         UserId,
-        EventId: EventId || null
+        EventId: EventId || null,
       });
 
-      // Notificar en tiempo real a todos los administradores
+      // 🔔 Notificar en tiempo real a todos los administradores
       io.to("admins").emit("notification:admin", {
         message: RequestDescription,
         requestType: RequestType,
         userId: UserId,
-        requestId: id
+        requestId: id,
       });
 
       res.status(201).json({ message: "Solicitud creada", RequestId: id });
-
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Error al crear la solicitud" });
@@ -81,7 +80,7 @@ const requestController = {
   updateStatus: async (req, res) => {
     try {
       const { status } = req.body;
-      const validStatus = ['pending', 'approved', 'rejected'];
+      const validStatus = ["pending", "approved", "rejected"];
       if (!validStatus.includes(status)) {
         return res.status(400).json({ error: "Estado inválido" });
       }
@@ -95,10 +94,12 @@ const requestController = {
         await Event.updateEvent(request.EventId, { EventStatus: "Canceled" });
       }
 
-      // Notificar al cliente cuando se actualiza su solicitud
+      // 🔔 Notificar al cliente con más datos
       io.to(`user_${request.UserId}`).emit("notification:client", {
-        message: `Tu solicitud fue ${status}`,
-        requestId: req.params.id
+        message: `Tu solicitud de tipo "${request.RequestType}" fue ${status}`,
+        requestId: req.params.id,
+        status,
+        type: request.RequestType,
       });
 
       res.json({ message: "Estado actualizado" });

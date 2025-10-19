@@ -1,5 +1,5 @@
+export { default as NotificationsClient } from '../Views/user/NotificationsClient' 
 
-export { default as Notifications } from '../views/user/Notification-tray'
 export { default as ClientCalendar } from '../views/user/Calendarclient'
 // Eventos
 export { default as EventDetailsC } from '../views/user/Events/EventDetailsCl'

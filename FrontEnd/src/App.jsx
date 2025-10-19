@@ -93,7 +93,8 @@ const routeConfig = {
     { path: '/Calendar', component: ClientCalendar },
     { path: '/HomeContractsCl', component: ContractsClient },
     { path: '/EventsHome/Details/:eventId', component: EventDetailsC },
-    { path: '/EventsHome', component: ListEventsC }
+    { path: '/EventsHome', component: ListEventsC },
+    { path: '/NotificationsClient', component: NotificationsClient }
   ],
   development: [{ path: '/test', component: TestC }]
 }

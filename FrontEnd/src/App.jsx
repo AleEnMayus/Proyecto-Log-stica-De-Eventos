@@ -46,7 +46,7 @@ import {
   EventDetailsC,
   ListEventsC,
   SurvayClient,
-  Notifications,
+  NotificationsClient,
   ImageGalleryC,
   ImageGalleryViewerC,
   ClientCalendar,
@@ -85,7 +85,6 @@ const routeConfig = {
     { path: '/EditEvent/:eventId', component: EditEvent }
   ],
   client: [
-    { path: '/Notifications', component: Notifications },
     { path: '/Schedule', component: Schedule },
     { path: '/Survey/:eventId', component: SurvayClient },
     { path: '/GalleryView', component: ImageGalleryViewerC },
@@ -94,7 +93,7 @@ const routeConfig = {
     { path: '/HomeContractsCl', component: ContractsClient },
     { path: '/EventsHome/Details/:eventId', component: EventDetailsC },
     { path: '/EventsHome', component: ListEventsC },
-    { path: '/NotificationsClient', component: NotificationsClient }
+    { path: '/Notification-tray', component: NotificationsClient }
   ],
   development: [{ path: '/test', component: TestC }]
 }

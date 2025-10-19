@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
+import { translateRequestType, translateStatus } from "../../utils/FormatText";
 import { socket } from "../../services/socket";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ToastContainer";
@@ -10,6 +11,7 @@ const baseURL = "http://localhost:4000";
 const NotificationsClient = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState("pendientes");
   const { toasts, addToast, removeToast } = useToast();
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -46,7 +48,7 @@ const NotificationsClient = () => {
     console.log(`Cliente conectado a sala user_${userId}`);
 
     socket.on("notification:client", (data) => {
-      console.log("🔔 Nueva notificación cliente:", data);
+      console.log("Nueva notificación cliente:", data);
       addToast(data.message, "info");
 
       setNotifications((prev) => [
@@ -70,11 +72,35 @@ const NotificationsClient = () => {
     fetchRequests();
   }, []);
 
+  // Separar notificaciones por estado
+  const pendientes = notifications.filter((n) => n.RequestStatus === "pending");
+  const gestionadas = notifications.filter((n) => n.RequestStatus !== "pending");
+
+  // Obtener las notificaciones según la sección activa
+  const currentNotifications = activeSection === "pendientes" ? pendientes : gestionadas;
+
   return (
     <div className="contratos-container">
       <HeaderCl />
       <div className="notificaciones-container">
-        <h1 className="titulo">Mis Notificaciones</h1>
+        <div className="header-notificaciones">
+          <h1 className="titulo">Mis Notificaciones</h1>
+          
+          <div className="toggle-section">
+            <button
+              className={`toggle-btn ${activeSection === "pendientes" ? "active" : ""}`}
+              onClick={() => setActiveSection("pendientes")}
+            >
+              Pendientes ({pendientes.length})
+            </button>
+            <button
+              className={`toggle-btn ${activeSection === "gestionadas" ? "active" : ""}`}
+              onClick={() => setActiveSection("gestionadas")}
+            >
+              Gestionadas ({gestionadas.length})
+            </button>
+          </div>
+        </div>
 
         {loading ? (
           <p>Cargando...</p>
@@ -82,23 +108,28 @@ const NotificationsClient = () => {
           <p>No tienes notificaciones por ahora</p>
         ) : (
           <div className="lista">
-            {notifications.map((n) => (
-              <div
-                key={n.RequestId}
-                className={`card ${
-                  n.RequestStatus !== "pending" ? `card-${n.RequestStatus}` : ""
-                }`}
-              >
-                <h2>{n.RequestType}</h2>
-                <p>{n.RequestDescription}</p>
-                <p className={`estado estado-${n.RequestStatus}`}>
-                  Estado: {n.RequestStatus}
-                </p>
-                <p className="fecha-gestion">
-                  Fecha: {new Date(n.RequestDate).toLocaleString("es-ES")}
-                </p>
-              </div>
-            ))}
+            {currentNotifications.length === 0 ? (
+              <p>No hay notificaciones en esta sección</p>
+            ) : (
+              currentNotifications.map((n) => (
+                <div
+                  key={n.RequestId}
+                  className={`card ${
+                    n.RequestStatus !== "pending" ? `card-${n.RequestStatus}` : ""
+                  }`}
+                  data-status={n.RequestStatus}
+                >
+                  <h2>{translateRequestType(n.RequestType)}</h2>
+                  <p>{n.RequestDescription}</p>
+                  <p className={`estado estado-${n.RequestStatus}`}>
+                    Estado: {translateStatus(n.RequestStatus)}
+                  </p>
+                  <p className="fecha-gestion">
+                    Fecha: {new Date(n.RequestDate).toLocaleString("es-ES")}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
         )}
       </div>

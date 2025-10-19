@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm";
 import { translateRequestType, translateStatus } from "../../utils/FormatText";
 import { useToast } from "../../hooks/useToast";
+import { socket } from "../../services/socket";
 import ToastContainer from "../../components/ToastContainer";
 import "../CSS/Notification.css";
-import { socket } from "../../services/socket";
 
 const baseURL = "http://localhost:4000";
 

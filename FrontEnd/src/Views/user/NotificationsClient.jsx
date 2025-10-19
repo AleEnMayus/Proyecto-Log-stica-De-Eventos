@@ -47,30 +47,53 @@ const NotificationsClient = () => {
     socket.emit("joinRoom", userId);
     console.log(`Cliente conectado a sala user_${userId}`);
 
+    // Escuchar cuando el admin cambia el estado de una solicitud
     socket.on("notification:client", (data) => {
       console.log("Nueva notificación cliente:", data);
       addToast(data.message, "info");
 
-      setNotifications((prev) => [
-        {
-          RequestId: data.requestId,
-          RequestStatus: data.status || "actualizada",
-          RequestDescription: data.message,
-          RequestDate: new Date().toISOString(),
-          RequestType: data.type || "Solicitud",
-        },
-        ...prev,
-      ]);
+      // Si es una actualización de estado existente
+      if (data.requestId) {
+        setNotifications((prev) => {
+          const exists = prev.find(n => n.RequestId === data.requestId);
+          
+          if (exists) {
+            // Actualizar la solicitud existente con el nuevo estado y ManagementDate
+            return prev.map(n => 
+              n.RequestId === data.requestId 
+                ? { 
+                    ...n, 
+                    RequestStatus: data.status || n.RequestStatus,
+                    ManagementDate: data.managementDate || new Date().toISOString()
+                  } 
+                : n
+            );
+          } else {
+            // Nueva solicitud
+            return [
+              {
+                RequestId: data.requestId,
+                RequestType: data.requestType,
+                RequestDescription: data.message || "Nueva solicitud",
+                RequestStatus: data.status || "pending",
+                RequestDate: data.requestDate || new Date().toISOString(),
+                ManagementDate: data.managementDate || null,
+              },
+              ...prev,
+            ];
+          }
+        });
+      }
     });
 
     return () => {
       socket.off("notification:client");
     };
-  }, [userId]);
+  }, [userId, addToast]);
 
   useEffect(() => {
     fetchRequests();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Separar notificaciones por estado
   const pendientes = notifications.filter((n) => n.RequestStatus === "pending");
@@ -125,8 +148,13 @@ const NotificationsClient = () => {
                     Estado: {translateStatus(n.RequestStatus)}
                   </p>
                   <p className="fecha-gestion">
-                    Fecha: {new Date(n.RequestDate).toLocaleString("es-ES")}
+                    Fecha de solicitud: {new Date(n.RequestDate).toLocaleString("es-ES")}
                   </p>
+                  {n.ManagementDate && (
+                    <p className="fecha-gestion">
+                      Gestionada: {new Date(n.ManagementDate).toLocaleString("es-ES")}
+                    </p>
+                  )}
                 </div>
               ))
             )}

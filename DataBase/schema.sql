@@ -311,6 +311,18 @@ GROUP BY r.ResourceId, r.ResourceName, r.Quantity, r.Status, r.Price;
 -- TRIGGERS
 -- ==========================================================
 
+-- Actualizar fecha de gestion en solicitudes
+DELIMITER //
+CREATE TRIGGER SetManagementDate
+BEFORE UPDATE ON  requests
+FOR EACH ROW 
+BEGIN
+	IF NEW.RequestStatus IN ("approved","rejected")
+		AND OLD.RequestStatus != NEW.RequestStatus THEN
+		SET NEW.ManagementDate = curdate();
+	END IF;
+END//
+	
 -- Validar disponibilidad antes de asignar
 DELIMITER //
 CREATE TRIGGER ValidateResourceAvailability
@@ -328,7 +340,6 @@ BEGIN
         SET MESSAGE_TEXT = 'Cantidad insuficiente del recurso';
     END IF;
 END//
-DELIMITER ;
 
 -- Actualizar estado después de asignar
 DELIMITER //
@@ -344,7 +355,6 @@ BEGIN
     ) <= 0, 'In_use', 'Available')
     WHERE r.ResourceId = NEW.ResourceId;
 END//
-DELIMITER ;
 
 -- Actualizar estado al devolver
 DELIMITER //
@@ -362,7 +372,6 @@ BEGIN
         WHERE r.ResourceId = NEW.ResourceId;
     END IF;
 END//
-DELIMITER ;
 
 -- Devolver recursos al finalizar evento
 DELIMITER //
@@ -378,7 +387,6 @@ BEGIN
         AND AssignmentStatus IN ('reserved', 'assigned');
     END IF;
 END//
-DELIMITER ;
 
 -- ==========================================================
 -- VERIFICAR CONFIGURACIÓN

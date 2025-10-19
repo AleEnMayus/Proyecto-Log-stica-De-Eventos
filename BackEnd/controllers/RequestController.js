@@ -62,7 +62,7 @@ const requestController = {
         EventId: EventId || null,
       });
 
-      // 🔔 Notificar en tiempo real a todos los administradores
+      // Notificar en tiempo real a todos los administradores
       io.to("admins").emit("notification:admin", {
         message: RequestDescription,
         requestType: RequestType,
@@ -94,7 +94,7 @@ const requestController = {
         await Event.updateEvent(request.EventId, { EventStatus: "Canceled" });
       }
 
-      // 🔔 Notificar al cliente con más datos
+      // Notificar al cliente con más datos
       io.to(`user_${request.UserId}`).emit("notification:client", {
         message: `Tu solicitud de tipo "${request.RequestType}" fue ${status}`,
         requestId: req.params.id,

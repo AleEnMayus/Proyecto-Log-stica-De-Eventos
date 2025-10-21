@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./galleryC2.css";
+
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import { useLocation } from "react-router-dom"; 
 

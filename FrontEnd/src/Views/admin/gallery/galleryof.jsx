@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './galleryof.css';
+
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 const ManagerImageGallery = () => {

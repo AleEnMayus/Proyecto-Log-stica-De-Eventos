@@ -4,7 +4,7 @@ const user = JSON.parse(localStorage.getItem("user") || "{}");
 
 export const socket = io("http://localhost:4000", {
   auth: {
-    userId: user?.id,  // fíjate que tu objeto en localStorage tiene "id", no "UserId"
+    userId: user?.id,  // objeto en localStorage tiene "id", no "UserId"
     role: user?.role
   },
   transports: ["websocket"],

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm";
 import { translateRequestType, translateStatus } from "../../utils/FormatText";
 import { useToast } from "../../hooks/useToast";
+import { socket } from "../../services/socket";
 import ToastContainer from "../../components/ToastContainer";
 import "../CSS/Notification.css";
-import { socket } from "../../services/socket";
 
 const baseURL = "http://localhost:4000";
 
@@ -25,13 +25,12 @@ const Notifications = () => {
           ...(token && { Authorization: `Bearer ${token}` }),
         },
       });
-
       if (!res.ok) throw new Error("Error al obtener solicitudes");
       const data = await res.json();
       setRequests(data);
     } catch (err) {
       console.error(err);
-      addToast("Error al cargar notificaciones", "error"); // Solo toast de validación
+      addToast("Error al cargar notificaciones", "error");
     } finally {
       setLoading(false);
     }
@@ -60,15 +59,17 @@ const Notifications = () => {
         throw new Error(errorData.error || errorData.message || "Error al actualizar estado");
       }
 
+      const updatedRequest = await res.json();
+
       addToast(
         newStatus === "approved" ? "Solicitud aceptada" : "Solicitud rechazada",
         "success"
       );
 
-      // Actualizar lista localmente sin recargar todo
+      // Actualizar con la respuesta del servidor que incluye ManagementDate
       setRequests(prev =>
         prev.map(r =>
-          r.RequestId === id ? { ...r, RequestStatus: newStatus, ManagementDate: new Date() } : r
+          r.RequestId === id ? { ...r, ...updatedRequest } : r
         )
       );
     } catch (err) {
@@ -80,14 +81,13 @@ const Notifications = () => {
   // --- Inicializar solicitudes al montar ---
   useEffect(() => {
     fetchRequests();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // --- Escuchar notificaciones en tiempo real ---
   useEffect(() => {
     socket.on("notification:admin", (data) => {
       console.log("Nueva notificación admin:", data);
-
-      // Solo agregamos al listado, no usamos toast de validación
+      
       setRequests(prev => [
         {
           RequestId: data.requestId,
@@ -96,6 +96,7 @@ const Notifications = () => {
           RequestStatus: "pending",
           UserId: data.userId,
           RequestDate: new Date().toISOString(),
+          ManagementDate: null,
         },
         ...prev,
       ]);
@@ -122,7 +123,6 @@ const Notifications = () => {
   return (
     <div className="contratos-container">
       <HeaderAdm />
-
       <div className="notificaciones-container">
         <div className="header-notificaciones">
           <h1 className="titulo">Notificaciones</h1>
@@ -164,13 +164,18 @@ const Notifications = () => {
               <div
                 key={n.RequestId}
                 className={`card ${n.RequestStatus !== "pending" ? `card-${n.RequestStatus}` : ""}`}
+                data-status={n.RequestStatus}
               >
                 <h2>{translateRequestType(n.RequestType)}</h2>
                 <p>{n.RequestDescription}</p>
                 <p className={`estado estado-${n.RequestStatus}`}>
                   Estado: {translateStatus(n.RequestStatus)}
                 </p>
-
+                
+                <p className="fecha-gestion">
+                  Fecha de solicitud: {new Date(n.RequestDate).toLocaleString("es-ES")}
+                </p>
+                
                 {n.RequestStatus === "pending" && (
                   <div className="acciones">
                     <button
@@ -187,10 +192,10 @@ const Notifications = () => {
                     </button>
                   </div>
                 )}
-
+                
                 {n.ManagementDate && (
                   <p className="fecha-gestion">
-                    Gestionada: {new Date(n.ManagementDate).toLocaleDateString("es-ES")}
+                    Gestionada: {new Date(n.ManagementDate).toLocaleString("es-ES")}
                   </p>
                 )}
               </div>
@@ -199,7 +204,6 @@ const Notifications = () => {
         </div>
       </div>
 
-      {/* Toasts de validación */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );

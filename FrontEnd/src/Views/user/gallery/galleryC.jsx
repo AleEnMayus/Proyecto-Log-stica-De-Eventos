@@ -36,7 +36,7 @@ const ImageGalleryC = () => {
     setImages(Array(9).fill(null));
   };
 
-  // 👇 Nuevo: redirigir al hacer clic en una imagen
+  // Nuevo: redirigir al hacer clic en una imagen
   const handleImageClick = (idx) => {
     navigate("/galleryview", { state: { selectedImage: images[idx] } });
   };
@@ -59,7 +59,7 @@ const ImageGalleryC = () => {
             <div 
               key={idx} 
               className="image-card" 
-              onClick={() => handleImageClick(idx)} // 👈 click en la imagen
+              onClick={() => handleImageClick(idx)} //  click en la imagen
               style={{ cursor: "pointer" }}
             >
               {img ? (

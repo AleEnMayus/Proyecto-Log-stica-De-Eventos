@@ -54,7 +54,7 @@ const RecoverPassword = () => {
       if (response.ok) {
         alert(`Código enviado a ${email}`);
         setErrorMessage('');
-        setCodeTimer(180); // ⏳ CAMBIO: ahora son 3 minutos (180 segundos)
+        setCodeTimer(180); // CAMBIO: ahora son 3 minutos (180 segundos)
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || 'Error al enviar el código');

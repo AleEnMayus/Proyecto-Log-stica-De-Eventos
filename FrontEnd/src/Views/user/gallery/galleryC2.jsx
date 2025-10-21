@@ -92,7 +92,7 @@ const ImageGalleryViewerC = () => {
                 />
               ) : (
                 <div className="placeholder-image">
-                  <span className="placeholder-icon">🖼️</span>
+                  <span className="placeholder-icon"></span>
                 </div>
               )}
             </div>

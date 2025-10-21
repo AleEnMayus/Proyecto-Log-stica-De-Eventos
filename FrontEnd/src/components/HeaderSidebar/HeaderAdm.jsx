@@ -152,7 +152,7 @@ const HeaderAdm = () => {
             <Link to="/HomeResources" className="sidebar-menu-item">
             <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="Currentcolor"><path d="M620-160.33 456.67-323.67 504-371l116 116 234.67-234.67L902-442.33l-282 282Zm220-408.34h-66.67v-204.66h-66.66v100H253.33v-100h-66.66v586.66H434V-120H186.67q-28.34 0-47.5-19.17Q120-158.33 120-186.67v-586.66q0-28.34 19.17-47.5Q158.33-840 186.67-840H377q8.33-35 37.33-57.5T480-920q37.33 0 66.17 22.5Q575-875 583.33-840h190q28.34 0 47.5 19.17Q840-801.67 840-773.33v204.66ZM480-773.33q17 0 28.5-11.5t11.5-28.5q0-17-11.5-28.5t-28.5-11.5q-17 0-28.5 11.5t-11.5 28.5q0 17 11.5 28.5t28.5 11.5Z"/></svg>  
             Recursos</Link>
-            <Link to="/galleryAdmin" className="sidebar-menu-item">
+            <Link to="/galleryAdmin2" className="sidebar-menu-item">
             <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="Currentcolor"><path d="M350-384.67h394l-130.67-174-99.33 130-66-84.66-98 128.66Zm-70 171.34q-27 0-46.83-19.84Q213.33-253 213.33-280v-533.33q0-27 19.84-46.84Q253-880 280-880h533.33q27 0 46.84 19.83Q880-840.33 880-813.33V-280q0 27-19.83 46.83-19.84 19.84-46.84 19.84H280Zm0-66.67h533.33v-533.33H280V-280ZM146.67-80q-27 0-46.84-19.83Q80-119.67 80-146.67v-600h66.67v600h600V-80h-600ZM280-813.33V-280v-533.33Z"/></svg>  
             Gestionar galería</Link>
             <Link to="/CalendarAdmin" className="sidebar-menu-item">

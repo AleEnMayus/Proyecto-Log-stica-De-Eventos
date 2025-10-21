@@ -17,9 +17,7 @@ const ImageGalleryC = () => {
     "https://source.unsplash.com/random/400x300?gathering",
     "https://source.unsplash.com/random/400x300?music"
   ]);
-
-  const [isEditing, setIsEditing] = useState(false);
-
+  
   const handleUpload = (e) => {
     const files = Array.from(e.target.files);
     const updated = [...images];
@@ -36,15 +34,14 @@ const ImageGalleryC = () => {
     setImages(Array(9).fill(null));
   };
 
-  // Redirigir al hacer clic en una imagen
-  const handleImageClick = (idx) => {
-    navigate("/galleryview", { state: { selectedImage: images[idx] } });
+  //  Redirigir al hacer clic en una imagen
+  const handleImageClick = (idx) => { 
+    navigate("/GalleryViewAdmin", { state: { selectedImage: images[idx] } });
   };
 
-  // 👉 Nuevo: activar/desactivar modo edición
-  const toggleEdit = () => {
-    setIsEditing(!isEditing);
-    alert(isEditing ? "Modo edición desactivado" : "Modo edición activado");
+  // Redirigir al apartado de edición
+  const goToEditGallery = () => {
+    navigate("/GalleryAdmin"); // asegúrate que esta ruta exista en tus <Routes>
   };
 
   return (
@@ -56,9 +53,9 @@ const ImageGalleryC = () => {
           <br /><br /><br /><br />
           <h2 className="gallery-title">Galería de Eventos</h2>
 
-          {/* ✅ Botón Editar Galería */}
-          <button className="btn btn-dark" onClick={toggleEdit}>
-            {isEditing ? "Salir de Edición" : "Editar Galería"}
+          {/* Botón que lleva al otro apartado */}
+          <button className="btn btn-dark" onClick={goToEditGallery}>
+            Editar Galería
           </button>
         </div>
 
@@ -78,7 +75,7 @@ const ImageGalleryC = () => {
                 />
               ) : (
                 <img
-                  src="https://via.placeholder.com/150?text=🖼️"
+                  src="https://via.placeholder.com/150?text="
                   alt="placeholder"
                   className="preview-image"
                 />

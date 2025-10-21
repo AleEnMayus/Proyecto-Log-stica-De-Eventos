@@ -44,12 +44,12 @@ const ManagerImageGallery = () => {
                 <img src={img} alt={`imagen-${idx}`} className="preview-image" />
               ) : (
                 <img
-                  src="https://via.placeholder.com/64?text=🖼️"
+                  src="https://via.placeholder.com/64?text="
                   alt="placeholder"
                   className="preview-image"
                 />
               )}
-              <button className="btn-delete" onClick={() => handleDelete(idx)}>🗑️</button>
+              <button className="btn-delete" onClick={() => handleDelete(idx)}>X</button>
             </div>
           ))}
         </div>
@@ -67,7 +67,7 @@ const ManagerImageGallery = () => {
           style={{ display: 'none' }}
         />
 
-        {/* ✅ Botón Subir Imagen */}
+        {/* Botón Subir Imagen */}
         <button
           className="btn btn-dark"
           onClick={() => document.getElementById('image-upload').click()}
@@ -75,13 +75,7 @@ const ManagerImageGallery = () => {
           Subir Imagen
         </button>
 
-        {/* ✅ Botón Guardar Cambios */}
-        <button
-          className="btn btn-dark"
-          onClick={handleSave}
-        >
-          Guardar Cambios
-        </button>
+        
       </div>
     </div>
   );

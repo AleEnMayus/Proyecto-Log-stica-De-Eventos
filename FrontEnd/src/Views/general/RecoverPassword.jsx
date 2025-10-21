@@ -160,7 +160,7 @@ const RecoverPassword = () => {
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
                   ←
                 </button>
-                <div className="logo-text">Happy-Art Eventos</div>
+                <div className="logo-text">Happy-Art-Events</div>
               </div>
             </div>
           </div>

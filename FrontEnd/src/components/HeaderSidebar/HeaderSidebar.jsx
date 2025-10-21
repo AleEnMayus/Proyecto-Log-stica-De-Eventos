@@ -21,7 +21,7 @@ const HeaderSidebar = () => {
       </button>
       <a href="/" className="navbar-brand d-flex align-items-center">
         <img src="/HAE_logo.png" className="img-50" alt="Logo" />
-        <div className="logo-text ms-2">Happy-Art Eventos</div>
+        <div className="logo-text ms-2">Happy-Art-Events</div>
       </a>
     </div>
 

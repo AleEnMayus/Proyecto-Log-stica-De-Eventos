@@ -53,7 +53,7 @@ const HeaderCl = () => {
             </button>
             <a href="/" className="d-flex logolink">
               <img src="/HAE_logo.png" className="img-50" alt="Logo" />
-              <div className="logo-text">Happy-Art Eventos</div>
+              <div className="logo-text">Happy-Art-Events</div>
             </a>
           </div>
 

@@ -81,45 +81,36 @@
   border: 2px solid var(--color-dark);
 }
 
-/* Días vacíos */
-.day.empty {
-  background: transparent;
-  pointer-events: none;
+/* Día con evento */
+.day.event-day {
+  background-color: var(--color-accent); /* Color de acento */
+  color: white;
+  font-weight: bold;
 }
 
-/* Caja de eventos */
+/* Hover en el día con evento */
+.day.event-day:hover {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: white;
+  border: 1px solid var(--color-secondary);
+  transform: scale(1.05);
+}
+
+/* Caja de evento */
 .event-box {
-  background: #ffffff;
-  padding: 15px; /* más pequeño */
+  background: #fff;
+  padding: 15px;
   border-radius: 14px;
   box-shadow: 0px 5px 14px rgba(0, 0, 0, 0.1);
-  min-width: 260px; /* más compacto */
-  max-width: 300px;
-  border-left: 4px solid var(--color-secondary);
+  min-width: 240px;
+  max-width: 350px;
+  text-align: left;
+  border-top: 4px solid var(--color-primary);
 }
 
-/* Texto de los eventos */
+/* Títulos de los eventos */
 .event-box p {
-  margin: 10px 0;
-  font-size: 0.95rem;
-  color: var(--color-dark);
-}
-
-.event-box strong {
-  color: var(--color-primary);
-  font-size: 1rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .calendar-content {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .calendar-box,
-  .event-box {
-    width: 100%;
-    max-width: 400px;
-  }
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 5px 0;
 }

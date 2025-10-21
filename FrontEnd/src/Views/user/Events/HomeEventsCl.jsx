@@ -1,52 +1,72 @@
-import React, { useState } from 'react';  
+import React, { useState, useEffect } from 'react';  
 import { Link, useNavigate } from 'react-router-dom';
+import { eraseUnderscore } from '../../../utils/FormatText';
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 import '../../CSS/Lists.css';
 import '../../CSS/components.css';
 
+const EstadoBadge = ({ estado }) => {
+  const normalizado = estado?.toLowerCase();
+
+  const estilos = {
+    completed: { background: "#ffe6e6", color: "#ff0000", border: "1px solid #ff0000" },
+    "in planning": { background: "#e6ffe6", color: "#13a927", border: "1px solid #13a927" },
+    "in execution": { background: "#fff4e0", color: "#ffae00", border: "1px solid #ffae00" },
+    canceled: { background: "#f0f0f0", color: "#6c757d", border: "1px solid #6c757d" },
+  };
+
+  const estilo = estilos[normalizado] || { background: "#f0f0f0", color: "#6c757d" };
+
+  return (
+    <span
+      style={{
+        padding: "4px 10px",
+        borderRadius: "12px",
+        fontWeight: "600",
+        fontSize: "0.85rem",
+        display: "inline-block",
+        textTransform: "capitalize",
+        ...estilo,
+      }}
+    >
+      {estado || "N/A"}
+    </span>
+  );
+};
+
 const ListEventsC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [eventos, setEventos] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const eventsPerPage = 5;
 
-  const eventos = [
-    {
-      id: 1,
-      fecha: '15/12/2024',
-      hora: '14:30',
-      nombreEvento: 'Conferencia de Marketing Digital',
-      agendadoPor: 'Juan Pérez',
-      estado: 'En planeación'
-    },
-    {
-      id: 2,
-      fecha: '20/12/2024',
-      hora: '10:00',
-      nombreEvento: 'Workshop de React',
-      agendadoPor: 'Juan Pérez',
-      estado: 'En ejecución'
-    }
-  ];
+  // ID del usuario actual (puedes obtenerlo de auth, props o contexto)
+  const userId = 1; // <- reemplazar dinámico si ya lo tienes en sesión
+  const baseURL = "http://localhost:4000"; // ajusta a tu backend real
+
+  // Cargar eventos desde el backend
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        const res = await fetch(`${baseURL}/api/events/user/${userId}`);
+        if (!res.ok) throw new Error("Error al cargar eventos");
+        const data = await res.json();
+        setEventos(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEventos();
+  }, [userId]);
 
   const eventosFiltrados = eventos.filter(evento =>
-    evento.nombreEvento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    evento.agendadoPor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    evento.estado.toLowerCase().includes(searchTerm.toLowerCase())
+    evento.EventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    evento.EventStatus.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const getEstadoColor = (estado) => {
-    switch (estado.toLowerCase()) {
-      case 'terminado':
-        return { color: '#ff0000ff' };
-      case 'en planeación':
-        return { color: '#13a927ff' };
-      case 'en ejecución':
-        return { color: '#ffae00ff' };
-      default:
-        return { color: '#6c757d' };
-    }
-  };
 
   const handleVerEvento = (eventId) => {
     navigate(`/EventsHome/Details/${eventId}`);
@@ -57,6 +77,8 @@ const ListEventsC = () => {
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = eventosFiltrados.slice(indexOfFirstEvent, indexOfLastEvent);
   const totalPages = Math.ceil(eventosFiltrados.length / eventsPerPage);
+
+  if (loading) return <div className="list-container"><p>Cargando eventos...</p></div>;
 
   return (
     <div className="list-container">
@@ -83,7 +105,7 @@ const ListEventsC = () => {
           <input
             type="text"
             className="search-input"
-            placeholder="Buscar por evento, organizador o estado..."
+            placeholder="Buscar por evento o estado..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -105,37 +127,36 @@ const ListEventsC = () => {
             </tr>
           </thead>
           <tbody>
-            {currentEvents.map((evento) => (
-              <tr key={evento.id}>
-                <td>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontWeight: '600', color: '#2c3e50' }}>{evento.fecha}</div>
-                    <div style={{ fontSize: '0.85rem', color: '#6c757d' }}>{evento.hora}</div>
-                  </div>
-                </td>
-                <td>
-                  <span style={{ fontWeight: '500', color: '#2c3e50' }}>
-                    {evento.nombreEvento}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    className="btn-custom btn-status-custom"
-                    style={getEstadoColor(evento.estado)}
-                  >
-                    {evento.estado}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className="btn-custom btn-view-custom"
-                    onClick={() => handleVerEvento(evento.id)}
-                  >
-                    Ver
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {currentEvents.map((evento) => {
+              const fecha = new Date(evento.EventDateTime).toLocaleDateString();
+              const hora = new Date(evento.EventDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+              return (
+                <tr key={evento.EventId}>
+                  <td>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontWeight: '600', color: '#2c3e50' }}>{fecha}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#6c757d' }}>{hora}</div>
+                    </div>
+                  </td>
+                  <td>
+                    <span style={{ fontWeight: '500', color: '#2c3e50' }}>
+                      {evento.EventName}
+                    </span>
+                  </td>
+                  <td>
+                    <EstadoBadge estado={eraseUnderscore(evento.EventStatus)} />
+                  </td>
+                  <td>
+                    <button
+                      className="btn-custom btn-edit-custom d-flex align-items-center mx-auto"
+                      onClick={() => handleVerEvento(evento.EventId)}
+                    >
+                      Ver
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -147,9 +168,7 @@ const ListEventsC = () => {
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
-            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
-          </svg>
+          ◀
         </button>
 
         <div className="pagination-numbers">
@@ -169,9 +188,7 @@ const ListEventsC = () => {
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
-            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
-          </svg>
+          ▶
         </button>
       </div>
 

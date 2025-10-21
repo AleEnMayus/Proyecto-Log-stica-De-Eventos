@@ -2,6 +2,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Importar el hook y el componente ToastContainer
+import { useToast } from "../../../hooks/useToast"; 
+import ToastContainer from "../../../components/ToastContainer";
+
 // Importación de componentes y estilos
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import '../../CSS/components.css';
@@ -13,6 +17,9 @@ import '../../CSS/FormsUser.css';
  */
 const CreateResource = () => {
   const navigate = useNavigate();
+
+  // Hook para toasts
+  const { toasts, addToast, removeToast } = useToast();
 
   // Estado local del formulario
   const [formData, setFormData] = useState({
@@ -47,16 +54,25 @@ const CreateResource = () => {
         })
       });
 
-      if (!response.ok) throw new Error("Error al crear recurso");
+      const data = await response.json();
 
-      const newResource = await response.json();
-      console.log("Recurso creado:", newResource);
+      if (!response.ok) {
+        throw new Error(data.error || "Error al crear recurso");
+      }
 
-      alert(" Recurso creado exitosamente");
-      navigate("/HomeResources");
+      console.log("Recurso creado:", data);
+
+      // Notificación de éxito
+      addToast(data.message || "Recurso creado exitosamente", "success");
+
+      setTimeout(() => {
+        navigate("/HomeResources");
+      }, 2000);
     } catch (error) {
       console.error("Error creando recurso:", error);
-      alert(" Ocurrió un error al crear el recurso");
+
+      // Notificación de error
+      addToast(error.message || "Ocurrió un error al crear el recurso", "danger");
     }
   };
 
@@ -96,7 +112,7 @@ const CreateResource = () => {
                   Cantidad <span className="text-danger">*</span>
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   name="quantity"
                   className="form-input"
                   placeholder="Ej: 10"
@@ -177,6 +193,9 @@ const CreateResource = () => {
           </form>
         </div>
       </div>
+
+      {/* Toast */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 };

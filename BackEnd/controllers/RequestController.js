@@ -1,14 +1,17 @@
 const Request = require("../models/Request");
 const Event = require("../models/Events");
+const { getIo } = require("../sockets/socket");
+
+const io = getIo();
 
 function formatDateForMySQL(dateString) {
   const date = new Date(dateString);
   const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0'); // Mes 0-11
-  const dd = String(date.getDate()).padStart(2, '0');
-  const hh = String(date.getHours()).padStart(2, '0');
-  const min = String(date.getMinutes()).padStart(2, '0');
-  const ss = String(date.getSeconds()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  const hh = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  const ss = String(date.getSeconds()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }
 
@@ -38,16 +41,15 @@ const requestController = {
     try {
       let { RequestDate, RequestDescription, RequestType, UserId, EventId } = req.body;
 
-      const validTypes = ['schedule_appointment', 'cancel_event', 'document_change'];
+      const validTypes = ["schedule_appointment", "cancel_event", "document_change"];
       if (!validTypes.includes(RequestType)) {
         return res.status(400).json({ error: "Tipo de solicitud inválido" });
       }
 
-      if (RequestType === 'cancel_event' && !EventId) {
+      if (RequestType === "cancel_event" && !EventId) {
         return res.status(400).json({ error: "EventId es obligatorio para cancelar un evento" });
       }
 
-      // Formatear la fecha
       if (RequestDate) {
         RequestDate = formatDateForMySQL(RequestDate);
       }
@@ -57,44 +59,48 @@ const requestController = {
         RequestDescription,
         RequestType,
         UserId,
-        EventId: EventId || null
+        EventId: EventId || null,
+      });
+
+      // Notificar en tiempo real a todos los administradores
+      io.to("admins").emit("notification:admin", {
+        message: RequestDescription,
+        requestType: RequestType,
+        userId: UserId,
+        requestId: id,
       });
 
       res.status(201).json({ message: "Solicitud creada", RequestId: id });
-
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Error al crear la solicitud" });
     }
   },
 
-   updateStatus: async (req, res) => {
+  updateStatus: async (req, res) => {
     try {
       const { status } = req.body;
-      const validStatus = ['pending', 'approved', 'rejected'];
+      const validStatus = ["pending", "approved", "rejected"];
       if (!validStatus.includes(status)) {
         return res.status(400).json({ error: "Estado inválido" });
       }
 
-      // Obtener la solicitud antes de actualizar
       const request = await Request.getById(req.params.id);
       if (!request) return res.status(404).json({ error: "Solicitud no encontrada" });
 
-      // Actualizar la solicitud
-      const affected = await Request.updateStatus(req.params.id, status);
+      await Request.updateStatus(req.params.id, status);
 
       if (request.RequestType === "cancel_event" && status === "approved") {
-        if (!request.EventId) return res.status(400).json({ error: "No se especificó el evento a cancelar" });
-
-        const statusMap = {
-          canceled: "Canceled",
-          "in planning": "In planning",
-          "in execution": "In execution",
-          completed: "Completed"
-        };
-
-        await Event.updateEvent(request.EventId, { EventStatus: statusMap["canceled"] });
+        await Event.updateEvent(request.EventId, { EventStatus: "Canceled" });
       }
+
+      // Notificar al cliente con más datos
+      io.to(`user_${request.UserId}`).emit("notification:client", {
+        message: `Tu solicitud de tipo "${request.RequestType}" fue ${status}`,
+        requestId: req.params.id,
+        status,
+        type: request.RequestType,
+      });
 
       res.json({ message: "Estado actualizado" });
     } catch (err) {
@@ -107,7 +113,6 @@ const requestController = {
     try {
       const affected = await Request.delete(req.params.id);
       if (!affected) return res.status(404).json({ error: "Solicitud no encontrada" });
-
       res.json({ message: "Solicitud eliminada" });
     } catch (err) {
       console.error(err);

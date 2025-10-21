@@ -1,6 +1,4 @@
 // controllers/profileController.js
-
-// Asegúrate de que el nombre del archivo coincida (Profile.js)
 const { getProfileById, updateProfile } = require("../models/Profile");
 
 /**
@@ -25,18 +23,22 @@ exports.getProfile = async (req, res) => {
  */
 exports.updateProfile = async (req, res) => {
   const { userId } = req.params;
-  const dataToUpdate = req.body; // El cuerpo de la petición con los datos a cambiar
+  const dataToUpdate = req.body;
 
   try {
-    // La lógica para no sobreescribir datos está en el modelo
     const affectedRows = await updateProfile(userId, dataToUpdate);
-    
+
     if (affectedRows === 0) {
-      // Puede significar que no se encontró el usuario o que no se enviaron datos para actualizar
-      return res.status(404).json({ message: "Usuario no encontrado o no se proporcionaron datos para actualizar." });
+      return res.status(404).json({
+        message: "Usuario no encontrado o no se proporcionaron datos para actualizar."
+      });
     }
-    
-    res.status(200).json({ message: "Perfil actualizado correctamente" });
+
+    // Volvemos a obtener el perfil actualizado
+    const updatedProfile = await getProfileById(userId);
+
+    // Respondemos con el objeto actualizado
+    res.status(200).json(updatedProfile);
   } catch (error) {
     console.error("Error al actualizar el perfil:", error);
     res.status(500).json({ error: "Error interno del servidor." });

@@ -1,77 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { eraseUnderscore } from '../../../utils/FormatText';
 import '../../CSS/components.css';
 import '../../CSS/DetailsEvt.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import ModalState from '../../../components/Modals/ModalState';
+import { useToast } from '../../../hooks/useToast';
+import ToastContainer from '../../../components/ToastContainer';
 
 const EventDetailsA = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
 
   const [eventData, setEventData] = useState(null);
+  const [clientData, setClientData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [showStateModal, setShowStateModal] = useState(false);
 
-  // Función para obtener los detalles del evento
+  const { toasts, addToast, removeToast } = useToast();
+
   const fetchEventDetails = async (id) => {
     try {
       setLoading(true);
       setError(null);
 
-      if (process.env.NODE_ENV === 'development') {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        const mockData = {
-          eventId: 1,
-          names: 'Juan Pérez',
-          email: 'juan.perez@email.com',
-          phone: '3123213456',
-          documentNumber: '123456789',
-          documentType: 'C.C.',
-          address: 'Avenida 68 Num°123, Bogotá D.C.',
-          eventDate: '15/10/2023',
-          eventName: 'Cumpleaños Numero 36',
-          eventTime: '9:00 AM',
-          selectedPackage: '1',
-          paymentMethod: 'Daviplata',
-          eventStatus: 'En planeación'
-        };
-
-        setEventData(mockData);
-        return;
-      }
-
-      const response = await fetch(`/api/events/${id}`, {
+      const response = await fetch(`http://localhost:4000/api/events/${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('La respuesta no es JSON válido');
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
       const data = await response.json();
       setEventData(data);
     } catch (err) {
       console.error('Error fetching event details:', err);
-
-      if (err.message.includes('JSON')) {
-        setError('Error: El servidor no devolvió datos válidos');
-      } else if (err.message.includes('404')) {
-        setError('Evento no encontrado');
-      } else if (err.message.includes('500')) {
-        setError('Error interno del servidor');
-      } else {
-        setError(`Error al cargar el evento: ${err.message}`);
-      }
+      setError(`Error al cargar el evento: ${err.message}`);
+      addToast("No se pudo cargar el evento", "danger");
     } finally {
       setLoading(false);
     }
@@ -83,195 +49,205 @@ const EventDetailsA = () => {
     }
   }, [eventId]);
 
-  const handleEditEvent = () => {
-    navigate(`/EditEvent/${eventId}`);
+  // Obtener datos del cliente
+  useEffect(() => {
+    const loadClientData = async () => {
+      if (!eventData || !eventData.ClientId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:4000/api/accounts/${eventData.ClientId}`
+        );
+
+        if (!response.ok) throw new Error("Error al cargar datos del cliente");
+
+        const userData = await response.json();
+        setClientData({
+          name: userData.Names || "N/A",
+          email: userData.Email || "Sin correo",
+          documentType: userData.DocumentType || "",
+          documentNumber: userData.DocumentNumber || "",
+        });
+      } catch (error) {
+        console.error("Error cargando datos del cliente:", error);
+        setClientData({
+          name: eventData.ClientName || "Error al cargar",
+          email: "Sin información",
+          documentType: "",
+          documentNumber: "",
+        });
+        addToast("Error al cargar datos del cliente", "danger");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadClientData();
+  }, [eventData]);
+
+  const handleEditEvent = () => navigate(`/EditEvent/${eventId}`);
+  const handleGoBack = () => navigate(-1);
+  const handleOpenStatusModal = () => setShowStateModal(true);
+
+  const handleStatusChangeFromModal = async (id, newStatus) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/events/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ EventStatus: newStatus })
+      });
+
+      if (!response.ok) throw new Error(`Error al cambiar estado: ${response.status}`);
+
+      const data = await response.json();
+
+      setEventData((prev) => ({
+        ...prev,
+        EventStatus: data.EventStatus
+      }));
+
+      setShowStateModal(false);
+      addToast("Estado del evento actualizado correctamente", "success");
+    } catch (err) {
+      console.error('Error cambiando estado:', err);
+      addToast("No se pudo cambiar el estado del evento", "danger");
+    }
   };
 
-  // Abrir modal
-  const handleOpenStatusModal = () => {
-    setShowStateModal(true);
-  };
-
-  // Confirmar cambio de estado
-  const handleStatusChangeFromModal = (eventId, newStatus) => {
-    console.log("Estado cambiado:", eventId, "->", newStatus);
-
-    // Actualizar estado local
-    setEventData(prev => ({
-      ...prev,
-      eventStatus: newStatus
-    }));
-
-    // Aquí harías tu request al backend para guardar el cambio
-    // await updateEventStatus(eventId, newStatus);
-  };
-
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
+  // Renders intermedios
   if (loading) {
     return (
-        <div className="content-container">
+      <div className="content-container">
         <HeaderAdm />
-          <div className="loading-message">
-            Cargando detalles del evento...
-          </div>
-        </div>
+        <div className="loading-message">Cargando detalles del evento...</div>
+        <ToastContainer toasts={toasts} removeToast={removeToast} />
+      </div>
     );
   }
 
   if (error) {
     return (
-        <div className="content-container">
+      <div className="content-container">
         <HeaderAdm />
-          <div className="error-message">
-            Error: {error}
-            <button onClick={() => fetchEventDetails(eventId)} className="btn-primary-custom">
-              Reintentar
-            </button>
-          </div>
+        <div className="error-message">
+          {error}
+          <button onClick={() => fetchEventDetails(eventId)} className="btn-primary-custom">
+            Reintentar
+          </button>
         </div>
+        <ToastContainer toasts={toasts} removeToast={removeToast} />
+      </div>
     );
   }
 
   if (!eventData) {
     return (
-        <div className="content-container">
+      <div className="content-container">
         <HeaderAdm />
-          <div className="no-data-message">
-            No se encontraron detalles para este evento.
-          </div>
-        </div>
+        <div className="no-data-message">No se encontraron detalles para este evento.</div>
+        <ToastContainer toasts={toasts} removeToast={removeToast} />
+      </div>
     );
   }
 
+  // --- RENDER PRINCIPAL ---
   return (
-
-      <div className="content-container mle-0">
+    <div className="content-container">
       <HeaderAdm />
 
-        <div className="user-card">
-          <div className="user-info">
-            <div className="avatar"></div>
-            <div>
-              <p className="user-label">Correo electrónico</p>
-              <p className="user-email">{eventData.email || 'N/A'}</p>
-            </div>
+      {/* Card de cliente */}
+      <div className="user-card">
+        <div className="user-info">
+          <div className="avatar">
+            {clientData?.name ? clientData.name.charAt(0).toUpperCase() : "?"}
           </div>
-
-          <div className="event-status">
-            <h4 className="status-title">Estado del evento</h4>
-            <div className="status-indicator">
-              <div className="status-dot"></div>
-              <span className="status-text">{eventData.eventStatus || 'N/A'}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="promo-card">
-          <div className="details-grid">
-            {/* Datos del evento */}
-            <div>
-              <div className="detail-item">
-                <label className="detail-label">Nombre del cliente:</label>
-                <div className="detail-box">{eventData.names || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Número de documento:</label>
-                <div className="detail-box">{eventData.documentNumber || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Tipo de documento:</label>
-                <div className="detail-box">{eventData.documentType || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Temática del evento:</label>
-                <div className="detail-box">{eventData.eventName || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Paquete Seleccionado:</label>
-                <div className="detail-box">{eventData.selectedPackage || 'N/A'}</div>
-              </div>
-            </div>
-
-            <div>
-              <div className="detail-item">
-                <label className="detail-label">Teléfono de Contacto:</label>
-                <div className="detail-box">{eventData.phone || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Ubicación del Evento:</label>
-                <div className="detail-box">{eventData.address || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Fecha del Evento:</label>
-                <div className="detail-box">{eventData.eventDate || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Hora del Evento:</label>
-                <div className="detail-box">{eventData.eventTime || 'N/A'}</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">Método de Pago:</label>
-                <div className="detail-box">{eventData.paymentMethod || 'N/A'}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Botones */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '20px',
-            flexWrap: 'wrap',
-            marginBottom: '30px',
-            width: '100%'
-          }}>
-            <button
-              className="btn-primary-custom"
-              onClick={handleEditEvent}
-            >
-              Editar evento
-            </button>
-
-            <button
-              className="btn-primary-custom"
-              onClick={handleOpenStatusModal}
-            >
-              Editar Estado de Evento
-            </button>
-          </div>
-
-          <div className="button-container">
-            <button
-              className="btn-secondary-custom back-button"
-              onClick={handleGoBack}
-            >
-              Volver
-            </button>
+          <div>
+            <p className="user-label">Cliente</p>
+            <p className="user-name">{clientData?.name || eventData.ClientName || "N/A"}</p>
+            <p className="user-email">{clientData?.email || "Sin correo"}</p>
+            {clientData?.documentNumber && (
+              <p className="user-email">
+                {clientData.documentType} {clientData.documentNumber}
+              </p>
+            )}
           </div>
         </div>
-      {/* Modal de estado */}
+
+        <div className="event-status">
+          <p className="status-title">Estado del evento</p>
+          <div className="status-indicator">
+            <span className="status-dot"></span>
+            <span className="status-text">{eraseUnderscore(eventData.EventStatus) || "N/A"}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Detalles */}
+      <div className="details-grid">
+        <div className="detail-item">
+          <span className="detail-label">Nombre del evento</span>
+          <div className="detail-box">{eventData.EventName || "N/A"}</div>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Fecha y hora</span>
+          <div className="detail-box">
+            {eventData.EventDateTime
+              ? new Date(eventData.EventDateTime).toLocaleString()
+              : "N/A"}
+          </div>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Capacidad</span>
+          <div className="detail-box">{eventData.Capacity || "N/A"}</div>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Precio</span>
+          <div className="detail-box">${eventData.EventPrice || "N/A"}</div>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Dirección</span>
+          <div className="detail-box">{eventData.Address || "N/A"}</div>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Método de pago</span>
+          <div className="detail-box">{eventData.AdvancePaymentMethod || "N/A"}</div>
+        </div>
+        <div className="detail-item" style={{ gridColumn: "1 / -1" }}>
+          <span className="detail-label">Descripción</span>
+          <div className="detail-box">{eventData.EventDescription || "N/A"}</div>
+        </div>
+      </div>
+
+      {/* Botones */}
+      <div className="button-container">
+        <button className="btn-primary-custom" onClick={handleEditEvent}>
+          Editar evento
+        </button>
+        <button className="btn-primary-custom" onClick={handleOpenStatusModal}>
+          Cambiar estado
+        </button>
+        <button className="btn-secondary-custom" onClick={handleGoBack}>
+          Volver
+        </button>
+      </div>
+
+      {/* Modal */}
       <ModalState
         show={showStateModal}
         onClose={() => setShowStateModal(false)}
         onConfirm={handleStatusChangeFromModal}
-        currentStatus={eventData.eventStatus}
-        entityId={eventData.eventId}
-        options={["En planeación", "En ejecución", "Finalizado"]}
+        currentStatus={eventData.EventStatus}
+        entityId={eventData.EventId}
+        options={["In_planning", "In_execution", "Completed", "Canceled"]}
         title="Cambiar estado de evento"
       />
-      </div>
+
+      {/* Toasts */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+    </div>
   );
 };
 

@@ -1,66 +1,52 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const http = require("http");
+const { Server } = require("socket.io");
 
-const db = require("./db"); // conexión a la base de datos
+const { notificationSocket } = require("./sockets/notificationSocket");
+const db = require("./db");
+const { startEventCompletionJob } = require('./jobs/eventCompletionJob');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// --- MIDDLEWARES ---
+// Crear servidor HTTP
+const server = http.createServer(app);
+
+
+// Inicializar Socket.IO
+const { init } = require("./sockets/socket");
+const io = init(server);
+
+notificationSocket(io);
+
+
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// --- RUTA DE PRUEBA ---
+// Rutas
 app.get("/", (req, res) => {
-  res.send(" <center><h1>Backend de logística de eventos funcionando!</h1></center> ");
+  res.send("<center><h1>Backend funcionando con Socket.IO !</h1></center>");
 });
 
-// --- RUTAS DE AUTENTICACIÓN ---
-const authRoutes = require("./routes/auth");
-app.use("/api", authRoutes);
+app.use("/api", require("./routes/auth"));
+app.use("/api/password", require("./routes/PasswordChange"));
+app.use("/api/questions", require("./routes/Admin/questions"));
+app.use("/api/survey", require("./routes/user/Survey"));
+app.use("/api/resources", require("./routes/Admin/Resources"));
+app.use("/api/events", require("./routes/Admin/Events"));
+app.use("/api/accounts", require("./routes/admin/accounts"));
+app.use("/api/profile", require("./routes/Profile"));
+app.use("/api/requests", require("./routes/user/Request"));
+app.use("/api", require("./routes/Admin/contractRoutes"));
 
-// --- RUTAS DE CONTRASEÑAS ---
-const passwordChangeRoutes = require("./routes/PasswordChange");
-app.use("/api/password", passwordChangeRoutes);
+// Jobs automáticos
+startEventCompletionJob();
 
-// --- RUTAS DE PREGUNTAS/ENCUESTAS ---
-const questionRoutes = require("./routes/Admin/questions");
-app.use("/api/questions", questionRoutes);
-
-// --- RUTAS DE PREGUNTAS/ENCUESTAS ---
-const surveyRoutes = require("./routes/user/Survey");
-app.use("/api", surveyRoutes);
-
-// --- RUTAS DE RECURSOS ---
-const resourceRoutes = require("./routes/Admin/Resources");
-app.use("/api/resources", resourceRoutes);
-
-// --- RUTAS DE EVENTOS ---
-const eventRoutes = require("./routes/Admin/Events");
-app.use("/api/events", eventRoutes);
-
-// --- RUTAS DE GESTIÓN DE CUENTAS ---
-const accountsRoutes = require("./routes/admin/accounts");
-app.use("/api/accounts", accountsRoutes);
-
-// --- RUTAS DE PERFIL ---
-const profileRoutes = require("./routes/Profile");
-app.use("/api/profile", profileRoutes);
-
-// --- RUTAS DE SOLICITUDES ---
-const requestRoutes = require("./routes/user/Request");
-app.use("/api/requests", requestRoutes);
-
-// --- RUTAS DE SUBIDA DE CONTRATOS ---
-const uploadRoutes = require("./routes/Admin/contractRoutes");
-app.use("/api", uploadRoutes);
-
-// --- RUTAS DE RECURSOS ASIGNADOS A EVENTOS --- 
-const eventResourcesRoutes = require("./routes/Admin/EventResourceRoutes");
-app.use("/api/event-resources", eventResourcesRoutes);
-
-// --- SERVIDOR ---
-app.listen(PORT, () => {
-  console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+// Iniciar servidor
+server.listen(PORT, () => {
+  console.log(`/ Backend corriendo en http://localhost:${PORT}`);
+  console.log("Socket.IO activo para notificaciones en tiempo real");
 });

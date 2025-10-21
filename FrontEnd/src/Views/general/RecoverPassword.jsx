@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../CSS/FormsUser.css';
+import ToastContainer from '../../components/ToastContainer';
+import { useToast } from '../../hooks/useToast';
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
@@ -9,11 +11,12 @@ const RecoverPassword = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [codeTimer, setCodeTimer] = useState(0); // tiempo en segundos
+  const [codeTimer, setCodeTimer] = useState(0);
 
+  const { toasts, addToast, removeToast } = useToast();
   const codeRefs = useRef([]);
 
-  // Manejo del temporizador del código
+  // Temporizador del código
   useEffect(() => {
     if (codeTimer <= 0) return;
     const interval = setInterval(() => {
@@ -22,7 +25,15 @@ const RecoverPassword = () => {
     return () => clearInterval(interval);
   }, [codeTimer]);
 
-  // Manejo del cambio en inputs de código
+  // Limpieza de datos sensibles al desmontar
+  useEffect(() => {
+    return () => {
+      setNewPassword('');
+      setConfirmPassword('');
+      setCode(['', '', '', '']);
+    };
+  }, []);
+
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) {
       const newCode = [...code];
@@ -30,19 +41,20 @@ const RecoverPassword = () => {
       setCode(newCode);
 
       if (value && index < code.length - 1) {
-        codeRefs.current[index + 1].focus();
+        codeRefs.current[index + 1]?.focus();
       } else if (!value && index > 0) {
-        codeRefs.current[index - 1].focus();
+        codeRefs.current[index - 1]?.focus();
       }
     }
   };
 
-  // Enviar código al correo ingresado
   const handleSendCode = async () => {
     if (!email) {
       setErrorMessage('Por favor ingresa tu correo.');
       return;
     }
+
+    setCodeTimer(180); // 3 minutos
 
     try {
       const response = await fetch('http://localhost:4000/api/password/send-code', {
@@ -51,30 +63,48 @@ const RecoverPassword = () => {
         body: JSON.stringify({ email }),
       });
 
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = { message: 'Error inesperado del servidor.' };
+      }
+
       if (response.ok) {
-        alert(`Código enviado a ${email}`);
+        addToast(data.message || 'Código enviado', 'success');
         setErrorMessage('');
-        setCodeTimer(180); // CAMBIO: ahora son 3 minutos (180 segundos)
+        setCodeTimer(120); // CAMBIO: ahora son 2 minutos (120 segundos)
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Error al enviar el código');
+        setCodeTimer(0);
+        setErrorMessage(data.message || 'Error al enviar el código');
+        addToast(data.message || 'Error al enviar el código', 'error');
       }
     } catch (error) {
       setErrorMessage('Error al conectar con el servidor');
+      addToast('Error al conectar con el servidor', 'error');
     }
   };
 
-  // Enviar nueva contraseña junto con el código
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
-      setErrorMessage('Las contraseñas no coinciden.');
+    if (code.some((digit) => digit === '')) {
+      setErrorMessage('Por favor ingresa el código completo.');
       return;
     }
 
-    if (codeTimer <= 0) {
-      setErrorMessage('El código ha expirado. Solicita uno nuevo.');
+    const validatePassword = (password) => {
+      const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+      return re.test(password);
+    };
+
+    if (!validatePassword(newPassword)) {
+      setErrorMessage('La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y caracteres especiales.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setErrorMessage('Las contraseñas no coinciden.');
       return;
     }
 
@@ -85,28 +115,36 @@ const RecoverPassword = () => {
         body: JSON.stringify({
           email,
           code: code.join(''),
-          newPassword
-        })
+          newPassword,
+        }),
       });
 
+      let errorData;
       if (response.ok) {
-        alert('Contraseña actualizada exitosamente');
+        addToast('Contraseña actualizada exitosamente', 'success');
         setErrorMessage('');
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
       } else {
-        const errorData = await response.json();
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { message: 'Error inesperado del servidor' };
+        }
         setErrorMessage(errorData.message || 'Error al actualizar la contraseña');
+        addToast(errorData.message || 'Error al actualizar la contraseña', 'error');
       }
     } catch (error) {
       setErrorMessage('Error al conectar con el servidor');
+      addToast('Error al conectar con el servidor', 'error');
     }
   };
 
-  // Regresa a la página anterior
   const handleGoBackBrowser = () => {
     window.history.back();
   };
 
-  // Mostrar tiempo restante en formato mm:ss
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60).toString().padStart(2, '0');
     const s = (seconds % 60).toString().padStart(2, '0');
@@ -123,15 +161,15 @@ const RecoverPassword = () => {
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
                   ←
                 </button>
-                <div className="logo-text">Happy-Art Eventos</div>
+                <div className="logo-text">Happy-Art-Events</div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="login-content mt-4">
-        <div className="login-form-card">
+      <div className="login-content container mt-4">
+        <div className="login-form-card form-card-500">
           <h1 className="login-title">Recuperar Contraseña</h1>
 
           {errorMessage && <div className="error-message">{errorMessage}</div>}
@@ -168,8 +206,16 @@ const RecoverPassword = () => {
                   ref={(el) => (codeRefs.current[index] = el)}
                   className="code-box"
                   maxLength="1"
+                  type="tel"
+                  pattern="[0-9]*"
+                  inputMode="numeric"
                   value={digit}
                   onChange={(e) => handleCodeChange(index, e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Backspace' && !code[index] && index > 0) {
+                      codeRefs.current[index - 1]?.focus();
+                    }
+                  }}
                 />
               ))}
             </div>
@@ -246,6 +292,9 @@ const RecoverPassword = () => {
           </form>
         </div>
       </div>
+
+      {/* Toasts */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

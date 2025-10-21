@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { eraseUnderscore } from '../../utils/FormatText';
 import "../../Views/CSS/Modals.css";
 
 const ModalState = ({ 
@@ -7,7 +8,7 @@ const ModalState = ({
   onConfirm,    // recibe la acción confirmada
   currentStatus, 
   entityId,     // id del usuario/evento que quieres modificar
-  options = ["En planeación", "En ejecución", "Finalizado"], 
+  options = [], 
   title = "Cambiar estado"
 }) => {
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
@@ -51,7 +52,7 @@ const ModalState = ({
                   </svg>
                 }
               </div>
-              <span className="status-label">{status}</span>
+              <span className="status-label">{eraseUnderscore(status)}</span>
             </div>
           ))}
         </div>

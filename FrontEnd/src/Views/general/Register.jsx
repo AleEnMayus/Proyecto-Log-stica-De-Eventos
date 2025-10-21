@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../CSS/FormsUser.css';
+import { useToast } from '../../hooks/useToast';
+import ToastContainer from '../../components/ToastContainer';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -13,12 +15,12 @@ const RegisterPage = () => {
     confirmPassword: ''
   });
 
+  const { toasts, addToast, removeToast } = useToast();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState('');
-  const errorRef = useRef(null);
 
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,25 +43,21 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar email
     if (!validateEmail(formData.email)) {
-      setErrorMessage('El correo no tiene un formato válido');
+      addToast('El correo no tiene un formato válido', 'danger');
       return;
     }
 
-    // Validar contraseña
     if (!validatePassword(formData.password)) {
-      setErrorMessage('La contraseña debe tener mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.');
+      addToast('La contraseña debe tener mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.', 'danger');
       return;
     }
 
-    // Validar confirmación de contraseña
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage('Las contraseñas no coinciden');
+      addToast('Las contraseñas no coinciden', 'danger');
       return;
     }
 
-    // Validar mayoría de edad
     const birthDate = new Date(formData.birthDate);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -69,17 +67,15 @@ const RegisterPage = () => {
     }
 
     if (age < 18) {
-      setErrorMessage('Debes ser mayor de 18 años para registrarte');
+      addToast('Debes ser mayor de 18 años para registrarte', 'danger');
       return;
     }
 
-    // Validar documento (mín 10 máx 20 caracteres)
     if (formData.documentNumber.length < 10 || formData.documentNumber.length > 20) {
-      setErrorMessage('El número de documento debe tener entre 10 y 20 caracteres');
+      addToast('El número de documento debe tener entre 10 y 20 caracteres', 'danger');
       return;
     }
 
-    // Enviar al backend
     try {
       const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
@@ -88,7 +84,8 @@ const RegisterPage = () => {
       });
 
       if (response.ok) {
-        setErrorMessage('Registro exitoso. Ahora puedes iniciar sesión.');
+        addToast('Registro exitoso. Ahora puedes iniciar sesión.', 'success');
+
         setFormData({
           fullName: '',
           birthDate: '',
@@ -98,23 +95,18 @@ const RegisterPage = () => {
           password: '',
           confirmPassword: ''
         });
+
         setTimeout(() => {
           navigate('/login');
         }, 1500);
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.message || 'Error en el registro');
+        addToast(errorData.message || 'Error en el registro', 'danger');
       }
     } catch (error) {
-      setErrorMessage('Error al conectar con el servidor');
+      addToast('Error al conectar con el servidor', 'danger');
     }
   };
-
-  useEffect(() => {
-    if (errorMessage && errorRef.current) {
-      errorRef.current.focus();
-    }
-  }, [errorMessage]);
 
   const handleGoBackBrowser = () => {
     window.history.back();
@@ -131,7 +123,7 @@ const RegisterPage = () => {
                   ←
                 </button>
                 <div className="logo-text">
-                  Happy-Art Eventos
+                  Happy-Art-Events
                 </div>
               </div>
             </div>
@@ -144,18 +136,12 @@ const RegisterPage = () => {
         </div>
       </header>
 
-      <div className="login-content mt-4 mt-10">
-        <div className="login-form-card">
+      <div className="login-content container mt-4 mt-10">
+        <div className="login-form-card w-800">
           <h1 className="login-title">Registrarse</h1>
           <p className="login-subtitle">
             Crea tu cuenta en Happy-Art Eventos
           </p>
-
-          {errorMessage &&
-            <div className="error-message" ref={errorRef} tabIndex="-1">
-              {errorMessage}
-            </div>
-          }
 
           <form onSubmit={handleSubmit}>
             <div className="row">
@@ -246,6 +232,7 @@ const RegisterPage = () => {
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
                     {showPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -280,6 +267,7 @@ const RegisterPage = () => {
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
                     {showConfirmPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -299,29 +287,14 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn-primary-custom login-btn">
+            <button type="submit" className="btn-primary-custom btn mt-4 w-100">
               Registrarse
             </button>
           </form>
-
-          <div className="divider">
-            <span>O regístrate con</span>
-          </div>
-
-          <div className="social-buttons">
-            <button className="social-btn" type="button">
-              Google
-            </button>
-          </div>
-
-          <p className="register-link">
-            ¿Ya tienes una cuenta?{' '}
-            <a href="/login">
-              Inicia sesión aquí
-            </a>
-          </p>
         </div>
       </div>
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

@@ -2,40 +2,61 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 
 const PasswordReset = {
-  // Crear código de recuperación (máximo 5 por día)
+  // Crear código de recuperación
   createResetCode: async (email, code) => {
     try {
       await db.query("CALL CreatePasswordResetCode(?, ?)", [email, code]);
+      return { success: true };
     } catch (error) {
+      // Capturar errores del procedimiento almacenado
       if (error.sqlState === "45000") {
-        throw new Error(error.sqlMessage);
+        return { success: false, message: error.sqlMessage };
       }
       throw error;
     }
   },
 
-  // Verifica solo si el código es válido (sin borrar)
+  // Verificar si el código es válido
   verifyCodeProcedure: async (email, code) => {
     try {
       await db.query("CALL CheckResetCode(?, ?)", [email, code]);
       return { success: true };
     } catch (error) {
-      if (error.sqlState === "45000") return { success: false, message: error.sqlMessage };
+      if (error.sqlState === "45000") {
+        return { success: false, message: error.sqlMessage };
+      }
       throw error;
     }
   },
 
-  // Actualiza contraseña y borra el código usado
-  updatePassword: async (email, code, newPassword) => {
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await db.query(`UPDATE User SET Password = ? WHERE Email = ?`, [
-      hashedPassword,
-      email,
-    ]);
-
-    // Borra el código que se acaba de usar
-    await db.query(`DELETE FROM PasswordReset WHERE Email = ? AND Code = ?`, [email, code]);
+  // Actualizar contraseña
+  updatePassword: async (email, newPassword) => {
+    try {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const [result] = await db.query(
+        "UPDATE User SET Password = ? WHERE Email = ?",
+        [hashedPassword, email]
+      );
+      
+      if (result.affectedRows === 0) {
+        throw new Error("Usuario no encontrado");
+      }
+      
+      return { success: true };
+    } catch (error) {
+      throw error;
+    }
   },
+
+  // Verificar si el usuario existe
+  userExists: async (email) => {
+    try {
+      const [rows] = await db.query("SELECT UserId FROM User WHERE Email = ?", [email]);
+      return rows.length > 0;
+    } catch (error) {
+      throw error;
+    }
+  }
 };
 
 module.exports = PasswordReset;

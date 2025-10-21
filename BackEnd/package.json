@@ -31,7 +31,10 @@
     "mongoose": "^7.5.0",
     "multer": "^2.0.2",
     "mysql2": "^3.14.3",
-    "nodemailer": "^6.10.1",
+    "node-cron": "^4.2.1",
+    "nodemailer": "^7.0.9",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "superagent": "^10.2.3",
     "uuid": "^9.0.0"
   },

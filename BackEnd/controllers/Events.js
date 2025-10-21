@@ -1,6 +1,7 @@
 const Event = require("../models/Events");
 const EventResources = require("../models/EventResources");
 const db = require("../db");
+const { sendEventCompletedEmail } = require("../services/emailService");
 
 // Listado de eventos (resumido)
 async function getEvents(req, res) {
@@ -10,6 +11,36 @@ async function getEvents(req, res) {
   } catch (err) {
     console.error("Error obteniendo eventos:", err);
     res.status(500).json({ error: "Error al obtener eventos" });
+  }
+}
+
+// Nuevo: Obtener eventos de un usuario por su ID
+async function getEventsByUserId(req, res) {
+  try {
+    const { userId } = req.params;
+
+    // Traer todos los eventos del usuario
+    const [events] = await db.query(
+      "SELECT * FROM Events WHERE ClientId = ?",
+      [userId]
+    );
+
+    if (events.length === 0) {
+      return res.status(404).json({ error: "No se encontraron eventos para este usuario" });
+    }
+
+    // Para cada evento, traer sus recursos
+    const eventsWithResources = await Promise.all(
+      events.map(async (event) => {
+        const resources = await EventResources.getResourcesByEvent(event.EventId);
+        return { ...event, resources: resources || [] };
+      })
+    );
+
+    res.json(eventsWithResources);
+  } catch (err) {
+    console.error("Error obteniendo eventos por usuario:", err);
+    res.status(500).json({ error: "Error al obtener eventos del usuario" });
   }
 }
 
@@ -23,7 +54,14 @@ async function getEventById(req, res) {
       return res.status(404).json({ error: "Evento no encontrado" });
     }
 
-    res.json(event);
+    // Obtener recursos vinculados al evento
+    const resources = await EventResources.getResourcesByEvent(id);
+
+    // Devolver evento + recursos
+    res.json({
+      ...event,
+      resources: resources || []
+    });
   } catch (err) {
     console.error("Error obteniendo evento por ID:", err);
     res.status(500).json({ error: "Error al obtener evento" });
@@ -110,10 +148,51 @@ async function updateEventStatus(req, res) {
       return res.status(400).json({ error: "Debes enviar el nuevo estado" });
     }
 
+    // 1. Obtener el estado actual antes de actualizar
+    const [currentEvent] = await db.query(
+      "SELECT EventStatus FROM Events WHERE EventId = ?",
+      [id]
+    );
+
+    if (currentEvent.length === 0) {
+      return res.status(404).json({ error: "Evento no encontrado" });
+    }
+
+    const oldStatus = currentEvent[0].EventStatus;
+
+    // 2. Actualizar el estado
     const updated = await Event.updateEventStatus(id, EventStatus);
-    updated
-      ? res.json({ message: "Estado actualizado correctamente" })
-      : res.status(404).json({ error: "Evento no encontrado" });
+
+    if (!updated) {
+      return res.status(404).json({ error: "Evento no encontrado" });
+    }
+
+    // 3. Si cambió a "Completed", enviar email
+    if (EventStatus === "Completed" && oldStatus !== "Completed") {
+      try {
+        // Obtener datos completos del evento y usuario
+        const [eventData] = await db.query(`
+          SELECT e.*, u.Email, u.Names 
+          FROM Events e
+          JOIN User u ON e.ClientId = u.UserId
+          WHERE e.EventId = ?
+        `, [id]);
+
+        if (eventData.length > 0) {
+          const event = eventData[0];
+          await sendEventCompletedEmail(event, {
+            Email: event.Email,
+            Names: event.Names
+          });
+          console.log(`Email de completado enviado para evento ${id}`);
+        }
+      } catch (emailError) {
+        console.error("Error al enviar email:", emailError);
+        // No fallar la respuesta si el email falla
+      }
+    }
+
+    res.json({ message: "Estado actualizado correctamente" });
 
   } catch (err) {
     console.error("Error actualizando estado:", err);
@@ -150,6 +229,7 @@ async function deleteEvent(req, res) {
 module.exports = {
   getEvents,
   getEventById,
+  getEventsByUserId,
   createEvent,
   updateEvent,
   deleteEvent,

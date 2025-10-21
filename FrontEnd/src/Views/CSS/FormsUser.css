@@ -1,11 +1,22 @@
 /* Botones adicionales */
 /* Botón enviar código */
+.form-card-500 {
+  max-width: 500px !important;
+  width: 100% !important;
+  margin: 0 auto;
+}
+
+.w-700 {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
 .btn-send-code {
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
   color: white;
   border: none;
   padding: 5px;            
-  border-radius: 10px;
+  border-radius: 15px;
   font-size: 16px;                     
   cursor: pointer;
   transition: all 0.2s ease-in-out;

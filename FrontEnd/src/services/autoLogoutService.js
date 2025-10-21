@@ -1,5 +1,5 @@
 let logoutCallback = null;
-let inactivityTime = 5 * 60 * 1000; // 5 min por defecto
+let inactivityTime = 5 * 60 * 1000; 
 let timeoutId = null;
 
 const resetTimer = () => {

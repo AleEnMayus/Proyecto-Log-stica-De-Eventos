@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useToast } from '../../../hooks/useToast'; // ✅ Importar toast
-import ToastContainer from '../../../components/ToastContainer'; // ✅ Importar contenedor
+import { useToast } from '../../../hooks/useToast'; // Importar toast
+import ToastContainer from '../../../components/ToastContainer'; // Importar contenedor
 import '../../CSS/FormsUser.css';
 
 const EditAccountPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const { toasts, addToast, removeToast } = useToast(); // ✅ Hook de toasts
+  const { toasts, addToast, removeToast } = useToast(); // Hook de toasts
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -125,7 +125,7 @@ const EditAccountPage = () => {
   };
 
   const handleCancel = () => {
-    addToast('Edición cancelada. No se guardaron los cambios.', 'danger'); // ✅ Mostrar alerta
+    addToast('Edición cancelada. No se guardaron los cambios.', 'danger'); // Mostrar alerta
     setTimeout(() => {
       navigate('/ManageAccounts');
     }, 2000);
@@ -146,7 +146,7 @@ const EditAccountPage = () => {
         </div>
       </div>
 
-      {/* ✅ Contenedor Toast */}
+      {/* Contenedor Toast */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );

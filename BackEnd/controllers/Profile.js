@@ -34,10 +34,10 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    // ✅ Volvemos a obtener el perfil actualizado
+    // Volvemos a obtener el perfil actualizado
     const updatedProfile = await getProfileById(userId);
 
-    // ✅ Respondemos con el objeto actualizado
+    // Respondemos con el objeto actualizado
     res.status(200).json(updatedProfile);
   } catch (error) {
     console.error("Error al actualizar el perfil:", error);

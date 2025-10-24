@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
-
+import "../../CSS/Gallery.css"
 import { useNavigate } from "react-router-dom"; 
 
 const ImageGalleryC = () => {

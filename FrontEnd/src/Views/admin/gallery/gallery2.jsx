@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import "../../CSS/Gallery.css";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 
 export default function ImageGallery() {
@@ -52,6 +52,9 @@ export default function ImageGallery() {
   return (
     <div className="app-container vh-90">
       <HeaderAdm />
+      <br />
+      <br />
+      <br />
       <div className="gallery-container d-flex" style={{ height: "90vh" }}>
         {/* Imagen principal */}
         <div className="main-area flex-grow-1 d-flex flex-column">

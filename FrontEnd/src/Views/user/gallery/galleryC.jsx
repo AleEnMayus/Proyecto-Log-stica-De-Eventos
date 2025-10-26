@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 import { useNavigate } from "react-router-dom"; 
-import "../../CSS/Gallery.css"
+import "../../CSS/Gallery.css";
 
 const ImageGalleryC = () => {
   const navigate = useNavigate(); 
@@ -36,22 +36,17 @@ const ImageGalleryC = () => {
     setImages(Array(9).fill(null));
   };
 
-  // Nuevo: redirigir al hacer clic en una imagen
   const handleImageClick = (idx) => {
     navigate("/galleryview", { state: { selectedImage: images[idx] } });
   };
 
   return (
-    <div className="gallery-manager">
+    <div className="gallery-manager" style={{ paddingTop: '120px' }}>
       <HeaderCl />
 
       <div className="gallery-left">
         <div className="gallery-header">
-          <br />
-          <br />
-          <br />
-          <br />
-          <h2 className="gallery-title">Galería de Eventos</h2>
+          <h2 className="page-title">GALERÍA DE EVENTOS</h2>
         </div>
 
         <div className="gallery-grid">
@@ -59,7 +54,7 @@ const ImageGalleryC = () => {
             <div 
               key={idx} 
               className="image-card" 
-              onClick={() => handleImageClick(idx)} //  click en la imagen
+              onClick={() => handleImageClick(idx)} 
               style={{ cursor: "pointer" }}
             >
               {img ? (

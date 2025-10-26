@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../CSS/components.css';
 import '../CSS/Home.css';
 import DynamicHeader from '../../components/HeaderSidebar/DynamicHeader';
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -84,23 +85,23 @@ const HomePage = () => {
 
   // 👇 Cambiado a user.rol y user.nombre
   const getWelcomeMessage = () => {
-    if (!user) return 'Happy Art Event';
+    if (!user) return 'Happy-Art-Events';
     if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.fullName}!`;
     return `¡Bienvenido ${user.fullName}!`;
   };
 
   const getWelcomeDescription = () => {
-    if (!user) return 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.';
+    if (!user) return 'Nuestra empresa transforma la forma de organizar eventos a través de una plataforma moderna y segura que permite explorar nuestra galería, conocer paquetes de servicios, registrarse fácilmente, gestionar eventos, descargar contratos, agendar citas y recibir notificaciones automáticas, brindando una experiencia práctica, confiable y totalmente digital para clientes y administradores.';
     if (user.role === 'admin') return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
     return 'Ahora puedes agendar citas, ver tus eventos y acceder a promociones exclusivas.';
   };
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
-      <DynamicHeader 
-        user={user} 
-        onLogin={handleLogin} 
-        onLogout={handleLogout} 
+      <DynamicHeader
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
       />
 
       <main className="container my-5 mt-5 pt-5">
@@ -157,22 +158,33 @@ const HomePage = () => {
             {user && user.role === 'admin' ? 'Gestión de Citas' : 'Agendamiento De Citas'}
           </h2>
           <p className="text-muted mb-4">
-            {user && user.role === 'admin' 
+            {user && user.role === 'admin'
               ? 'Como administrador, puedes ver y gestionar todas las citas del sistema.'
-              : user 
+              : user
                 ? 'Como usuario registrado, puedes agendar citas directamente.'
                 : 'Especificación de espacio donde se podrá asignar una cita para el evento que desee el usuario.'
             }
           </p>
-          <a href='/login' className="btn-secondary-custom btn">
-            {user && user.role === 'admin' ? 'Gestionar Todas las Citas' : user ? 'Agendar Nueva Cita' : 'Agendar Cita'}
+          <a
+            href={
+              user
+                ? (user.role === 'admin' ? '/AdminCitas' : '/Schedule')
+                : '/login'
+            }
+            className="btn-secondary-custom btn"
+          >
+            {user && user.role === 'admin'
+              ? 'Gestionar Todas las Citas'
+              : user
+                ? 'Agendar Nueva Cita'
+                : 'Agendar Cita'}
           </a>
         </section>
 
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Paquetes De Promociones</h2>
           <p className="text-muted mb-4">
-            {user && user.role === 'admin' 
+            {user && user.role === 'admin'
               ? 'Panel de administración de promociones y paquetes.'
               : 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.'
             }
@@ -215,10 +227,10 @@ const HomePage = () => {
             <div className="col-md-6 mt-5 mt-md-0">
               <h3 className="section-title h4">Redes Sociales</h3>
               <div className="mb-3">
-                <strong>Facebook:</strong> Happy-Art-Event
+                <strong>TikTok:</strong> Happy-Art-Events
               </div>
               <div className="mb-3">
-                <strong>Youtube:</strong> Happy-Art-Event
+                <strong>Youtube:</strong> Happy-Art-Events
               </div>
               <div>
                 <strong>Instagram:</strong> Happy-Art-Event

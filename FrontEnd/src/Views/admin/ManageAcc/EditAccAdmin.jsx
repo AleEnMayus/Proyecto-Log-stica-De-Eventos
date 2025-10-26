@@ -1,154 +1,306 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useToast } from '../../../hooks/useToast'; // ✅ Importar toast
-import ToastContainer from '../../../components/ToastContainer'; // ✅ Importar contenedor
-import '../../CSS/FormsUser.css';
+import React, { useState, useEffect } from "react";
+import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
+import "../../CSS/FormsUser.css";
+import ToastContainer from "../../../components/ToastContainer";
+import { useToast } from "../../../hooks/useToast";
 
-const EditAccountPage = () => {
-  const { userId } = useParams();
-  const navigate = useNavigate();
-  const { toasts, addToast, removeToast } = useToast(); // ✅ Hook de toasts
+const EditAccountPage = ({ userData, onClose }) => {
+  const { toasts, showToast, removeToast } = useToast();
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    email: '',
-    birthDate: '',
-    documentType: '',
-    documentNumber: '',
-    rol: '',
-    password: '',
-    confirmPassword: ''
+    firstName: "",
+    email: "",
+    birthDate: "",
+    documentType: "",
+    documentNumber: "",
+    rol: "",
+    password: "",
+    confirmPassword: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // agregado
 
-  // Cargar datos del usuario
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const response = await fetch(`http://localhost:4000/api/accounts/${userId}`);
-        if (!response.ok) throw new Error("Error al cargar datos");
-        const userData = await response.json();
-
-        setFormData({
-          firstName: userData.Names || "",
-          email: userData.Email || "",
-          birthDate: userData.BirthDate ? userData.BirthDate.split("T")[0] : "",
-          documentType: userData.DocumentType || "",
-          documentNumber: userData.DocumentNumber || "",
-          rol: userData.Role || "",
-          password: "",
-          confirmPassword: ""
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error('Error cargando datos del usuario:', error);
-        addToast("Error al cargar datos del usuario", "danger");
-        setLoading(false);
-      }
-    };
-
-    if (userId) loadUserData();
-  }, [userId, addToast]);
-
-  const validateForm = () => {
-    const newErrors = {};
-    const requiredFields = ['firstName', 'email', 'birthDate', 'documentType', 'documentNumber', 'rol'];
-
-    requiredFields.forEach(field => {
-      if (!formData[field]) {
-        newErrors[field] = 'Este campo es obligatorio';
-      }
-    });
-
-    const birthDate = new Date(formData.birthDate);
-    const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const isUnder18 = age < 18 || (age === 18 && today < new Date(birthDate.setFullYear(birthDate.getFullYear() + 18)));
-    if (isUnder18) newErrors.birthDate = 'Debes ser mayor de edad';
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.email && !emailRegex.test(formData.email))
-      newErrors.email = 'Correo no válido';
-
-    if (formData.password) {
-      if (formData.password.length < 8) newErrors.password = 'Mínimo 8 caracteres';
-      if (!/[A-Z]/.test(formData.password)) newErrors.password = 'Debe incluir al menos una mayúscula';
-      if (!/[a-z]/.test(formData.password)) newErrors.password = 'Debe incluir al menos una minúscula';
-      if (!/[0-9]/.test(formData.password)) newErrors.password = 'Debe incluir al menos un número';
-      if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) newErrors.password = 'Debe incluir un caracter especial';
-      if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Las contraseñas no coinciden';
+    if (userData) {
+      setFormData({
+        firstName: userData.firstName || "",
+        email: userData.email || "",
+        birthDate: userData.birthDate || "",
+        documentType: userData.documentType || "",
+        documentNumber: userData.documentNumber || "",
+        rol: userData.rol || "",
+        password: "",
+        confirmPassword: "",
+      });
     }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  }, [userData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async () => {
-    if (!validateForm()) return;
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.firstName) newErrors.firstName = "El nombre es obligatorio";
+    if (!formData.email) newErrors.email = "El correo es obligatorio";
+    if (!formData.documentType)
+      newErrors.documentType = "Seleccione un tipo de documento";
+    if (!formData.documentNumber)
+      newErrors.documentNumber = "El número de documento es obligatorio";
+    if (formData.password !== formData.confirmPassword)
+      newErrors.confirmPassword = "Las contraseñas no coinciden";
+    return newErrors;
+  };
 
-    try {
-      const response = await fetch(`http://localhost:4000/api/accounts/${userId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          Names: formData.firstName,
-          DocumentType: formData.documentType,
-          DocumentNumber: formData.documentNumber,
-          BirthDate: formData.birthDate,
-          Email: formData.email,
-          Password: formData.password || undefined,
-          Status: "active",
-          Role: formData.rol
-        })
-      });
-
-      if (!response.ok) throw new Error('Error al actualizar');
-
-      addToast('Usuario actualizado exitosamente!', 'success');
-
-      setTimeout(() => {
-        navigate('/ManageAccounts');
-      }, 2000);
-
-    } catch (error) {
-      console.error('Error actualizando usuario:', error);
-      addToast('Error al actualizar el usuario. Intenta de nuevo.', 'danger');
+  const handleSubmit = () => {
+    const validationErrors = validate();
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length === 0) {
+      showToast("Cuenta actualizada correctamente", "success");
+      onClose && onClose();
     }
   };
 
   const handleCancel = () => {
-    addToast('Edición cancelada. No se guardaron los cambios.', 'danger'); // ✅ Mostrar alerta
-    setTimeout(() => {
-      navigate('/ManageAccounts');
-    }, 2000);
+    onClose && onClose();
   };
 
-  if (loading) {
-    return <div className="loading-message">Cargando datos del usuario...</div>;
-  }
-
   return (
-    <div className="login-container">
-      <div className="login-content">
-        {/* ✅ Aquí seguiría todo tu formulario sin cambios */}
+    <>
+      <HeaderAdm />
+      <div className="login-container" style={{ paddingTop: "100px" }}>
+        <div className="form-container form-container-custom">
+          <h2 className="form-page-title">EDITAR CUENTA</h2>
 
-        <div className="d-flex justify-content-between mt-4">
-          <button type="button" className="btn-cancel" onClick={handleCancel}>Cancelar</button>
-          <button type="submit" className="btn-primary-custom" onClick={handleSubmit}>Actualizar</button>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            {/* 🔹 Fila 1: Nombre y Correo */}
+            <div className="form-row">
+              <div className="form-col">
+                <label className="form-label">Nombre completo</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  className="form-input"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                />
+                {errors.firstName && (
+                  <p className="text-danger">{errors.firstName}</p>
+                )}
+              </div>
+              <div className="form-col">
+                <label className="form-label">Correo electrónico</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="form-input"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+                {errors.email && <p className="text-danger">{errors.email}</p>}
+              </div>
+            </div>
+
+            {/* 🔹 Fila 2: Fecha y Tipo de documento */}
+            <div className="form-row">
+              <div className="form-col">
+                <label className="form-label">Fecha de nacimiento</label>
+                <input
+                  type="date"
+                  name="birthDate"
+                  className="form-input"
+                  value={formData.birthDate}
+                  onChange={handleInputChange}
+                />
+                {errors.birthDate && (
+                  <p className="text-danger">{errors.birthDate}</p>
+                )}
+              </div>
+              <div className="form-col">
+                <label className="form-label">Tipo de documento</label>
+                <select
+                  name="documentType"
+                  className="form-input"
+                  value={formData.documentType}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Seleccione</option>
+                  <option value="CC">Cédula de Ciudadanía</option>
+                  <option value="CE">Cédula de Extranjería</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                </select>
+                {errors.documentType && (
+                  <p className="text-danger">{errors.documentType}</p>
+                )}
+              </div>
+            </div>
+
+            {/* 🔹 Fila 3: Número de documento y Rol */}
+            <div className="form-row">
+              <div className="form-col">
+                <label className="form-label">Número de documento</label>
+                <input
+                  type="text"
+                  name="documentNumber"
+                  className="form-input"
+                  value={formData.documentNumber}
+                  onChange={handleInputChange}
+                />
+                {errors.documentNumber && (
+                  <p className="text-danger">{errors.documentNumber}</p>
+                )}
+              </div>
+              <div className="form-col">
+                <label className="form-label">Rol</label>
+                <select
+                  name="rol"
+                  className="form-input"
+                  value={formData.rol}
+                  onChange={handleInputChange}
+                >
+                  <option value="">Seleccione</option>
+                  <option value="admin">Administrador</option>
+                  <option value="client">Cliente</option>
+                </select>
+                {errors.rol && <p className="text-danger">{errors.rol}</p>}
+              </div>
+            </div>
+
+            {/* 🔹 Fila 4: Contraseña y Confirmación */}
+            <div className="form-row">
+              <div className="form-col">
+                <label className="form-label">Contraseña</label>
+                <div className="input-with-icon">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className="form-input"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                  />
+                  <span
+                    className="toggle-visibility-inside"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    ) : (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                        <path d="M1 1l22 22" />
+                      </svg>
+                    )}
+                  </span>
+                </div>
+                {errors.password && (
+                  <p className="text-danger">{errors.password}</p>
+                )}
+              </div>
+
+              <div className="form-col">
+                <label className="form-label">Confirmar contraseña</label>
+                <div className="input-with-icon">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    className="form-input"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                  />
+                  <span
+                    className="toggle-visibility-inside"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                        <circle cx="12" cy="12" r="3" />
+                      </svg>
+                    ) : (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                        <path d="M1 1l22 22" />
+                      </svg>
+                    )}
+                  </span>
+                </div>
+                {errors.confirmPassword && (
+                  <p className="text-danger">{errors.confirmPassword}</p>
+                )}
+              </div>
+            </div>
+
+            {/* 🔹 Botones */}
+            <div className="form-actions">
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={handleCancel}
+              >
+                Cancelar
+              </button>
+              <button type="submit" className="btn-primary-custom">
+                Actualizar Cuenta
+              </button>
+            </div>
+          </form>
+
+          {/* 🔹 Toast */}
+          <ToastContainer
+            toasts={toasts || []}
+            removeToast={removeToast || (() => {})}
+          />
         </div>
       </div>
-
-      {/* ✅ Contenedor Toast */}
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-    </div>
+    </>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
+import "../../CSS/Gallery.css"
 import { useNavigate } from "react-router-dom"; 
-import "../../CSS/Gallery.css";
 
 const ImageGalleryC = () => {
   const navigate = useNavigate(); 
@@ -17,9 +17,7 @@ const ImageGalleryC = () => {
     "https://source.unsplash.com/random/400x300?gathering",
     "https://source.unsplash.com/random/400x300?music"
   ]);
-
-  const [isEditing, setIsEditing] = useState(false);
-
+  
   const handleUpload = (e) => {
     const files = Array.from(e.target.files);
     const updated = [...images];
@@ -36,25 +34,37 @@ const ImageGalleryC = () => {
     setImages(Array(9).fill(null));
   };
 
-  const handleImageClick = (idx) => {
-    navigate("/galleryview", { state: { selectedImage: images[idx] } });
+  //  Redirigir al hacer clic en una imagen
+  const handleImageClick = (idx) => { 
+    navigate("/GalleryViewAdmin", { state: { selectedImage: images[idx] } });
+  };
+
+  // Redirigir al apartado de edición
+  const goToEditGallery = () => {
+    navigate("/GalleryAdmin"); // asegúrate que esta ruta exista en tus <Routes>
   };
 
   return (
-    <div className="gallery-manager" style={{ paddingTop: '120px' }}>
+    <div className="gallery-manager">
       <HeaderCl />
 
       <div className="gallery-left">
         <div className="gallery-header">
-          <h2 className="page-title">GALERÍA DE EVENTOS</h2>
+          <br /><br /><br /><br />
+          <h2 className="gallery-title">Galería de Eventos</h2>
+
+          {/* Botón que lleva al otro apartado */}
+          <button className="btn btn-dark" onClick={goToEditGallery}>
+            Editar Galería
+          </button>
         </div>
 
         <div className="gallery-grid">
           {images.map((img, idx) => (
-            <div 
-              key={idx} 
-              className="image-card" 
-              onClick={() => handleImageClick(idx)} 
+            <div
+              key={idx}
+              className="image-card"
+              onClick={() => handleImageClick(idx)}
               style={{ cursor: "pointer" }}
             >
               {img ? (
@@ -65,7 +75,7 @@ const ImageGalleryC = () => {
                 />
               ) : (
                 <img
-                  src="https://via.placeholder.com/150?text=🖼️"
+                  src="https://via.placeholder.com/150?text="
                   alt="placeholder"
                   className="preview-image"
                 />

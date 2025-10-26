@@ -114,4 +114,11 @@ router.delete("/contracts/:eventId", async (req, res) => {
   }
 });
 
+
+
+
+
 module.exports = router;
+
+
+

@@ -123,7 +123,7 @@ const RegisterPage = () => {
                   ←
                 </button>
                 <div className="logo-text">
-                  Happy-Art Eventos
+                  Happy-Art-Events
                 </div>
               </div>
             </div>

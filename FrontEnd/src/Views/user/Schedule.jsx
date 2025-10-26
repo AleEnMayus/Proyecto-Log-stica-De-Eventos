@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 
-// ✅ Importamos tu hook y el contenedor
+//  Importamos tu hook y el contenedor
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ToastContainer";
 
@@ -15,7 +15,7 @@ const Schedule = () => {
   const [reason, setReason] = useState("");
   const navigate = useNavigate();
 
-  // ✅ Hook para toasts (como en tu ej. CreateEvent)
+  //  Hook para toasts (como en tu ej. CreateEvent)
   const { toasts, addToast, removeToast } = useToast();
 
   // Validar fecha
@@ -97,7 +97,8 @@ const Schedule = () => {
       <div className="login-container">
         <div className="login-content">
           <div className="form-container-custom">
-            <h2 className="login-title">Agendar Cita</h2>
+            <h2 className="login-title">AGENDAR CITA
+            </h2>
             <p className="login-subtitle">Selecciona fecha, hora y motivo de tu cita</p>
 
             <form onSubmit={sendRequest}>
@@ -150,7 +151,7 @@ const Schedule = () => {
         </div>
       </div>
 
-      {/* ✅ Contenedor de toasts */}
+      {/* Contenedor de toasts */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );

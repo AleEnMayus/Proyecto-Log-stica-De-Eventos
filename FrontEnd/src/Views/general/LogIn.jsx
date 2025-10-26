@@ -97,7 +97,7 @@ const LoginPage = () => {
                   ←
                 </button>
                 <div className="logo-text">
-                  Happy-Art Eventos
+                  Happy-Art-Events
                 </div>
               </div>
             </div>
@@ -114,7 +114,7 @@ const LoginPage = () => {
         <div className="login-form-card">
           <h1 className="login-title">Iniciar Sesión</h1>
           <p className="login-subtitle">
-            Accede a tu cuenta de Happy-Art Eventos
+            Accede a tu cuenta de Happy-Art-Events
           </p>
 
           <form onSubmit={handleSubmit}>

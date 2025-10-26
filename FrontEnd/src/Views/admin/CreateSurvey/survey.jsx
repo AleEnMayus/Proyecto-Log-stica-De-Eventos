@@ -4,7 +4,7 @@ import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/Lists.css"; // CSS universal
 
 const Survey = () => {
-  const [questions, setQuestions] = useState([]); // 👈 ahora solo preguntas
+  const [questions, setQuestions] = useState([]); 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const questionsPerPage = 5;
@@ -16,7 +16,7 @@ const Survey = () => {
         const res = await fetch("http://localhost:4000/api/questions");
         if (!res.ok) throw new Error("Error al obtener preguntas");
         const data = await res.json();
-        setQuestions(data); // 👈 API devuelve [{ QuestionId, QuestionText }]
+        setQuestions(data); // API devuelve [{ QuestionId, QuestionText }]
       } catch (err) {
         console.error("Error cargando preguntas:", err);
       }

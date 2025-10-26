@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
+import HeaderCl from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/Gallery.css"
 import { useNavigate } from "react-router-dom"; 
 

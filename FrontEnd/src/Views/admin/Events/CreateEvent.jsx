@@ -99,9 +99,6 @@ const CreateEvent = () => {
     <div className="login-container mt-10">
       <div className="login-content container">
         <div className="login-form-card form-container-custom w-800">
-          <button className="back-btn" onClick={() => window.history.back()}>
-            ←
-          </button>
           <h1 className="login-title">AGENDAR EVENTO</h1>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>

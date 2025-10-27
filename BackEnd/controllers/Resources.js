@@ -1,12 +1,12 @@
-// controllers/resourceController.js
 const Resource = require('../models/Resources');
+const db = require('../db'); // Para consultar el recurso actualizado
 
 async function getResources(req, res) {
   try {
     const resources = await Resource.getAllResources();
     res.json(resources);
   } catch (err) {
-    console.error('Error en getResources:', err); // Esto ayuda mucho
+    console.error('Error en getResources:', err);
     res.status(500).json({ error: 'Error obteniendo recursos' });
   }
 }
@@ -32,8 +32,14 @@ async function updateResource(req, res) {
       Status,
       Price
     );
-    updated ? res.json(updated) : res.status(404).json({ error: 'Recurso no encontrado' });
+
+    if (!updated) return res.status(404).json({ error: 'Recurso no encontrado' });
+
+    // Trae el recurso actualizado de la DB
+    const [result] = await db.execute('SELECT * FROM Resources WHERE ResourceId = ?', [req.params.id]);
+    res.json(result[0]); // Devuelve el objeto actualizado
   } catch (err) {
+    console.error('Error en updateResource:', err);
     res.status(500).json({ error: 'Error actualizando recurso' });
   }
 }

@@ -1,302 +1,281 @@
-/* Contenedor principal de toda la galería */
+/* ===== VARIABLES ===== */
+:root {
+  --blue: #0d6efd;
+  --blue-hover: #0b5ed7;
+  --gray-light: #f8f9fa;
+  --gray-border: #dee2e6;
+  --white: #fff;
+  --text-dark: #212529;
+  --radius: 8px;
+}
+
+/* ===== CONTENEDOR GENERAL ===== */
 .gallery-manager {
-  background: #f8f9fa;
-  min-height: 100vh;
-  font-family: "Segoe UI", sans-serif;
+    background: #f8f9fa;
+    min-height: 100vh;
+    font-family: "Segoe UI", sans-serif;
 }
 
 /* Sección principal donde van el título y las imágenes */
 .gallery-left {
-  padding: 120px 60px 40px;
-  background: #fff;
+    padding: 40px 60px;
+    background: #fff;
 }
 
 
-/* Encabezado con el título y el botón "Editar Galería" */
+/* ===== CABECERA DE GALERÍA ===== */
 .gallery-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
 }
 
 /* Estilo del título principal */
 .gallery-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #212529;
-  margin-bottom: 30px;
-  text-align: left;
-  padding-left: 10px;
-  margin-left: 150px;
+    display: flex;
+    justify-content: space-between;
+    flex: 0 1 auto;
+    max-width: 70%;
+    text-align: left;
 }
 
 
 /* Botón oscuro (Editar Galería) */
 .btn-dark {
-  background: #343a40;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  cursor: pointer;
+    background: #343a40;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
 /* Cuadrícula donde se organizan las imágenes */
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-  justify-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    justify-items: center;
 }
 
 /* Tarjeta individual de cada imagen */
 .image-card {
-  background: #f1f1f1;
-  border-radius: 12px;
-  overflow: hidden;
-  width: 100%;
-  max-width: 420px;
-  aspect-ratio: 4/3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.3s;
+    background: #f1f1f1;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 420px;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;   
 }
 
 /* Efecto al pasar el ratón sobre la imagen */
 .image-card:hover {
-  transform: scale(1.03);
+    transform: scale(1.03);
 }
 
 /* Estilo de la imagen dentro de cada tarjeta */
 .preview-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* segunda parte  edicion de  galeria */
 
 /*  Estructura general  */
 .app-container {
-  background: #f8f9fa;
-  font-family: "Segoe UI", sans-serif;
-  min-height: 100vh;
+    background: #f8f9fa;
+    font-family: "Segoe UI", sans-serif;
+    min-height: 100vh;
 }
 
 /*  Contenedor principal  */
 .gallery-container {
-  display: flex;
-  justify-content: center;
-  /* Centra todo horizontalmente */
-  align-items: flex-start;
-  gap: 60px;
-  /* Espacio entre imagen y comentarios */
-  padding: 40px 60px;
-  background-color: var(--gray-light);
-  min-height: calc(100vh - 80px);
+    display: flex;
+    background: #fff;
+    border-radius: 8px;
+    margin: 15px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Imagen centrada horizontalmente */
+/* Área principal (imagen + botones)  */
 .main-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* 🔹 mantiene la imagen centrada */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Contenedor de la imagen */
+/* Imagen principal  */
 .image-container {
-  position: relative;
-  width: 760px;
-  /* 🔹 un poco más ancho */
-  height: 440px;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    background: #f5f5f5;
+    border-bottom: 1px solid #dee2e6;
+    position: relative;
 }
-
-/* Panel de comentarios alineado con la parte superior de la imagen */
-.comments-panel {
-  align-self: flex-start;
-  /* 🔹 se alinea arriba, no al centro */
-  background-color: var(--white);
-  border-radius: var(--radius);
-  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.1);
-  padding: 25px 20px;
-  display: flex;
-  flex-direction: column;
-  max-width: 360px;
-  height: 440px;
-  /* 🔹 igual altura que la imagen */
-}
-
 
 .image-wrapper {
-  width: 80%;
-  margin: 10px auto;
+    width: 80%;
+    margin: 10px auto;
 }
 
 .main-image {
-  border-radius: 8px;
-  max-height: 360px;
-  width: 100%;
-  object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-height: 360px;
+    width: 100%;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Botones de navegacion  */
 .nav-button {
-  background: #ffffffcc;
-  border: none;
-  font-size: 1.3rem;
-  width: 36px;
-  height: 36px;
-  color: #333;
-  transition: 0.2s;
+    background: #ffffffcc;
+    border: none;
+    font-size: 1.3rem;
+    width: 36px;
+    height: 36px;
+    color: #333;
+    transition: 0.2s;
 }
 
 .nav-button:hover {
-  background: #0d6efd;
-  color: #fff;
+    background: #0d6efd;
+    color: #fff;
 }
 
 /* Paginacion */
 .pagination {
-  background: #fff;
-  border-top: 1px solid #dee2e6;
-  padding: 10px;
-  gap: 6px;
+    background: #fff;
+    border-top: 1px solid #dee2e6;
+    padding: 10px;
+    gap: 6px;
 }
 
 .pagination .btn {
-  width: 30px;
-  height: 30px;
-  font-size: 0.9rem;
-  border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+    border-radius: 5px;
 }
 
 /*  Panel lateral (comentarios) */
 .comments-panel {
-  width: 260px;
-  border-left: 1px solid #dee2e6;
-  display: flex;
-  flex-direction: column;
-  background: #f8f9fa;
+    width: 260px;
+    border-left: 1px solid #dee2e6;
+    display: flex;
+    flex-direction: column;
+    background: #f8f9fa;
 }
 
 .comments-list {
-  padding: 10px;
-  overflow-y: auto;
-  flex-grow: 1;
+    padding: 10px;
+    overflow-y: auto;
+    flex-grow: 1;
 }
 
 .card {
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  background: #fff;
-  margin-bottom: 8px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: #fff;
+    margin-bottom: 8px;
 }
 
 .card-body {
-  padding: 8px 10px;
-  font-size: 0.9rem;
+    padding: 8px 10px;
+    font-size: 0.9rem;
 }
 
 /* Botones panel  */
 .comments-panel .btn {
-  border-radius: 5px;
-  font-size: 0.9rem;
+    border-radius: 5px;
+    font-size: 0.9rem;
 }
 
 /*  Modal */
 .modal-header {
-  background: #0d6efd;
-  color: #fff;
+    background: #0d6efd;
+    color: #fff;
 }
 
 .modal-content {
-  border-radius: 10px;
+    border-radius: 10px;
 }
 
 /* Tercera parte vista de cometarios */
 
 .gallery-manager {
-  display: flex;
-  background: #f8f9fa;
-  min-height: 100vh;
-  font-family: "Segoe UI", sans-serif;
+    display: flex;
+    background: #f8f9fa;
+    min-height: 100vh;
+    font-family: "Segoe UI", sans-serif;
 }
 
-/*  Panel izquierdo (galeria)  */
+/* ===== GALERÍA ===== */
 .gallery-left {
-  flex: 1;
-  padding: 60px 80px;
-  background: #fff;
+    flex: 1;
+    padding: 60px 80px;
+    background: #fff;
 }
 
 .gallery-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-align: left;
-  color: #212529;
-  margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: left;
+    color: #212529;
+    margin-bottom: 30px;
 }
 
-/* Cuadricula de imagenes*/
+/* ===== CUADRÍCULA DE IMÁGENES ===== */
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
 }
 
-/* Tarjeta de imagen */
+/* ===== TARJETAS ===== */
 .image-card {
-  position: relative;
-  background: #f1f1f1;
-  border-radius: 12px;
-  overflow: hidden;
-  aspect-ratio: 4/3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    position: relative;
+    background: #f1f1f1;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .image-card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-/* Imagen dentro de la tarjeta */
 .preview-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Boton de eliminar */
+/* ===== BOTÓN ELIMINAR ===== */
 .btn-delete {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(255, 0, 0, 0.8);
-  border: none;
-  color: #fff;
-  font-weight: bold;
-  font-size: 14px;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  transition: 0.2s;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 0, 0, 0.8);
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    transition: 0.2s;
 }
 
 /* Parte de cometarias del cliente*/
@@ -330,78 +309,17 @@
   box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   display: flex;
-  justify-content: center;
   align-items: center;
-}
-
-.image-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Botone de navegacion */
-.nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 34px;
-  height: 34px;
-  background-color: rgba(0, 0, 0, 0.4);
-  border: none;
-  border-radius: 50%;
-  color: var(--white);
-  font-size: 1.5rem;
-  display: flex;
   justify-content: center;
-  align-items: center;
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.nav-button:hover {
-  background-color: rgba(0, 0, 0, 0.7);
+.btn-delete:hover {
+  background: rgba(200, 35, 51, 1);
+  transform: scale(1.1);
 }
 
-.nav-button.prev {
-  left: 10px;
-}
-
-.nav-button.next {
-  right: 10px;
-}
-
-/* Paginación  */
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 25px;
-}
-
-.page-button {
-  width: 38px;
-  height: 38px;
-  border-radius: 5px;
-  border: 1px solid var(--blue);
-  background-color: transparent;
-  color: var(--blue);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.page-button.active {
-  background-color: var(--blue);
-  color: var(--white);
-}
-
-.page-button:hover:not(.active) {
-  background-color: #e7f1ff;
-}
-
-/* Panel de comentarios */
+/* ===== PANEL DE COMENTARIOS ===== */
 .comments-panel {
   flex: 1;
   background-color: var(--white);
@@ -413,7 +331,6 @@
   max-width: 360px;
 }
 
-/* Lista de cometarios */
 .comments-list {
   flex: 1;
   overflow-y: auto;
@@ -441,48 +358,7 @@
   font-size: 0.95rem;
 }
 
-.no-comments {
-  text-align: center;
-  color: #6c757d;
-  font-style: italic;
-}
-
-/* Seccion de cometarios  */
-.add-comment-area {
-  border-top: 1px solid var(--gray-border);
-  padding-top: 15px;
-}
-
-.add-comment-header {
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 10px;
-}
-
-.add-comment-body {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.comment-textarea {
-  width: 100%;
-  height: 80px;
-  border: 1px solid var(--gray-border);
-  border-radius: var(--radius);
-  padding: 10px;
-  resize: none;
-  font-family: inherit;
-  font-size: 0.95rem;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.comment-textarea:focus {
-  border-color: var(--blue);
-}
-
-/* Boton de añadir  */
+/* ===== BOTÓN DE AÑADIR COMENTARIO ===== */
 .add-comment-button {
   background-color: var(--blue);
   color: var(--white);
@@ -502,24 +378,4 @@
 .add-icon {
   margin-right: 5px;
   font-weight: bold;
-}
-
-.page-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #212529;
-  text-align: left;
-  margin-bottom: 30px;
-  margin-left: 150px;
-  /* alineado con la primera imagen */
-  padding-left: 10px;
-  font-family: "Segoe UI", sans-serif;
-}
-
-@media (max-width: 768px) {
-  .page-title {
-    font-size: 1.5rem;
-    margin-left: 20px;
-    text-align: center;
-  }
 }

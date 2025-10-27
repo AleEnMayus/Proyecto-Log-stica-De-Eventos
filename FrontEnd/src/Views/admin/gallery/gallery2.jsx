@@ -85,6 +85,7 @@ export default function ImageGallery() {
               images[currentImage].comments.map((c, i) => (
                 <div key={c.id} className="card mb-3 border-primary-subtle shadow-sm">
                   <div className="card-body">
+                    <br /><br /><br /><br />
                     <div className="fw-semibold text-primary mb-2" style={{ fontSize: 14 }}>
                       Comentario {i + 1}
                     </div>

@@ -1,27 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/FormsUser.css";
 import ToastContainer from "../../../components/ToastContainer";
 import { useToast } from "../../../hooks/useToast";
 
-const EditAccountPage = () => {
-  const { userId } = useParams(); // <-- Obtener ID desde URL
-  const navigate = useNavigate();
+const EditAccountPage = ({ userData, onClose }) => {
   const { toasts, showToast, removeToast } = useToast();
 
-  const [formData, setFormData] = useState(null); // null mientras carga
+  const [formData, setFormData] = useState({
+    firstName: "",
+    email: "",
+    birthDate: "",
+    documentType: "",
+    documentNumber: "",
+    rol: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // agregado
 
-  // Función para manejar cambios en los inputs
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        firstName: userData.firstName || "",
+        email: userData.email || "",
+        birthDate: userData.birthDate || "",
+        documentType: userData.documentType || "",
+        documentNumber: userData.documentNumber || "",
+        rol: userData.rol || "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
+  }, [userData]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Validación simple
   const validate = () => {
     const newErrors = {};
     if (!formData.firstName) newErrors.firstName = "El nombre es obligatorio";
@@ -35,68 +55,18 @@ const EditAccountPage = () => {
     return newErrors;
   };
 
-  // Traer datos del backend al montar el componente
-  useEffect(() => {
-    const fetchAccount = async () => {
-      try {
-        const response = await fetch(`http://localhost:4000/api/accounts/${userId}`);
-        if (!response.ok) throw new Error("Error al obtener la cuenta");
-        const data = await response.json();
-
-        setFormData({
-          firstName: data.Names || "",
-          email: data.Email || "",
-          birthDate: data.BirthDate ? data.BirthDate.slice(0, 10) : "",
-          documentType: data.DocumentType || "",
-          documentNumber: data.DocumentNumber || "",
-          rol: data.Role || "",
-          password: "",
-          confirmPassword: "",
-        });
-      } catch (error) {
-        console.error(error);
-        showToast("Error al cargar los datos de la cuenta", "error");
-      }
-    };
-
-    if (userId) fetchAccount();
-  }, [userId, showToast]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     const validationErrors = validate();
     setErrors(validationErrors);
-
     if (Object.keys(validationErrors).length === 0) {
-      try {
-        const payload = {
-          Names: formData.firstName,
-          Email: formData.email,
-          BirthDate: formData.birthDate,
-          DocumentType: formData.documentType,
-          DocumentNumber: formData.documentNumber,
-          Role: formData.rol,
-          Password: formData.password || undefined,
-        };
-
-        const response = await fetch(`http://localhost:4000/api/accounts/${userId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) throw new Error("Error al actualizar la cuenta");
-
-        showToast("Cuenta actualizada correctamente", "success");
-        navigate("/ManageAccounts"); // volver al listado
-      } catch (error) {
-        console.error(error);
-        showToast("Error al actualizar la cuenta", "error");
-      }
+      showToast("Cuenta actualizada correctamente", "success");
+      onClose && onClose();
     }
   };
 
-  if (!formData) return <div>Cargando usuario...</div>;
+  const handleCancel = () => {
+    onClose && onClose();
+  };
 
   return (
     <>
@@ -105,8 +75,14 @@ const EditAccountPage = () => {
         <div className="form-container form-container-custom">
           <h2 className="form-page-title">EDITAR CUENTA</h2>
 
-          <form onSubmit={handleSubmit}>
-            {/* Fila 1: Nombre y Correo */}
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            {/* 🔹 Fila 1: Nombre y Correo */}
             <div className="form-row">
               <div className="form-col">
                 <label className="form-label">Nombre completo</label>
@@ -117,7 +93,9 @@ const EditAccountPage = () => {
                   value={formData.firstName}
                   onChange={handleInputChange}
                 />
-                {errors.firstName && <p className="text-danger">{errors.firstName}</p>}
+                {errors.firstName && (
+                  <p className="text-danger">{errors.firstName}</p>
+                )}
               </div>
               <div className="form-col">
                 <label className="form-label">Correo electrónico</label>
@@ -132,7 +110,7 @@ const EditAccountPage = () => {
               </div>
             </div>
 
-            {/* Fila 2: Fecha y Tipo de documento */}
+            {/* 🔹 Fila 2: Fecha y Tipo de documento */}
             <div className="form-row">
               <div className="form-col">
                 <label className="form-label">Fecha de nacimiento</label>
@@ -143,6 +121,9 @@ const EditAccountPage = () => {
                   value={formData.birthDate}
                   onChange={handleInputChange}
                 />
+                {errors.birthDate && (
+                  <p className="text-danger">{errors.birthDate}</p>
+                )}
               </div>
               <div className="form-col">
                 <label className="form-label">Tipo de documento</label>
@@ -157,10 +138,13 @@ const EditAccountPage = () => {
                   <option value="CE">Cédula de Extranjería</option>
                   <option value="Pasaporte">Pasaporte</option>
                 </select>
+                {errors.documentType && (
+                  <p className="text-danger">{errors.documentType}</p>
+                )}
               </div>
             </div>
 
-            {/* Fila 3: Número de documento y Rol */}
+            {/* 🔹 Fila 3: Número de documento y Rol */}
             <div className="form-row">
               <div className="form-col">
                 <label className="form-label">Número de documento</label>
@@ -171,6 +155,9 @@ const EditAccountPage = () => {
                   value={formData.documentNumber}
                   onChange={handleInputChange}
                 />
+                {errors.documentNumber && (
+                  <p className="text-danger">{errors.documentNumber}</p>
+                )}
               </div>
               <div className="form-col">
                 <label className="form-label">Rol</label>
@@ -184,10 +171,11 @@ const EditAccountPage = () => {
                   <option value="admin">Administrador</option>
                   <option value="client">Cliente</option>
                 </select>
+                {errors.rol && <p className="text-danger">{errors.rol}</p>}
               </div>
             </div>
 
-            {/* Fila 4: Contraseña y Confirmación */}
+            {/* 🔹 Fila 4: Contraseña y Confirmación */}
             <div className="form-row">
               <div className="form-col">
                 <label className="form-label">Contraseña</label>
@@ -234,6 +222,9 @@ const EditAccountPage = () => {
                     )}
                   </span>
                 </div>
+                {errors.password && (
+                  <p className="text-danger">{errors.password}</p>
+                )}
               </div>
 
               <div className="form-col">
@@ -281,13 +272,19 @@ const EditAccountPage = () => {
                     )}
                   </span>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-danger">{errors.confirmPassword}</p>
+                )}
               </div>
             </div>
 
-
-            {/* Botones */}
+            {/* 🔹 Botones */}
             <div className="form-actions">
-              <button type="button" className="btn-cancel" onClick={() => navigate("/ManageAccounts")}>
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={handleCancel}
+              >
                 Cancelar
               </button>
               <button type="submit" className="btn-primary-custom">
@@ -296,7 +293,11 @@ const EditAccountPage = () => {
             </div>
           </form>
 
-          <ToastContainer toasts={toasts || []} removeToast={removeToast || (() => { })} />
+          {/* 🔹 Toast */}
+          <ToastContainer
+            toasts={toasts || []}
+            removeToast={removeToast || (() => {})}
+          />
         </div>
       </div>
     </>

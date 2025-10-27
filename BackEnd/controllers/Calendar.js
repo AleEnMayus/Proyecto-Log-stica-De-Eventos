@@ -13,3 +13,5 @@ const fetchAllEvents = async (req, res) => {
 module.exports = {
   fetchAllEvents,
 };
+
+

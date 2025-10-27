@@ -18,7 +18,6 @@ const ListResource = () => {
 
   const [recursos, setRecursos] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const resourcesPerPage = 5;
@@ -125,13 +124,18 @@ const ListResource = () => {
   const currentResources = filteredResources.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(filteredResources.length / resourcesPerPage);
 
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="list-container">
       <HeaderAdm />
 
-      {/* Header */}
       <div className="list-header mt-5 pt-5">
-        <h2 className="list-title">LISTA DE RECURSOS</h2>
+        <h2 className="list-title">LISTADO DE RECURSOS</h2>
         <button onClick={handleCreate} className="btn-create d-flex">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#fff">
             <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
@@ -221,36 +225,35 @@ const ListResource = () => {
         )}
       </div>
 
-      {/* Paginación */}
-      {totalPages > 1 && (
-        <nav className="pagination">
-          <button
-            className="pagination-arrow"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            &laquo;
-          </button>
-          <div className="pagination-numbers">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-          <button
-            className="pagination-arrow"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            &raquo;
-          </button>
-        </nav>
-      )}
+      <div className="pagination">
+        <button
+          className="pagination-arrow"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          ◀
+        </button>
+
+        <div className="pagination-numbers">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className="pagination-arrow"
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          ▶
+        </button>
+      </div>
 
       {/* Modal eliminar */}
       <ConfirmModal

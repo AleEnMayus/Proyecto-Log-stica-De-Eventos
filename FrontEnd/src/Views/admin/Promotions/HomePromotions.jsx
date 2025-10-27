@@ -1,99 +1,216 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
+import { Link, useNavigate } from "react-router-dom";
 import "../../CSS/components.css";
-import "../../CSS/Promotions.css"; // 
+import "../../CSS/Lists.css";
+import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 
-const PromotionsAdmin = () => {
-  const promociones = [
-    {
-      id: 1,
-      titulo: "Sencillo",
-      descripcion:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex."',
-    },
-    {
-      id: 2,
-      titulo: "Regular",
-      descripcion:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex."',
-    },
-    {
-      id: 3,
-      titulo: "Lujoso",
-      descripcion:
-        '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex."',
-    },
-  ];
+const ListPromotionsA = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [promotions, setPromotions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const promotionsPerPage = 5;
+
+  // Traer promociones desde API
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/promotions");
+        if (!res.ok) throw new Error("Error al obtener promociones");
+        const data = await res.json();
+        setPromotions(data);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPromotions();
+  }, []);
+
+  // Filtro
+  const promotionsFiltradas = promotions.filter(
+    (promo) =>
+      promo.Title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      promo.Description?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Paginación
+  const indexOfLastPromo = currentPage * promotionsPerPage;
+  const indexOfFirstPromo = indexOfLastPromo - promotionsPerPage;
+  const currentPromos = promotionsFiltradas.slice(
+    indexOfFirstPromo,
+    indexOfLastPromo
+  );
+  const totalPages = Math.ceil(promotionsFiltradas.length / promotionsPerPage);
+
+  // Ver promoción (redirección)
+  const handleVerPromo = (promotionId) => {
+    navigate(`/promotions/details/${promotionId}`);
+  };
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="list-container mle-0">
+        <HeaderAdm />
+        <p className="mt-5 pt-5 text-center">Cargando promociones...</p>
+      </div>
+    );
+  }
 
   return (
-    <>
+    <div className="list-container mle-0">
       <HeaderAdm />
 
-      {/* Contenedor principal centrado y con margen bajo el header */}
-      <div className="promotions-wrapper container">
-        {/* Título y botón crear */}
-        <div className="d-flex justify-content-between align-items-center mb-4 w-100">
-          <h2 className="fw-bold">PROMOCIONES</h2>
-          <button className="btn btn-primary-custom d-flex align-items-center">
-            <span className="material-symbols-outlined me-2">add</span>
-            Crear Promoción
-          </button>
-        </div>
+      {/* Header */}
+      <div className="list-header mt-5 pt-5">
+        <h2 className="list-title">LISTADO DE PROMOCIONES</h2>
+        <Link to="/promotions/create" className="btn-create">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#ffffff"
+          >
+            <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+          </svg>
+          Crear Promoción
+        </Link>
+      </div>
 
-        {/* Descripción general */}
-        <p className="text-secondary description-text">
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex."
-        </p>
-
-        {/* Tarjetas de promociones */}
-        <div className="row mt-4 justify-content-center w-100">
-          {promociones.map((promo) => (
-            <div key={promo.id} className="col-md-3 col-sm-6 mb-4">
-              <div
-                className="p-3 border rounded-3 bg-light text-center"
-                style={{ minHeight: "280px" }}
-              >
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h5 className="fw-bold mb-0">{promo.titulo}</h5>
-                  <div>
-                    <span
-                      className="material-symbols-outlined text-danger me-2"
-                      style={{ cursor: "pointer" }}
-                      title="Eliminar"
-                    >
-                      delete
-                    </span>
-                    <span
-                      className="material-symbols-outlined text-primary"
-                      style={{ cursor: "pointer" }}
-                      title="Editar"
-                    >
-                      edit
-                    </span>
-                  </div>
-                </div>
-                <p className="text-secondary" style={{ fontSize: "0.9rem" }}>
-                  {promo.descripcion}
-                </p>
-                <div className="d-flex justify-content-center gap-3 mt-auto">
-                  <button className="btn btn-primary-custom px-4">
-                    Activar
-                  </button>
-                  <button className="btn btn-secondary-custom px-4">
-                    Desactivar
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+      {/* Search Bar */}
+      <div className="search-container mb-4 w-50-lg">
+        <span className="search-label">Buscar promociones</span>
+        <div className="search-input-group">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="currentcolor"
+          >
+            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+          </svg>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Buscar por título o descripción..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
         </div>
       </div>
-    </>
+
+      {/* Tabla */}
+      <div className="table-container">
+        <table className="list-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Descripción</th>
+              <th>Descuento</th>
+              <th>Estado</th>
+              <th>Ver</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentPromos.map((promo) => (
+              <tr key={promo.PromotionId}>
+                <td>{promo.PromotionId}</td>
+                <td style={{ fontWeight: "500", color: "#2c3e50" }}>
+                  {promo.Title}
+                </td>
+                <td style={{ color: "#34495e" }}>
+                  {promo.Description || "Sin descripción"}
+                </td>
+                <td style={{ fontWeight: "600", color: "#ff7a00" }}>
+                  {promo.Discount ? `${promo.Discount}%` : "—"}
+                </td>
+                <td>
+                  <span
+                    style={{
+                      background:
+                        promo.Status === "Active" ? "#e6ffe6" : "#ffe6e6",
+                      color:
+                        promo.Status === "Active" ? "#13a927" : "#ff0000",
+                      border: `1px solid ${
+                        promo.Status === "Active" ? "#13a927" : "#ff0000"
+                      }`,
+                      padding: "4px 10px",
+                      borderRadius: "12px",
+                      fontWeight: "600",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    {promo.Status || "N/A"}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    className="btn-custom btn-edit-custom d-flex align-items-center mx-auto"
+                    onClick={() => handleVerPromo(promo.PromotionId)}
+                  >
+                    Ver
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Estado vacío */}
+      {promotionsFiltradas.length === 0 && (
+        <div className="empty-state">
+          <p>No se encontraron promociones que coincidan con tu búsqueda.</p>
+        </div>
+      )}
+
+      {/* Paginación */}
+      <div className="pagination">
+        <button
+          className="pagination-arrow"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          ◀
+        </button>
+
+        <div className="pagination-numbers">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`pagination-btn ${
+                currentPage === i + 1 ? "active" : ""
+              }`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+
+        <button
+          className="pagination-arrow"
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          ▶
+        </button>
+      </div>
+
+      
+    </div>
   );
 };
 
-export default PromotionsAdmin;
+export default ListPromotionsA;

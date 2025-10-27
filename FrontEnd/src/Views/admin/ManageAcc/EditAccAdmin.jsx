@@ -6,6 +6,8 @@ const EditAccountPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
 
+  const { toasts, addToast, removeToast } = useToast(); // ✅ Inicializar toasts
+
   const [formData, setFormData] = useState({
     firstName: '',
     email: '',
@@ -27,8 +29,8 @@ const EditAccountPage = () => {
       try {
         const response = await fetch(`http://localhost:4000/api/accounts/${userId}`);
         if (!response.ok) throw new Error("Error al cargar datos");
-        const userData = await response.json();
 
+        const userData = await response.json();
         setFormData({
           firstName: userData.Names || "",
           email: userData.Email || "",
@@ -42,22 +44,20 @@ const EditAccountPage = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error cargando datos del usuario:', error);
+        addToast("No se pudieron cargar los datos del usuario", "danger");
         setLoading(false);
       }
     };
 
     if (userId) loadUserData();
-  }, [userId]);
+  }, [userId, addToast]);
 
   const validateForm = () => {
     const newErrors = {};
-
-    // Campos obligatorios
     const requiredFields = ['firstName', 'email', 'birthDate', 'documentType', 'documentNumber', 'rol'];
+
     requiredFields.forEach(field => {
-      if (!formData[field]) {
-        newErrors[field] = 'Este campo es obligatorio';
-      }
+      if (!formData[field]) newErrors[field] = 'Este campo es obligatorio';
     });
 
     // Validar mayoría de edad
@@ -65,9 +65,7 @@ const EditAccountPage = () => {
     const today = new Date();
     const age = today.getFullYear() - birthDate.getFullYear();
     const isUnder18 = age < 18 || (age === 18 && today < new Date(birthDate.setFullYear(birthDate.getFullYear() + 18)));
-    if (isUnder18) {
-      newErrors.birthDate = 'Debes ser mayor de edad';
-    }
+    if (isUnder18) newErrors.birthDate = 'Debes ser mayor de edad';
 
     // Validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -77,24 +75,12 @@ const EditAccountPage = () => {
 
     // Validar contraseña si la cambia
     if (formData.password) {
-      if (formData.password.length < 8) {
-        newErrors.password = 'Mínimo 8 caracteres';
-      }
-      if (!/[A-Z]/.test(formData.password)) {
-        newErrors.password = 'Debe incluir al menos una mayúscula';
-      }
-      if (!/[a-z]/.test(formData.password)) {
-        newErrors.password = 'Debe incluir al menos una minúscula';
-      }
-      if (!/[0-9]/.test(formData.password)) {
-        newErrors.password = 'Debe incluir al menos un número';
-      }
-      if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) {
-        newErrors.password = 'Debe incluir un caracter especial';
-      }
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Las contraseñas no coinciden';
-      }
+      if (formData.password.length < 8) newErrors.password = 'Mínimo 8 caracteres';
+      if (!/[A-Z]/.test(formData.password)) newErrors.password = 'Debe incluir al menos una mayúscula';
+      if (!/[a-z]/.test(formData.password)) newErrors.password = 'Debe incluir al menos una minúscula';
+      if (!/[0-9]/.test(formData.password)) newErrors.password = 'Debe incluir al menos un número';
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(formData.password)) newErrors.password = 'Debe incluir un caracter especial';
+      if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Las contraseñas no coinciden';
     }
 
     setErrors(newErrors);
@@ -131,13 +117,17 @@ const EditAccountPage = () => {
       if (!response.ok) throw new Error('Error al actualizar');
 
       const data = await response.json();
-      alert('Usuario actualizado exitosamente!');
       console.log("Respuesta del servidor:", data);
 
-      navigate('/ManageAccounts');
+      // ✅ Mostrar notificación de éxito
+      addToast("¡Usuario actualizado exitosamente!", "success");
+
+      setTimeout(() => {
+        navigate('/ManageAccounts');
+      }, 2000);
     } catch (error) {
       console.error('Error actualizando usuario:', error);
-      alert('Error al actualizar el usuario. Intenta de nuevo.');
+      addToast("Error al actualizar el usuario. Intenta de nuevo.", "danger");
     }
   };
 
@@ -264,20 +254,7 @@ const EditAccountPage = () => {
                     className="toggle-visibility-inside"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8
-                     a21.07 21.07 0 0 1 5.06-6.06" />
-                        <path d="M1 1l22 22" />
-                      </svg>
-                    )}
+                    👁️
                   </span>
                 </div>
                 {errors.password && <p className="error-text">{errors.password}</p>}
@@ -298,20 +275,7 @@ const EditAccountPage = () => {
                     className="toggle-visibility-inside"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8
-                     a21.07 21.07 0 0 1 5.06-6.06" />
-                        <path d="M1 1l22 22" />
-                      </svg>
-                    )}
+                    👁️
                   </span>
                 </div>
                 {errors.confirmPassword && <p className="error-text">{errors.confirmPassword}</p>}
@@ -325,8 +289,13 @@ const EditAccountPage = () => {
           </form>
         </div>
       </div>
+
+      {/* ✅ Contenedor para mostrar los Toasts */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };
 
 export default EditAccountPage;
+
+

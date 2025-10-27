@@ -21,3 +21,5 @@ export { default as ContractsList } from '../Views/admin/Contracts/ListContracts
 // Gestión de Encuestas
 export { default as Survay } from '../Views/admin/CreateSurvey/survey'
 export { default as CreateSurvay } from '../Views/admin/CreateSurvey/createsurvey'
+
+export { default as PromotionsAdmin } from '../Views/admin/Promotions/HomePromotions'

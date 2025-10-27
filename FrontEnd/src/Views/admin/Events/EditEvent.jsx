@@ -126,10 +126,6 @@ const EditEvent = () => {
       <HeaderAdm />
       <div className="login-container container mt-10">
         <div className="login-form-card w-800">
-          <button className="back-btn" onClick={() => window.history.back()}>
-            ←
-          </button>
-
           <h1 className="login-title">EDITAR EVENTO</h1>
 
           <form

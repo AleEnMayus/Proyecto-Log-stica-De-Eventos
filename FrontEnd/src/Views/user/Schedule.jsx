@@ -97,7 +97,8 @@ const Schedule = () => {
       <div className="login-container">
         <div className="login-content">
           <div className="form-container-custom">
-            <h2 className="login-title">Agendar Cita</h2>
+            <h2 className="login-title">AGENDAR CITA
+            </h2>
             <p className="login-subtitle">Selecciona fecha, hora y motivo de tu cita</p>
 
             <form onSubmit={sendRequest}>

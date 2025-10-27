@@ -38,7 +38,8 @@ import {
   ManagerImageGallery,
   AdminCalendar,
   ContractsAdmin,
-  ContractsList
+  ContractsList,
+  PromotionsAdmin
 } from './imports/adminImports'
 
 import {
@@ -86,7 +87,8 @@ const routeConfig = {
     { path: '/EventsHomeAdmin', component: ListEventsA },
     { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
-    { path: '/EditEvent/:eventId', component: EditEvent }
+    { path: '/EditEvent/:eventId', component: EditEvent },
+    { path: '/PromotionsAdmin', component: PromotionsAdmin }
   ],
   client: [
     { path: '/Schedule', component: Schedule },

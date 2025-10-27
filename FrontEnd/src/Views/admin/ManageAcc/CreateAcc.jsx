@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../../CSS/FormsUser.css';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 const CreateAccountForm = () => {
   const [formData, setFormData] = useState({
@@ -125,160 +126,159 @@ const CreateAccountForm = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-content">
-        <button className="back-btn" onClick={() => window.history.back()}>
-          ←
-        </button>
+    <>
+      <HeaderAdm />
+      <div className="login-container">
+        <div className="login-content">
+          <div className="login-form-card" style={{ maxWidth: "800px" }}>
+            <h1 className="login-title">CREAR CUENTA</h1>
 
-        <div className="login-form-card" style={{ maxWidth: "800px" }}>
-          <h1 className="login-title">CREAR CUENTA</h1>
+            {errorMessage && (
+              <p className="text-danger" style={{ color: "red", marginBottom: "10px" }}>
+                {errorMessage}
+              </p>
+            )}
 
-          {errorMessage && (
-            <p className="text-danger" style={{ color: "red", marginBottom: "10px" }}>
-              {errorMessage}
-            </p>
-          )}
-
-          <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
-            <div className="row">
-              <div className="col-md-12 mb-3">
-                <label className="form-label">
-                  Nombre completo <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  className="form-input"
-                  placeholder="Ingresa tu nombre completo"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Correo electrónico <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  className="form-input"
-                  placeholder="ejemplo@correo.com"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Fecha de nacimiento <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="date"
-                  name="birthDate"
-                  className="form-input"
-                  value={formData.birthDate}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Tipo de documento <span className="text-danger">*</span>
-                </label>
-                <select
-                  name="documentType"
-                  className="form-input"
-                  value={formData.documentType}
-                  onChange={handleInputChange}
-                >
-                  <option value="">Elige tipo</option>
-                  <option value="CC">Cédula de Ciudadanía</option>
-                  <option value="CE">Cédula de Extranjería</option>
-                  <option value="Pasaporte">Pasaporte</option>
-                  <option value="TI">Tarjeta de Identidad</option>
-                </select>
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Número de documento <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="documentNumber"
-                  className="form-input"
-                  placeholder="Ej: 1234567890"
-                  value={formData.documentNumber}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Contraseña <span className="text-danger">*</span>
-                </label>
-                <div className="input-with-icon">
+            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+              <div className="row">
+                <div className="col-md-12 mb-3">
+                  <label className="form-label">
+                    Nombre completo <span className="text-danger">*</span>
+                  </label>
                   <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    className="form-input d-flex align-items-center"
-                    placeholder="Mínimo 8 caracteres"
-                    value={formData.password}
+                    type="text"
+                    name="firstName"
+                    className="form-input"
+                    placeholder="Ingresa tu nombre completo"
+                    value={formData.firstName}
                     onChange={handleInputChange}
                   />
-                  <span
-                    className="toggle-visibility-inside"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
-                    ) : (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" /><path d="M1 1l22 22" /></svg>
-                    )}
-                  </span>
                 </div>
               </div>
 
-              <div className="col-md-6 mb-3">
-                <label className="form-label">
-                  Confirmar contraseña <span className="text-danger">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  className="form-input"
-                  placeholder="Repite la contraseña"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                />
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Correo electrónico <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    className="form-input"
+                    placeholder="ejemplo@correo.com"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Fecha de nacimiento <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="birthDate"
+                    className="form-input"
+                    value={formData.birthDate}
+                    onChange={handleInputChange}
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="d-flex justify-content-between mt-4">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick={handleCancel}
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="btn-primary-custom"
-              >
-                Crear
-              </button>
-            </div>
-          </form>
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Tipo de documento <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    name="documentType"
+                    className="form-input"
+                    value={formData.documentType}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">Elige tipo</option>
+                    <option value="CC">Cédula de Ciudadanía</option>
+                    <option value="CE">Cédula de Extranjería</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                    <option value="TI">Tarjeta de Identidad</option>
+                  </select>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Número de documento <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="documentNumber"
+                    className="form-input"
+                    placeholder="Ej: 1234567890"
+                    value={formData.documentNumber}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Contraseña <span className="text-danger">*</span>
+                  </label>
+                  <div className="input-with-icon">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      className="form-input d-flex align-items-center"
+                      placeholder="Mínimo 8 caracteres"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                    />
+                    <span
+                      className="toggle-visibility-inside"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                      ) : (
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" /><path d="M1 1l22 22" /></svg>
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Confirmar contraseña <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    className="form-input"
+                    placeholder="Repite la contraseña"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-between mt-4">
+                <button
+                  type="button"
+                  className="btn-cancel"
+                  onClick={() => window.history.back()}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary-custom"
+                >
+                  Crear
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

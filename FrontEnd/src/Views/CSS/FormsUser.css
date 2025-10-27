@@ -91,13 +91,24 @@
   color: rgb(21, 165, 231);
 }
 
-/* Login form */
+.form-page-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  /* font-family heredada del proyecto */
+}
+
 .login-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  padding-top: 3vh;
-  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* alineamos desde arriba */
+  padding: 80px 20px 20px 20px; /* padding-top evita choque con header */
+  background: #f9f9f9;
 }
+
 
 .login-content {
   max-width: 1200px;
@@ -106,11 +117,12 @@
 }
 
 .login-form-card {
-  background: #fff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  margin: 0 auto;     /* asegura centrado horizontal */
+    max-width: 600px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    margin: 0 auto;
 }
 
 .w-800 {
@@ -340,6 +352,14 @@ select.form-input {
   background: #f9f9f9;
 }
 
+.form-container {
+  max-width: 800px;
+  margin: 50px auto; /* centra y agrega espacio desde arriba */
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
 
 .form-container-custom {
   background: #fff;              /* mantiene el estilo limpio */

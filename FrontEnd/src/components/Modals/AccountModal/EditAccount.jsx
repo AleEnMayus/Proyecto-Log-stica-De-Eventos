@@ -11,7 +11,7 @@ const API_FIELD_MAPPING = {
   documentNumber: "DocumentNumber",
 };
 
-const EditModal = ({ isOpen, onClose, user, onSave }) => { // <-- 🔥 se agrega onSave
+const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
   const navigate = useNavigate();
 
   const [isRequestModalOpen, setRequestModalOpen] = useState(false);

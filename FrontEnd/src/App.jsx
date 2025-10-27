@@ -38,7 +38,8 @@ import {
   ManagerImageGallery,
   AdminCalendar,
   ContractsAdmin,
-  ContractsList
+  ContractsList,
+  PromotionsAdmin
 } from './imports/adminImports'
 
 import {
@@ -52,6 +53,7 @@ import {
   ClientCalendar,
   ContractsClient
 } from './imports/clientImports'
+import ImageGalleryA from './Views/admin/gallery/gallery1'
 
 // Configuración de rutas
 const routeConfig = {
@@ -71,6 +73,9 @@ const routeConfig = {
     { path: '/CreateResource', component: CreateResource },
     { path: '/SurvayHome', component: Survay },
     { path: '/SurvayHome/create', component: CreateSurvay },
+    
+    // Galería
+    { path: '/GalleryAdmin2', component: ImageGalleryA },
     { path: '/GalleryViewAdmin', component: ImageGallery },
     { path: '/GalleryAdmin', component: ManagerImageGallery },
     { path: '/ManageAccounts', component: AdminAccountsList },
@@ -82,7 +87,8 @@ const routeConfig = {
     { path: '/EventsHomeAdmin', component: ListEventsA },
     { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
-    { path: '/EditEvent/:eventId', component: EditEvent }
+    { path: '/EditEvent/:eventId', component: EditEvent },
+    { path: '/PromotionsAdmin', component: PromotionsAdmin }
   ],
   client: [
     { path: '/Schedule', component: Schedule },

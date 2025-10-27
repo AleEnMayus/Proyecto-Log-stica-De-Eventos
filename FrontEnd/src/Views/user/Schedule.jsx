@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
+
+//  Importamos tu hook y el contenedor
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/ToastContainer";
+
 import "../CSS/components.css";
 import "../CSS/FormsUser.css";
 
@@ -11,6 +15,9 @@ const Schedule = () => {
   const [reason, setReason] = useState("");
   const navigate = useNavigate();
 
+  //  Hook para toasts (como en tu ej. CreateEvent)
+  const { toasts, addToast, removeToast } = useToast();
+
   // Validar fecha
   const validateDate = (selectedDate) => {
     const today = new Date();
@@ -18,13 +25,13 @@ const Schedule = () => {
     const inputDate = new Date(selectedDate);
 
     if (inputDate < today) {
-      toast.error("No puedes seleccionar una fecha anterior a hoy");
+      addToast("No puedes seleccionar una fecha anterior a hoy", "danger");
       return false;
     }
 
     const year = inputDate.getFullYear();
     if (year < 1900 || year > 2100) {
-      toast.error("Por favor selecciona una fecha válida");
+      addToast("Por favor selecciona una fecha válida", "danger");
       return false;
     }
     return true;
@@ -38,7 +45,7 @@ const Schedule = () => {
     const inAfternoon = decimalTime >= 13 && decimalTime <= 15;
 
     if (!inMorning && !inAfternoon) {
-      toast.error("Solo puedes agendar citas de 8:00 a 10:00 AM o de 1:00 a 3:00 PM");
+      addToast("Solo puedes agendar citas de 8:00 a 10:00 AM o de 1:00 a 3:00 PM", "danger");
       return false;
     }
     return true;
@@ -51,8 +58,6 @@ const Schedule = () => {
 
     try {
       const dateTime = `${date}T${time}:00`;
-
-      // Usar userId desde localStorage
       const user = JSON.parse(localStorage.getItem("user") || "{}");
 
       const response = await fetch("http://localhost:4000/api/requests", {
@@ -62,7 +67,7 @@ const Schedule = () => {
           RequestDate: dateTime,
           RequestDescription: reason,
           RequestType: "schedule_appointment",
-          UserId: user.id || 1, // fallback
+          UserId: user.id || 1,
           EventId: null
         })
       });
@@ -70,17 +75,17 @@ const Schedule = () => {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Tu cita ha sido enviada correctamente");
+        addToast("Tu cita ha sido enviada correctamente", "success");
         setDate("");
         setTime("");
         setReason("");
-        navigate("/EventsHome");
+        setTimeout(() => navigate("/EventsHome"), 2000);
       } else {
-        toast.error(data.error || "Error al enviar la solicitud");
+        addToast(data.error || "Error al enviar la solicitud", "danger");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Hubo un problema al enviar la solicitud");
+      addToast("Hubo un problema al enviar la solicitud", "danger");
     }
   };
 
@@ -92,7 +97,8 @@ const Schedule = () => {
       <div className="login-container">
         <div className="login-content">
           <div className="form-container-custom">
-            <h2 className="login-title">Agendar Cita</h2>
+            <h2 className="login-title">AGENDAR CITA
+            </h2>
             <p className="login-subtitle">Selecciona fecha, hora y motivo de tu cita</p>
 
             <form onSubmit={sendRequest}>
@@ -144,6 +150,9 @@ const Schedule = () => {
           </div>
         </div>
       </div>
+
+      {/* Contenedor de toasts */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

@@ -73,6 +73,7 @@ const RecoverPassword = () => {
       if (response.ok) {
         addToast(data.message || 'Código enviado', 'success');
         setErrorMessage('');
+        setCodeTimer(120); // CAMBIO: ahora son 2 minutos (120 segundos)
       } else {
         setCodeTimer(0);
         setErrorMessage(data.message || 'Error al enviar el código');
@@ -160,7 +161,7 @@ const RecoverPassword = () => {
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
                   ←
                 </button>
-                <div className="logo-text">Happy-Art Eventos</div>
+                <div className="logo-text">Happy-Art-Events</div>
               </div>
             </div>
           </div>

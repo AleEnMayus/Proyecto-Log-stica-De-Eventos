@@ -174,6 +174,7 @@ const AdminAccountsList = () => {
                 <th>Id</th>
                 <th>Nombre Usuario</th>
                 <th>Numero de Documento</th>
+                <th>Correo Electronico</th>
                 <th>Rol</th>
                 <th>Estado</th>
                 <th>Editar</th>
@@ -186,6 +187,7 @@ const AdminAccountsList = () => {
                   <td><span className="user-type">{user.UserId}</span></td>
                   <td><span className="user-name">{user.Names}</span></td>
                   <td>{user.DocumentNumber}</td>
+                  <td>{user.Email}</td>
                   <td>{capitalize(user.Role)}</td>
                   <td>
                     <button

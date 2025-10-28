@@ -1,0 +1,199 @@
+/* Contenedor principal de listas */
+.list-container {
+  padding: 80px 20px 40px; /* margen por header fijo */
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Header de la lista */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.list-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+/* Botón principal de crear/agregar */
+.btn-create {
+  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
+  border: none;
+  border-radius: 25px;
+  padding: 10px 22px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s ease;
+  gap: 5px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(21, 165, 231, 0.3);
+}
+
+/* Buscador */
+input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.search-container {
+  margin-bottom: 25px;
+}
+
+.search-input-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ced4da;
+  border-radius: 25px;
+  padding: 5px 12px;
+  background: #fff;
+  gap: 8px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  padding: 8px 0;
+}
+
+.search-label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Tabla universal */
+.table-container {
+  overflow-x: auto;
+  margin-bottom: 30px;
+}
+
+.list-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.list-table th,
+.list-table td {
+  padding: 14px;
+  text-align: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.list-table th {
+  background: #f9fafc;
+  font-weight: 600;
+  color: #34495e;
+}
+
+/* Información de usuario */
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* Tipos de usuario */
+.user-type.admin {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.user-type.user {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+/* Botones de acción */
+.btn-custom {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-status-custom {
+  background: #f1f1f1;
+  color: #333;
+}
+
+.btn-edit-custom {
+  background: #3498db;
+  color: white;
+}
+
+.btn-delete-custom {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-custom:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+/* Estado vacío */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+/* Utilidades responsive */
+@media (min-width: 770px) {
+  .w-50-lg {
+    width: 50% !important;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .list-table th,
+  .list-table td {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .btn-custom {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  .list-container{
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+}

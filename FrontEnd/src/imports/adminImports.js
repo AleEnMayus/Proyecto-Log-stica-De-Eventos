@@ -1,24 +1,29 @@
-export { default as Notification } from '../admin/Notification'
-export { default as AdminCalendar } from '../admin/Calendaradmin'
+export { default as Notification } from '../Views/admin/Notification'
+export { default as AdminCalendar } from '../Views/admin/Calendaradmin'
 // Gestión de Eventos
-export { default as ListEventsA } from '../admin/Events/HomeEventsAdm'
-export { default as EventDetailsA } from '../admin/Events/EventDetailsAdm'
-export { default as CreateEvent } from '../admin/Events/CreateEvent'
-export { default as EditEvent } from '../admin/Events/EditEvent'
+export { default as ListEventsA } from '../Views/admin/Events/HomeEventsAdm'
+export { default as EventDetailsA } from '../Views/admin/Events/EventDetailsAdm'
+export { default as CreateEvent } from '../Views/admin/Events/CreateEvent'
+export { default as EditEvent } from '../Views/admin/Events/EditEvent'
 //Gestión de Cuentas
-export { default as AdminAccountsList } from '../admin/ManageAcc/HomeAccounts'
-export { default as CreateAccountForm } from '../admin/ManageAcc/CreateAcc'
-export { default as EditAccountPage } from '../admin/ManageAcc/EditAccAdmin'
+export { default as AdminAccountsList } from '../Views/admin/ManageAcc/HomeAccounts'
+export { default as CreateAccountForm } from '../Views/admin/ManageAcc/CreateAcc'
+export { default as EditAccountPage } from '../Views/admin/ManageAcc/EditAccAdmin'
 // Registro de Recuros
-export { default as AssingResources } from '../admin/Resource/AllocateResources'
-export { default as ListResource } from '../admin/Resource/HomeResource'
-export { default as CreateResource } from '../admin/Resource/CreateResource'
+export { default as CreateResource } from '../Views/admin/Resource/CreateResource'
+export { default as ListResource } from '../Views/admin/Resource/HomeResource'
 // Gestión galeria
-export { default as ImageGallery } from '../admin/gallery/gallery2'
-export { default as ManagerImageGallery } from '../admin/gallery/galleryof'
+export { default as ImageGallery } from '../Views/admin/gallery/gallery2'
+export { default as ManagerImageGallery } from '../Views/admin/gallery/galleryof'
 // Gestión de Contratos
-export { default as ContractsAdmin } from '../admin/Contracts/HomeContractsAdmin'
-export { default as ContractsList } from '../admin/Contracts/ListContracts'
+export { default as ContractsAdmin } from '../Views/admin/Contracts/HomeContractsAdmin'
+export { default as ContractsList } from '../Views/admin/Contracts/ListContracts'
 // Gestión de Encuestas
-export { default as Survay } from '../admin/CreateSurvey/survey'
-export { default as CreateSurvay } from '../admin/CreateSurvey/createsurvey'
+export { default as Survay } from '../Views/admin/CreateSurvey/survey'
+export { default as CreateSurvay } from '../Views/admin/CreateSurvey/createsurvey'
+// Gestion de promociones 
+export { default as PromotionsAdmin } from '../Views/admin/Promotions/HomePromotions'
+export { default as PromotionsForm } from '../Views/admin/Promotions/CreatePromotions'
+export { default as PromotionsEdit} from '../Views/admin/Promotions/EditPromotions'
+
+// 

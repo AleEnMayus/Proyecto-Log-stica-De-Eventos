@@ -1,0 +1,213 @@
+/* === Estilos globales === */
+body {
+  background-color: #f9fcff;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: #1a2b44;
+  margin: 0;
+  padding: 0;
+}
+
+/* === Estructura general === */
+.promotions-wrapper {
+  min-height: 100vh;
+}
+
+.promotions-container {
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* === Tablas === */
+.table th {
+  font-weight: bold;
+}
+
+/* === Hover genérico de botones Bootstrap === */
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* === Sección principal === */
+.form-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 100px);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* === Contenedores === */
+.form-container,
+.modal-container {
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  padding: 35px;
+}
+
+.form-container {
+  width: 500px;
+}
+
+.modal-container {
+  width: 400px;
+  position: relative;
+}
+
+/* === Títulos === */
+.form-container h2,
+.modal-container h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #243b53;
+  margin-bottom: 25px;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* === Formularios === */
+.promo-form,
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+}
+
+.promo-form label,
+.edit-form label {
+  font-weight: 600;
+  color: #334e68;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* === Campos de formulario === */
+.promo-form input,
+.promo-form select,
+.promo-form textarea,
+.edit-form input,
+.edit-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d9e2ec;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  color: #102a43;
+  font-size: 15px;
+  transition: all 0.2s ease-in-out;
+}
+
+.promo-form input:focus,
+.promo-form select:focus,
+.promo-form textarea:focus,
+.edit-form input:focus,
+.edit-form textarea:focus {
+  border-color: #62b0e8;
+  background-color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(98, 176, 232, 0.2);
+}
+
+.promo-form textarea,
+.edit-form textarea {
+  resize: none;
+  height: 60px;
+}
+
+/* === Filas dobles === */
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.row div {
+  flex: 1;
+}
+
+/* === Modal === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #2f2f2f;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.close-btn:hover {
+  transform: translateX(-3px);
+}
+
+/* === Grupo de botones === */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px; /* Espacio similar al de tu imagen */
+  margin-top: 25px;
+}
+
+/* === Botones base === */
+.button-group button,
+.btn-crear,
+.btn-editar,
+.btn-cancelar {
+  flex: 1;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 0;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* === Botón "Crear" / "Editar" (degradado azul) === */
+.btn-crear,
+.btn-editar,
+.button-group .btn-crear,
+.button-group .btn-editar {
+  background: linear-gradient(90deg, #0096ff, #9b6cff);
+  color: #ffffff;
+}
+.btn-crear:hover,
+.btn-editar:hover,
+.button-group .btn-crear:hover,
+.button-group .btn-editar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 10px rgba(0, 150, 255, 0.3);
+}
+
+/* === Botón "Cancelar" (gris) === */
+.btn-cancelar,
+.button-group .btn-cancelar {
+  background-color: #9ca3af;
+  color: #ffffff;
+}
+.btn-cancelar:hover,
+.button-group .btn-cancelar:hover {
+  background-color: #868e96;
+}

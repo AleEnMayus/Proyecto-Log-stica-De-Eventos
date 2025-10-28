@@ -1,15 +1,15 @@
+export { default as NotificationsClient } from '../Views/user/NotificationsClient' 
 
-export { default as Notifications } from '../user/Notification-tray'
-export { default as ClientCalendar } from '../user/Calendarclient'
+export { default as ClientCalendar } from '../views/user/Calendarclient'
 // Eventos
-export { default as EventDetailsC } from '../user/Events/EventDetailsCl'
-export { default as ListEventsC } from '../user/Events/HomeEventsCl'
+export { default as EventDetailsC } from '../views/user/Events/EventDetailsCl'
+export { default as ListEventsC } from '../views/user/Events/HomeEventsCl'
 // Encuesta
-export { default as SurvayClient } from '../user/survey'
+export { default as SurvayClient } from '../views/user/survey'
 // Agendar cita
-export { default as Schedule } from '../user/Schedule'
+export { default as Schedule } from '../views/user/Schedule'
 // Contratos
-export { default as ContractsClient } from '../user/Contrats/HomeContratsCl'
+export { default as ContractsClient } from '../views/user/Contrats/HomeContratsCl'
 // Galería
-export { default as ImageGalleryC } from '../user/gallery/galleryC'
-export { default as ImageGalleryViewerC } from '../user/gallery/galleryC2'
+export { default as ImageGalleryC } from '../views/user/gallery/galleryC'
+export { default as ImageGalleryViewerC } from '../views/user/gallery/galleryC2'

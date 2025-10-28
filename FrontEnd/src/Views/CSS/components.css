@@ -38,6 +38,10 @@
   align-items: center;
 }
 
+.btn {
+  border-radius: 25px !important;
+}
+
 .btn-primary-custom {
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
   border: none;
@@ -99,6 +103,7 @@ button.dropdown-item-custom {
   text-decoration: none;
   transition: background-color 0.2s;
 }
+
 
 button.dropdown-item-custom:hover {
   background-color: rgba(0, 0, 0, 0.1);
@@ -211,15 +216,24 @@ button.dropdown-item-custom:focus {
 
 /* ------------------ PAGINACIÓN OPTIMIZADA ------------------ */
 .pagination {
-  display: flex;
+  position: relative;
+  display: flex !important;
   justify-content: center;
   align-items: center;
-  gap: 0.25rem;
-  padding: 1rem 0;
+  gap: 0.5rem;
+  margin: 20px auto;
+  padding: 1rem;
   width: 100%;
-  background-color: transparent;
-  border: none;
-  box-shadow: none;
+  z-index: 10;
+  background: transparent;
+}
+
+.list-container {
+  overflow: visible !important; /* evita que tape la paginación */
+}
+
+.table-container {
+  overflow: visible !important; /* evita que la tabla la oculte */
 }
 
 .pagination-numbers {

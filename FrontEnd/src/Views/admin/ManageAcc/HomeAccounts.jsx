@@ -71,8 +71,7 @@ const AdminAccountsList = () => {
     setShowStateModal(true);
   };
 
-  // Confirmar cambio de estado desde ModalState
-  // Confirmar cambio de estado desde ModalState
+  // Confirmar cambio de estado
   const handleStatusChangeFromModal = (userId, newStatus) => {
     const user = users.find(u => u.UserId === userId);
     const userName = user ? user.Names : 'Usuario';
@@ -84,7 +83,6 @@ const AdminAccountsList = () => {
       confirmText: "Confirmar cambio",
       onConfirm: async () => {
         try {
-          // Llamada al backend
           const res = await fetch(`${API_URL}/${userId}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -93,7 +91,6 @@ const AdminAccountsList = () => {
 
           if (!res.ok) throw new Error("Error al cambiar estado");
 
-          // Actualizamos el front
           executeStatusChange(userId, newStatus);
           setShowModal(false);
         } catch (err) {
@@ -108,8 +105,6 @@ const AdminAccountsList = () => {
 
   // Ejecutar cambio de estado real
   const executeStatusChange = (userId, newStatus) => {
-    console.log("Estado cambiado:", userId, "->", newStatus);
-
     setUsers(prevUsers =>
       prevUsers.map(user =>
         user.UserId === userId ? { ...user, Status: newStatus } : user
@@ -138,11 +133,10 @@ const AdminAccountsList = () => {
 
   return (
     <div className="list-container">
-      {/* Header */}
       <HeaderAdm />
 
       <div className="list-header mt-5 pt-5">
-        <h2 className="list-title">ADMINISTRAR CUENTA</h2>
+        <h2 className="list-title">LISTADO DE CUENTAS</h2>
         <Link to="/CreateAccount" className="btn-create d-flex" style={{ textDecoration: 'none' }}>
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">
             <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
@@ -151,7 +145,6 @@ const AdminAccountsList = () => {
         </Link>
       </div>
 
-      {/* Search Bar */}
       <div className="search-container mb-4 w-50-lg">
         <span className="search-label">Nombre o usuario</span>
         <div className="search-input-group">
@@ -171,7 +164,6 @@ const AdminAccountsList = () => {
         </div>
       </div>
 
-      {/* Tabla */}
       <div className="table-container">
         {loading ? (
           <div className="empty-state">Cargando cuentas...</div>
@@ -180,7 +172,10 @@ const AdminAccountsList = () => {
             <thead>
               <tr>
                 <th>Id</th>
-                <th>Nombre usuario</th>
+                <th>Nombre Usuario</th>
+                <th>Numero de Documento</th>
+                <th>Correo Electronico</th>
+                <th>Rol</th>
                 <th>Estado</th>
                 <th>Editar</th>
                 <th>Eliminar</th>
@@ -189,17 +184,14 @@ const AdminAccountsList = () => {
             <tbody>
               {currentUsers.map((user) => (
                 <tr key={user.UserId}>
-                  <td>
-                    <span className="user-type">{user.UserId}</span>
-                  </td>
-                  <td>
-                    <div className="user-info">
-                      <span className="user-name">{user.Names}</span>
-                    </div>
-                  </td>
+                  <td><span className="user-type">{user.UserId}</span></td>
+                  <td><span className="user-name">{user.Names}</span></td>
+                  <td>{user.DocumentNumber}</td>
+                  <td>{user.Email}</td>
+                  <td>{capitalize(user.Role)}</td>
                   <td>
                     <button
-                      className="btn-custom btn-status-custom d-flex align-items-center mx-auto"
+                      className="btn-custom btn-status-custom mx-auto"
                       onClick={() => handleOpenStatusModal(user.UserId, user.Status)}
                     >
                       {capitalize(user.Status)}
@@ -207,21 +199,21 @@ const AdminAccountsList = () => {
                   </td>
                   <td>
                     <button
-                      className="btn-custom btn-edit-custom d-flex align-items-center mx-auto"
+                      className="btn-custom btn-edit-custom mx-auto"
                       onClick={() => handleEdit(user.UserId)}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
-                        <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
+                      <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#e3e3e3">
+                        <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Z" />
                       </svg>
                     </button>
                   </td>
                   <td>
                     <button
-                      className="btn-custom btn-delete-custom d-flex align-items-center mx-auto"
+                      className="btn-custom btn-delete-custom mx-auto"
                       onClick={() => handleDelete(user.UserId)}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">
-                        <path d="M269-86q-53 0-89.5-36.5T143-212v-497H80v-126h257v-63h284v63h259v126h-63v497q0 53-36.5 89.5T691-86H269Zm422-623H269v497h422v-497ZM342-281h103v-360H342v360Zm173 0h103v-360H515v360ZM269-709v497-497Z" />
+                      <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px" fill="#ffffffff">
+                        <path d="M269-86q-53 0-89.5-36.5T143-212v-497H80v-126h257v-63h284v63h259v126h-63v497q0 53-36.5 89.5T691-86H269Zm422-623H269v497h422v-497Z" />
                       </svg>
                     </button>
                   </td>
@@ -232,40 +224,44 @@ const AdminAccountsList = () => {
         )}
       </div>
 
-      {/* Paginación */}
+      {/* 🔹 Paginación visible */}
       {totalPages > 1 && (
-        <nav className="pagination">
+        <div className="pagination-container" style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "10px",
+          marginTop: "25px",
+          paddingBottom: "20px",
+        }}>
           <button
-            className="pagination-arrow"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            className="page-btn"
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
             &laquo;
           </button>
 
-          <div className="pagination-numbers">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
+            >
+              {i + 1}
+            </button>
+          ))}
 
           <button
-            className="pagination-arrow"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            className="page-btn"
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
             &raquo;
           </button>
-        </nav>
+        </div>
       )}
 
-      {/* Modal de Confirmación */}
       <ConfirmModal
         show={showModal}
         onClose={() => setShowModal(false)}
@@ -274,7 +270,6 @@ const AdminAccountsList = () => {
         confirmText={modalConfig.confirmText}
       />
 
-      {/* Modal de Estado */}
       <ModalState
         show={showStateModal}
         onClose={() => setShowStateModal(false)}

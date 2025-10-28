@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/components.css";
-import "../../CSS/Promotions.css";
+import "../../CSS/FormsUser.css";
 
-export default function PromotionsForm() {
+const PromotionsForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nombre: "",
     descripcion: "",
@@ -19,52 +21,82 @@ export default function PromotionsForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Promoción creada:", formData);
-    alert("Promoción creada con éxito");
+    alert("✅ Promoción creada con éxito");
   };
 
   const handleCancel = () => {
-    setFormData({
-      nombre: "",
-      descripcion: "",
-      estado: "",
-      precio: "",
-    });
+    navigate(-1); // ⬅️ vuelve al apartado anterior
   };
 
   return (
     <>
-      <HeaderAdm /> {/* Header visible en la parte superior */}
-      <br /><br /><br />
+      <HeaderAdm />
 
-      <div className="form-page">
-        <div className="form-container">
-          <h2>CREAR PROMOCIONES</h2>
+      <div
+        className="login-container"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <div
+          className="form-container-custom"
+          style={{
+            width: "70%", // 🔹 más angosto que antes
+            maxWidth: "600px",
+            marginTop: "-40px", // 🔹 sube un poco el formulario
+          }}
+        >
+          <h1 className="form-page-title">CREAR PROMOCIÓN</h1>
 
-          <form onSubmit={handleSubmit} className="promo-form">
-            <label>Nombre Promoción</label>
-            <input
-              type="text"
-              name="nombre"
-              placeholder="Ingrese el nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              required
-            />
+          <form onSubmit={handleSubmit}>
+            {/* Nombre */}
+            <div className="form-row">
+              <div className="form-col" style={{ flex: "1 1 100%" }}>
+                <label className="form-label">Nombre Promoción</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  className="form-input"
+                  placeholder="Ingrese el nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
 
-            <label>Descripción</label>
-            <textarea
-              name="descripcion"
-              placeholder="Ingrese la descripción"
-              value={formData.descripcion}
-              onChange={handleChange}
-              required
-            ></textarea>
+            {/* Descripción */}
+            <div className="form-row" style={{ marginTop: "10px" }}>
+              <div className="form-col" style={{ flex: "1 1 100%" }}>
+                <label className="form-label">Descripción</label>
+                <textarea
+                  name="descripcion"
+                  className="form-input"
+                  placeholder="Ingrese la descripción"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                  required
+                  rows="3"
+                ></textarea>
+              </div>
+            </div>
 
-            <div className="row">
-              <div>
-                <label>Estado</label>
+            {/* Estado y Precio (más cerca del anterior campo) */}
+            <div
+              className="form-row"
+              style={{
+                marginTop: "15px", // 🔹 menos espacio entre secciones
+                gap: "20px",
+              }}
+            >
+              <div className="form-col">
+                <label className="form-label">Estado</label>
                 <select
                   name="estado"
+                  className="form-input"
                   value={formData.estado}
                   onChange={handleChange}
                   required
@@ -75,11 +107,12 @@ export default function PromotionsForm() {
                 </select>
               </div>
 
-              <div>
-                <label>Precio</label>
+              <div className="form-col">
+                <label className="form-label">Precio</label>
                 <input
                   type="number"
                   name="precio"
+                  className="form-input"
                   placeholder="Ingrese el precio"
                   value={formData.precio}
                   onChange={handleChange}
@@ -88,17 +121,24 @@ export default function PromotionsForm() {
               </div>
             </div>
 
-            {/* Botones alineados */}
-            <div className="button-group">
-              <button type="submit" className="btn-crear">
-                Crear Promoción
-              </button>
+            {/* Botones */}
+            <div
+              className="form-actions"
+              style={{
+                marginTop: "25px",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <button
                 type="button"
-                className="btn-cancelar"
+                className="btn-cancel"
                 onClick={handleCancel}
               >
                 Cancelar
+              </button>
+              <button type="submit" className="btn-primary-custom">
+                Crear Promoción
               </button>
             </div>
           </form>
@@ -106,4 +146,6 @@ export default function PromotionsForm() {
       </div>
     </>
   );
-}
+};
+
+export default PromotionsForm;

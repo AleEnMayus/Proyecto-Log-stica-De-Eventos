@@ -145,6 +145,29 @@ CREATE TABLE Comments (
 );
 
 -- ==========================================================
+-- TABLA: PROMOCIONES
+-- ==========================================================
+CREATE TABLE Promotions (
+	PromotionId INT PRIMARY KEY AUTO_INCREMENT,
+	TitleProm VARCHAR (25),
+	DescriptionProm VARCHAR (255),
+	Price FLOAT,
+	StatusProm ENUM('active', 'inactive') DEFAULT 'inactive'
+);
+
+-- ==========================================================
+-- TABLA: ASIGNACION DE PROMOCIONES
+-- ==========================================================
+
+CREATE TABLE PromotionEvent (
+    PromotionEventId INT AUTO_INCREMENT PRIMARY KEY,
+    EventId INT,
+    PromotionId INT,
+    FOREIGN KEY (EventId) REFERENCES Events(EventId) ON DELETE CASCADE,
+    FOREIGN KEY (PromotionId) REFERENCES Promotions(PromotionId) ON DELETE RESTRICT
+);
+
+-- ==========================================================
 -- TABLA: RECUPERACIÓN DE CONTRASEÑAS
 -- ==========================================================
 CREATE TABLE PasswordReset (
@@ -155,6 +178,8 @@ CREATE TABLE PasswordReset (
     LastSendAttempt DATETIME DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_created (CreatedAt)
 );
+
+
 
 -- ==========================================================
 -- PROCEDIMIENTOS ALMACENADOS
@@ -392,16 +417,3 @@ END//
 -- VERIFICAR CONFIGURACIÓN
 -- ==========================================================
 SHOW VARIABLES LIKE 'event_scheduler';
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -197,3 +197,33 @@ input:focus {
     padding-right: 5px !important;
   }
 }
+
+
+
+
+/* 🔹 Botones de acción (Editar / Eliminar) */
+.btn-action {
+  border: none;
+  border-radius: 25px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 35px;
+}
+
+.btn-action.edit {
+  background-color: #3498db; /* Azul */
+}
+
+.btn-action.delete {
+  background-color: #e74c3c; /* Rojo */
+}
+
+.btn-action:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}

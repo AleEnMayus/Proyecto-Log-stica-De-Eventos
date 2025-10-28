@@ -39,7 +39,9 @@ import {
   AdminCalendar,
   ContractsAdmin,
   ContractsList,
-  PromotionsAdmin
+  PromotionsAdmin,
+  PromotionsForm,
+  PromotionsEdit
 } from './imports/adminImports'
 
 import {
@@ -88,7 +90,9 @@ const routeConfig = {
     { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
     { path: '/EditEvent/:eventId', component: EditEvent },
-    { path: '/PromotionsAdmin', component: PromotionsAdmin }
+    { path: '/PromotionsAdmin', component: PromotionsAdmin },
+    { path: '/PromotionsForm', component: PromotionsForm },
+    { path: '/PromotionsEdit', component: PromotionsEdit }
   ],
   client: [
     { path: '/Schedule', component: Schedule },

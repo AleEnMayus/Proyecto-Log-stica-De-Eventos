@@ -67,7 +67,7 @@ const ListPromotionsA = () => {
       {/* Header */}
       <div className="list-header mt-5 pt-5">
         <h2 className="list-title">LISTADO DE PROMOCIONES</h2>
-        <Link to="/promotions/create" className="btn-create">
+        <Link to="/PromotionsForm" className="btn-create">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24px"

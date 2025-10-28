@@ -12,11 +12,11 @@ const ListPromotionsA = () => {
   const navigate = useNavigate();
   const promotionsPerPage = 5;
 
-  // Traer promociones desde API
+  // Traer promociones desde el backend
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/promotions");
+        const res = await fetch("http://localhost:4000/api/promotion");
         if (!res.ok) throw new Error("Error al obtener promociones");
         const data = await res.json();
         setPromotions(data);
@@ -32,8 +32,8 @@ const ListPromotionsA = () => {
   // Filtro
   const promotionsFiltradas = promotions.filter(
     (promo) =>
-      promo.Title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      promo.Description?.toLowerCase().includes(searchTerm.toLowerCase())
+      promo.TitleProm?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      promo.DescriptionProm?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Paginación
@@ -45,12 +45,16 @@ const ListPromotionsA = () => {
   );
   const totalPages = Math.ceil(promotionsFiltradas.length / promotionsPerPage);
 
-  // Ver promoción (redirección)
-  const handleVerPromo = (promotionId) => {
+  // botones
+  const handleEdit = (promotionId) => {
+    navigate(`/PromotionsEdit/${promotionId}`);
+  };
+
+  const handleDelete = (promotionId) => {
     navigate(`/promotions/details/${promotionId}`);
   };
 
-  // Loading
+  // Cargando
   if (loading) {
     return (
       <div className="list-container mle-0">
@@ -81,19 +85,10 @@ const ListPromotionsA = () => {
         </Link>
       </div>
 
-      {/* Search Bar */}
+      {/* Barra de búsqueda */}
       <div className="search-container mb-4 w-50-lg">
         <span className="search-label">Buscar promociones</span>
         <div className="search-input-group">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            viewBox="0 -960 960 960"
-            width="24px"
-            fill="currentcolor"
-          >
-            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
-          </svg>
           <input
             type="text"
             className="search-input"
@@ -112,52 +107,64 @@ const ListPromotionsA = () => {
         <table className="list-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Título</th>
               <th>Descripción</th>
-              <th>Descuento</th>
+              <th>Precio</th>
               <th>Estado</th>
-              <th>Ver</th>
+              <th>Editar</th>
+              <th>Eliminar</th>
             </tr>
           </thead>
           <tbody>
             {currentPromos.map((promo) => (
               <tr key={promo.PromotionId}>
-                <td>{promo.PromotionId}</td>
                 <td style={{ fontWeight: "500", color: "#2c3e50" }}>
-                  {promo.Title}
+                  {promo.TitleProm}
                 </td>
                 <td style={{ color: "#34495e" }}>
-                  {promo.Description || "Sin descripción"}
+                  {promo.DescriptionProm || "Sin descripción"}
                 </td>
                 <td style={{ fontWeight: "600", color: "#ff7a00" }}>
-                  {promo.Discount ? `${promo.Discount}%` : "—"}
+                  ${promo.Price}
                 </td>
                 <td>
                   <span
                     style={{
                       background:
-                        promo.Status === "Active" ? "#e6ffe6" : "#ffe6e6",
+                        promo.StatusProm === "active" ? "#e6ffe6" : "#ffe6e6",
                       color:
-                        promo.Status === "Active" ? "#13a927" : "#ff0000",
-                      border: `1px solid ${
-                        promo.Status === "Active" ? "#13a927" : "#ff0000"
-                      }`,
+                        promo.StatusProm === "active" ? "#13a927" : "#ff0000",
+                      border: `1px solid ${promo.StatusProm === "active" ? "#13a927" : "#ff0000"
+                        }`,
                       padding: "4px 10px",
                       borderRadius: "12px",
                       fontWeight: "600",
                       fontSize: "0.85rem",
                     }}
                   >
-                    {promo.Status || "N/A"}
+                    {promo.StatusProm === "active" ? "Activa" : "Inactiva"}
                   </span>
+                </td>
+                <td className="d-flex">
+                  <button
+                    className="btn-custom btn-edit-custom mx-auto"
+                    onClick={() => handleEdit(promo.PromotionId)}
+                    aria-label="Editar"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
+                    </svg>
+                  </button>
                 </td>
                 <td>
                   <button
-                    className="btn-custom btn-edit-custom d-flex align-items-center mx-auto"
-                    onClick={() => handleVerPromo(promo.PromotionId)}
+                    className="btn-custom btn-delete-custom mx-auto"
+                    onClick={() => handleDelete(promo.PromotionId)}
+                    aria-label="Eliminar"
                   >
-                    Ver
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                      <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                    </svg>
                   </button>
                 </td>
               </tr>
@@ -166,7 +173,7 @@ const ListPromotionsA = () => {
         </table>
       </div>
 
-      {/* Estado vacío */}
+      {/* Sin resultados */}
       {promotionsFiltradas.length === 0 && (
         <div className="empty-state">
           <p>No se encontraron promociones que coincidan con tu búsqueda.</p>
@@ -187,9 +194,8 @@ const ListPromotionsA = () => {
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i + 1}
-              className={`pagination-btn ${
-                currentPage === i + 1 ? "active" : ""
-              }`}
+              className={`pagination-btn ${currentPage === i + 1 ? "active" : ""
+                }`}
               onClick={() => setCurrentPage(i + 1)}
             >
               {i + 1}
@@ -207,8 +213,6 @@ const ListPromotionsA = () => {
           ▶
         </button>
       </div>
-
-      
     </div>
   );
 };

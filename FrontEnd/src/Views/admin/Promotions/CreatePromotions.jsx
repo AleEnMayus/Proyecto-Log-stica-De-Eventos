@@ -18,10 +18,28 @@ const PromotionsForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  // ✅ Crear promoción (POST al backend)
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Promoción creada:", formData);
-    alert("✅ Promoción creada con éxito");
+    try {
+      const res = await fetch("http://localhost:4000/api/promotions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          TitleProm: formData.nombre,
+          DescriptionProm: formData.descripcion,
+          Price: parseFloat(formData.precio),
+          StatusProm: formData.estado === "Activa" ? "active" : "inactive",
+        }),
+      });
+
+      if (!res.ok) throw new Error("Error al crear promoción");
+      alert("✅ Promoción creada con éxito");
+      navigate("/PromotionsList"); // Redirige al listado
+    } catch (error) {
+      console.error("Error:", error);
+      alert("❌ Hubo un problema al crear la promoción");
+    }
   };
 
   const handleCancel = () => {
@@ -31,7 +49,6 @@ const PromotionsForm = () => {
   return (
     <>
       <HeaderAdm />
-
       <div
         className="login-container"
         style={{
@@ -44,9 +61,9 @@ const PromotionsForm = () => {
         <div
           className="form-container-custom"
           style={{
-            width: "70%", // 🔹 más angosto que antes
+            width: "70%",
             maxWidth: "600px",
-            marginTop: "-40px", // 🔹 sube un poco el formulario
+            marginTop: "-40px",
           }}
         >
           <h1 className="form-page-title">CREAR PROMOCIÓN</h1>
@@ -84,13 +101,10 @@ const PromotionsForm = () => {
               </div>
             </div>
 
-            {/* Estado y Precio (más cerca del anterior campo) */}
+            {/* Estado y Precio */}
             <div
               className="form-row"
-              style={{
-                marginTop: "15px", // 🔹 menos espacio entre secciones
-                gap: "20px",
-              }}
+              style={{ marginTop: "15px", gap: "20px" }}
             >
               <div className="form-col">
                 <label className="form-label">Estado</label>

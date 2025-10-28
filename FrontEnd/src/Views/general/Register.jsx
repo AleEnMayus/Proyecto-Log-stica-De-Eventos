@@ -287,7 +287,7 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn-primary-custom btn mt-4 w-100">
+            <button type="submit" className="btn-primary-custom login-btn mt-4 w-100">
               Registrarse
             </button>
           </form>

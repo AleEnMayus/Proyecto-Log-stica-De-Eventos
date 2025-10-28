@@ -32,7 +32,6 @@ CREATE TABLE Events (
     ClientId INT NOT NULL,
     EventStatus ENUM('In_planning', 'In_execution', 'Completed', 'Canceled') DEFAULT 'In_planning',
     Capacity INT NOT NULL,
-    EventPrice FLOAT NOT NULL,
     AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     EventDateTime DATETIME NOT NULL,
@@ -151,7 +150,7 @@ CREATE TABLE Promotions (
 	PromotionId INT PRIMARY KEY AUTO_INCREMENT,
 	TitleProm VARCHAR (25),
 	DescriptionProm VARCHAR (255),
-	Price FLOAT,
+	Price DECIMAL(10,2),
 	StatusProm ENUM('active', 'inactive') DEFAULT 'inactive'
 );
 
@@ -417,3 +416,15 @@ END//
 -- VERIFICAR CONFIGURACIÓN
 -- ==========================================================
 SHOW VARIABLES LIKE 'event_scheduler';
+
+Insert into user (UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role, Photo)
+values (1, 'Ale', 'CC', '12345678901', '2000-04-08', 'apilogisticaeventos@gmail.com', 
+  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL);
+
+Insert into user (UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role, Photo)
+values (2, 'Ale', 'CC', '12345678902', '2000-04-08', 'admin@gmail.com', 
+  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL);
+        
+UPDATE user
+SET role = 'admin'
+WHERE userid = 2;

@@ -92,7 +92,7 @@ const routeConfig = {
     { path: '/EditEvent/:eventId', component: EditEvent },
     { path: '/PromotionsAdmin', component: PromotionsAdmin },
     { path: '/PromotionsForm', component: PromotionsForm },
-    { path: '/PromotionsEdit', component: PromotionsEdit }
+    { path: '/PromotionsEdit/:promoId', component: PromotionsEdit }
   ],
   client: [
     { path: '/Schedule', component: Schedule },

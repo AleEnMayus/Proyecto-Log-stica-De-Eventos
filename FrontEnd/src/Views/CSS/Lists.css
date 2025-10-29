@@ -1,6 +1,6 @@
 /* Contenedor principal de listas */
 .list-container {
-  padding: 80px 20px 40px; /* margen por header fijo */
+  padding: 80px 20px 40px;
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -102,63 +102,6 @@ input:focus {
   color: #34495e;
 }
 
-/* Información de usuario */
-.user-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-name {
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-/* Tipos de usuario */
-.user-type.admin {
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-.user-type.user {
-  color: #27ae60;
-  font-weight: bold;
-}
-
-/* Botones de acción */
-.btn-custom {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.btn-status-custom {
-  background: #f1f1f1;
-  color: #333;
-}
-
-.btn-edit-custom {
-  background: #3498db;
-  color: white;
-}
-
-.btn-delete-custom {
-  background: #e74c3c;
-  color: white;
-}
-
-.btn-custom:hover {
-  transform: translateY(-1px);
-  opacity: 0.9;
-}
-
 /* Estado vacío */
 .empty-state {
   text-align: center;
@@ -188,18 +131,11 @@ input:focus {
     font-size: 0.85rem;
   }
 
-  .btn-custom {
-    padding: 4px 8px;
-    font-size: 0.75rem;
-  }
   .list-container{
     padding-left: 5px !important;
     padding-right: 5px !important;
   }
 }
-
-
-
 
 /* 🔹 Botones de acción (Editar / Eliminar) */
 .btn-action {
@@ -213,17 +149,487 @@ input:focus {
   justify-content: center;
   width: 40px;
   height: 35px;
+  margin: 0 2px;
 }
 
 .btn-action.edit {
-  background-color: #3498db; /* Azul */
+  background-color: #3498db;
 }
 
 .btn-action.delete {
-  background-color: #e74c3c; /* Rojo */
+  background-color: #e74c3c;
 }
 
 .btn-action:hover {
   transform: scale(1.05);
   opacity: 0.9;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal de edición de recurso */
+.resource-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px 30px;
+  color: white;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-content {
+  padding: 30px;
+}
+
+/* Formulario de recurso */
+.resource-form {
+  width: 100%;
+}
+
+.form-field {
+  margin-bottom: 20px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.field-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e8ed;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: #3498db;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+/* Acciones del modal */
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e1e8ed;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+.btn-cancel:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.btn-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Modal de eliminación */
+.delete-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.delete-modal .modal-content {
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.delete-title {
+  margin: 0 0 30px 0;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #2c3e50;
+  line-height: 1.5;
+}
+
+.delete-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-cancel-delete {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.btn-cancel-delete:hover {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.btn-confirm-delete {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 30px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.btn-confirm-delete:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+
+/* Texto centrado */
+.text-center {
+  text-align: center;
+}
+
+/* Paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 10px;
+}
+
+.pagination-arrow, .pagination-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.pagination-arrow:hover:not(:disabled),
+.pagination-btn:hover:not(.active) {
+  background: #f8f9fa;
+}
+
+.pagination-arrow:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 5px;
+}
+
+/* ✨ NUEVO DISEÑO DE MODALES */
+.edit-modal, .delete-modal.new {
+  background: #fff;
+  border-radius: 15px;
+  width: 95%;
+  max-width: 480px;
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-title {
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.form-grid .full-width {
+  grid-column: 1 / span 2;
+}
+
+.modal-form input,
+.modal-form select,
+.modal-form textarea {
+  width: 100%;
+  background: #f5f7fa;
+  border: 1px solid #e1e5ea;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  color: #2c3e50;
+}
+
+.modal-form textarea {
+  resize: none;
+  height: 70px;
+}
+
+/* Botones del modal de edición */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.btn-cancel {
+  background: #ff5c70;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 22px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background: #e03e50;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #33b1ff, #9c6efc);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+  opacity: 0.9;
+}
+
+/* Modal de eliminación */
+.delete-modal.new {
+  text-align: center;
+  padding: 40px 30px;
+}
+
+.delete-title {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 25px;
+}
+
+.delete-actions.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-cancel-delete {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-gradient-delete {
+  background: linear-gradient(135deg, #33b1ff, #9c6efc);
+  border: none;
+  color: #fff;
+  padding: 12px 0;
+  border-radius: 25px;
+  width: 100%;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.btn-gradient-delete:hover {
+  opacity: 0.9;
+}
+
+
+/* Centrar correctamente los botones de Acciones */
+.list-table th.acciones-header {
+  text-align: center;
+}
+
+.list-table td.acciones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Botones redondos */
+.btn-action {
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-action.edit {
+  background-color: #3498db;
+  color: white;
+}
+
+.btn-action.delete {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-action:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+
+/* --- Botones redondos tipo imagen subida --- */
+.btn-action {
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.btn-action.edit {
+  background-color: #3498db;
+}
+
+.btn-action.delete {
+  background-color: #e74c3c;
+}
+
+.btn-action:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+
+/* --- Centrar botones del modal Editar --- */
+.modal-buttons {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: 1rem; /* Espacio entre Cancelar y Guardar */
+  margin-top: 20px;
+}
+
+/* Estilo del botón Cancelar */
+.btn-cancel {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cancel:hover {
+  background-color: #ff4c4c;
+}
+
+/* Estilo del botón Guardar */
+.btn-save {
+  background: linear-gradient(90deg, #007bff, #7b2ff7);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
 }

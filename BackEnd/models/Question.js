@@ -1,16 +1,32 @@
 // models/Question.js
-const db = require("../db");
+const db = require("../db"); // conexión MySQL
 
 const Question = {
-  create: (text, callback) => {
-    const query = "INSERT INTO questions (QuestionText) VALUES (?)";
-    db.query(query, [text], callback);
+  // Obtener todas las preguntas
+  async findAll() {
+    const [rows] = await db.query("SELECT * FROM questions ORDER BY QuestionId ASC");
+    return rows;
   },
 
-  findAll: async () => {
-    const query = "SELECT * FROM questions";
-    const [rows] = await db.query(query); // usando promesas
-    return rows;
+  // Crear una nueva pregunta
+  async create(QuestionText) {
+    const [result] = await db.query("INSERT INTO questions (QuestionText) VALUES (?)", [QuestionText]);
+    return { id: result.insertId, QuestionText };
+  },
+
+  // Actualizar una pregunta existente
+  async update(QuestionId, QuestionText) {
+    const [result] = await db.query(
+      "UPDATE questions SET QuestionText = ? WHERE QuestionId = ?",
+      [QuestionText, QuestionId]
+    );
+    return result.affectedRows > 0;
+  },
+
+  // Eliminar una pregunta
+  async remove(QuestionId) {
+    const [result] = await db.query("DELETE FROM questions WHERE QuestionId = ?", [QuestionId]);
+    return result.affectedRows > 0;
   },
 };
 

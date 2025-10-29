@@ -224,6 +224,7 @@ const ListResource = () => {
         )}
       </div>
 
+      {/* Paginación */}
       <div className="pagination">
         <button
           className="pagination-arrow"
@@ -238,7 +239,7 @@ const ListResource = () => {
             <button
               key={i + 1}
               className={`pagination-btn ${currentPage === i + 1 ? "active" : ""}`}
-              onClick={() => setCurrentPage(i + 1)}
+              onClick={() => goToPage(i + 1)}
             >
               {i + 1}
             </button>

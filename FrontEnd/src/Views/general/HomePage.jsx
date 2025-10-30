@@ -3,10 +3,12 @@ import '../CSS/components.css';
 import '../CSS/Home.css';
 import DynamicHeader from '../../components/HeaderSidebar/DynamicHeader';
 import { Link } from 'react-router-dom';
+import PromotionModal from '../../components/Modals/ModalPromotion'; // Importa tu modal aquí
 
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [user, setUser] = useState(null);
+  const [selectedPromo, setSelectedPromo] = useState(null); // Estado para el modal
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -83,7 +85,6 @@ const HomePage = () => {
     setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  // 👇 Cambiado a user.rol y user.nombre
   const getWelcomeMessage = () => {
     if (!user) return 'Happy-Art-Events';
     if (user.role === 'admin') return `Panel de Admin - ¡Hola ${user.fullName}!`;
@@ -91,8 +92,10 @@ const HomePage = () => {
   };
 
   const getWelcomeDescription = () => {
-    if (!user) return 'Nuestra empresa transforma la forma de organizar eventos a través de una plataforma moderna y segura que permite explorar nuestra galería, conocer paquetes de servicios, registrarse fácilmente, gestionar eventos, descargar contratos, agendar citas y recibir notificaciones automáticas, brindando una experiencia práctica, confiable y totalmente digital para clientes y administradores.';
-    if (user.role === 'admin') return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
+    if (!user)
+      return 'Nuestra empresa transforma la forma de organizar eventos a través de una plataforma moderna y segura que permite explorar nuestra galería, conocer paquetes de servicios, registrarse fácilmente, gestionar eventos, descargar contratos, agendar citas y recibir notificaciones automáticas, brindando una experiencia práctica, confiable y totalmente digital para clientes y administradores.';
+    if (user.role === 'admin')
+      return 'Desde aquí puedes gestionar usuarios, eventos y ver estadísticas completas.';
     return 'Ahora puedes agendar citas, ver tus eventos y acceder a promociones exclusivas.';
   };
 
@@ -105,15 +108,13 @@ const HomePage = () => {
       />
 
       <main className="container my-5 mt-5 pt-5">
+        {/* ====== SECCIÓN INICIO ====== */}
         <section id="inicio" className="mb-5 mt-5">
-          <h1 className="section-title display-4">
-            {getWelcomeMessage()}
-          </h1>
-          <p className="lead text-muted mb-4">
-            {getWelcomeDescription()}
-          </p>
+          <h1 className="section-title display-4">{getWelcomeMessage()}</h1>
+          <p className="lead text-muted mb-4">{getWelcomeDescription()}</p>
         </section>
 
+        {/* ====== GALERÍA ====== */}
         <section id="galeria" className="mb-5">
           <h2 className="section-title h3">Galería De Eventos</h2>
           <div className="carousel-container">
@@ -144,15 +145,12 @@ const HomePage = () => {
               ))}
             </div>
 
-            <button className="carousel-btn prev" onClick={prevSlide}>
-              ‹
-            </button>
-            <button className="carousel-btn next" onClick={nextSlide}>
-              ›
-            </button>
+            <button className="carousel-btn prev" onClick={prevSlide}>‹</button>
+            <button className="carousel-btn next" onClick={nextSlide}>›</button>
           </div>
         </section>
 
+        {/* ====== EVENTOS ====== */}
         <section id="eventos" className="mb-5">
           <h2 className="section-title h3">
             {user && user.role === 'admin' ? 'Gestión de Citas' : 'Agendamiento De Citas'}
@@ -162,15 +160,10 @@ const HomePage = () => {
               ? 'Como administrador, puedes ver y gestionar todas las citas del sistema.'
               : user
                 ? 'Como usuario registrado, puedes agendar citas directamente.'
-                : 'Especificación de espacio donde se podrá asignar una cita para el evento que desee el usuario.'
-            }
+                : 'Especificación de espacio donde se podrá asignar una cita para el evento que desee el usuario.'}
           </p>
           <a
-            href={
-              user
-                ? (user.role === 'admin' ? '/AdminCitas' : '/Schedule')
-                : '/login'
-            }
+            href={user ? (user.role === 'admin' ? '/AdminCitas' : '/Schedule') : '/login'}
             className="btn-secondary-custom btn"
           >
             {user && user.role === 'admin'
@@ -181,26 +174,37 @@ const HomePage = () => {
           </a>
         </section>
 
+        {/* ====== PROMOCIONES ====== */}
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Paquetes De Promociones</h2>
           <p className="text-muted mb-4">
             {user && user.role === 'admin'
               ? 'Panel de administración de promociones y paquetes.'
-              : 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.'
-            }
+              : 'Información general de la empresa, donde se especifica sus funciones, sus propósitos y objetivos generales.'}
           </p>
 
           <div className="row">
             {promociones.map((promo) => (
-              <div key={promo.id} className="col-lg-6 col-xl-3 mb-4">
+              <div
+                key={promo.id}
+                className="col-lg-6 col-xl-3 mb-4"
+                onClick={() => setSelectedPromo(promo)} // 👈 Abre el modal
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="promo-card h-100">
                   <h5 className="text-primary fw-bold mb-3">{promo.titulo}</h5>
                   <h6 className="mb-3">{promo.nombre}</h6>
-                  <p className="text-muted small mb-4" style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
+                  <p
+                    className="text-muted small mb-4"
+                    style={{ fontSize: '0.85rem', lineHeight: '1.4' }}
+                  >
                     <strong>Descripción:</strong> {promo.descripcion}
                   </p>
                   <div className="mt-auto">
-                    <p className="fw-bold mb-0" style={{ color: 'rgb(255, 83, 121)' }}>
+                    <p
+                      className="fw-bold mb-0"
+                      style={{ color: 'rgb(255, 83, 121)' }}
+                    >
                       <strong>Valor: {promo.valor}</strong>
                     </p>
                   </div>
@@ -208,33 +212,31 @@ const HomePage = () => {
               </div>
             ))}
           </div>
+
+          {/* 👇 Modal de promoción */}
+          {selectedPromo && (
+            <PromotionModal
+              promo={selectedPromo}
+              onClose={() => setSelectedPromo(null)}
+            />
+          )}
         </section>
 
+        {/* ====== CONTACTO ====== */}
         <section id="contacto" className="contact-section">
           <div className="row">
             <div className="col-md-6 mb-5 mb-md-0">
               <h3 className="section-title h4">Contacto</h3>
-              <div className="mb-3">
-                <strong>Teléfono:</strong> +57 312400579
-              </div>
-              <div className="mb-3">
-                <strong>Dirección:</strong> Calle 67 A Sur N° 68-81
-              </div>
-              <div>
-                <strong>Correo Electrónico:</strong> dpspadgpg@gmail.com
-              </div>
+              <div className="mb-3"><strong>Teléfono:</strong> +57 312400579</div>
+              <div className="mb-3"><strong>Dirección:</strong> Calle 67 A Sur N° 68-81</div>
+              <div><strong>Correo Electrónico:</strong> dpspadgpg@gmail.com</div>
             </div>
+
             <div className="col-md-6 mt-5 mt-md-0">
               <h3 className="section-title h4">Redes Sociales</h3>
-              <div className="mb-3">
-                <strong>TikTok:</strong> Happy-Art-Events
-              </div>
-              <div className="mb-3">
-                <strong>Youtube:</strong> Happy-Art-Events
-              </div>
-              <div>
-                <strong>Instagram:</strong> Happy-Art-Event
-              </div>
+              <div className="mb-3"><strong>TikTok:</strong> Happy-Art-Events</div>
+              <div className="mb-3"><strong>Youtube:</strong> Happy-Art-Events</div>
+              <div><strong>Instagram:</strong> Happy-Art-Event</div>
             </div>
           </div>
         </section>
@@ -242,7 +244,7 @@ const HomePage = () => {
 
       <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     </div>
-  )
-}
+  );
+};
 
 export default HomePage;

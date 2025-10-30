@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../CSS/FormsUser.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
 const CreateAccountForm = () => {
+  const navigate = useNavigate(); // ✅ Hook para redireccionar
+
   const [formData, setFormData] = useState({
     firstName: '',
+    rol: '',
     email: '',
-    birthDate: '',
+    birthDate: '', 
     documentType: '',
     documentNumber: '',
-    rol: '',
     password: '',
     confirmPassword: ''
   });
@@ -39,7 +42,7 @@ const CreateAccountForm = () => {
     setErrorMessage('');
 
     // Validar campos obligatorios
-    const requiredFields = ['firstName', 'email', 'birthDate', 'documentType', 'documentNumber', 'password', 'confirmPassword'];
+    const requiredFields = ['firstName', 'rol', 'email', 'birthDate', 'documentType', 'documentNumber', 'password', 'confirmPassword'];
     const emptyFields = requiredFields.filter(field => !formData[field]);
     if (emptyFields.length > 0) {
       setErrorMessage('Por favor, completa todos los campos obligatorios.');
@@ -79,6 +82,7 @@ const CreateAccountForm = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           Names: formData.firstName,
+          Rol: formData.rol,
           DocumentType: formData.documentType,
           DocumentNumber: formData.documentNumber,
           BirthDate: formData.birthDate,
@@ -94,35 +98,14 @@ const CreateAccountForm = () => {
       }
 
       alert('Cuenta creada exitosamente!');
-      setFormData({
-        firstName: '',
-        email: '',
-        birthDate: '',
-        documentType: '',
-        documentNumber: '',
-        rol: '',
-        password: '',
-        confirmPassword: ''
-      });
+
+      // ✅ Redireccionar automáticamente a la lista de cuentas
+      navigate('/admin/accounts');
 
     } catch (error) {
       console.error('Error en la petición:', error);
       setErrorMessage('Error en el servidor, intenta más tarde.');
     }
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      firstName: '',
-      email: '',
-      birthDate: '',
-      documentType: '',
-      documentNumber: '',
-      rol: '',
-      password: '',
-      confirmPassword: ''
-    });
-    setErrorMessage('');
   };
 
   return (
@@ -140,8 +123,10 @@ const CreateAccountForm = () => {
             )}
 
             <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+              
+              {/* Nombre y Rol */}
               <div className="row">
-                <div className="col-md-12 mb-3">
+                <div className="col-md-6 mb-3">
                   <label className="form-label">
                     Nombre completo <span className="text-danger">*</span>
                   </label>
@@ -154,8 +139,25 @@ const CreateAccountForm = () => {
                     onChange={handleInputChange}
                   />
                 </div>
+
+                <div className="col-md-6 mb-3">
+                  <label className="form-label">
+                    Rol <span className="text-danger">*</span>
+                  </label>
+                  <select
+                    name="rol"
+                    className="form-input"
+                    value={formData.rol}
+                    onChange={handleInputChange}
+                  >
+                    <option value="">Selecciona un rol</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Cliente">Cliente</option>
+                  </select>
+                </div>
               </div>
 
+              {/* Correo y Fecha de nacimiento */}
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
@@ -184,6 +186,7 @@ const CreateAccountForm = () => {
                 </div>
               </div>
 
+              {/* Documento */}
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
@@ -217,6 +220,7 @@ const CreateAccountForm = () => {
                 </div>
               </div>
 
+              {/* Contraseña */}
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label className="form-label">
@@ -259,11 +263,12 @@ const CreateAccountForm = () => {
                 </div>
               </div>
 
+              {/* Botones */}
               <div className="d-flex justify-content-between mt-4">
                 <button
                   type="button"
                   className="btn-cancel"
-                  onClick={() => window.history.back()}
+                  onClick={() => navigate('/admin/accounts')} // ✅ también para el botón Cancelar
                 >
                   Cancelar
                 </button>

@@ -38,6 +38,10 @@
   align-items: center;
 }
 
+.btn {
+  border-radius: 25px !important;
+}
+
 .btn-primary-custom {
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
   border: none;
@@ -99,6 +103,7 @@ button.dropdown-item-custom {
   text-decoration: none;
   transition: background-color 0.2s;
 }
+
 
 button.dropdown-item-custom:hover {
   background-color: rgba(0, 0, 0, 0.1);

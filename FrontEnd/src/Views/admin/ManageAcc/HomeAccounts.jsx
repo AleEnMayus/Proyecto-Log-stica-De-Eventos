@@ -172,7 +172,10 @@ const AdminAccountsList = () => {
             <thead>
               <tr>
                 <th>Id</th>
-                <th>Nombre usuario</th>
+                <th>Nombre Usuario</th>
+                <th>Numero de Documento</th>
+                <th>Correo Electronico</th>
+                <th>Rol</th>
                 <th>Estado</th>
                 <th>Editar</th>
                 <th>Eliminar</th>
@@ -183,6 +186,9 @@ const AdminAccountsList = () => {
                 <tr key={user.UserId}>
                   <td><span className="user-type">{user.UserId}</span></td>
                   <td><span className="user-name">{user.Names}</span></td>
+                  <td>{user.DocumentNumber}</td>
+                  <td>{user.Email}</td>
+                  <td>{capitalize(user.Role)}</td>
                   <td>
                     <button
                       className="btn-custom btn-status-custom mx-auto"

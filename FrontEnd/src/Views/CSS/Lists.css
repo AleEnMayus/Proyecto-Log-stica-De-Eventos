@@ -1,3 +1,90 @@
+
+/* ==== BOTONES DE ESTADO ==== */
+.btn-status-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 18px;
+  border-radius: 9999px; /* completamente redondeado */
+  font-size: 14px;
+  font-weight: 500;
+  border: none; /* sin borde negro */
+  cursor: pointer;
+  transition: all 0.25s ease;
+  outline: none;
+  min-width: 90px;
+}
+
+/* Estado activo (verde claro) */
+.status-active {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+/* Estado inactivo (rojo claro) */
+.status-inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Estado desconocido (gris) */
+.status-unknown {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+/* Suavizar el hover */
+.btn-status-custom:hover {
+  transform: scale(1.05);
+  filter: brightness(0.95);
+}
+
+/* ==== TABLA ==== */
+.table-container td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+}
+
+/* ==== PAGINACIÓN ==== */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px 0;
+  gap: 8px;
+}
+
+.pagination-btn,
+.pagination-number {
+  border: none;
+  background-color: #f3f4f6;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-number.active {
+  background-color: #7c3aed;
+  color: white;
+}
+
+.pagination-btn:hover,
+.pagination-number:hover {
+  background-color: #ddd6fe;
+  transform: scale(1.05);
+}
+
+
+
+/* ==== GENERAL ==== */
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  padding: 20px;
+}
 /* Contenedor principal de listas */
 .list-container {
   padding: 80px 20px 5px; /* margen por header fijo */
@@ -96,33 +183,19 @@ input:focus {
   border-bottom: 1px solid #f0f0f0;
 }
 
+/* 🔹 Evita que el texto se extienda y lo muestra verticalmente */
+.list-table td {
+  white-space: normal !important;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 150px;
+  text-align: center;
+}
+
 .list-table th {
   background: #f9fafc;
   font-weight: 600;
   color: #34495e;
-}
-
-/* Información de usuario */
-.user-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-name {
-  font-weight: 500;
-  color: #2c3e50;
-}
-
-/* Tipos de usuario */
-.user-type.admin {
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-.user-type.user {
-  color: #27ae60;
-  font-weight: bold;
 }
 
 /* Botones de acción */
@@ -137,11 +210,6 @@ input:focus {
   align-items: center;
   justify-content: center;
   gap: 4px;
-}
-
-.btn-status-custom {
-  background: #f1f1f1;
-  color: #333;
 }
 
 .btn-edit-custom {
@@ -167,12 +235,48 @@ input:focus {
   font-size: 1rem;
 }
 
-/* Utilidades responsive */
-@media (min-width: 770px) {
-  .w-50-lg {
-    width: 50% !important;
-  }
+/* ==== MULTILÍNEA EN CELDAS ==== */
+.td-description {
+  max-width: 200px;
+  white-space: normal;
+  word-wrap: break-word;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.4;
+  padding: 10px;
 }
+
+/* ==== PESTAÑAS DE LISTAS ==== */
+.list-tabs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 20px auto 30px;
+}
+
+.tab-btn {
+  background: #ede9fe;
+  color: #5b21b6;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.tab-btn:hover {
+  background: #d8b4fe;
+}
+
+.tab-btn.active {
+  background: #7c3aed;
+  color: #fff;
+  border-color: #6d28d9;
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.4);
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -192,38 +296,52 @@ input:focus {
     padding: 4px 8px;
     font-size: 0.75rem;
   }
-  .list-container{
+
+  .list-container {
     padding-left: 5px !important;
     padding-right: 5px !important;
   }
 }
-
-
-
-
-/* 🔹 Botones de acción (Editar / Eliminar) */
-.btn-action {
-  border: none;
-  border-radius: 25px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  display: inline-flex;
-  align-items: center;
+/* ===== PAGINACIÓN MODERNA ===== */
+.pagination-container {
+  display: flex;
   justify-content: center;
-  width: 40px;
-  height: 35px;
+  align-items: center;
+  gap: 8px;
+  margin-top: 25px;
 }
 
-.btn-action.edit {
-  background-color: #3498db; /* Azul */
+.pagination-btn,
+.pagination-number {
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  color: #111827;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.btn-action.delete {
-  background-color: #e74c3c; /* Rojo */
-}
-
-.btn-action:hover {
+.pagination-btn:hover,
+.pagination-number:hover {
+  background-color: #f3f4f6;
   transform: scale(1.05);
-  opacity: 0.9;
+}
+
+.pagination-number.active {
+  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  color: #fff;
+  border: none;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }

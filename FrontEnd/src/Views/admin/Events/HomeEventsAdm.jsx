@@ -105,7 +105,7 @@ const ListEventsA = () => {
       <HeaderAdm />
 
       {/* Header */}
-      <div className="list-header mt-5 pt-5">
+      <div className="list-header mt-3">
         <h2 className="list-title">LISTADO DE EVENTOS</h2>
         <Link to="/CreateEvent" className="btn-create">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff">

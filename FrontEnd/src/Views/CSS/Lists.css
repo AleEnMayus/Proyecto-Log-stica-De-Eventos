@@ -1,6 +1,6 @@
 /* Contenedor principal de listas */
 .list-container {
-  padding: 80px 20px 40px; /* margen por header fijo */
+  padding: 80px 20px 5px; /* margen por header fijo */
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -184,7 +184,7 @@ input:focus {
 
   .list-table th,
   .list-table td {
-    padding: 10px;
+    padding: 4px 0px;
     font-size: 0.85rem;
   }
 

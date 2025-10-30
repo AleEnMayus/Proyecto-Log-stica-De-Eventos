@@ -102,11 +102,10 @@ const EventDetailsA = () => {
 
       if (!response.ok) throw new Error(`Error al cambiar estado: ${response.status}`);
 
-      const data = await response.json();
-
+      // Actualiza inmediatamente el estado en el frontend
       setEventData((prev) => ({
         ...prev,
-        EventStatus: data.EventStatus
+        EventStatus: newStatus
       }));
 
       setShowStateModal(false);

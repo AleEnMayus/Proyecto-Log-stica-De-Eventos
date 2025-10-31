@@ -71,25 +71,37 @@ const routeConfig = {
   ],
   admin: [
     { path: '/NotificationsAdmin', component: Notification },
+    // Recursos
+
     { path: '/HomeResources', component: ListResource },
     { path: '/CreateResource', component: CreateResource },
+
+    // Encuestas
     { path: '/SurvayHome', component: Survay },
     { path: '/SurvayHome/create', component: CreateSurvay },
     
     // Galería
-    { path: '/GalleryAdmin2', component: ImageGalleryA },
-    { path: '/GalleryViewAdmin', component: ImageGallery },
-    { path: '/GalleryAdmin', component: ManagerImageGallery },
+    { path: '/GalleryAdmin', component: ImageGalleryA },
+    { path: '/GalleryViewAdmin/:ImgId', component: ImageGallery },
+    { path: '/GalleryAdminEdit', component: ManagerImageGallery },
+
+    // Cuentas de usuario
     { path: '/ManageAccounts', component: AdminAccountsList },
     { path: '/CreateAccount', component: CreateAccountForm },
     { path: '/ManageAccounts/edit/:userId', component: EditAccountPage },
     { path: '/CalendarAdmin', component: AdminCalendar },
+
+    // Contratos
     { path: '/SendContractsAdmin', component: ContractsAdmin },
     { path: '/ListContracts', component: ContractsList },
+
+    // Eventos
     { path: '/EventsHomeAdmin', component: ListEventsA },
     { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
     { path: '/EditEvent/:eventId', component: EditEvent },
+
+    // Promociones
     { path: '/PromotionsAdmin', component: PromotionsAdmin },
     { path: '/PromotionsForm', component: PromotionsForm },
     { path: '/PromotionsEdit/:promoId', component: PromotionsEdit }

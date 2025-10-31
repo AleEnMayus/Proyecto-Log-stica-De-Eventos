@@ -32,7 +32,7 @@ const ModalState = ({
 
   return (
     <div className="sidebar-overlay active">
-      <div className="profile-modal">
+      <div className="profile-modal mt-5">
         <button className="close-btn" onClick={onClose}>×</button>
 
         <h2 className="modal-title text-center">{title}</h2>
@@ -58,7 +58,6 @@ const ModalState = ({
         </div>
 
         <div className="pm-footer">
-          <button className="btn btn-status w-100" onClick={onClose}>Cancelar</button>
           <button 
             onClick={handleStatusChange}
             disabled={!selectedStatus}
@@ -66,6 +65,7 @@ const ModalState = ({
           >
             Cambiar
           </button>
+          <button className="btn btn-status w-100" onClick={onClose}>Cancelar</button>
         </div>
       </div>
     </div>

@@ -100,7 +100,7 @@ CREATE TABLE MultimediaFile (
     FileId INT PRIMARY KEY AUTO_INCREMENT,
     FileName VARCHAR(50) NOT NULL,
     FilePath VARCHAR(256) NOT NULL,
-    Extension ENUM('JPG','PNG') NOT NULL
+    Extension ENUM('JPG','PNG','JPEG') NOT NULL
 );
 
 -- ==========================================================

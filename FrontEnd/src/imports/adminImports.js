@@ -1,5 +1,6 @@
 export { default as Notification } from '../Views/admin/Notification'
 export { default as AdminCalendar } from '../Views/admin/Calendaradmin'
+export { default as HomeAdmin } from '../Views/general/HomePageAdm'
 // Gestión de Eventos
 export { default as ListEventsA } from '../Views/admin/Events/HomeEventsAdm'
 export { default as EventDetailsA } from '../Views/admin/Events/EventDetailsAdm'
@@ -21,9 +22,3 @@ export { default as ContractsList } from '../Views/admin/Contracts/ListContracts
 // Gestión de Encuestas
 export { default as Survay } from '../Views/admin/CreateSurvey/survey'
 export { default as CreateSurvay } from '../Views/admin/CreateSurvey/createsurvey'
-// Gestion de promociones 
-export { default as PromotionsAdmin } from '../Views/admin/Promotions/HomePromotions'
-export { default as PromotionsForm } from '../Views/admin/Promotions/CreatePromotions'
-export { default as PromotionsEdit} from '../Views/admin/Promotions/EditPromotions'
-
-// 

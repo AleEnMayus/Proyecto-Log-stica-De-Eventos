@@ -150,20 +150,7 @@ CREATE TABLE Promotions (
 	PromotionId INT PRIMARY KEY AUTO_INCREMENT,
 	TitleProm VARCHAR (25),
 	DescriptionProm VARCHAR (255),
-	Price DECIMAL(10,2),
-	StatusProm ENUM('active', 'inactive') DEFAULT 'inactive'
-);
-
--- ==========================================================
--- TABLA: ASIGNACION DE PROMOCIONES
--- ==========================================================
-
-CREATE TABLE PromotionEvent (
-    PromotionEventId INT AUTO_INCREMENT PRIMARY KEY,
-    EventId INT,
-    PromotionId INT,
-    FOREIGN KEY (EventId) REFERENCES Events(EventId) ON DELETE CASCADE,
-    FOREIGN KEY (PromotionId) REFERENCES Promotions(PromotionId) ON DELETE RESTRICT
+	Price DECIMAL(10,2)
 );
 
 -- ==========================================================

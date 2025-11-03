@@ -62,28 +62,6 @@ const LoginPage = () => {
     window.history.back();
   };
 
-  // Simulación de login con Google
-  const handleGoogleLogin = () => {
-    const googleUser = {
-      id: 4,
-      name: 'Usuario Google',
-      role: 'user',
-      email: 'google@usuario.com',
-      fullName: 'Usuario Google',
-      birthDate: '',
-      identificationType: '',
-      documentNumber: '',
-      profilePicture: 'https://randomuser.me/api/portraits/men/50.jpg'
-    };
-
-    localStorage.setItem('user', JSON.stringify(googleUser));
-    addToast("Inicio de sesión con Google exitoso", "success");
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-  };
-
   return (
     <div className="login-container">
       <ToastContainer toasts={toasts} removeToast={removeToast} />

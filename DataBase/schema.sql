@@ -32,6 +32,7 @@ CREATE TABLE Events (
     ClientId INT NOT NULL,
     EventStatus ENUM('In_planning', 'In_execution', 'Completed', 'Canceled') DEFAULT 'In_planning',
     Capacity INT NOT NULL,
+    EventPrice FLOAT NOT NULL,
     AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     EventDateTime DATETIME NOT NULL,

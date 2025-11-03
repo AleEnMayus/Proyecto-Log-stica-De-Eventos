@@ -58,6 +58,11 @@ const RegisterPage = () => {
       return;
     }
 
+    if (!formData.birthDate || formData.birthDate.trim() === "") {
+      addToast('Debes ingresar tu fecha de nacimiento', 'danger');
+      return;
+    }
+
     const birthDate = new Date(formData.birthDate);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -76,11 +81,17 @@ const RegisterPage = () => {
       return;
     }
 
+    // ✅ ARREGLA EL REGISTRO → convierte birthDate al formato correcto YYYY-MM-DD
+    const formattedData = {
+      ...formData,
+      birthDate: new Date(formData.birthDate).toISOString().slice(0, 10)
+    };
+
     try {
       const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formattedData) // ✅ se envía con formato válido
       });
 
       if (response.ok) {
@@ -234,6 +245,7 @@ const RegisterPage = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
+                    {/* ✅ NO TOQUÉ tus iconos */}
                     {showPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -269,6 +281,7 @@ const RegisterPage = () => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
+                    {/* ✅ iconos intactos */}
                     {showConfirmPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

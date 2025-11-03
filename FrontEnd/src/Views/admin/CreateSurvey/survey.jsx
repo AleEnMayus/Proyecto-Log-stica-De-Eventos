@@ -110,7 +110,7 @@ const Survey = () => {
 
       {/* Header */}
       <div className="list-header mt-5 pt-5">
-        <h2 className="list-title">Preguntas Registradas</h2>
+        <h2 className="list-title">PREGUNTAS REGISTRADAS</h2>
         <Link to="/SurvayHome/create" className="btn-create">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -155,7 +155,8 @@ const Survey = () => {
             <tr>
               <th>ID</th>
               <th>Pregunta</th>
-              <th className="acciones-header">Acciones</th>
+              <th className="acciones-header">Editar</th>
+              <th className="acciones-header">Eliminar</th>
             </tr>
           </thead>
           <tbody>
@@ -163,25 +164,27 @@ const Survey = () => {
               <tr key={q.QuestionId}>
                 <td>{q.QuestionId}</td>
                 <td>{q.QuestionText}</td>
-                <td className="acciones">
+                <td className="Editar">
                   <button
-                    className="btn-action edit"
-                    title="Editar"
+                    className="btn-custom btn-edit-custom mx-auto"
                     onClick={() => handleEditClick(q)}
+                    aria-label="Editar"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" fill="#fff" viewBox="0 0 24 24">
-                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42L18.37 3.29a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.83z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z" />
                     </svg>
                   </button>
+                  <td className="Eliminar"></td>
                   <button
-                    className="btn-action delete"
-                    title="Eliminar"
+                    className="btn-custom btn-delete-custom mx-auto"
                     onClick={() => confirmDelete(q)}
+                    aria-label="Eliminar"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" fill="#fff" viewBox="0 0 24 24">
-                      <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                      <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
                     </svg>
                   </button>
+
                 </td>
               </tr>
             ))}

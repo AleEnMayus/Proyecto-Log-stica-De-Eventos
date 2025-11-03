@@ -3,15 +3,17 @@ import '../CSS/components.css';
 import '../CSS/Home.css';
 import '../../Views/CSS/HeaderSB.css';
 import HeaderAdm from '../../components/HeaderSidebar/HeaderAdm';
-import PromotionModal from '../../components/Modals/ModalPromotion';
+import PromotionModal from '../../components/Modals/PromotionModal/EditPromotion';
+import ModalPromotionCreate from '../../components/Modals/PromotionModal/CreatePromotion';
 
 const HomeAdmin = ({ user, onLogout }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedPromo, setSelectedPromo] = useState(null);
+  const [creating, setCreating] = useState(false); 
   const [adminUser, setAdminUser] = useState(user || null);
+  const [promociones, setPromociones] = useState([]);
 
   useEffect(() => {
-    // Carga del usuario desde localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) setAdminUser(JSON.parse(storedUser));
 
@@ -24,11 +26,19 @@ const HomeAdmin = ({ user, onLogout }) => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Funciones para el carrusel
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % images.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
+  // Cargar promociones
+  const loadPromotions = () => {
+    fetch("http://localhost:4000/api/promotions")
+      .then(res => res.json())
+      .then(data => setPromociones(data))
+      .catch(err => console.error("Error cargando promociones:", err));
+  };
 
-  // Imágenes de galería
+  useEffect(() => {
+    loadPromotions();
+  }, []);
+
+  // Carrusel
   const images = [
     { id: 1, alt: "Evento 1" },
     { id: 2, alt: "Evento 2" },
@@ -37,44 +47,16 @@ const HomeAdmin = ({ user, onLogout }) => {
     { id: 5, alt: "Evento 5" }
   ];
 
-  // Promociones (de ejemplo)
-  const promociones = [
-    {
-      id: 1,
-      titulo: "PROMOCIÓN UNO",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    },
-    {
-      id: 2,
-      titulo: "PROMOCIÓN DOS",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    },
-    {
-      id: 3,
-      titulo: "PROMOCIÓN TRES",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    },
-    {
-      id: 4,
-      titulo: "PROMOCIÓN CUATRO",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    }
-  ];
+  const nextSlide = () => setCurrentSlide(prev => (prev + 1) % images.length);
+  const prevSlide = () => setCurrentSlide(prev => (prev - 1 + images.length) % images.length);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
       <HeaderAdm user={adminUser} onLogout={onLogout} />
 
       <main className="container my-5 mt-5 pt-5">
-        {/* ====== SECCIÓN INICIO ====== */}
+        
+        {/* INICIO */}
         <section id="inicio" className="mb-5 mt-5">
           <h1 className="section-title display-4">
             Panel de Administrador - ¡Bienvenido {adminUser?.fullName || 'Administrador'}!
@@ -84,7 +66,7 @@ const HomeAdmin = ({ user, onLogout }) => {
           </p>
         </section>
 
-        {/* ====== GALERÍA ====== */}
+        {/* GALERÍA */}
         <section id="galeria" className="mb-5">
           <h2 className="section-title h3">Galería de Eventos</h2>
           <div className="carousel-container">
@@ -120,50 +102,57 @@ const HomeAdmin = ({ user, onLogout }) => {
           </div>
         </section>
 
-        {/* ====== CITAS ====== */}
+        {/* CITAS */}
         <section id="citas" className="mb-5">
-          <h2 className="section-title h3">Gestión de Citas</h2>
+          <h2 className="section-title h3">Gestión de Eventos</h2>
           <p className="text-muted mb-4">
-            Como administrador, puedes ver y gestionar todas las citas registradas en el sistema.
+            Como administrador, puedes ver y gestionar todas los eventos registrados en el sistema.
           </p>
-          <a
-            href="/AdminCitas"
-            className="btn-secondary-custom btn"
-          >
-            Gestionar Citas
+          <a href="/EventsHomeAdmin" className="btn-secondary-custom btn">
+            Gestionar Eventos
           </a>
         </section>
 
-        {/* ====== PROMOCIONES ====== */}
+        {/* ✅ PROMOCIONES (ACTUALIZADO) */}
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Administrar Promociones</h2>
           <p className="text-muted mb-4">
             Aquí puedes visualizar, modificar o eliminar promociones y paquetes del sistema.
           </p>
 
+          {promociones.length < 4 && (
+            <div className="text-end mb-3">
+              <button
+                className="btn-primary-custom btn"
+                onClick={() => setCreating(true)}
+              >
+                + Crear Promoción
+              </button>
+            </div>
+          )}
+
           <div className="row">
             {promociones.map((promo) => (
               <div
-                key={promo.id}
+                key={promo.PromotionId}
                 className="col-lg-6 col-xl-3 mb-4"
                 onClick={() => setSelectedPromo(promo)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="promo-card h-100">
-                  <h5 className="text-primary fw-bold mb-3">{promo.titulo}</h5>
-                  <h6 className="mb-3">{promo.nombre}</h6>
-                  <p
-                    className="text-muted small mb-4"
-                    style={{ fontSize: '0.85rem', lineHeight: '1.4' }}
-                  >
-                    <strong>Descripción:</strong> {promo.descripcion}
+
+                  <h5 className="text-primary fw-bold mb-3">
+                    {promo.TitleProm}
+                  </h5>
+
+                  {/* ✅ DESCRIPCIÓN TRUNCADA */}
+                  <p className="promo-description">
+                    {promo.DescriptionProm}
                   </p>
+
                   <div className="mt-auto">
-                    <p
-                      className="fw-bold mb-0"
-                      style={{ color: 'rgb(255, 83, 121)' }}
-                    >
-                      <strong>Valor: {promo.valor}</strong>
+                    <p className="fw-bold mb-0" style={{ color: 'rgb(255, 83, 121)' }}>
+                      <strong>Valor: ${promo.Price}</strong>
                     </p>
                   </div>
                 </div>
@@ -171,33 +160,43 @@ const HomeAdmin = ({ user, onLogout }) => {
             ))}
           </div>
 
-          {/* Modal de promoción */}
+          {/* Modal Editar */}
           {selectedPromo && (
             <PromotionModal
               promo={selectedPromo}
               onClose={() => setSelectedPromo(null)}
+              refreshPromos={loadPromotions}
+            />
+          )}
+
+          {/* Modal Crear */}
+          {creating && (
+            <ModalPromotionCreate
+              onClose={() => setCreating(false)}
+              refreshPromos={loadPromotions}
             />
           )}
         </section>
 
-        {/* ====== CONTACTO ====== */}
+        {/* CONTACTO */}
         <section id="contacto" className="contact-section">
           <div className="row">
             <div className="col-md-6 mb-5 mb-md-0">
               <h3 className="section-title h4">Contacto</h3>
-              <div className="mb-3"><strong>Teléfono:</strong> +57 312400579</div>
-              <div className="mb-3"><strong>Dirección:</strong> Calle 67 A Sur N° 68-81</div>
-              <div><strong>Correo Electrónico:</strong> dpspadgpg@gmail.com</div>
+              <div className="mb-3"><strong>Teléfono:</strong> +57 3133409132</div>
+              <div className="mb-3"><strong>Dirección:</strong> Calle 77 Sur N° 81H-20/Bogotá D.C-Colombia</div>
+              <div><strong>Correo Electrónico:</strong> happy.art.eventos@gmail.com</div>
             </div>
 
             <div className="col-md-6 mt-5 mt-md-0">
               <h3 className="section-title h4">Redes Sociales</h3>
-              <div className="mb-3"><strong>TikTok:</strong> Happy-Art-Events</div>
-              <div className="mb-3"><strong>Youtube:</strong> Happy-Art-Events</div>
-              <div><strong>Instagram:</strong> Happy-Art-Event</div>
+              <div className="mb-3"><strong>TikTok:</strong> @happy.art.eventos</div>
+              <div className="mb-3"><strong>Instagram:</strong> @happy_art_eventos</div>
+              <div className="mb-3"><strong>Facebook:</strong> Happy-Art-EVENTOS</div>
             </div>
           </div>
         </section>
+
       </main>
     </div>
   );

@@ -227,6 +227,17 @@
   font-weight: 500;
 }
 
+.modal-description {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  background: #f3f5f7;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 6px;
+}
+
+
 /* Recursos desabilitados */
 /* Fila deshabilitada */
 .disabled-row {

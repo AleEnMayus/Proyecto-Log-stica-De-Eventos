@@ -63,7 +63,7 @@
 }
 
 .btn-secondary-custom {
-  background: rgb(255, 83, 121);
+  background: rgb(251, 82, 119);
   border: none;
   border-radius: 25px;
   padding: 10px 25px;
@@ -337,6 +337,33 @@ button.dropdown-item-custom:focus {
   opacity: 1;
   transform: rotate(45deg) scale(1);
 }
+
+/* Evitar desbordes en la descripción de promociones */
+.promo-card {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  height: 100%;
+  overflow: hidden;
+}
+
+.promo-description {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical; 
+  -webkit-line-clamp: 3;
+
+  line-clamp: 3;
+}
+
+
 
 @media (max-width: 770px) {
   .title-headersb{

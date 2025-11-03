@@ -58,7 +58,6 @@ const ModalState = ({
         </div>
 
         <div className="pm-footer">
-          <button className="btn btn-status w-100" onClick={onClose}>Cancelar</button>
           <button 
             onClick={handleStatusChange}
             disabled={!selectedStatus}
@@ -66,6 +65,7 @@ const ModalState = ({
           >
             Cambiar
           </button>
+          <button className="btn-secondary-custom w-100" onClick={onClose}>Cancelar</button>
         </div>
       </div>
     </div>

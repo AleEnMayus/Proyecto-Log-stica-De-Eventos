@@ -163,7 +163,7 @@ const AdminAccountsList = () => {
           >
             <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
           </svg>
-          CREAR CUENTA
+          Crear Cuenta
         </Link>
       </div>
 

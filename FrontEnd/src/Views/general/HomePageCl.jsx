@@ -3,12 +3,17 @@ import '../CSS/components.css';
 import '../CSS/Home.css';
 import '../../Views/CSS/HeaderSB.css';
 import HeaderCl from '../../components/HeaderSidebar/HeaderCl';
-import PromotionModal from '../../components/Modals/ModalPromotion';
+
+// modal SOLO LECTURA
+import ModalPromotionView from '../../components/Modals/PromotionModal/ModalPromotionView';
 
 const HomeClient = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [user, setUser] = useState(null);
   const [selectedPromo, setSelectedPromo] = useState(null);
+
+  // Promociones reales
+  const [promociones, setPromociones] = useState([]);
 
   // === Cargar usuario desde localStorage ===
   useEffect(() => {
@@ -27,6 +32,14 @@ const HomeClient = () => {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
+  }, []);
+
+  // Cargar promociones reales desde el backend
+  useEffect(() => {
+    fetch("http://localhost:4000/api/promotions")
+      .then(res => res.json())
+      .then(data => setPromociones(data))
+      .catch(err => console.error("Error cargando promociones:", err));
   }, []);
 
   // === Login y Logout ===
@@ -52,14 +65,6 @@ const HomeClient = () => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % images.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
 
-  // === Promociones ===
-  const promociones = [
-    { id: 1, titulo: "PROMOCIÓN UNO", nombre: "Fiesta Premium", descripcion: "Paquete con decoración, catering y animación infantil.", valor: "$1.000.000" },
-    { id: 2, titulo: "PROMOCIÓN DOS", nombre: "Evento Corporativo", descripcion: "Ideal para reuniones empresariales y cenas ejecutivas.", valor: "$1.500.000" },
-    { id: 3, titulo: "PROMOCIÓN TRES", nombre: "Cumpleaños Sorpresa", descripcion: "Organizamos tu sorpresa completa con detalles personalizados.", valor: "$900.000" },
-    { id: 4, titulo: "PROMOCIÓN CUATRO", nombre: "Boda de Ensueño", descripcion: "Incluye planificación total, música, decoración y fotografía.", valor: "$2.500.000" }
-  ];
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
       {/* ====== HEADER CLIENTE ====== */}
@@ -68,7 +73,9 @@ const HomeClient = () => {
       <main className="container my-5 mt-5 pt-5">
         {/* ====== SECCIÓN BIENVENIDA ====== */}
         <section id="inicio" className="mb-5 mt-5">
-          <h1 className="section-title display-4">Panel de Cliente - ¡Bienvenido {user?.fullName }!</h1>
+          <h1 className="section-title display-4">
+            Panel de Cliente - ¡Bienvenido {user?.fullName}!
+          </h1>
           <p className="lead text-muted mb-4">
             Ahora puedes agendar citas, ver tus eventos y acceder a promociones exclusivas.
           </p>
@@ -131,23 +138,21 @@ const HomeClient = () => {
           <div className="row">
             {promociones.map((promo) => (
               <div
-                key={promo.id}
+                key={promo.PromotionId}
                 className="col-lg-6 col-xl-3 mb-4"
                 onClick={() => setSelectedPromo(promo)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="promo-card h-100">
-                  <h5 className="text-primary fw-bold mb-3">{promo.titulo}</h5>
-                  <h6 className="mb-3">{promo.nombre}</h6>
-                  <p
-                    className="text-muted small mb-4"
-                    style={{ fontSize: '0.85rem', lineHeight: '1.4' }}
-                  >
-                    <strong>Descripción:</strong> {promo.descripcion}
+                  <h5 className="text-primary fw-bold mb-3">{promo.TitleProm}</h5>
+
+                  <p className="text-muted small mb-4" style={{ fontSize: '0.85rem' }}>
+                    <strong>Descripción:</strong> {promo.DescriptionProm}
                   </p>
+
                   <div className="mt-auto">
                     <p className="fw-bold mb-0" style={{ color: 'rgb(255, 83, 121)' }}>
-                      <strong>Valor: {promo.valor}</strong>
+                      <strong>Valor: ${promo.Price}</strong>
                     </p>
                   </div>
                 </div>
@@ -155,9 +160,9 @@ const HomeClient = () => {
             ))}
           </div>
 
-          {/* Modal de promoción */}
+          {/* ✅ Modal solo lectura */}
           {selectedPromo && (
-            <PromotionModal
+            <ModalPromotionView
               promo={selectedPromo}
               onClose={() => setSelectedPromo(null)}
             />
@@ -169,16 +174,16 @@ const HomeClient = () => {
           <div className="row">
             <div className="col-md-6 mb-5 mb-md-0">
               <h3 className="section-title h4">Contacto</h3>
-              <div className="mb-3"><strong>Teléfono:</strong> +57 312400579</div>
-              <div className="mb-3"><strong>Dirección:</strong> Calle 67 A Sur N° 68-81</div>
-              <div><strong>Correo Electrónico:</strong> dpspadgpg@gmail.com</div>
+              <div className="mb-3"><strong>Teléfono:</strong> +57 3133409132</div>
+              <div className="mb-3"><strong>Dirección:</strong> Calle 77 Sur N° 81H-20/Bogotá D.C-Colombia</div>
+              <div><strong>Correo Electrónico:</strong> happy.art.eventos@gmail.com</div>
             </div>
 
             <div className="col-md-6 mt-5 mt-md-0">
               <h3 className="section-title h4">Redes Sociales</h3>
-              <div className="mb-3"><strong>TikTok:</strong> Happy-Art-Events</div>
-              <div className="mb-3"><strong>Youtube:</strong> Happy-Art-Events</div>
-              <div><strong>Instagram:</strong> Happy-Art-Event</div>
+              <div className="mb-3"><strong>TikTok:</strong> @happy.art.eventos</div>
+              <div className="mb-3"><strong>Instagram:</strong> @happy_art_eventos</div>
+              <div className="mb-3"><strong>Facebook:</strong> Happy-Art-EVENTOS</div>
             </div>
           </div>
         </section>

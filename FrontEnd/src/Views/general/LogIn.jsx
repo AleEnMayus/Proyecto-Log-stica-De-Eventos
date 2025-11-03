@@ -163,35 +163,34 @@ const LoginPage = () => {
               </button>
             </div>
 
-            <div className="form-options">
-              <Link to="/recover" className="forgot-password">
+            <div
+              className="form-options"
+              style={{ width: "100%", marginBottom: "15px", display: "flex", justifyContent: "center" }}
+            >
+              <Link
+                to="/recover"
+                className="forgot-password"
+                style={{ display: "block", textAlign: "center" }}
+              >
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
 
+
             <button
               type="submit"
-              className="btn-primary-custom login-btn"
+              className="btn-primary-custom"
               disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "14px 0",
+                fontSize: "16px"
+              }}
             >
               {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
           </form>
-
-          <div className="divider">
-            <span>O continúa con</span>
-          </div>
-
-          <div className="social-buttons">
-            <button
-              className="social-btn"
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Conectando...' : 'Google'}
-            </button>
-          </div>
+          <div className="divider">O</div>
 
           <p className="register-link">
             ¿No tienes una cuenta?{' '}

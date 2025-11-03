@@ -1,51 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../CSS/components.css';
 import '../CSS/Home.css';
 import '../../Views/CSS/HeaderSB.css';
 import HeaderSidebar from '../../components/HeaderSidebar/HeaderSidebar';
-import PromotionModal from '../../components/Modals/ModalPromotion';
+
+// Modal SOLO LECTURA para guest
+import ModalPromotionView from '../../components/Modals/PromotionModal/ModalPromotionView';
 
 const HomeGuest = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // promociones reales desde BD
+  const [promociones, setPromociones] = useState([]);
+
+  // para abrir modal
   const [selectedPromo, setSelectedPromo] = useState(null);
 
+  // ============================
+  // Cargar promociones reales
+  // ============================
+  const loadPromotions = () => {
+    fetch("http://localhost:4000/api/promotions")
+      .then(res => res.json())
+      .then(data => setPromociones(data))
+      .catch(err => console.error("Error cargando promociones:", err));
+  };
+
+  useEffect(() => {
+    loadPromotions();
+  }, []);
+
+  // ============================
+  // ✅ Carrusel
+  // ============================
   const images = [
     { id: 1, alt: "Evento 1" },
     { id: 2, alt: "Evento 2" },
     { id: 3, alt: "Evento 3" },
     { id: 4, alt: "Evento 4" },
     { id: 5, alt: "Evento 5" }
-  ];
-
-  const promociones = [
-    {
-      id: 1,
-      titulo: "PROMOCION UNO",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    },
-    {
-      id: 2,
-      titulo: "PROMOCION DOS",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    },
-    {
-      id: 3,
-      titulo: "PROMOCION TRES",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    },
-    {
-      id: 4,
-      titulo: "PROMOCION CUATRO",
-      nombre: "Nombre Promoción",
-      descripcion: "Lorem ipsum dolor sit amet...",
-      valor: "$1.000.000"
-    }
   ];
 
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % images.length);
@@ -56,6 +49,10 @@ const HomeGuest = () => {
       <HeaderSidebar />
 
       <main className="container my-5 mt-5 pt-5">
+
+        {/* ===============================
+            SECCIÓN INICIO
+        =============================== */}
         <section id="inicio" className="mb-5 mt-5">
           <h1 className="section-title display-4">Happy-Art-Events</h1>
           <p className="lead text-muted mb-4">
@@ -63,6 +60,9 @@ const HomeGuest = () => {
           </p>
         </section>
 
+        {/* ===============================
+            GALERÍA
+        =============================== */}
         <section id="galeria" className="mb-5">
           <h2 className="section-title h3">Galería De Eventos</h2>
           <div className="carousel-container">
@@ -92,6 +92,9 @@ const HomeGuest = () => {
           </div>
         </section>
 
+        {/* ===============================
+            CITAS
+        =============================== */}
         <section id="eventos" className="mb-5">
           <h2 className="section-title h3">Agendamiento De Citas</h2>
           <p className="text-muted mb-4">
@@ -102,6 +105,9 @@ const HomeGuest = () => {
           </a>
         </section>
 
+        {/* ===============================
+            PROMOCIONES (solo lectura)
+        =============================== */}
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Paquetes De Promociones</h2>
           <p className="text-muted mb-4">Información general de la empresa.</p>
@@ -109,20 +115,22 @@ const HomeGuest = () => {
           <div className="row">
             {promociones.map((promo) => (
               <div
-                key={promo.id}
+                key={promo.PromotionId}
                 className="col-lg-6 col-xl-3 mb-4"
                 onClick={() => setSelectedPromo(promo)}
                 style={{ cursor: 'pointer' }}
               >
                 <div className="promo-card h-100">
-                  <h5 className="text-primary fw-bold mb-3">{promo.titulo}</h5>
-                  <h6 className="mb-3">{promo.nombre}</h6>
-                  <p className="text-muted small mb-4" style={{ fontSize: '0.85rem', lineHeight: '1.4' }}>
-                    <strong>Descripción:</strong> {promo.descripcion}
+                  <h5 className="text-primary fw-bold mb-3">{promo.TitleProm}</h5>
+
+                  {/* ✅ DESCRIPCIÓN CON LÍMITE DE 3 LÍNEAS */}
+                  <p className="promo-description">
+                    <strong>Descripción:</strong> {promo.DescriptionProm}
                   </p>
+
                   <div className="mt-auto">
                     <p className="fw-bold mb-0" style={{ color: 'rgb(255, 83, 121)' }}>
-                      <strong>Valor: {promo.valor}</strong>
+                      <strong>Valor: ${promo.Price}</strong>
                     </p>
                   </div>
                 </div>
@@ -130,22 +138,32 @@ const HomeGuest = () => {
             ))}
           </div>
 
-          {selectedPromo && <PromotionModal promo={selectedPromo} onClose={() => setSelectedPromo(null)} />}
+          {/* ✅ Modal SOLO LECTURA */}
+          {selectedPromo && (
+            <ModalPromotionView
+              promo={selectedPromo}
+              onClose={() => setSelectedPromo(null)}
+            />
+          )}
         </section>
 
+        {/* ===============================
+            CONTACTO
+        =============================== */}
         <section id="contacto" className="contact-section">
           <div className="row">
             <div className="col-md-6 mb-5 mb-md-0">
               <h3 className="section-title h4">Contacto</h3>
-              <div className="mb-3"><strong>Teléfono:</strong> +57 312400579</div>
-              <div className="mb-3"><strong>Dirección:</strong> Calle 67 A Sur N° 68-81</div>
-              <div><strong>Correo Electrónico:</strong> dpspadgpg@gmail.com</div>
+              <div className="mb-3"><strong>Teléfono:</strong> +57 3133409132</div>
+              <div className="mb-3"><strong>Dirección:</strong> Calle 77 Sur N° 81H-20/Bogotá D.C-Colombia</div>
+              <div><strong>Correo Electrónico:</strong> happy.art.eventos@gmail.com</div>
             </div>
+
             <div className="col-md-6 mt-5 mt-md-0">
               <h3 className="section-title h4">Redes Sociales</h3>
-              <div className="mb-3"><strong>TikTok:</strong> Happy-Art-Events</div>
-              <div className="mb-3"><strong>Youtube:</strong> Happy-Art-Events</div>
-              <div><strong>Instagram:</strong> Happy-Art-Event</div>
+              <div className="mb-3"><strong>TikTok:</strong> @happy.art.eventos</div>
+              <div className="mb-3"><strong>Instagram:</strong> @happy_art_eventos</div>
+              <div className="mb-3"><strong>Facebook:</strong> Happy-Art-EVENTOS</div>
             </div>
           </div>
         </section>

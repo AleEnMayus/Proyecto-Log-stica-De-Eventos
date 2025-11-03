@@ -255,11 +255,13 @@ const UpdatePassword = () => {
 
             <button
               type="submit"
-              className="btn-primary-custom login-btn"
+              className="btn-primary-custom btn"
+              style={{ width: "100%", padding: "12px 0" }}
               disabled={isLoading || !formData.currentPassword || !formData.newPassword || !formData.confirmPassword}
             >
               {isLoading ? 'Actualizando...' : 'Confirmar nueva contraseña'}
             </button>
+
           </form>
         </div>
       </div>

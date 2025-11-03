@@ -224,7 +224,9 @@ const AssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
           onClick={() => setPaginaActual((p) => Math.max(1, p - 1))}
           disabled={paginaActual === 1}
         >
-          ◀
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+          </svg>
         </button>
         <div className="pagination-numbers">
           {getPagesWindow().map((n) => (
@@ -244,7 +246,9 @@ const AssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
           }
           disabled={paginaActual === totalPaginas}
         >
-          ▶
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+          </svg>
         </button>
       </div>
 

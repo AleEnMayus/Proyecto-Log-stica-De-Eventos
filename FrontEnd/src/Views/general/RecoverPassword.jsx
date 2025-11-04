@@ -5,7 +5,7 @@ import { useToast } from '../../hooks/useToast';
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
-  const [code, setCode] = useState(['', '', '', '', '', '']);
+  const [code, setCode] = useState(Array(6).fill(''));
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -30,7 +30,7 @@ const RecoverPassword = () => {
     return () => {
       setNewPassword('');
       setConfirmPassword('');
-      setCode(['', '', '', '']);
+      setCode(Array(6).fill(''));
     };
   }, []);
 
@@ -198,27 +198,39 @@ const RecoverPassword = () => {
               </div>
             </div>
 
-            {/* Código */}
-            <div className="code-inputs mb-3">
-              {code.map((digit, index) => (
-                <input
-                  key={index}
-                  ref={(el) => (codeRefs.current[index] = el)}
-                  className="code-box"
-                  maxLength="1"
-                  type="tel"
-                  pattern="[0-9]*"
-                  inputMode="numeric"
-                  value={digit}
-                  onChange={(e) => handleCodeChange(index, e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Backspace' && !code[index] && index > 0) {
-                      codeRefs.current[index - 1]?.focus();
-                    }
-                  }}
-                />
-              ))}
-            </div>
+            {/* Código de verificación */}
+<div className="form-group text-center mb-4">
+  <label className="d-block mb-3 fw-semibold fs-5">
+    Ingresa el código de verificación
+  </label>
+
+  <div className="d-flex justify-content-center gap-1 flex-wrap">
+    {code.map((digit, index) => (
+      <input
+        key={index}
+        ref={(el) => (codeRefs.current[index] = el)}
+        type="tel"
+        pattern="[0-9]*"
+        inputMode="numeric"
+        maxLength="1"
+        value={digit}
+        onChange={(e) => handleCodeChange(index, e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Backspace" && !code[index] && index > 0) {
+            codeRefs.current[index - 1]?.focus();
+          }
+        }}
+        className="form-control text-center fw-bold"
+        style={{
+          width: "35px",
+          height: "35px",
+          borderRadius: "8px",
+          border: "1px solid #ccc",
+        }}
+      />
+    ))}
+  </div>
+</div>
 
             {/* Nueva contraseña */}
             <div className="form-group mb-3 password-group">

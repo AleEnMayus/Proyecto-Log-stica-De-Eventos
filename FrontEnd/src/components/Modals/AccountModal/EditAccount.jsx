@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "../../../Views/CSS/Modals.css";
 import RequestModal from '../RequestModal';
 
+// ✅ Importar el hook y el contenedor de toasts
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/ToastContainer";
+
 const API_FIELD_MAPPING = {
   fullName: "Names",
   birthDate: "BirthDate",
@@ -11,8 +15,9 @@ const API_FIELD_MAPPING = {
   documentNumber: "DocumentNumber",
 };
 
-const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
+const EditModal = ({ isOpen, onClose, user, onSave }) => { 
   const navigate = useNavigate();
+  const { toasts, addToast, removeToast } = useToast(); // ✅ sistema de notificaciones
 
   const [isRequestModalOpen, setRequestModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
@@ -25,7 +30,6 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-
         const initialData = {
           fullName: parsedUser.fullName || parsedUser.Names || "",
           email: parsedUser.email || parsedUser.Email || "",
@@ -98,49 +102,59 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
 
   // Guardar cambios
   const handleSaveChanges = async () => {
-    // Validar todo antes de enviar
-    Object.keys(formData).forEach((key) => {
-      validateField(key, formData[key]);
-    });
-
-    const hasErrors = Object.values(errors).some((err) => err);
-    if (hasErrors) {
-      console.error("Hay errores en el formulario.");
-      return;
-    }
-
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      console.error("No se encontró información de usuario en localStorage.");
-      onClose();
-      return;
-    }
-
-    const parsedUser = JSON.parse(storedUser);
-    const userId = parsedUser.id;
-    if (!userId) {
-      console.error("No se pudo encontrar el ID de usuario.");
-      onClose();
-      return;
-    }
-
-    const changes = {};
-    Object.keys(formData).forEach((key) => {
-      if (formData[key] !== originalUser[key]) {
-        const apiFieldName = API_FIELD_MAPPING[key];
-        if (apiFieldName) {
-          changes[apiFieldName] = formData[key];
-        }
-      }
-    });
-
-    if (Object.keys(changes).length === 0) {
-      console.log("No se detectaron cambios.");
-      onClose();
-      return;
-    }
-
     try {
+      // ✅ Validar antes de enviar
+      Object.keys(formData).forEach((key) => validateField(key, formData[key]));
+      const hasErrors = Object.values(errors).some((err) => err);
+
+      // ✅ Validar campos obligatorios
+      const requiredFields = ["fullName", "birthDate", "identificationType", "documentNumber"];
+      const emptyFields = requiredFields.filter(
+        (f) => !formData[f] || formData[f].trim() === ""
+      );
+
+      if (emptyFields.length > 0) {
+        addToast("Por favor, completa todos los campos obligatorios antes de guardar.", "danger");
+        return;
+      }
+
+      if (hasErrors) {
+        addToast("Por favor, corrige los errores antes de guardar.", "danger");
+        return;
+      }
+
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) {
+        addToast("No se encontró información del usuario.", "danger");
+        onClose();
+        return;
+      }
+
+      const parsedUser = JSON.parse(storedUser);
+      const userId = parsedUser.id;
+      if (!userId) {
+        addToast("No se pudo encontrar el ID del usuario.", "danger");
+        onClose();
+        return;
+      }
+
+      const changes = {};
+      Object.keys(formData).forEach((key) => {
+        if (formData[key] !== originalUser[key]) {
+          const apiFieldName = API_FIELD_MAPPING[key];
+          if (apiFieldName) {
+            changes[apiFieldName] = formData[key];
+          }
+        }
+      });
+
+      if (Object.keys(changes).length === 0) {
+        addToast("No se detectaron cambios para guardar.", "warning");
+        onClose();
+        return;
+      }
+
+      // 📨 Enviar actualización
       const response = await fetch(`http://localhost:4000/api/profile/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -148,26 +162,22 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
       });
 
       if (response.ok) {
-        console.log("Perfil actualizado correctamente.");
-
         const updatedUser = { ...parsedUser, ...formData };
         localStorage.setItem("user", JSON.stringify(updatedUser));
 
-        // 🔥 Notificamos al Header para que se actualice
-        if (onSave) {
-          onSave(updatedUser);
-        }
+        addToast("Perfil actualizado correctamente.", "success");
 
+        if (onSave) onSave(updatedUser);
         setOriginalUser(formData);
-        setFormData(formData);
 
-        onClose();
+        setTimeout(() => onClose(), 2000); // Cierra después del mensaje
       } else {
         const errorData = await response.json();
-        console.error("Error de la API:", errorData.message);
+        addToast(errorData.message || "Error al actualizar el perfil.", "danger");
       }
     } catch (error) {
       console.error("Error de red o conexión:", error);
+      addToast("Error de conexión con el servidor.", "danger");
     }
   };
 
@@ -176,7 +186,6 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
 
   return (
     <>
-      {/* Modal */}
       <div className="sidebar-overlay active" onClick={onClose}>
         <div className="profile-modal w-800" onClick={stopPropagation}>
           <button className="close-btn" onClick={onClose}>×</button>
@@ -204,17 +213,16 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
 
             {/* Campos */}
             <div className="pm-fields" style={{ maxWidth: "800px" }}>
-              {/* Rol */}
               <div className="field-row">
                 <div className="field">
                   <div className="badge bg-secondary small mt-3">{rolLegible}</div>
                 </div>
               </div>
 
-              {/* Nombre */}
+              {/* Campos de usuario */}
               <div className="field-row">
                 <div className="field">
-                  <div className="field-label">Nombre completo</div>
+                  <div className="field-label">Nombre completo *</div>
                   <input
                     type="text"
                     name="fullName"
@@ -226,7 +234,6 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
                 </div>
               </div>
 
-              {/* Correo */}
               <div className="field-row">
                 <div className="field">
                   <div className="field-label">
@@ -242,10 +249,9 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
                 </div>
               </div>
 
-              {/* Fecha de nacimiento */}
               <div className="field-row">
                 <div className="field">
-                  <div className="field-label">Fecha de nacimiento</div>
+                  <div className="field-label">Fecha de nacimiento *</div>
                   <input
                     type="date"
                     name="birthDate"
@@ -257,11 +263,10 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
                 </div>
               </div>
 
-              {/* Documento */}
               <div className="field-row two-cols">
                 <div className="field">
                   <div className="field-label">
-                    Tipo de documento
+                    Tipo de documento *
                     {role === "user" && <span className="text-muted ms-2">(Campo protegido)</span>}
                   </div>
                   <select
@@ -280,7 +285,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
 
                 <div className="field">
                   <div className="field-label">
-                    Número de documento
+                    Número de documento *
                     {role === "user" && <span className="text-muted ms-2">(Campo protegido)</span>}
                   </div>
                   <input
@@ -295,7 +300,6 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
                 </div>
               </div>
 
-              {/* Foto */}
               <div className="field-row">
                 <div className="field">
                   <div className="field-label">URL de foto (opcional)</div>
@@ -330,7 +334,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
             </button>
 
             {role === "user" && (
-              <button className="btn-secondary-custom w-100" onClick={openRequestModal}>
+              <button className="btn-secondary-custom w-100" onClick={() => setRequestModalOpen(true)}>
                 Solicitar cambio de documento
               </button>
             )}
@@ -341,11 +345,14 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
       {isRequestModalOpen && (
         <RequestModal
           isOpen={isRequestModalOpen}
-          onClose={closeRequestModal}
+          onClose={() => setRequestModalOpen(false)}
           user={user}
           requestType="document_change"
         />
       )}
+
+      {/* ✅ Contenedor de notificaciones */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 };

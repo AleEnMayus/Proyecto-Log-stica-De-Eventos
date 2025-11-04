@@ -40,7 +40,7 @@ const auth = {
     return await bcrypt.compare(password, hashedPassword);
   },
 
-  // AGREGAR ESTE MÉTODO PARA ACTUALIZAR CONTRASEÑA
+  // MÉTODO PARA ACTUALIZAR CONTRASEÑA
   updatePassword: async (userId, newPasswordHash) => {
     const [result] = await db.query(
       "UPDATE User SET Password = ? WHERE UserId = ?",

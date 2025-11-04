@@ -46,13 +46,13 @@ app.use("/api/requests", require("./routes/user/Request"));
 app.use("/api/promotions", require("./routes/Admin/promotions"));
 app.use("/api/gallery", require("./routes/Admin/galleryRoutes"));
 app.use("/api/gallery", require("./routes/commentsRoutes"));
-//app.use("/api/contracts", require("./routes/Admin/contractsUploadRoutes"));
+app.use("/api/contracts", require("./routes/Admin/contractsUploadRoutes"));
 
 // Jobs automáticos
 startEventCompletionJob();
 
 // Iniciar servidor
 server.listen(PORT, () => {
-  console.log(`-/ Backend corriendo en http://localhost:${PORT}`);
+  console.log(`-/ Backend corriendo en http://localhost:${PORT}`) ;
   console.log("-/ Socket.IO activo para notificaciones en tiempo real");
 });

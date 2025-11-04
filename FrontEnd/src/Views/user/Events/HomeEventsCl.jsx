@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';  
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { eraseUnderscore } from '../../../utils/FormatText';
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
@@ -42,9 +42,10 @@ const ListEventsC = () => {
   const navigate = useNavigate();
   const eventsPerPage = 5;
 
-  // ID del usuario actual (puedes obtenerlo de auth, props o contexto)
-  const userId = 1; // <- reemplazar dinámico si ya lo tienes en sesión
-  const baseURL = "http://localhost:4000"; // ajusta a tu backend real
+  // ID del usuario actual 
+  const user = JSON.parse(localStorage.getItem('user'));
+  const userId = user?.id;
+  const baseURL = "http://localhost:4000";
 
   // Cargar eventos desde el backend
   useEffect(() => {

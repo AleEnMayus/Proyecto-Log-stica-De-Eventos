@@ -1,5 +1,5 @@
 const Account = require("../models/Account");
-const bcrypt = require("bcrypt");
+
 // Crear cuenta
 const createAccount = async (req, res) => {
   try {
@@ -9,16 +9,14 @@ const createAccount = async (req, res) => {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
-    // Hashear la contraseña
-    const hashedPassword = await bcrypt.hash(Password, 10); // 10 salt rounds
-
+    // Crear la cuenta directamente, el hash se hace en el modelo
     const result = await Account.create({
       Names,
       DocumentType,
       DocumentNumber,
       BirthDate,
       Email,
-      Password: hashedPassword,
+      Password,
       Status: Status || "active",
       Role: Role || "user"
     });
@@ -32,7 +30,6 @@ const createAccount = async (req, res) => {
     res.status(500).json({ error: "Error interno al crear cuenta" });
   }
 };
-
 
 // Obtener todas las cuentas
 const getAccounts = async (req, res) => {
@@ -62,7 +59,7 @@ const getAccountById = async (req, res) => {
   }
 };
 
-// Actualizar cuenta (sin permitir modificar la contraseña ni la foto)
+// Actualizar cuenta (sin modificar la contraseña ni la foto)
 const updateAccount = async (req, res) => {
   try {
     const { id } = req.params;
@@ -98,16 +95,17 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+// Cambiar estado de la cuenta
 const changeAccountStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { Status } = req.body;
-    const statusLower = Status.toLowerCase();
 
     if (!Status) {
       return res.status(400).json({ error: "El campo Status es requerido" });
     }
 
+    const statusLower = Status.toLowerCase();
     const result = await Account.changeStatus(id, statusLower);
 
     if (result.affectedRows === 0) {
@@ -120,7 +118,6 @@ const changeAccountStatus = async (req, res) => {
     res.status(500).json({ error: "Error interno al cambiar status" });
   }
 };
-
 
 module.exports = {
   createAccount,

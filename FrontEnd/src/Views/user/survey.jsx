@@ -17,19 +17,12 @@ const ClientSurvey = () => {
   const [loadingQuestions, setLoadingQuestions] = useState(true);
 
   const defaultQuestions = [
-    { _qid: "1", _text: "¿Cómo calificarías la organización general del evento?" },
-    { _qid: "2", _text: "¿Qué opinas sobre la calidad del servicio?" },
-    { _qid: "3", _text: "¿Recomendarías este evento a otras personas?" },
-    { _qid: "4", _text: "¿Cómo calificarías la atención recibida?" },
-    { _qid: "5", _text: "¿El evento cumplió con tus expectativas?" }
   ];
 
   useEffect(() => {
-    const getUserId = () => {
-      const storedUserId = localStorage.getItem("userId");
-      return storedUserId ? parseInt(storedUserId, 10) : 4;
-    };
-    setUserId(getUserId());
+    // Obtener ID de usuario desde localStorage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUserId(storedUser?.id || 4); // fallback por defecto 4
     fetchQuestions();
   }, []);
 
@@ -106,10 +99,12 @@ const ClientSurvey = () => {
     if (!userId) return addToast("No se encontró el ID de usuario", "danger");
     if (!eventId) return addToast("No se encontró el ID del evento", "danger");
 
-    const unanswered = Object.entries(answers).filter(([_, val]) => val === 0).map(([qid]) => {
-      const question = questions.find(q => q._qid === qid);
-      return question ? question._text : `Pregunta ${qid}`;
-    });
+    const unanswered = Object.entries(answers)
+      .filter(([_, val]) => val === 0)
+      .map(([qid]) => {
+        const question = questions.find(q => q._qid === qid);
+        return question ? question._text : `Pregunta ${qid}`;
+      });
 
     if (unanswered.length > 0) {
       return addToast(`Por favor, responde las siguientes preguntas:\n${unanswered.join('\n')}`, "warning");
@@ -121,11 +116,7 @@ const ClientSurvey = () => {
       const res = await fetch("http://localhost:4000/api/survey", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          EventId: eventId,
-          UserId: userId,
-          Answers: answers,
-        }),
+        body: JSON.stringify({ EventId: eventId, UserId: userId, Answers: answers }),
       });
 
       const data = await res.json();
@@ -133,7 +124,6 @@ const ClientSurvey = () => {
 
       addToast("¡Encuesta enviada con éxito!", "success");
 
-      // Resetear respuestas
       const resetAnswers = {};
       questions.forEach(q => { resetAnswers[q._qid] = 0; });
       setAnswers(resetAnswers);

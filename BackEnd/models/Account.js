@@ -1,78 +1,53 @@
-const db = require("../db");
-const bcrypt = require("bcrypt");
+const Survey = require("../models/Survey");
+const Account = require("../models/Account"); // Modelo de usuarios
+const Event = require("../models/Events");     // Modelo de eventos (singular, según tu modelo)
 
-const Account = {
-  // Crear usuario con contraseña 
-  create: async ({ Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status = "active", Role = "user" }) => {
-    if (!Password) throw new Error("Password is required");
-    const hashedPassword = await bcrypt.hash(Password, 10);
+// Enviar encuesta
+const submitSurvey = async (req, res) => {
+  try {
+    const { EventId, UserId, Answers } = req.body;
 
-    const sql = `
-      INSERT INTO User (Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const [result] = await db.query(sql, [
-      Names,
-      DocumentType,
-      DocumentNumber,
-      BirthDate,
-      Email,
-      hashedPassword,
-      Status,
-      Role
-    ]);
-    return result.insertId; // devuelve id del usuario creado
-  },
-  
-  findAll: async () => {
-    const sql = "SELECT UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Status, Role FROM User";
-    const [rows] = await db.query(sql);
-    return rows;
-  },
-
-  findById: async (id) => {
-    const sql = "SELECT UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Status, Role FROM User WHERE UserId = ?";
-    const [rows] = await db.query(sql, [id]);
-    return rows[0];
-  },
-
-  update: async (id, { Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Role }) => {
-    let sql;
-    let params;
-
-    if (Password) {
-      const hashedPassword = await bcrypt.hash(Password, 10);
-      sql = `
-        UPDATE User 
-        SET Names = ?, DocumentType = ?, DocumentNumber = ?, BirthDate = ?, Email = ?, Password = ?, Status = ?, Role = ?
-        WHERE UserId = ?
-      `;
-      params = [Names, DocumentType, DocumentNumber, BirthDate, Email, hashedPassword, 'active', Role, id];
-    } else {
-      sql = `
-        UPDATE User 
-        SET Names = ?, DocumentType = ?, DocumentNumber = ?, BirthDate = ?, Email = ?, Status = ?, Role = ?
-        WHERE UserId = ?
-      `;
-      params = [Names, DocumentType, DocumentNumber, BirthDate, Email, 'active', Role, id];
+    // Validación básica de datos
+    if (!EventId || !UserId || !Answers) {
+      return res.status(400).json({ error: "Faltan datos en la encuesta" });
     }
 
-    const [result] = await db.query(sql, params);
-    return result;
-  },
+    // Validar que el usuario exista
+    const user = await Account.findById(UserId);
+    console.log("Buscando usuario con ID:", UserId, "Resultado:", user);
+    if (!user) {
+      return res.status(400).json({ error: "Usuario no existe" });
+    }
 
-  remove: async (id) => {
-    const sql = "DELETE FROM User WHERE UserId = ?";
-    const [result] = await db.query(sql, [id]);
-    return result;
-  },
-  // Cambiar estado (activo/inactivo)
-  changeStatus: async (id, status) => {
-    const sql = "UPDATE User SET Status = ? WHERE UserId = ?";
-    const [result] = await db.query(sql, [status, id]);
-    return result;
-  },
+    // Validar que el evento exista
+    const event = await Event.findById(EventId);
+    console.log("Buscando evento con ID:", EventId, "Resultado:", event);
+    if (!event) {
+      return res.status(400).json({ error: "Evento no existe" });
+    }
 
+    // Guardar encuesta
+    const result = await Survey.saveSurvey(EventId, UserId, Answers);
+
+    res.status(201).json({
+      message: "Encuesta guardada con éxito",
+      result,
+    });
+  } catch (err) {
+    console.error("Error al guardar encuesta:", err);
+    res.status(500).json({ error: "Error interno al guardar encuesta" });
+  }
 };
 
-module.exports = Account;
+// Obtener todas las respuestas (admin)
+const getAllAnswers = async (req, res) => {
+  try {
+    const results = await Survey.getAllAnswers(); // Ajuste: tu modelo ya retorna array
+    res.json(results);
+  } catch (err) {
+    console.error("Error al obtener respuestas:", err);
+    res.status(500).json({ error: "Error interno al obtener respuestas" });
+  }
+};
+
+module.exports = { submitSurvey, getAllAnswers };

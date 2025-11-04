@@ -2,6 +2,10 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useNotifications from "./hooks/useNotifications";
 import autoLogoutService from "./services/autoLogoutService";
+import Results from "./Views/admin/CreateSurvey/results";
+
+
+
 
 // Toasts
 import { ToastContainer } from "react-toastify";
@@ -90,6 +94,8 @@ const routeConfig = {
     { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
     { path: '/EditEvent/:eventId', component: EditEvent },
+    { path: '/SurvayHome/results', component: Results },
+
   ],
   client: [
     { path: '/HomeClient', component: HomeClient },

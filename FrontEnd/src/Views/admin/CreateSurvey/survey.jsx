@@ -65,7 +65,6 @@ const Survey = () => {
       );
       if (!res.ok) throw new Error("Error al actualizar la pregunta");
 
-      // Actualizar localmente
       setQuestions((prev) =>
         prev.map((q) =>
           q.QuestionId === selectedQuestion.QuestionId ? selectedQuestion : q
@@ -111,18 +110,36 @@ const Survey = () => {
       {/* Header */}
       <div className="list-header mt-5 pt-5">
         <h2 className="list-title">Preguntas Registradas</h2>
-        <Link to="/SurvayHome/create" className="btn-create">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            width="24px"
-            fill="#fff"
-            viewBox="0 -960 960 960"
-          >
-            <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
-          </svg>
-          Crear Encuesta
-        </Link>
+
+        <div className="d-flex" style={{ display: "flex", gap: "12px" }}>
+          <Link to="/SurvayHome/create" className="btn-create">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              width="24px"
+              fill="#fff"
+              viewBox="0 -960 960 960"
+            >
+              <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+            </svg>
+            Crear Encuesta
+          </Link>
+
+          {/* 🔹 Nuevo botón al lado */}
+          <Link to="/SurvayHome/results" className="btn-status-custom status-active btn-create">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              width="24px"
+              fill="#fff"
+              viewBox="0 -960 960 960"
+            >
+              <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+            </svg>
+            
+            Ver Resultados
+          </Link>
+        </div>
       </div>
 
       {/* Buscar */}

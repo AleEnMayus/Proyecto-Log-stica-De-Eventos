@@ -2,7 +2,7 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 
 const Account = {
-  // Crear usuario con contraseña hasheada
+  // Crear usuario con contraseña 
   create: async ({ Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status = "active", Role = "user" }) => {
     if (!Password) throw new Error("Password is required");
     const hashedPassword = await bcrypt.hash(Password, 10);

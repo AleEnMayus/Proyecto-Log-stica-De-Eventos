@@ -14,7 +14,7 @@ const Question = {
     return { id: result.insertId, QuestionText };
   },
 
-  // Actualizar una pregunta existente
+  // Actualización de una pregunta existente
   async update(QuestionId, QuestionText) {
     const [result] = await db.query(
       "UPDATE questions SET QuestionText = ? WHERE QuestionId = ?",

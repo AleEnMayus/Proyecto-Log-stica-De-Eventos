@@ -79,7 +79,7 @@ async function updateEventStatus(id, status) {
   return result.affectedRows > 0;
 }
 
-// Actualizar evento completo
+// Actualización evento completo
 async function updateEvent(id, event) {
   const [result] = await db.query(
     `UPDATE Events 

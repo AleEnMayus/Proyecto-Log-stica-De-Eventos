@@ -59,7 +59,7 @@ const LoginPage = () => {
 
   // Volver atrás con el navegador
   const handleGoBackBrowser = () => {
-    window.history.back();
+    navigate(`/`);
   };
 
   return (

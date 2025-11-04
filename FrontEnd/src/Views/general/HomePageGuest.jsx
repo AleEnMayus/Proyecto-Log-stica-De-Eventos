@@ -142,7 +142,7 @@ const HomeGuest = () => {
           <p className="text-muted mb-4">
             Especificación de espacio donde se podrá asignar una cita para el evento que desee el usuario.
           </p>
-          <a href="/login" className="btn-secondary-custom btn">
+          <a href="/login" className="btn-secondary-custom btn w-200p">
             Agendar Cita
           </a>
         </section>

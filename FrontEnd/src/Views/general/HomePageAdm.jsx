@@ -151,7 +151,7 @@ const HomeAdmin = ({ user, onLogout }) => {
           <p className="text-muted mb-4">
             Como administrador, puedes ver y gestionar todas los eventos registrados en el sistema.
           </p>
-          <a href="/EventsHomeAdmin" className="btn-secondary-custom btn">
+          <a href="/EventsHomeAdmin" className="btn-secondary-custom btn w-200p">
             Gestionar Eventos
           </a>
         </section>

@@ -167,7 +167,7 @@ const HomeClient = () => {
           <p className="text-muted mb-4">
             Como usuario registrado, puedes agendar tus citas fácilmente para organizar eventos únicos.
           </p>
-          <a href="/Schedule" className="btn-secondary-custom btn">
+          <a href="/Schedule" className="btn-secondary-custom btn w-200p">
             Agendar Nueva Cita
           </a>
         </section>

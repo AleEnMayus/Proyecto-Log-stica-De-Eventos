@@ -32,7 +32,7 @@ const ModalState = ({
 
   return (
     <div className="sidebar-overlay active">
-      <div className="profile-modal">
+      <div className="profile-modal mt-5">
         <button className="close-btn" onClick={onClose}>×</button>
 
         <h2 className="modal-title text-center">{title}</h2>

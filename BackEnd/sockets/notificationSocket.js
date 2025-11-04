@@ -22,7 +22,7 @@ function notificationSocket(io) {
     });
 
     socket.on("disconnect", () => {
-      console.log("iente desconectado:", socket.id);
+      console.log("Cliente desconectado:", socket.id);
     });
   });
 }

@@ -1,11 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+const path = require("path");
 const http = require("http");
 const path = require("path");
 const { Server } = require("socket.io");
+require("dotenv").config();
 
-const { notificationSocket } = require("./sockets/notificationSocket");
 const db = require("./db");
 const { startEventCompletionJob } = require("./jobs/eventCompletionJob");
 
@@ -24,24 +24,28 @@ notificationSocket(io);
 app.use(cors());
 app.use(express.json());
 
-// Servir archivos estáticos (los PDFs subidos)
+// Servir carpeta uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// === RUTAS API ===
+// Ruta principal
 app.get("/", (req, res) => {
   res.send("<center><h1>Backend funcionando con Socket.IO</h1></center>");
 });
 
+// Rutas
 app.use("/api", require("./routes/auth"));
 app.use("/api/password", require("./routes/PasswordChange"));
 app.use("/api/questions", require("./routes/Admin/questions"));
 app.use("/api/survey", require("./routes/user/Survey"));
 app.use("/api/resources", require("./routes/Admin/Resources"));
 app.use("/api/events", require("./routes/Admin/Events"));
-app.use("/api/accounts", require("./routes/admin/accounts"));
+app.use("/api/accounts", require("./routes/Admin/accounts"));
 app.use("/api/profile", require("./routes/Profile"));
 app.use("/api/requests", require("./routes/user/Request"));
 app.use("/api/promotions", require("./routes/Admin/promotions"));
+app.use("/api/contract", require("./routes/Admin/contractRoutes"));
+app.use("/api/gallery", require("./routes/Admin/galleryRoutes"));
+app.use("/api/gallery", require("./routes/commentsRoutes"));
 
 //  Aquí conectas la nueva ruta de contratos (subida + listado + eliminación)
 app.use("/api/contracts", require("./routes/Admin/contractsUploadRoutes"));
@@ -51,6 +55,6 @@ startEventCompletionJob();
 
 // === Iniciar servidor ===
 server.listen(PORT, () => {
-  console.log(` Backend corriendo en: http://localhost:${PORT}`);
-  console.log("Socket.IO activo para notificaciones en tiempo real");
+  console.log(`-/ Backend corriendo en http://localhost:${PORT}`);
+  console.log("-/ Socket.IO activo para notificaciones en tiempo real");
 });

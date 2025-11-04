@@ -78,18 +78,31 @@ const routeConfig = {
   admin: [
     { path: '/HomeAdmin', component: HomeAdmin },
     { path: '/NotificationsAdmin', component: Notification },
+    // Recursos
+
     { path: '/HomeResources', component: ListResource },
     { path: '/CreateResource', component: CreateResource },
+
+    // Encuestas
     { path: '/SurvayHome', component: Survay },
     { path: '/SurvayHome/create', component: CreateSurvay },
-    { path: '/GalleryViewAdmin', component: ImageGallery },
-    { path: '/GalleryAdmin', component: ManagerImageGallery },
+    
+    // Galería
+    { path: '/GalleryAdmin', component: ImageGalleryA },
+    { path: '/GalleryViewAdmin/:ImgId', component: ImageGallery },
+    { path: '/GalleryAdminEdit', component: ManagerImageGallery },
+
+    // Cuentas de usuario
     { path: '/ManageAccounts', component: AdminAccountsList },
     { path: '/CreateAccount', component: CreateAccountForm },
     { path: '/ManageAccounts/edit/:userId', component: EditAccountPage },
     { path: '/CalendarAdmin', component: AdminCalendar },
+
+    // Contratos
     { path: '/SendContractsAdmin', component: ContractsAdmin },
     { path: '/ListContracts', component: ContractsList },
+
+    // Eventos
     { path: '/EventsHomeAdmin', component: ListEventsA },
     { path: '/EventsHomeAdmin/Details/:eventId', component: EventDetailsA },
     { path: '/CreateEvent', component: CreateEvent },
@@ -101,7 +114,7 @@ const routeConfig = {
     { path: '/HomeClient', component: HomeClient },
     { path: '/Schedule', component: Schedule },
     { path: '/Survey/:eventId', component: SurvayClient },
-    { path: '/GalleryView', component: ImageGalleryViewerC },
+    { path: '/GalleryView/:ImgId', component: ImageGalleryViewerC },
     { path: '/Gallery', component: ImageGalleryC },
     { path: '/Calendar', component: ClientCalendar },
     { path: '/HomeContractsCl', component: ContractsClient },

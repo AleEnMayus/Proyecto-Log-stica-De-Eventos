@@ -101,7 +101,7 @@ CREATE TABLE MultimediaFile (
     FileId INT PRIMARY KEY AUTO_INCREMENT,
     FileName VARCHAR(50) NOT NULL,
     FilePath VARCHAR(256) NOT NULL,
-    Extension ENUM('JPG','PNG') NOT NULL
+    Extension ENUM('JPG','PNG','JPEG') NOT NULL
 );
 
 -- ==========================================================
@@ -281,7 +281,104 @@ DELIMITER ;
 
 -- ==========================================================
 -- VISTAS
--- ==========================================================
+-- ==========================================================-- Calendario User
+CREATE OR REPLACE VIEW UserCalendarView AS
+SELECT 
+    'event' AS type,
+    e.EventId AS id,
+    e.EventName AS title,
+    e.EventDateTime AS start_date,
+    e.EventStatus AS status,
+    e.Address AS location,
+    e.EventDescription AS description,
+    e.Capacity,
+    e.ClientId AS user_id,
+    u.Names AS user_name,
+    NULL AS request_id,
+    NULL AS request_type
+FROM Events e
+INNER JOIN User u ON e.ClientId = u.UserId
+WHERE e.EventStatus != 'Canceled'
+
+UNION ALL
+
+SELECT 
+    'appointment' AS type,
+    r.RequestId AS id,
+    CONCAT('Cita: ', 
+        CASE r.RequestType
+            WHEN 'schedule_appointment' THEN 'Agendar'
+            WHEN 'cancel_event' THEN 'Cancelación'
+            WHEN 'document_change' THEN 'Cambio de documento'
+        END
+    ) AS title,
+    r.ManagementDate AS start_date,
+    r.RequestStatus AS status,
+    NULL AS location,
+    r.RequestDescription AS description,
+    NULL AS Capacity,
+    r.UserId AS user_id,
+    u.Names AS user_name,
+    r.RequestId AS request_id,
+    r.RequestType AS request_type
+FROM Requests r
+INNER JOIN User u ON r.UserId = u.UserId
+WHERE r.RequestStatus = 'approved' 
+    AND r.RequestType = 'schedule_appointment'
+    AND r.ManagementDate IS NOT NULL;
+
+-- Calendario Administrativo (Todas las citas y eventos)
+CREATE OR REPLACE VIEW AdminCalendarView AS
+SELECT 
+    'event' AS type,
+    e.EventId AS id,
+    e.EventName AS title,
+    e.EventDateTime AS start_date,
+    e.EventStatus AS status,
+    e.Address AS location,
+    e.EventDescription AS description,
+    e.Capacity,
+    e.ClientId AS user_id,
+    u.Names AS user_name,
+    u.Email AS user_email,
+    e.AdvancePaymentMethod AS payment_method,
+    e.ContractNumber,
+    NULL AS request_id,
+    NULL AS request_type,
+    NULL AS request_date
+FROM Events e
+INNER JOIN User u ON e.ClientId = u.UserId
+
+UNION ALL
+
+SELECT 
+    'appointment' AS type,
+    r.RequestId AS id,
+    CONCAT('Cita: ', u.Names, ' ', ' - ',
+        CASE r.RequestType
+            WHEN 'schedule_appointment' THEN 'Agendar'
+            WHEN 'cancel_event' THEN 'Cancelación'
+            WHEN 'document_change' THEN 'Cambio de documento'
+        END
+    ) AS title,
+    r.ManagementDate AS start_date,
+    r.RequestStatus AS status,
+    NULL AS location,
+    r.RequestDescription AS description,
+    NULL AS Capacity,
+    r.UserId AS user_id,
+    u.Names AS user_name,
+    u.Email AS user_email,
+    NULL AS payment_method,
+    NULL AS ContractNumber,
+    r.RequestId AS request_id,
+    r.RequestType AS request_type,
+    r.RequestDate AS request_date
+FROM Requests r
+INNER JOIN User u ON r.UserId = u.UserId
+WHERE r.RequestStatus = 'approved' 
+    AND r.RequestType = 'schedule_appointment'
+    AND r.ManagementDate IS NOT NULL;
 
 -- Satisfacción de eventos
 CREATE OR REPLACE VIEW EventSatisfactionView AS

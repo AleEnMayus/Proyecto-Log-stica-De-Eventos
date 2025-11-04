@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/Lists.css";
 
+import EditQuestion from "../../../components/Modals/EditQuestion"; 
+import ConfirmModal from "../../../components/Modals/ModalConfirm";
+
 const Survey = () => {
   const [questions, setQuestions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,7 +31,7 @@ const Survey = () => {
     fetchQuestions();
   }, []);
 
-  // Filtrar
+  // Filtrar preguntas
   const questionsFiltradas = questions.filter((q) =>
     q.QuestionText?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -45,30 +48,18 @@ const Survey = () => {
     setShowEditModal(true);
   };
 
-  // Cerrar modal editar
-  const handleCancel = () => {
-    setShowEditModal(false);
-    setSelectedQuestion(null);
-  };
-
-  // Guardar cambios
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Guardar cambios desde modal
+  const handleSaveEdit = async (id, newText) => {
     try {
-      const res = await fetch(
-        `http://localhost:4000/api/questions/${selectedQuestion.QuestionId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ QuestionText: selectedQuestion.QuestionText }),
-        }
-      );
+      const res = await fetch(`http://localhost:4000/api/questions/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ QuestionText: newText }),
+      });
       if (!res.ok) throw new Error("Error al actualizar la pregunta");
 
       setQuestions((prev) =>
-        prev.map((q) =>
-          q.QuestionId === selectedQuestion.QuestionId ? selectedQuestion : q
-        )
+        prev.map((q) => (q.QuestionId === id ? { ...q, QuestionText: newText } : q))
       );
 
       setShowEditModal(false);
@@ -93,9 +84,11 @@ const Survey = () => {
         { method: "DELETE" }
       );
       if (!res.ok) throw new Error("Error al eliminar la pregunta");
+
       setQuestions((prev) =>
         prev.filter((q) => q.QuestionId !== questionToDelete.QuestionId)
       );
+
       setShowDeleteModal(false);
       setQuestionToDelete(null);
     } catch (err) {
@@ -107,36 +100,21 @@ const Survey = () => {
     <div className="list-container">
       <HeaderAdm />
 
-      {/* Header */}
+      {/* Header con botones */}
       <div className="list-header mt-5 pt-5">
-        <h2 className="list-title">Preguntas Registradas</h2>
-
+        <h2 className="list-title">PREGUNTAS REGISTRADAS</h2>
         <div className="d-flex" style={{ display: "flex", gap: "12px" }}>
           <Link to="/SurvayHome/create" className="btn-create">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              width="24px"
-              fill="#fff"
-              viewBox="0 -960 960 960"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
               <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
             </svg>
             Crear Encuesta
           </Link>
 
-          {/* 🔹 Nuevo botón al lado */}
           <Link to="/SurvayHome/results" className="btn-status-custom status-active btn-create">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              width="24px"
-              fill="#fff"
-              viewBox="0 -960 960 960"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
               <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
             </svg>
-            
             Ver Resultados
           </Link>
         </div>
@@ -146,14 +124,8 @@ const Survey = () => {
       <div className="search-container mb-4 w-50-lg">
         <span className="search-label">Buscar preguntas</span>
         <div className="search-input-group">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="24px"
-            width="24px"
-            fill="currentcolor"
-            viewBox="0 -960 960 960"
-          >
-            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="currentcolor" viewBox="0 -960 960 960">
+            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
           </svg>
           <input
             type="text"
@@ -172,7 +144,8 @@ const Survey = () => {
             <tr>
               <th>ID</th>
               <th>Pregunta</th>
-              <th className="acciones-header">Acciones</th>
+              <th className="acciones-header">Editar</th>
+              <th className="acciones-header">Eliminar</th>
             </tr>
           </thead>
           <tbody>
@@ -180,23 +153,29 @@ const Survey = () => {
               <tr key={q.QuestionId}>
                 <td>{q.QuestionId}</td>
                 <td>{q.QuestionText}</td>
-                <td className="acciones">
+
+                {/* EDITAR */}
+                <td className="Editar">
                   <button
-                    className="btn-action edit"
-                    title="Editar"
+                    className="btn-custom btn-edit-custom mx-auto"
                     onClick={() => handleEditClick(q)}
+                    aria-label="Editar"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" fill="#fff" viewBox="0 0 24 24">
-                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42L18.37 3.29a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.83z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                      <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h357l-80 80H200v560h560v-278l80-80v358q0 33-23.5 56.5T760-120H200Zm280-360ZM360-360v-170l367-367q12-12 27-18t30-6q16 0 30.5 6t26.5 18l56 57q11 12 17 26.5t6 29.5q0 15-5.5 29.5T897-728L530-360H360Zm481-424-56-56 56 56ZM440-440h56l232-232-28-28-29-28-231 231v57Zm260-260-29-28 29 28 28 28-28-28Z"/>
                     </svg>
                   </button>
+                </td>
+
+                {/* ELIMINAR */}
+                <td className="Eliminar">
                   <button
-                    className="btn-action delete"
-                    title="Eliminar"
+                    className="btn-custom btn-delete-custom mx-auto"
                     onClick={() => confirmDelete(q)}
+                    aria-label="Eliminar"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" fill="#fff" viewBox="0 0 24 24">
-                      <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                      <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
                     </svg>
                   </button>
                 </td>
@@ -206,62 +185,25 @@ const Survey = () => {
         </table>
       </div>
 
-      {/* Modal Editar */}
-      {showEditModal && (
-        <div className="modal-overlay">
-          <div className="edit-modal">
-            <h3 className="modal-title">Editar Pregunta</h3>
-            <form onSubmit={handleSubmit} className="modal-form">
-              <label>Texto de la pregunta</label>
-              <input
-                type="text"
-                value={selectedQuestion?.QuestionText || ""}
-                onChange={(e) =>
-                  setSelectedQuestion({
-                    ...selectedQuestion,
-                    QuestionText: e.target.value,
-                  })
-                }
-                required
-              />
-              <div className="modal-buttons">
-                <button
-                  type="button"
-                  className="btn-cancel"
-                  onClick={handleCancel}
-                >
-                  Cancelar
-                </button>
-                <button type="submit" className="btn-save">
-                  Guardar Cambios
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* MODAL EDITAR */}
+      <EditQuestion
+        show={showEditModal}
+        question={selectedQuestion}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedQuestion(null);
+        }}
+        onSave={handleSaveEdit}
+      />
 
-      {/* Modal Eliminar */}
-      {showDeleteModal && questionToDelete && (
-        <div className="modal-overlay">
-          <div className="delete-modal new">
-            <h3 className="delete-title">
-              ¿Seguro que quieres eliminar esta pregunta?
-            </h3>
-            <div className="delete-actions centered">
-              <button
-                className="btn-cancel-delete"
-                onClick={() => setShowDeleteModal(false)}
-              >
-                Cancelar
-              </button>
-              <button className="btn-gradient-delete" onClick={handleDelete}>
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* MODAL CONFIRMACIÓN DELETE */}
+      <ConfirmModal
+        show={showDeleteModal}
+        message="¿Seguro que deseas eliminar esta pregunta?"
+        confirmText="Eliminar"
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

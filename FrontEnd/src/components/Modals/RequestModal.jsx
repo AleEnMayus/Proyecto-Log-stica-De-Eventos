@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "../../Views/CSS/Modals.css";
 
-const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) => {
+const RequestModal = ({ isOpen, onClose, usert, requestType, eventId = null }) => {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   if (!isOpen) return null;
+
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const stop = (e) => e.stopPropagation();
 

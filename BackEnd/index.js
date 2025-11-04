@@ -53,6 +53,6 @@ startEventCompletionJob();
 
 // Iniciar servidor
 server.listen(PORT, () => {
-  console.log(`-/ Backend corriendo en http://localhost:${PORT}`);
+  console.log(`-/ Backend corriendo en http://localhost:${PORT}`) ;
   console.log("-/ Socket.IO activo para notificaciones en tiempo real");
 });

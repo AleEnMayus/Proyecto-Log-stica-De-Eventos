@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../../Views/CSS/Modals.css";
 import RequestModal from '../RequestModal';
 
-// ✅ Importar el hook y el contenedor de toasts
+//  Importar el hook y el contenedor de toasts
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
 
@@ -17,7 +17,7 @@ const API_FIELD_MAPPING = {
 
 const EditModal = ({ isOpen, onClose, user, onSave }) => { 
   const navigate = useNavigate();
-  const { toasts, addToast, removeToast } = useToast(); // ✅ sistema de notificaciones
+  const { toasts, addToast, removeToast } = useToast(); //  sistema de notificaciones
 
   const [isRequestModalOpen, setRequestModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
@@ -103,11 +103,11 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
   // Guardar cambios
   const handleSaveChanges = async () => {
     try {
-      // ✅ Validar antes de enviar
+      //  Validar antes de enviar
       Object.keys(formData).forEach((key) => validateField(key, formData[key]));
       const hasErrors = Object.values(errors).some((err) => err);
 
-      // ✅ Validar campos obligatorios
+      // Validar campos obligatorios
       const requiredFields = ["fullName", "birthDate", "identificationType", "documentNumber"];
       const emptyFields = requiredFields.filter(
         (f) => !formData[f] || formData[f].trim() === ""
@@ -154,7 +154,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
         return;
       }
 
-      // 📨 Enviar actualización
+      //  Enviar actualización
       const response = await fetch(`http://localhost:4000/api/profile/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -351,7 +351,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
         />
       )}
 
-      {/* ✅ Contenedor de notificaciones */}
+      {/*  Contenedor de notificaciones */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );

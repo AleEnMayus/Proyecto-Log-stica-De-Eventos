@@ -23,7 +23,7 @@ const HeaderCl = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // 🔄 Guarda cambios de perfil en estado y localStorage
+  //  Guarda cambios de perfil en estado y localStorage
   const handleSaveProfile = (updatedData) => {
     const updatedUser = { ...userData, ...updatedData };
     setUserData(updatedUser);

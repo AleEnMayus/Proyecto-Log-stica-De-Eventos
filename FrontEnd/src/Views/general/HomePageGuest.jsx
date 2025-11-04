@@ -9,12 +9,10 @@ import ModalPromotionView from '../../components/Modals/PromotionModal/ModalProm
 
 const HomeGuest = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // promociones reales desde BD
   const [promociones, setPromociones] = useState([]);
-
-  // para abrir modal
   const [selectedPromo, setSelectedPromo] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [loadingGallery, setLoadingGallery] = useState(true);
 
   // ============================
   // Cargar promociones reales
@@ -31,18 +29,45 @@ const HomeGuest = () => {
   }, []);
 
   // ============================
-  // ✅ Carrusel
+  // Cargar galería de imágenes
   // ============================
-  const images = [
-    { id: 1, alt: "Evento 1" },
-    { id: 2, alt: "Evento 2" },
-    { id: 3, alt: "Evento 3" },
-    { id: 4, alt: "Evento 4" },
-    { id: 5, alt: "Evento 5" }
-  ];
+  useEffect(() => {
+    const loadGallery = async () => {
+      try {
+        setLoadingGallery(true);
+        const response = await fetch("http://localhost:4000/api/gallery/1");
+        const data = await response.json();
+        
+        if (data && data.navigation) {
+          const totalImages = data.navigation.totalImages;
+          const imagesToLoad = Math.min(totalImages, 5);
+          
+          const imagePromises = [];
+          for (let i = 1; i <= imagesToLoad; i++) {
+            imagePromises.push(
+              fetch(`http://localhost:4000/api/gallery/${i}`)
+                .then(res => res.json())
+                .catch(err => null)
+            );
+          }
+          
+          const images = await Promise.all(imagePromises);
+          const validImages = images.filter(img => img && img.url);
+          setGalleryImages(validImages);
+        }
+      } catch (err) {
+        console.error("Error cargando galería:", err);
+        setGalleryImages([]);
+      } finally {
+        setLoadingGallery(false);
+      }
+    };
 
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % images.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
+    loadGallery();
+  }, []);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % galleryImages.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
@@ -65,31 +90,48 @@ const HomeGuest = () => {
         =============================== */}
         <section id="galeria" className="mb-5">
           <h2 className="section-title h3">Galería De Eventos</h2>
-          <div className="carousel-container">
-            <div className="carousel-track" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-              {images.map((image) => (
-                <div key={image.id} className="carousel-slide">
-                  <div
-                    style={{
-                      width: '200px',
-                      height: '150px',
-                      background: '#dee2e6',
-                      borderRadius: '10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      margin: '0 auto'
-                    }}
-                  >
-                    🖼
-                  </div>
-                  <p className="mt-3 mb-0">{image.alt}</p>
-                </div>
-              ))}
+          
+          {loadingGallery ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
             </div>
-            <button className="carousel-btn prev" onClick={prevSlide}>‹</button>
-            <button className="carousel-btn next" onClick={nextSlide}>›</button>
-          </div>
+          ) : galleryImages.length > 0 ? (
+            <div className="carousel-container">
+              <div className="carousel-track" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+                {galleryImages.map((image, index) => (
+                  <div key={image.FileId} className="carousel-slide">
+                    <img
+                      src={image.url}
+                      alt={image.FileName}
+                      style={{
+                        width: '100%',
+                        objectFit: 'cover',
+                        borderRadius: '10px',
+                        margin: '0 auto',
+                        display: 'block'
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextElementSibling.style.display = 'flex';
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              {galleryImages.length > 1 && (
+                <>
+                  <button className="carousel-btn prev" onClick={prevSlide}>‹</button>
+                  <button className="carousel-btn next" onClick={nextSlide}>›</button>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-5 text-muted">
+              <p>No hay imágenes en la galería</p>
+            </div>
+          )}
         </section>
 
         {/* ===============================
@@ -123,7 +165,7 @@ const HomeGuest = () => {
                 <div className="promo-card h-100">
                   <h5 className="text-primary fw-bold mb-3">{promo.TitleProm}</h5>
 
-                  {/* ✅ DESCRIPCIÓN CON LÍMITE DE 3 LÍNEAS */}
+                  {/* DESCRIPCIÓN CON LÍMITE DE 3 LÍNEAS */}
                   <p className="promo-description">
                     <strong>Descripción:</strong> {promo.DescriptionProm}
                   </p>
@@ -138,7 +180,7 @@ const HomeGuest = () => {
             ))}
           </div>
 
-          {/* ✅ Modal SOLO LECTURA */}
+          {/*  Modal SOLO LECTURA */}
           {selectedPromo && (
             <ModalPromotionView
               promo={selectedPromo}

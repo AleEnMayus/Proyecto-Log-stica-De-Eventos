@@ -1,169 +1,273 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/ToastContainer";
 import "../../CSS/components.css";
 import "../../CSS/FormsUser.css";
 
 const ContractsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-
-  // Datos de ejemplo para los contratos
-  const contratos = [
-    { id: 1, texto: 'Contrato 1° Cliente 1 Nombre Evento' },
-    { id: 2, texto: 'Contrato 2° Cliente 2 Nombre Evento' },
-    { id: 3, texto: 'Contrato 3° Cliente 3 Nombre Evento' },
-    { id: 4, texto: 'Contrato 4° Cliente 4 Nombre Evento' },
-    { id: 5, texto: 'Contrato 5° Cliente 5 Nombre Evento' },
-    { id: 6, texto: 'Contrato 6° Cliente 6 Nombre Evento' },
-    { id: 7, texto: 'Contrato 7° Cliente 7 Nombre Evento' },
-    { id: 8, texto: 'Contrato 8° Cliente 8 Nombre Evento' },
-    { id: 9, texto: 'Contrato 9° Cliente 9 Nombre Evento' },
-    { id: 10, texto: 'Contrato 10° Cliente 10 Nombre Evento' },
-    { id: 11, texto: 'Contrato 11° Cliente 11 Nombre Evento' },
-    { id: 12, texto: 'Contrato 12° Cliente 12 Nombre Evento' },
-    { id: 13, texto: 'Contrato 13° Cliente 13 Nombre Evento' },
-    { id: 14, texto: 'Contrato 14° Cliente 14 Nombre Evento' },
-    { id: 15, texto: 'Contrato 15° Cliente 15 Nombre Evento' },
-    { id: 16, texto: 'Contrato 16° Cliente 16 Nombre Evento' },
-  ];
+  const [contratos, setContratos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { toasts, addToast, removeToast } = useToast();
 
   const itemsPerPage = 3;
 
-  const filteredContratos = contratos.filter(contrato =>
-    contrato.texto.toLowerCase().includes(searchTerm.toLowerCase())
+  //  FETCH CONTRATOS 
+  const fetchContratos = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:4000/api/contracts/list');
+      
+      if (!response.ok) {
+        throw new Error('Error al cargar los contratos');
+      }
+      
+      const data = await response.json();
+      setContratos(data);
+      
+      if (data.length === 0) {
+        addToast('No hay contratos registrados', 'info');
+      }
+    } catch (error) {
+      console.error("Error al cargar contratos:", error);
+      addToast('Error al cargar los contratos', 'danger');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchContratos();
+  }, []);
+
+  // FUNCIONES DE ACCIÓN 
+  const handleDownload = async (eventId, eventName) => {
+    try {
+      addToast('Descargando contrato...', 'info');
+      
+      const response = await fetch(`http://localhost:4000/api/contracts/download/${eventId}`);
+      
+      if (!response.ok) {
+        throw new Error("No se pudo descargar el contrato");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Contrato_${eventName}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      addToast('Contrato descargado exitosamente', 'success');
+    } catch (error) {
+      console.error("Error al descargar:", error);
+      addToast('Error al descargar el contrato', 'danger');
+    }
+  };
+
+  const handleDelete = async (eventId, eventName) => {
+    if (!window.confirm(`¿Seguro que quieres eliminar el contrato de "${eventName}"?`)) return;
+    
+    try {
+      const response = await fetch(`http://localhost:4000/api/contracts/delete/${eventId}`, { 
+        method: 'DELETE' 
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al eliminar el contrato');
+      }
+      
+      const data = await response.json();
+      addToast(data.message || 'Contrato eliminado correctamente', 'success');
+      fetchContratos(); // refresca la lista
+    } catch (error) {
+      console.error("Error al eliminar:", error);
+      addToast('Error al eliminar el contrato', 'danger');
+    }
+  };
+
+  const handleSendEmail = async (eventId, eventName) => {
+    try {
+      addToast('Enviando correo...', 'info');
+      
+      const response = await fetch(`http://localhost:4000/api/contracts/send-email/${eventId}`, { 
+        method: 'POST' 
+      });
+      
+      if (!response.ok) {
+        throw new Error('Error al enviar el correo');
+      }
+      
+      const data = await response.json();
+      addToast(`Correo enviado exitosamente a ${data.emailSentTo}`, 'success');
+    } catch (error) {
+      console.error("Error al enviar correo:", error);
+      addToast('Error al enviar el correo', 'danger');
+    }
+  };
+
+  // FILTRO Y PAGINACIÓN 
+  const filteredContratos = contratos.filter(c => 
+    c.EventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.ClientName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  
   const totalPages = Math.ceil(filteredContratos.length / itemsPerPage);
-
+  
   const getCurrentPageContratos = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredContratos.slice(startIndex, endIndex);
-  };
-
-  const handleExpand = (contratoId) => {
-    console.log('Descargar contrato:', contratoId);
-    alert(`Descargar contrato ${contratoId}`);
-  };
-
-  const handleDelete = (contratoId) => {
-    console.log('Eliminar contrato:', contratoId);
-    alert(`Eliminar contrato ${contratoId}`);
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredContratos.slice(start, start + itemsPerPage);
   };
 
   const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
   };
 
   const renderPaginationButtons = () => {
     const buttons = [];
-
-    // Botón anterior
     buttons.push(
-      <button
-        key="prev"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+      <button 
+        key="prev" 
+        onClick={() => handlePageChange(currentPage - 1)} 
+        disabled={currentPage === 1} 
         className="pagination-arrow"
       >
         «
       </button>
     );
-
-    // Generar todas las páginas
+    
     for (let i = 1; i <= totalPages; i++) {
       buttons.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
+        <button 
+          key={i} 
+          onClick={() => handlePageChange(i)} 
           className={`pagination-btn ${currentPage === i ? 'active' : ''}`}
         >
           {i}
         </button>
       );
     }
-
-    // Botón siguiente
+    
     buttons.push(
-      <button
-        key="next"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+      <button 
+        key="next" 
+        onClick={() => handlePageChange(currentPage + 1)} 
+        disabled={currentPage === totalPages} 
         className="pagination-arrow"
       >
         »
       </button>
     );
-
+    
     return buttons;
   };
+
+  if (loading) {
+    return (
+      <div className="login-content mt-5 pt-5">
+        <HeaderAdm />
+        <div className="login-form-card">
+          <p style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            Cargando contratos...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-content mt-5 pt-5">
       <HeaderAdm />
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <div className="login-form-card contracts-card">
-        {/* Título principal */}
         <h1 className="login-title">Listado De Contratos</h1>
 
-        {/* Barra de búsqueda */}
         <div className="form-row form-input" style={{ marginBottom: 20 }}>
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            height="24px" 
+            viewBox="0 -960 960 960" 
+            width="24px" 
+            fill="currentcolor"
+          >
             <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
           </svg>
-          <input
-            type="text"
-            placeholder="Buscar..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            style={{ border: 0, outline: 'none', flex: 1 }}
+          <input 
+            type="text" 
+            placeholder="Buscar por evento o cliente..." 
+            value={searchTerm} 
+            onChange={e => { 
+              setSearchTerm(e.target.value); 
+              setCurrentPage(1); 
+            }} 
+            style={{ border: 0, outline: 'none', flex: 1 }} 
           />
         </div>
 
-        {/* Lista de contratos */}
-        <div className="contratos-list">
-          {getCurrentPageContratos().map((contrato) => (
-            <div
-              className="contrato-item form-row"
-              key={contrato.id}
-            >
-              <div style={{ flex: 1 }}>
-                <span className="contrato-text" style={{ color: '#2c3e50', fontWeight: 600 }}>
-                  {contrato.texto}
-                </span>
-              </div>
-
-              <div className="d-flex flex-column align-items-center contrato-actions" style={{ gap: 8 }}>
-                <button
-                  onClick={() => handleExpand(contrato.id)}
-                  className="btn-secondary-custom"
-                  type="button"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentcolor"><path d="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"/></svg>
-                </button>
-                <button
-                  onClick={() => handleDelete(contrato.id)}
-                  className="btn-cancel"
-                  type="button"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentcolor"><path d="M261-120q-24.75 0-42.37-17.63Q201-155.25 201-180v-570h-41v-60h188v-30h264v30h188v60h-41v570q0 24-18 42t-42 18H261Zm438-630H261v570h438v-570ZM367-266h60v-399h-60v399Zm166 0h60v-399h-60v399ZM261-750v570-570Z"/></svg>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Paginación (usa tus clases existente .pagination, .pagination-btn, .pagination-arrow) */}
-        {totalPages > 1 && (
-          <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
-            <div className="pagination">
-              {renderPaginationButtons()}
-            </div>
+        {filteredContratos.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+            <p>No se encontraron contratos</p>
           </div>
+        ) : (
+          <>
+            <div className="contratos-list">
+              {getCurrentPageContratos().map(c => (
+                <div className="contrato-item form-row" key={c.EventId}>
+                  <div style={{ flex: 1 }}>
+                    <span className="contrato-text" style={{ color: '#2c3e50', fontWeight: 600 }}>
+                      {c.EventName}
+                    </span>
+                    {c.ClientName && (
+                      <div style={{ fontSize: '0.85rem', color: '#7f8c8d', marginTop: 4 }}>
+                        Cliente: {c.ClientName}
+                      </div>
+                    )}
+                  </div>
+                  <div className="d-flex flex-column align-items-center contrato-actions" style={{ gap: 8 }}>
+                    <button 
+                      onClick={() => handleDownload(c.EventId, c.EventName)} 
+                      className="btn-secondary-custom btn"
+                    >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+                  </svg>
+                      Descargar
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(c.EventId, c.EventName)} 
+                      className="btn-secondary-custom btn"
+                    >
+                  <svg xmlns="http://www.w3.org/2000/svg" className='me-2' height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                  </svg>
+                      Eliminar
+                    </button>
+                    <button 
+                      onClick={() => handleSendEmail(c.EventId, c.EventName)} 
+                      className="btn-primary-custom btn"
+                    >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+                    <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+                  </svg>
+                      Reenviar Correo
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center' }}>
+                <div className="pagination">{renderPaginationButtons()}</div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

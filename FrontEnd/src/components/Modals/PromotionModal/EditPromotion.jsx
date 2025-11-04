@@ -11,7 +11,7 @@ const PromotionModal = ({ promo, onClose, refreshPromos }) => {
     Price: promo.Price
   });
 
-  // ✅ Estado para mostrar el modal de confirmación
+  // Estado para mostrar el modal de confirmación
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = (e) =>

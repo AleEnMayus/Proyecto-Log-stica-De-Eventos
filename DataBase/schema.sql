@@ -283,8 +283,9 @@ DELIMITER ;
 -- ==========================================================
 -- VISTAS
 -- ==========================================================
-
--- Vista: UserCalendarView
+-- ========================================
+-- Vista: UserCalendarView (usando RequestDate)
+-- ========================================
 CREATE OR REPLACE VIEW UserCalendarView AS
 SELECT 
     'event' AS type,
@@ -316,7 +317,7 @@ SELECT
             WHEN 'document_change' THEN 'Cambio de documento'
         END
     ) AS title,
-    r.ManagementDate AS start_date,
+    r.RequestDate AS start_date,  -- <--- CAMBIO AQUÍ
     r.RequestStatus AS status,
     NULL AS location,
     r.RequestDescription AS description,
@@ -329,9 +330,12 @@ FROM Requests r
 INNER JOIN User u ON r.UserId = u.UserId
 WHERE r.RequestStatus = 'approved'
   AND r.RequestType = 'schedule_appointment'
-  AND r.ManagementDate IS NOT NULL;
+  AND r.RequestDate IS NOT NULL;  -- <--- USANDO REQUESTDATE
 
--- Vista: AdminCalendarView
+
+-- ========================================
+-- Vista: AdminCalendarView (usando RequestDate)
+-- ========================================
 CREATE OR REPLACE VIEW AdminCalendarView AS
 SELECT 
     'event' AS type,
@@ -368,7 +372,7 @@ SELECT
             WHEN 'document_change' THEN 'Cambio de documento'
         END
     ) AS title,
-    r.ManagementDate AS start_date,
+    r.RequestDate AS start_date,  -- <--- CAMBIO AQUÍ
     r.RequestStatus AS status,
     NULL AS location,
     r.RequestDescription AS description,
@@ -385,7 +389,7 @@ FROM Requests r
 INNER JOIN User u ON r.UserId = u.UserId
 WHERE r.RequestStatus = 'approved'
   AND r.RequestType = 'schedule_appointment'
-  AND r.ManagementDate IS NOT NULL;
+  AND r.RequestDate IS NOT NULL;  -- <--- USANDO REQUESTDATE
 
 -- Satisfacción de eventos
 CREATE OR REPLACE VIEW EventSatisfactionView AS

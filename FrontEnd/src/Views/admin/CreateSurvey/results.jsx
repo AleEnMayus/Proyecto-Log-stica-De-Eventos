@@ -1,115 +1,189 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
-import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
-import "../../CSS/components.css";
-import "../../CSS/FormsUser.css";
+import '../../CSS/Lists.css';
+import '../../CSS/components.css';
 
-const Results = () => {
+const API_URL = "http://localhost:4000/api/survey";
+const QUESTIONS_PER_PAGE = 5;
+
+const ResultsSurvey = () => {
   const navigate = useNavigate();
   const { toasts, addToast, removeToast } = useToast();
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const fetchResults = async () => {
-      try {
-        const response = await fetch("http://localhost:4000/api/surveys", { mode: "cors" });
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("La respuesta del servidor no es JSON. Revisa tu backend.");
-        }
+  // --- Cargar resultados desde API ---
+  const fetchResults = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(API_URL, { mode: 'cors' });
+      if (!res.ok) throw new Error("No se pudieron cargar los resultados");
+      const data = await res.json();
 
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || "Error al cargar resultados");
+      const organized = data.map(item => ({
+        user: item.UserName,
+        event: item.EventName,
+        question: item.QuestionText,
+        value: Number(item.NumericValue)
+      }));
 
-        // Organizar los resultados por usuario y evento
-        const organized = data.map(item => ({
-          user: item.UserName,
-          event: item.EventName,
-          question: item.QuestionText,
-          value: Number(item.NumericValue),
-        }));
+      organized.sort((a, b) => {
+        if (a.user !== b.user) return a.user.localeCompare(b.user);
+        if (a.event !== b.event) return a.event.localeCompare(b.event);
+        return a.question.localeCompare(b.question);
+      });
 
-        // Ordenar primero por usuario, luego por evento
-        organized.sort((a, b) => {
-          if (a.user !== b.user) return a.user.localeCompare(b.user);
-          if (a.event !== b.event) return a.event.localeCompare(b.event);
-          return a.question.localeCompare(b.question);
-        });
-
-        setResults(organized);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error al cargar resultados:", err);
-        addToast(err.message || "No se pudieron cargar los resultados", "danger");
-        setLoading(false);
-      }
-    };
-
-    fetchResults();
-  }, [addToast]);
-
-  const handleBack = () => {
-    navigate("/SurvayHome");
+      setResults(organized);
+    } catch (err) {
+      console.error(err);
+      addToast(err.message || "Error al cargar resultados", "danger");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  useEffect(() => { fetchResults(); }, []);
+
+  // --- Filtrar resultados ---
+  const filteredResults = results.filter(r =>
+    r.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    r.event.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    r.question.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // --- Paginación ---
+  const indexOfLast = currentPage * QUESTIONS_PER_PAGE;
+  const indexOfFirst = indexOfLast - QUESTIONS_PER_PAGE;
+  const currentResults = filteredResults.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredResults.length / QUESTIONS_PER_PAGE);
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
+
+  const handleBack = () => navigate("/SurvayHome");
+
   return (
-    <>
+    <div className="list-container">
       <HeaderAdm />
-      <div className="login-container d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
-        <div className="login-form-card w-100">
-          <h1 className="login-title">RESULTADOS DE ENCUESTAS</h1>
 
-          {loading ? (
-            <p className="text-center text-muted">Cargando resultados...</p>
-          ) : results.length === 0 ? (
-            <p className="text-center text-muted">No hay resultados disponibles.</p>
-          ) : (
-            <div className="results-container">
-              {results.map((item, index) => (
-                <div key={index} className="result-card">
-                  <h5>
-                    Usuario: <strong>{item.user}</strong> | Evento: <strong>{item.event}</strong>
-                  </h5>
-                  <p>
-                    Pregunta: <strong>{item.question}</strong>
-                  </p>
-                  <p>
-                    Valor: <strong>{item.value}</strong> ⭐
-                  </p>
-                  <div className="result-bar-container">
-                    <div
-                      className="result-bar"
-                      style={{
-                        width: `${Math.min(item.value * 20, 100)}%`,
-                        backgroundColor:
-                          item.value >= 4
-                            ? "#10b981"
-                            : item.value >= 3
-                            ? "#facc15"
-                            : "#ef4444",
-                      }}
-                    ></div>
-                  </div>
-                </div>
+      <div className="list-header mt-5 pt-5">
+        <h2 className="list-title">RESULTADOS DE ENCUESTAS</h2>
+      </div>
+
+      {/* Buscador */}
+      <div className="search-container mb-4 w-50-lg">
+        <span className="search-label">Buscar</span>
+        <input
+          type="text"
+          className="form-control search-input"
+          placeholder="Buscar por usuario, evento o pregunta..."
+          value={searchTerm}
+          onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+        />
+      </div>
+
+      {/* Tabla */}
+      <div className="table-container">
+        {loading ? (
+          <div className="empty-state">Cargando resultados...</div>
+        ) : (
+          <table className="table list-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Evento</th>
+                <th>Pregunta</th>
+                <th>Valor</th>
+                <th>Barra</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentResults.map((r, idx) => (
+                <tr key={indexOfFirst + idx}>
+                  <td>{r.user}</td>
+                  <td>{r.event}</td>
+                  <td>{r.question}</td>
+                  <td>{r.value} ⭐</td>
+                  <td>
+                    <div className="result-bar-container">
+                      <div
+                        className="result-bar"
+                        style={{
+                          width: `${Math.min(r.value * 20, 100)}%`,
+                          backgroundColor:
+                            r.value >= 4 ? "#10b981" : r.value >= 3 ? "#facc15" : "#ef4444",
+                          height: '16px',
+                          borderRadius: '4px'
+                        }}
+                      ></div>
+                    </div>
+                  </td>
+                </tr>
               ))}
-            </div>
-          )}
+              {currentResults.length === 0 && (
+                <tr>
+                  <td colSpan="5">
+                    <div className="empty-state">No se encontraron resultados.</div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        )}
+      </div>
 
-          <div className="form-actions">
-            <button type="button" className="btn-cancel" onClick={handleBack}>
-              ← Volver
+      {/* Paginación estilo ListResource */}
+      <div className="pagination">
+        <button
+          className="pagination-arrow"
+          onClick={() => goToPage(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+          </svg>
+        </button>
+
+        <div className="pagination-numbers">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`pagination-btn ${currentPage === i + 1 ? 'active' : ''}`}
+              onClick={() => goToPage(i + 1)}
+            >
+              {i + 1}
             </button>
-          </div>
+          ))}
         </div>
+
+        <button
+          className="pagination-arrow"
+          onClick={() => goToPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Botón volver */}
+      <div className="form-actions mt-3">
+        <button type="button" className="btn-cancel" onClick={handleBack}>
+          ← Volver
+        </button>
       </div>
 
       <ToastContainer toasts={toasts} removeToast={removeToast} />
-    </>
+    </div>
   );
 };
 
-export default Results;
+export default ResultsSurvey;

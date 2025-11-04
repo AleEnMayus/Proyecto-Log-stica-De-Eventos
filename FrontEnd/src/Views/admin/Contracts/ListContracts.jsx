@@ -9,23 +9,7 @@ const ContractsList = () => {
 
   // Datos de ejemplo para los contratos
   const contratos = [
-    { id: 1, texto: 'Contrato 1° Cliente 1 Nombre Evento' },
-    { id: 2, texto: 'Contrato 2° Cliente 2 Nombre Evento' },
-    { id: 3, texto: 'Contrato 3° Cliente 3 Nombre Evento' },
-    { id: 4, texto: 'Contrato 4° Cliente 4 Nombre Evento' },
-    { id: 5, texto: 'Contrato 5° Cliente 5 Nombre Evento' },
-    { id: 6, texto: 'Contrato 6° Cliente 6 Nombre Evento' },
-    { id: 7, texto: 'Contrato 7° Cliente 7 Nombre Evento' },
-    { id: 8, texto: 'Contrato 8° Cliente 8 Nombre Evento' },
-    { id: 9, texto: 'Contrato 9° Cliente 9 Nombre Evento' },
-    { id: 10, texto: 'Contrato 10° Cliente 10 Nombre Evento' },
-    { id: 11, texto: 'Contrato 11° Cliente 11 Nombre Evento' },
-    { id: 12, texto: 'Contrato 12° Cliente 12 Nombre Evento' },
-    { id: 13, texto: 'Contrato 13° Cliente 13 Nombre Evento' },
-    { id: 14, texto: 'Contrato 14° Cliente 14 Nombre Evento' },
-    { id: 15, texto: 'Contrato 15° Cliente 15 Nombre Evento' },
-    { id: 16, texto: 'Contrato 16° Cliente 16 Nombre Evento' },
-  ];
+    { id: 1, texto: 'Contrato 1° Cliente 1 Nombre Evento' }]
 
   const itemsPerPage = 3;
 

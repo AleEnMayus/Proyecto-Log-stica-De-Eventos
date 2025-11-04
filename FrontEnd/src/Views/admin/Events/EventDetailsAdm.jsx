@@ -116,6 +116,10 @@ const EventDetailsA = () => {
     }
   };
 
+  const handleSend = (eventId) => {
+    navigate(`/SendContractsAdmin/${eventId}`);
+  };
+
   // Renders intermedios
   if (loading) {
     return (
@@ -222,6 +226,9 @@ const EventDetailsA = () => {
 
       {/* Botones */}
       <div className="button-container">
+        <button className="btn-primary-custom" onClick={handleSend(eventId)}>
+          Enviar contrato
+        </button>
         <button className="btn-primary-custom" onClick={handleEditEvent}>
           Editar evento
         </button>

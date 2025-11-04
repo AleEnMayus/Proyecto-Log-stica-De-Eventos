@@ -1,39 +1,10 @@
-const express = require("express");
-const router = express.Router();
-const fs = require("fs");
-const path = require("path");
-const multer = require("multer");
-const nodemailer = require("nodemailer");
-const db = require("../../db"); // asegúrate de que este archivo exista y exporte la conexión
-
-// === Configuración de Multer ===
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, "../../uploads/contracts");
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype === "application/pdf") cb(null, true);
-    else cb(new Error("Solo se permiten archivos PDF"));
-  },
-});
-
-// === Subir contrato y enviarlo al correo del cliente ===
-router.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
+router.post("/upload", upload.single("pdf"), async (req, res) => {
+  const connection = await db.getConnection(); // Para rollback si algo falla
   try {
     const { eventId } = req.body;
+
     if (!eventId) {
+      if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ error: "Debe proporcionar el ID del evento" });
     }
 
@@ -41,72 +12,85 @@ router.post("/upload-pdf", upload.single("pdf"), async (req, res) => {
       return res.status(400).json({ error: "No se subió ningún archivo" });
     }
 
-    // Verificar si el evento existe
-    const [existing] = await db.query(
-      "SELECT e.ContractRoute, u.Email, u.FullName FROM Events e JOIN User u ON e.ClientId = u.UserId WHERE e.EventId = ?",
+    // Verificar si ya tiene contrato asignado
+    const [existing] = await connection.query(
+      `SELECT e.EventName, e.ContractRoute, u.Email, u.Names
+       FROM Events e
+       JOIN User u ON e.ClientId = u.UserId
+       WHERE e.EventId = ?`,
       [eventId]
     );
 
     if (!existing.length) {
+      fs.unlinkSync(req.file.path);
       return res.status(404).json({ error: "Evento no encontrado" });
     }
 
+    // 🚫 Si ya tiene contrato, no se guarda ni reenvía
     if (existing[0].ContractRoute) {
+      fs.unlinkSync(req.file.path); // eliminar archivo subido
       return res.status(400).json({
-        error: "El contrato ya fue asignado a este evento. Solo se permite uno por evento.",
+        error: "El contrato ya fue asignado a este evento. No se puede reemplazar.",
       });
     }
 
-    // === Generar URL completa del contrato ===
-    const serverUrl = process.env.SERVER_URL || "http://localhost:4000";
-    const contractUrl = `${serverUrl}/uploads/contracts/${req.file.filename}`;
+    // ✅ Generar ruta y número
     const contractNumber = Math.floor(100000 + Math.random() * 900000);
+    const contractUrl = `/uploads/contracts/${req.file.filename}`;
 
-    // === Guardar contrato (URL completa) en la tabla Events ===
-    await db.query(
+    await connection.beginTransaction();
+
+    // Guardar contrato en la base
+    await connection.query(
       `UPDATE Events 
-       SET ContractRoute = ?, ContractNumber = ? 
+       SET ContractRoute = ?, ContractNumber = ?
        WHERE EventId = ?`,
       [contractUrl, contractNumber, eventId]
     );
 
-    // === Enviar el contrato por correo al cliente ===
+    // === Enviar correo al cliente ===
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "tucorreo@gmail.com", // <-- cámbialo por tu correo
-        pass: "tu_contraseña_de_aplicacion", // <-- usa contraseña de aplicación, no la normal
+        user: process.env.MAIL_USER || "tucorreo@gmail.com",
+        pass: process.env.MAIL_PASS || "tu_contraseña_de_aplicacion",
       },
     });
 
     const mailOptions = {
-      from: "tucorreo@gmail.com",
+      from: `Equipo de Eventos <${process.env.MAIL_USER || "tucorreo@gmail.com"}>`,
       to: existing[0].Email,
-      subject: `Contrato del evento #${contractNumber}`,
-      text: `Hola ${existing[0].FullName},\n\nAdjuntamos el contrato correspondiente a su evento.\n\nSaludos,\nEquipo de Eventos`,
+      subject: `Contrato del evento "${existing[0].EventName}" - Código ${contractNumber}`,
+      text: `Hola ${existing[0].Names},\n\nAdjuntamos el contrato correspondiente a su evento "${existing[0].EventName}".\n\nPuede acceder al documento en: ${contractUrl}\n\nSaludos,\nEquipo de Eventos.`,
       attachments: [
         {
           filename: req.file.originalname,
-          path: path.join(__dirname, "../../uploads/contracts", req.file.filename),
+          path: req.file.path,
         },
       ],
     };
 
     await transporter.sendMail(mailOptions);
+    await connection.commit();
 
     res.json({
       success: true,
-      message: "Contrato subido, asociado y enviado correctamente al cliente",
+      message: "Contrato subido y enviado correctamente",
       data: {
         eventId,
-        contractUrl,
+        eventName: existing[0].EventName,
+        userName: existing[0].Names,
         contractNumber,
+        contractUrl,
+        emailSentTo: existing[0].Email,
       },
     });
   } catch (error) {
-    console.error(" Error al subir o enviar contrato:", error);
+    console.error("Error al subir contrato:", error);
+    if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); // limpia si falla
+    await connection.rollback();
     res.status(500).json({ error: "Error interno al subir o enviar contrato" });
+  } finally {
+    connection.release();
   }
 });
-
-module.exports = router;

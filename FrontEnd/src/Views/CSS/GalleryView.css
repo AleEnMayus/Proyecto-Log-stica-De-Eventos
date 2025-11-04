@@ -125,7 +125,6 @@ html, body {
 .comments-panel {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;

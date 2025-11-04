@@ -5,7 +5,7 @@ import { useToast } from '../../hooks/useToast';
 
 const RecoverPassword = () => {
   const [email, setEmail] = useState('');
-  const [code, setCode] = useState(['', '', '', '']);
+  const [code, setCode] = useState(['', '', '', '', '', '']);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);

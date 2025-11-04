@@ -243,7 +243,7 @@ export default function ImageDetail() {
     <div className="gallery-page">
       <HeaderAdm />
 
-      <div className="gallery-wrapper">
+      <div className="gallery-wrapper mx-auto">
         {/* Imagen principal con navegación */}
         <div className="image-section">
           <div className="main-image-wrapper" style={{ position: "relative" }}>

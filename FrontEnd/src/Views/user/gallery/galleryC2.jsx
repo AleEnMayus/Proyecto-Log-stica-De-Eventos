@@ -100,7 +100,7 @@ const ImageGalleryViewerC = () => {
   return (
     <div className="gallery-page">
       <HeaderCl />
-      <div className="gallery-wrapper">
+      <div className="gallery-wrapper mx-auto">
         {/* Imagen principal */}
         <div className="image-section">
           <div className="main-image-wrapper">

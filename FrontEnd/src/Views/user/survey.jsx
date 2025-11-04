@@ -2,9 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import "../CSS/FormsUser.css";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/ToastContainer";
 
 const ClientSurvey = () => {
   const { eventId } = useParams();
+  const { toasts, addToast, removeToast } = useToast();
+
   const [userId, setUserId] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
@@ -12,7 +16,6 @@ const ClientSurvey = () => {
   const [loading, setLoading] = useState(false);
   const [loadingQuestions, setLoadingQuestions] = useState(true);
 
-  // Preguntas por defecto en caso de que el endpoint falle
   const defaultQuestions = [
     { _qid: "1", _text: "¿Cómo calificarías la organización general del evento?" },
     { _qid: "2", _text: "¿Qué opinas sobre la calidad del servicio?" },
@@ -24,12 +27,8 @@ const ClientSurvey = () => {
   useEffect(() => {
     const getUserId = () => {
       const storedUserId = localStorage.getItem("userId");
-      if (storedUserId) {
-        return parseInt(storedUserId, 10);
-      }
-      return 4; // Usuario por defecto
+      return storedUserId ? parseInt(storedUserId, 10) : 4;
     };
-
     setUserId(getUserId());
     fetchQuestions();
   }, []);
@@ -37,51 +36,30 @@ const ClientSurvey = () => {
   const fetchQuestions = async () => {
     try {
       setLoadingQuestions(true);
-      console.log(" Intentando cargar preguntas...");
-      
       const res = await fetch("http://localhost:4000/api/questions");
-      
-      if (!res.ok) {
-        throw new Error(`Error HTTP: ${res.status}`);
-      }
-      
+      if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
       const data = await res.json();
-      console.log(" Preguntas cargadas:", data);
 
       let questionsToUse = [];
-      
       if (data && Array.isArray(data) && data.length > 0) {
-        // Usar preguntas del servidor
         questionsToUse = data.map((q, idx) => {
           const id = q?.QuestionId || q?._id || q?.id || `q_${idx}`;
           const text = q?.QuestionText || q?.text || q?.question || `Pregunta ${idx + 1}`;
           return { ...q, _qid: id, _text: text };
         });
-        console.log(" Usando preguntas del servidor");
       } else {
-        // Usar preguntas por defecto
         questionsToUse = defaultQuestions;
-        console.log(" Usando preguntas por defecto");
       }
 
-      // Inicializar respuestas
       const initialAnswers = {};
-      questionsToUse.forEach((q) => {
-        initialAnswers[q._qid] = 0;
-      });
+      questionsToUse.forEach(q => { initialAnswers[q._qid] = 0; });
 
       setQuestions(questionsToUse);
       setAnswers(initialAnswers);
-      
     } catch (err) {
-      console.error(" Error cargando preguntas, usando preguntas por defecto:", err);
-      
-      // En caso de error, usar preguntas por defecto
+      console.error("Error cargando preguntas:", err);
       const initialAnswers = {};
-      defaultQuestions.forEach((q) => {
-        initialAnswers[q._qid] = 0;
-      });
-      
+      defaultQuestions.forEach(q => { initialAnswers[q._qid] = 0; });
       setQuestions(defaultQuestions);
       setAnswers(initialAnswers);
     } finally {
@@ -99,15 +77,9 @@ const ClientSurvey = () => {
       return (
         <svg
           key={`${questionId}-${i}`}
-          onClick={() =>
-            setAnswers((prev) => ({ ...prev, [questionId]: value }))
-          }
-          onMouseEnter={() =>
-            setHover((prev) => ({ ...prev, [questionId]: value }))
-          }
-          onMouseLeave={() =>
-            setHover((prev) => ({ ...prev, [questionId]: 0 }))
-          }
+          onClick={() => setAnswers(prev => ({ ...prev, [questionId]: value }))}
+          onMouseEnter={() => setHover(prev => ({ ...prev, [questionId]: value }))}
+          onMouseLeave={() => setHover(prev => ({ ...prev, [questionId]: 0 }))}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           width="28"
@@ -130,40 +102,22 @@ const ClientSurvey = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validaciones
-    if (!userId) {
-      alert("Error: No se encontró el ID de usuario");
-      return;
-    }
 
-    if (!eventId) {
-      alert("Error: No se encontró el ID del evento");
-      return;
-    }
+    if (!userId) return addToast("No se encontró el ID de usuario", "danger");
+    if (!eventId) return addToast("No se encontró el ID del evento", "danger");
 
-    // Verificar que todas las preguntas tengan respuesta
-    const unansweredQuestions = Object.entries(answers)
-      .filter(([_, value]) => value === 0)
-      .map(([qid]) => {
-        const question = questions.find(q => q._qid === qid);
-        return question ? question._text : `Pregunta ${qid}`;
-      });
+    const unanswered = Object.entries(answers).filter(([_, val]) => val === 0).map(([qid]) => {
+      const question = questions.find(q => q._qid === qid);
+      return question ? question._text : `Pregunta ${qid}`;
+    });
 
-    if (unansweredQuestions.length > 0) {
-      alert(`Por favor, responde las siguientes preguntas:\n${unansweredQuestions.join('\n')}`);
-      return;
+    if (unanswered.length > 0) {
+      return addToast(`Por favor, responde las siguientes preguntas:\n${unanswered.join('\n')}`, "warning");
     }
 
     setLoading(true);
 
     try {
-      console.log(" Enviando encuesta:", { 
-        EventId: eventId, 
-        UserId: userId, 
-        Answers: answers 
-      });
-
       const res = await fetch("http://localhost:4000/api/survey", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -174,25 +128,19 @@ const ClientSurvey = () => {
         }),
       });
 
-      const responseData = await res.json();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al enviar la encuesta");
 
-      if (!res.ok) {
-        throw new Error(responseData.error || "Error al enviar la encuesta");
-      }
-
-      alert("¡Encuesta enviada con éxito! Gracias por tu feedback.");
+      addToast("¡Encuesta enviada con éxito!", "success");
 
       // Resetear respuestas
       const resetAnswers = {};
-      questions.forEach((q) => {
-        resetAnswers[q._qid] = 0;
-      });
+      questions.forEach(q => { resetAnswers[q._qid] = 0; });
       setAnswers(resetAnswers);
       setHover({});
-
     } catch (err) {
-      console.error(" Error al enviar encuesta:", err);
-      alert(`Error: ${err.message}`);
+      console.error("Error al enviar encuesta:", err);
+      addToast(err.message || "Error inesperado al enviar la encuesta", "danger");
     } finally {
       setLoading(false);
     }
@@ -204,19 +152,17 @@ const ClientSurvey = () => {
       <div className="survey-container">
         <h2 className="survey-title">Encuesta de Satisfacción</h2>
         <div className="debug-info" style={{fontSize: '12px', color: '#666', marginBottom: '10px'}}>
-          ID de usuario: {userId} (Tipo: {typeof userId}) | ID de evento: {eventId}
+          ID de usuario: {userId} | ID de evento: {eventId}
           {loadingQuestions && " | Cargando preguntas..."}
         </div>
-        
+
         <form onSubmit={handleSubmit} className="survey-form">
           {loadingQuestions ? (
-            <p> Cargando preguntas...</p>
+            <p>Cargando preguntas...</p>
           ) : questions.length > 0 ? (
             questions.map((q, index) => (
               <div key={q._qid} className="survey-question-block">
-                <p className="survey-question">
-                  {index + 1}. {q._text}
-                </p>
+                <p className="survey-question">{index + 1}. {q._text}</p>
                 <div className="stars">{renderStars(q._qid)}</div>
                 <div className="rating-display" style={{fontSize: '14px', color: '#666', marginTop: '5px'}}>
                   Calificación seleccionada: <strong>{answers[q._qid] || 0}/5</strong>
@@ -236,10 +182,12 @@ const ClientSurvey = () => {
               cursor: (loading || loadingQuestions || questions.length === 0) ? 'not-allowed' : 'pointer'
             }}
           >
-            {loading ? " Enviando..." : " Enviar Encuesta"}
+            {loading ? "Enviando..." : "Enviar Encuesta"}
           </button>
         </form>
       </div>
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

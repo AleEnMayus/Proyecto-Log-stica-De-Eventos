@@ -9,7 +9,7 @@ const ContractsAdmin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // === Subir y enviar contrato ===
+  //  Subir y enviar contrato 
   const handleSendContract = async () => {
     if (!contrato) return alert("Selecciona un contrato PDF antes de enviar.");
 

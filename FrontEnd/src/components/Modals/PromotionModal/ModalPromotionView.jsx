@@ -30,7 +30,7 @@ const ModalPromotionView = ({ promo, onClose }) => {
           </p>
         </div>
 
-        {/* ✅ Botón cerrar alineado a la izquierda */}
+        {/* Botón cerrar alineado a la izquierda */}
         <div className="mt-4" style={{ textAlign: "left" }}>
           <button className="btn-secondary-custom btn" onClick={onClose}>
             Cerrar

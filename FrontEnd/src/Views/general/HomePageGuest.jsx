@@ -180,7 +180,7 @@ const HomeGuest = () => {
             ))}
           </div>
 
-          {/* ✅ Modal SOLO LECTURA */}
+          {/*  Modal SOLO LECTURA */}
           {selectedPromo && (
             <ModalPromotionView
               promo={selectedPromo}

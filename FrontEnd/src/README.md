@@ -1,10 +1,10 @@
-# 📁 src — Código Fuente del Frontend
+#  src — Código Fuente del Frontend
 
 Esta carpeta contiene el núcleo del desarrollo frontend del Proyecto de Logística de Eventos. Aquí se encuentran los componentes, vistas, servicios y archivos principales que conforman la interfaz de usuario.
 
 ---
 
-## 📂 Estructura General
+##  Estructura General
 
 - `App.jsx` — Componente raíz de la aplicación  
 - `main.jsx` — Punto de entrada para React  
@@ -15,19 +15,19 @@ Esta carpeta contiene el núcleo del desarrollo frontend del Proyecto de Logíst
 
 ---
 
-## 🧩 Propósito
+##  Propósito
 
 Cada subcarpeta dentro de `src` está diseñada para mantener el código modular, escalable y fácil de mantener. La separación por roles y funcionalidades permite una mejor organización y colaboración entre desarrolladores.
 
 ---
 
-## 📌 Estado
+##  Estado
 
-> 🚧 **En desarrollo activo** 
+>  **En desarrollo activo** 
 
 ---
 
-## 🗂️ Recomendaciones
+##  Recomendaciones
 
 - Mantener los componentes pequeños y reutilizables  
 - Usar `imports/` para centralizar dependencias por rol  

@@ -14,7 +14,7 @@ const ContractsList = () => {
 
   const itemsPerPage = 3;
 
-  // === FETCH CONTRATOS ===
+  //  FETCH CONTRATOS 
   const fetchContratos = async () => {
     try {
       setLoading(true);
@@ -42,7 +42,7 @@ const ContractsList = () => {
     fetchContratos();
   }, []);
 
-  // === FUNCIONES DE ACCIÓN ===
+  // FUNCIONES DE ACCIÓN 
   const handleDownload = async (eventId, eventName) => {
     try {
       addToast('Descargando contrato...', 'info');
@@ -111,7 +111,7 @@ const ContractsList = () => {
     }
   };
 
-  // === FILTRO Y PAGINACIÓN ===
+  // FILTRO Y PAGINACIÓN 
   const filteredContratos = contratos.filter(c => 
     c.EventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.ClientName?.toLowerCase().includes(searchTerm.toLowerCase())

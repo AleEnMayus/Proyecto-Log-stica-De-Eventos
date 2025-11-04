@@ -22,7 +22,7 @@ const CreateSurvay = () => {
   const [questions, setQuestions] = useState([""]);
   const [error, setError] = useState("");
 
-  // ➕ Agregar nueva pregunta (máximo 5)
+  //  Agregar nueva pregunta (máximo 5)
   const addQuestion = () => {
     if (questions.length < 5) {
       setQuestions(prev => [...prev, ""]);
@@ -83,7 +83,7 @@ const CreateSurvay = () => {
     }
   };
 
-  // ↩Cancelar creación
+  // Cancelar creación
   const handleCancel = () => {
     navigate("/SurvayHome");
   };

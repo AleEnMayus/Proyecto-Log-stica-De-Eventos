@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import '../../CSS/FormsUser.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
-// ✅ Importar el hook y el contenedor de notificaciones
+// Importar el hook y el contenedor de notificaciones
 import { useToast } from "../../../hooks/useToast"; 
 import ToastContainer from "../../../components/ToastContainer";
 
 const CreateAccountForm = () => {
-  const navigate = useNavigate(); // ✅ Hook para redireccionar
+  const navigate = useNavigate(); //  Hook para redireccionar
 
-  // ✅ Sistema de notificaciones
+  //  Sistema de notificaciones
   const { toasts, addToast, removeToast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -293,7 +293,7 @@ const CreateAccountForm = () => {
         </div>
       </div>
 
-      {/* ✅ Contenedor de notificaciones */}
+      {/* Contenedor de notificaciones */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );

@@ -8,9 +8,8 @@ import ConfirmModal from "../../../components/Modals/ModalConfirm";
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
 
-// ============================
 // Funciones Fetch API Nueva
-// ============================
+
 
 async function getImages(page = 1, limit = 8) {
   const response = await fetch(`http://localhost:4000/api/gallery/paginated?page=${page}&limit=${limit}`);
@@ -38,9 +37,9 @@ async function deleteAllImages(id) {
   return data;
 }
 
-// ============================
+
 // Componente principal
-// ============================
+
 
 const ImageGalleryC = () => {
   const navigate = useNavigate();

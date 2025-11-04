@@ -18,7 +18,7 @@ const ResultsSurvey = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // --- Cargar resultados desde API ---
+  //  Cargar resultados desde API 
   const fetchResults = async () => {
     try {
       setLoading(true);
@@ -50,14 +50,14 @@ const ResultsSurvey = () => {
 
   useEffect(() => { fetchResults(); }, []);
 
-  // --- Filtrar resultados ---
+  //  Filtrar resultados 
   const filteredResults = results.filter(r =>
     r.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.event.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.question.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // --- Paginación ---
+  //  Paginación 
   const indexOfLast = currentPage * QUESTIONS_PER_PAGE;
   const indexOfFirst = indexOfLast - QUESTIONS_PER_PAGE;
   const currentResults = filteredResults.slice(indexOfFirst, indexOfLast);

@@ -113,7 +113,7 @@ const HomeAdmin = ({ user, onLogout }) => {
           </a>
         </section>
 
-        {/* ✅ PROMOCIONES (ACTUALIZADO) */}
+        {/* PROMOCIONES (ACTUALIZADO) */}
         <section id="promociones" className="mb-5">
           <h2 className="section-title h3">Administrar Promociones</h2>
           <p className="text-muted mb-4">
@@ -145,7 +145,7 @@ const HomeAdmin = ({ user, onLogout }) => {
                     {promo.TitleProm}
                   </h5>
 
-                  {/* ✅ DESCRIPCIÓN TRUNCADA */}
+                  {/* DESCRIPCIÓN TRUNCADA */}
                   <p className="promo-description">
                     {promo.DescriptionProm}
                   </p>

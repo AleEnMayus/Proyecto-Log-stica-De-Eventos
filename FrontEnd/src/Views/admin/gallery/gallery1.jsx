@@ -276,7 +276,7 @@ const ImageGalleryC = () => {
           setShowConfirmModal(false);
         }}
         message={confirmMessage}
-        confirmText="Sí, eliminar"
+        confirmText="Eliminar"
       />
 
       <ToastContainer toasts={toasts} removeToast={removeToast} />

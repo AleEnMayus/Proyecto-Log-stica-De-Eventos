@@ -88,9 +88,8 @@ const routeConfig = {
     { path: '/SurvayHome/create', component: CreateSurvay },
     
     // Galería
-    { path: '/GalleryAdmin', component: ImageGalleryA },
     { path: '/GalleryViewAdmin/:ImgId', component: ImageGallery },
-    { path: '/GalleryAdminEdit', component: ManagerImageGallery },
+    { path: '/GalleryAdmin', component: ManagerImageGallery },
 
     // Cuentas de usuario
     { path: '/ManageAccounts', component: AdminAccountsList },
@@ -127,7 +126,7 @@ const routeConfig = {
   ],
 };
 
-// 🔐 Hook de autenticación
+// Hook de autenticación
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);
@@ -152,7 +151,7 @@ const useAuth = () => {
   return { isAuthenticated, userRole, loading };
 };
 
-// 🧩 Protección de rutas
+// Protección de rutas
 const ProtectedRoute = ({ children, requiredRole, userRole, isAuthenticated }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (requiredRole && userRole !== requiredRole) return <Navigate to="/" replace />;
@@ -164,7 +163,7 @@ const PublicOnlyRoute = ({ children, isAuthenticated }) => {
   return children;
 };
 
-// 🧭 Redirección dinámica del "/"
+// Redirección dinámica del "/"
 const HomeRedirect = ({ isAuthenticated, userRole }) => {
   if (!isAuthenticated) return <Navigate to="/HomeGuest" replace />;
   if (userRole === "admin") return <Navigate to="/HomeAdmin" replace />;
@@ -172,7 +171,7 @@ const HomeRedirect = ({ isAuthenticated, userRole }) => {
   return <Navigate to="/HomeGuest" replace />;
 };
 
-// 🧱 Renderizado dinámico de rutas
+// Renderizado dinámico de rutas
 const renderRoutes = (routes = [], routeType, authProps = {}) => {
   return routes.map(({ path, component: Component }) => {
     const element = <Component />;
@@ -195,7 +194,7 @@ const renderRoutes = (routes = [], routeType, authProps = {}) => {
   });
 };
 
-// 🚀 Componente principal
+// Componente principal
 function App() {
   const { isAuthenticated, userRole, loading } = useAuth();
 

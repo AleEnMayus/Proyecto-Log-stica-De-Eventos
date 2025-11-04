@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const http = require("http");
-const path = require("path");
 const { Server } = require("socket.io");
 require("dotenv").config();
 
@@ -17,6 +16,8 @@ const server = http.createServer(app);
 
 // Inicializar Socket.IO
 const { init } = require("./sockets/socket");
+const { notificationSocket } = require("./sockets/notificationSocket");
+
 const io = init(server);
 notificationSocket(io);
 
@@ -43,17 +44,14 @@ app.use("/api/accounts", require("./routes/Admin/accounts"));
 app.use("/api/profile", require("./routes/Profile"));
 app.use("/api/requests", require("./routes/user/Request"));
 app.use("/api/promotions", require("./routes/Admin/promotions"));
-app.use("/api/contract", require("./routes/Admin/contractRoutes"));
 app.use("/api/gallery", require("./routes/Admin/galleryRoutes"));
 app.use("/api/gallery", require("./routes/commentsRoutes"));
-
-//  Aquí conectas la nueva ruta de contratos (subida + listado + eliminación)
 app.use("/api/contracts", require("./routes/Admin/contractsUploadRoutes"));
 
-// === Jobs automáticos ===
+// Jobs automáticos
 startEventCompletionJob();
 
-// === Iniciar servidor ===
+// Iniciar servidor
 server.listen(PORT, () => {
   console.log(`-/ Backend corriendo en http://localhost:${PORT}`);
   console.log("-/ Socket.IO activo para notificaciones en tiempo real");

@@ -226,7 +226,7 @@ const EventDetailsA = () => {
 
       {/* Botones */}
       <div className="button-container">
-        <button className="btn-primary-custom" onClick={handleSend(eventId)}>
+        <button className="btn-primary-custom" onClick={() => handleSend(eventId)}>
           Enviar contrato
         </button>
         <button className="btn-primary-custom" onClick={handleEditEvent}>

@@ -11,9 +11,9 @@ const HomeClient = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [user, setUser] = useState(null);
   const [selectedPromo, setSelectedPromo] = useState(null);
-
-  // Promociones reales
   const [promociones, setPromociones] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [loadingGallery, setLoadingGallery] = useState(true);
 
   // === Cargar usuario desde localStorage ===
   useEffect(() => {
@@ -42,6 +42,44 @@ const HomeClient = () => {
       .catch(err => console.error("Error cargando promociones:", err));
   }, []);
 
+  // Cargar galería de imágenes
+  useEffect(() => {
+    const loadGallery = async () => {
+      try {
+        setLoadingGallery(true);
+        // Primero obtenemos una imagen para saber cuántas hay en total
+        const response = await fetch("http://localhost:4000/api/gallery/1");
+        const data = await response.json();
+        
+        if (data && data.navigation) {
+          const totalImages = data.navigation.totalImages;
+          const imagesToLoad = Math.min(totalImages, 5); // Máximo 5 imágenes
+          
+          // Cargar todas las imágenes necesarias
+          const imagePromises = [];
+          for (let i = 1; i <= imagesToLoad; i++) {
+            imagePromises.push(
+              fetch(`http://localhost:4000/api/gallery/${i}`)
+                .then(res => res.json())
+                .catch(err => null)
+            );
+          }
+          
+          const images = await Promise.all(imagePromises);
+          const validImages = images.filter(img => img && img.url);
+          setGalleryImages(validImages);
+        }
+      } catch (err) {
+        console.error("Error cargando galería:", err);
+        setGalleryImages([]);
+      } finally {
+        setLoadingGallery(false);
+      }
+    };
+
+    loadGallery();
+  }, []);
+
   // === Login y Logout ===
   const handleLogin = (userData) => {
     localStorage.setItem('user', JSON.stringify(userData));
@@ -53,17 +91,8 @@ const HomeClient = () => {
     setUser(null);
   };
 
-  // === Carrusel ===
-  const images = [
-    { id: 1, alt: "Evento 1" },
-    { id: 2, alt: "Evento 2" },
-    { id: 3, alt: "Evento 3" },
-    { id: 4, alt: "Evento 4" },
-    { id: 5, alt: "Evento 5" }
-  ];
-
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % images.length);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % galleryImages.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#f8f9fa' }}>
@@ -84,37 +113,52 @@ const HomeClient = () => {
         {/* ====== GALERÍA ====== */}
         <section id="galeria" className="mb-5">
           <h2 className="section-title h3">Galería de Eventos</h2>
-          <div className="carousel-container">
-            <div
-              className="carousel-track"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {images.map((image) => (
-                <div key={image.id} className="carousel-slide">
-                  <div className="text-center">
-                    <div
-                      style={{
-                        width: '200px',
-                        height: '150px',
-                        background: '#dee2e6',
-                        borderRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: '0 auto'
-                      }}
-                    >
-                      🖼
-                    </div>
-                    <p className="mt-3 mb-0">{image.alt}</p>
-                  </div>
-                </div>
-              ))}
+          
+          {loadingGallery ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
             </div>
+          ) : galleryImages.length > 0 ? (
+            <div className="carousel-container">
+              <div
+                className="carousel-track"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {galleryImages.map((image, index) => (
+                  <div key={image.FileId} className="carousel-slide">
+                      <img
+                        src={image.url}
+                        alt={image.FileName}
+                        style={{
+                          width: '100%',
+                          objectFit: 'cover',
+                          borderRadius: '10px',
+                          margin: '0 auto',
+                          display: 'block'
+                        }}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextElementSibling.style.display = 'flex';
+                        }}
+                      />
+                  </div>
+                ))}
+              </div>
 
-            <button className="carousel-btn prev" onClick={prevSlide}>‹</button>
-            <button className="carousel-btn next" onClick={nextSlide}>›</button>
-          </div>
+              {galleryImages.length > 1 && (
+                <>
+                  <button className="carousel-btn prev" onClick={prevSlide}>‹</button>
+                  <button className="carousel-btn next" onClick={nextSlide}>›</button>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-5 text-muted">
+              <p>No hay imágenes en la galería</p>
+            </div>
+          )}
         </section>
 
         {/* ====== CITAS ====== */}
@@ -146,8 +190,8 @@ const HomeClient = () => {
                 <div className="promo-card h-100">
                   <h5 className="text-primary fw-bold mb-3">{promo.TitleProm}</h5>
 
-                  <p className="text-muted small mb-4" style={{ fontSize: '0.85rem' }}>
-                    <strong>Descripción:</strong> {promo.DescriptionProm}
+                  <p className="promo-description">
+                    {promo.DescriptionProm}
                   </p>
 
                   <div className="mt-auto">

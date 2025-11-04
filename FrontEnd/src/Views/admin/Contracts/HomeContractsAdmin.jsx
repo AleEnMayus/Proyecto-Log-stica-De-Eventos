@@ -16,23 +16,22 @@ const ContractsAdmin = () => {
     try {
       setLoading(true);
 
-      // 🔍 Paso 1: Verificar si ya existe contrato asignado
+      // Paso 1: verificar contrato existente
       const verifyResponse = await fetch(`http://localhost:4000/api/contracts/by-event/${eventId}`);
       if (verifyResponse.ok) {
         const existing = await verifyResponse.json();
         if (existing.ContractRoute) {
-          alert("⚠️ Este evento ya tiene un contrato asignado. No puedes reemplazarlo.");
+          alert("Este evento ya tiene un contrato asignado. No puedes reemplazarlo.");
           setLoading(false);
           return;
         }
       }
 
-      // Paso 2: Preparar datos
+      // Paso 2: subir contrato
       const formData = new FormData();
       formData.append("pdf", contrato);
       formData.append("eventId", eventId);
 
-      // Paso 3: Subir al backend
       const response = await fetch("http://localhost:4000/api/contracts/upload", {
         method: "POST",
         body: formData,
@@ -42,11 +41,9 @@ const ContractsAdmin = () => {
 
       if (!response.ok) throw new Error(data.error || "Error al subir el contrato");
 
-      alert(
-        `✅ Contrato enviado correctamente a ${data.data.emailSentTo}\nCódigo: ${data.data.contractNumber}`
-      );
-
+      alert(`Contrato enviado correctamente a ${data.data.emailSentTo}\nCódigo: ${data.data.contractNumber}`);
       setContrato(null);
+
     } catch (error) {
       console.error("Error subiendo contrato:", error);
       alert(error.message || "Ocurrió un error al subir el contrato");
@@ -111,7 +108,10 @@ const ContractsAdmin = () => {
               className="btn-primary-custom"
               disabled={loading}
             >
-              📄 Cargar Contrato
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+                <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+              </svg>
+              Cargar Contrato
             </button>
 
             <button
@@ -119,24 +119,30 @@ const ContractsAdmin = () => {
               className="btn-primary-custom"
               disabled={!contrato || loading}
             >
-              {loading ? "Enviando..." : "📤 Enviar Contrato"}
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+                <path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/>
+              </svg>
+              {loading ? "Enviando..." : "Enviar Contrato"}
             </button>
 
             <button
               onClick={handleEliminarContrato}
-              className="btn-secondary-custom"
+              className="btn-secondary-custom w-100"
               disabled={!contrato || loading}
             >
-              🗑️ Eliminar contrato
+              <svg xmlns="http://www.w3.org/2000/svg" className='me-2' height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
+                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+              </svg>
+              Eliminar contrato
             </button>
           </div>
         </div>
 
         <button
           onClick={handleVerListado}
-          className="btn-secondary-custom mx-auto"
+          className="btn-secondary-custom mx-auto "
         >
-          📁 Ver Listado De Contratos
+          Ver Listado De Contratos
         </button>
       </div>
     </div>

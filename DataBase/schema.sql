@@ -372,7 +372,7 @@ SELECT
             WHEN 'document_change' THEN 'Cambio de documento'
         END
     ) AS title,
-    r.RequestDate AS start_date,  -- <--- CAMBIO AQUÍ
+    r.RequestDate AS start_date,
     r.RequestStatus AS status,
     NULL AS location,
     r.RequestDescription AS description,

@@ -160,7 +160,7 @@ const HomeClient = () => {
             ))}
           </div>
 
-          {/* ✅ Modal solo lectura */}
+          {/* Modal solo lectura */}
           {selectedPromo && (
             <ModalPromotionView
               promo={selectedPromo}

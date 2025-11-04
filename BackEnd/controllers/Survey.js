@@ -1,9 +1,9 @@
 const Survey = require("../models/Survey");
 
-// POST /api/survey
-async function submitSurvey(req, res) {
+// Enviar encuesta
+const submitSurvey = async (req, res) => {
   try {
-    const { Answers, EventId, UserId } = req.body;
+    const { EventId, UserId, Answers } = req.body;
 
     if (!EventId || !UserId || !Answers) {
       return res.status(400).json({ error: "Faltan datos en la encuesta" });
@@ -11,11 +11,25 @@ async function submitSurvey(req, res) {
 
     const result = await Survey.saveSurvey(EventId, UserId, Answers);
 
-    res.json({ message: "Encuesta guardada con éxito", result });
+    res.status(201).json({
+      message: "Encuesta guardada con éxito",
+      result,
+    });
   } catch (err) {
     console.error("Error al guardar encuesta:", err);
-    res.status(500).json({ error: "Error al guardar encuesta" });
+    res.status(500).json({ error: "Error interno al guardar encuesta" });
   }
-}
+};
 
-module.exports = { submitSurvey };
+// Obtener todas las respuestas (admin)
+const getAllAnswers = async (req, res) => {
+  try {
+    const [results] = await Survey.getAllAnswers();
+    res.json(results);
+  } catch (err) {
+    console.error("Error al obtener respuestas:", err);
+    res.status(500).json({ error: "Error interno al obtener respuestas" });
+  }
+};
+
+module.exports = { submitSurvey, getAllAnswers };

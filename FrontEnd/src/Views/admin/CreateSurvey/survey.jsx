@@ -4,7 +4,7 @@ import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/Lists.css";
 
 import EditQuestion from "../../../components/Modals/EditQuestion"; 
-import ConfirmModal from "../../../components/Modals/ModalConfirm"; //  IMPORTADO
+import ConfirmModal from "../../../components/Modals/ModalConfirm";
 
 const Survey = () => {
   const [questions, setQuestions] = useState([]);
@@ -31,7 +31,7 @@ const Survey = () => {
     fetchQuestions();
   }, []);
 
-  // Filtro
+  // Filtrar preguntas
   const questionsFiltradas = questions.filter((q) =>
     q.QuestionText?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -48,7 +48,7 @@ const Survey = () => {
     setShowEditModal(true);
   };
 
-  // Guardar cambios desde el MODAL NUEVO
+  // Guardar cambios desde modal
   const handleSaveEdit = async (id, newText) => {
     try {
       const res = await fetch(`http://localhost:4000/api/questions/${id}`, {
@@ -56,13 +56,10 @@ const Survey = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ QuestionText: newText }),
       });
-
       if (!res.ok) throw new Error("Error al actualizar la pregunta");
 
       setQuestions((prev) =>
-        prev.map((q) =>
-          q.QuestionId === id ? { ...q, QuestionText: newText } : q
-        )
+        prev.map((q) => (q.QuestionId === id ? { ...q, QuestionText: newText } : q))
       );
 
       setShowEditModal(false);
@@ -86,7 +83,6 @@ const Survey = () => {
         `http://localhost:4000/api/questions/${questionToDelete.QuestionId}`,
         { method: "DELETE" }
       );
-
       if (!res.ok) throw new Error("Error al eliminar la pregunta");
 
       setQuestions((prev) =>
@@ -104,15 +100,24 @@ const Survey = () => {
     <div className="list-container">
       <HeaderAdm />
 
-      {/* Header */}
+      {/* Header con botones */}
       <div className="list-header mt-5 pt-5">
         <h2 className="list-title">PREGUNTAS REGISTRADAS</h2>
-        <Link to="/SurvayHome/create" className="btn-create">
-          <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
-            <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
-          </svg>
-          Crear Encuesta
-        </Link>
+        <div className="d-flex" style={{ display: "flex", gap: "12px" }}>
+          <Link to="/SurvayHome/create" className="btn-create">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
+              <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+            </svg>
+            Crear Encuesta
+          </Link>
+
+          <Link to="/SurvayHome/results" className="btn-status-custom status-active btn-create">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
+              <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+            </svg>
+            Ver Resultados
+          </Link>
+        </div>
       </div>
 
       {/* Buscar */}
@@ -143,7 +148,6 @@ const Survey = () => {
               <th className="acciones-header">Eliminar</th>
             </tr>
           </thead>
-
           <tbody>
             {currentQuestions.map((q) => (
               <tr key={q.QuestionId}>
@@ -181,7 +185,7 @@ const Survey = () => {
         </table>
       </div>
 
-      {/* MODAL EDITAR NUEVO */}
+      {/* MODAL EDITAR */}
       <EditQuestion
         show={showEditModal}
         question={selectedQuestion}

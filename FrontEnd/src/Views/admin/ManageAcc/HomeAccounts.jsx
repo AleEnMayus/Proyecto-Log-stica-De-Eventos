@@ -6,6 +6,9 @@ import ConfirmModal from "../../../components/Modals/ModalConfirm";
 import ModalState from "../../../components/Modals/ModalState";
 import "../../CSS/Lists.css";
 import "../../CSS/components.css";
+// Importar el contenedor de toasts y el hook personalizado
+import ToastContainer from "../../../components/ToastContainer";
+import { useToast } from "../../../hooks/useToast";
 
 const API_URL = "http://localhost:4000/api/accounts";
 
@@ -13,6 +16,7 @@ const AdminAccountsList = () => {
   // Estados principales
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { toasts, addToast, removeToast } = useToast();
 
   // Estados para modales
   const [showModal, setShowModal] = useState(false);
@@ -39,6 +43,7 @@ const AdminAccountsList = () => {
       setCurrentPage(1); // Reinicia la paginación al cargar datos
     } catch (err) {
       console.error("Error cargando cuentas:", err);
+          addToast("Error cargando cuentas", "danger");
     } finally {
       setLoading(false);
     }
@@ -64,10 +69,11 @@ const AdminAccountsList = () => {
 
           // Elimina la cuenta de la lista local
           setUsers((prev) => prev.filter((u) => u.UserId !== userId));
+          addToast("Cuenta eliminada exitosamente", "success");
           setShowModal(false);
         } catch (err) {
           console.error("Error eliminando cuenta:", err);
-          alert("No se pudo eliminar la cuenta");
+          addToast("No se pudo eliminar la cuenta", "danger");
         }
       },
     });
@@ -106,10 +112,11 @@ const AdminAccountsList = () => {
               u.UserId === userId ? { ...u, Status: newStatus } : u
             )
           );
+          addToast("Estado de cuenta actualizado exitosamente", "success"); 
           setShowModal(false);
         } catch (err) {
           console.error("Error cambiando estado:", err);
-          alert("No se pudo cambiar el estado");
+          addToast("No se pudo cambiar el estado", "danger");
         }
       },
     });
@@ -286,7 +293,9 @@ const AdminAccountsList = () => {
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            ◀
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/>
+          </svg>
           </button>
 
           {/* Números */}
@@ -310,7 +319,9 @@ const AdminAccountsList = () => {
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            ▶
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"/>
+          </svg>
           </button>
         </div>
       )}
@@ -330,6 +341,8 @@ const AdminAccountsList = () => {
         options={["Active", "Inactive"]}
         title="Cambiar estado de usuario"
       />
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

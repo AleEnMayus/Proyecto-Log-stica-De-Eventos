@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/FormsUser.css";
+
+// Importar el contenedor de toasts y el hook personalizado
 import ToastContainer from "../../../components/ToastContainer";
 import { useToast } from "../../../hooks/useToast";
 
 const EditAccountPage = () => {
   const { userId } = useParams(); // <-- Obtener ID desde URL
   const navigate = useNavigate();
-  const { toasts, showToast, removeToast } = useToast();
+  const { toasts, addToast, removeToast } = useToast();
 
   const [formData, setFormData] = useState(null); // null mientras carga
   const [errors, setErrors] = useState({});
@@ -55,12 +57,12 @@ const EditAccountPage = () => {
         });
       } catch (error) {
         console.error(error);
-        showToast("Error al cargar los datos de la cuenta", "error");
+        addToast("Error al cargar los datos de la cuenta", "error");
       }
     };
 
     if (userId) fetchAccount();
-  }, [userId, showToast]);
+  }, [userId, addToast]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,11 +89,14 @@ const EditAccountPage = () => {
 
         if (!response.ok) throw new Error("Error al actualizar la cuenta");
 
-        showToast("Cuenta actualizada correctamente", "success");
-        navigate("/ManageAccounts"); // volver al listado
+        addToast("Cuenta actualizada correctamente", "success");
+
+        setTimeout(() => {
+          navigate("/ManageAccounts"); // volver al listado
+        }, 1000);
       } catch (error) {
         console.error(error);
-        showToast("Error al actualizar la cuenta", "error");
+        addToast("Error al actualizar la cuenta", "error");
       }
     }
   };
@@ -297,7 +302,7 @@ const EditAccountPage = () => {
               </div>
             </form>
 
-            <ToastContainer toasts={toasts || []} removeToast={removeToast || (() => { })} />
+            <ToastContainer toasts={toasts} removeToast={removeToast} />
           </div>
         </div>
       </div>

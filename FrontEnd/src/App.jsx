@@ -109,7 +109,7 @@ const routeConfig = {
   client: [
     { path: '/Schedule', component: Schedule },
     { path: '/Survey/:eventId', component: SurvayClient },
-    { path: '/GalleryView', component: ImageGalleryViewerC },
+    { path: '/GalleryView/:ImgId', component: ImageGalleryViewerC },
     { path: '/Gallery', component: ImageGalleryC },
     { path: '/Calendar', component: ClientCalendar },
     { path: '/HomeContractsCl', component: ContractsClient },

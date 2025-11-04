@@ -6,63 +6,29 @@ import "../../CSS/components.css";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
 
+// toasts
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/ToastContainer";
+
 export default function ImageDetail() {
   const { ImgId } = useParams();
   const navigate = useNavigate();
+
+  const { toasts, addToast, removeToast } = useToast();
 
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
+  const [navigation, setNavigation] = useState(null);
 
   // Estados para modal de comentarios
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
-  const [confirmMessage, setConfirmMessage] = useState("");
   const [currentModalPage, setCurrentModalPage] = useState(1);
+  const [confirmMessage, setConfirmMessage] = useState("");
   const [selectedComments, setSelectedComments] = useState([]);
   const [publicComments, setPublicComments] = useState([]);
-
-  // Paginación de la galería
-  const [images, setImages] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const limit = 8; // cantidad de imágenes por página
-
-  const fetchImages = async (page = 1) => {
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `http://localhost:4000/api/gallery/${ImgId}`
-      );
-
-      if (!res.ok) throw new Error("Error al obtener imágenes");
-
-      const data = await res.json();
-      setImages(data.images || []);
-      setTotalPages(data.totalPages || 1);
-    } catch (err) {
-      console.error("Error al cargar imágenes:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchImages(currentPage);
-  }, [currentPage, ImgId]);
-
-
-  // Controles de página
-  const nextPage = () => {
-    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) setCurrentPage((p) => p - 1);
-  };
-
 
   // Función para recargar comentarios
   const refreshComments = async () => {
@@ -97,6 +63,7 @@ export default function ImageDetail() {
             src: imageData.url,
             alt: imageData.FileName,
           });
+          setNavigation(imageData.navigation);
         }
 
         await refreshComments();
@@ -114,10 +81,23 @@ export default function ImageDetail() {
     };
   }, [ImgId]);
 
+  // Navegación entre imágenes
+  const goToPrevImage = () => {
+    if (navigation?.prevId) {
+      navigate(`/GalleryViewAdmin/${navigation.prevId}`);
+    }
+  };
+
+  const goToNextImage = () => {
+    if (navigation?.nextId) {
+      navigate(`/GalleryViewAdmin/${navigation.nextId}`);
+    }
+  };
+
   // Cargar comentarios públicos cuando se abre el modal
   const openCommentModal = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/gallery/comments/public");
+      const res = await fetch("http://localhost:4000/api/gallery/comments/pending");
       if (res.ok) {
         const data = await res.json();
         setPublicComments(data);
@@ -134,78 +114,100 @@ export default function ImageDetail() {
     refreshComments();
   };
 
-  // requestDeleteImage
-
-  const requestDeleteImage = (idx, e) => {
-    e.stopPropagation();
-    setConfirmAction(() => () => handleDeleteImage(idx));
+  // Eliminar imagen
+  const requestDeleteImage = () => {
     setConfirmMessage("¿Estás seguro de que deseas eliminar esta imagen?");
     setShowConfirmModal(true);
   };
 
-  const handleDeleteImage = async (idx) => {
+  const handleDeleteImage = async () => {
     try {
-      const realIndex = indexOfFirstImage + idx;
-      const imageToDelete = images[realIndex];
-
-      const response = await fetch(`http://localhost:4000/api/gallery/${imageToDelete.FileId}`, {
+      const response = await fetch(`http://localhost:4000/api/gallery/${ImgId}`, {
         method: "DELETE",
       });
 
       if (!response.ok) throw new Error("Error al eliminar la imagen");
 
-      // Recargar la galería
-      await fetchImages();
+      const data = await response.json();
 
-      // Ajustar página si es necesario
-      const updatedLength = images.length - 1;
-      if (updatedLength <= indexOfFirstImage && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
       addToast("Imagen eliminada correctamente", "success");
+      // Redirigir según respuesta del backend
+      if (data.isEmpty) {
+        navigate("/GalleryAdmin");
+      } else if (data.redirectTo) {
+        navigate(`/GalleryViewAdmin/${data.redirectTo}`);
+      } else {
+        navigate("/GalleryAdmin");
+      }
     } catch (error) {
       console.error("Error deleting image:", error);
-      addToast("Error al eliminar la imagen", "danger");
+      ("Error al eliminar la imagen");
     }
   };
 
-
-  const toggleCommentSelection = async (commentId) => {
+  // Aceptar comentario
+  const handleApproveComment = async (commentId) => {
     try {
-      if (selectedComments.includes(commentId)) {
-        const res = await fetch(`http://localhost:4000/api/gallery/${ImgId}/comments/${commentId}`, {
-          method: "DELETE",
-        });
+      const res = await fetch(`http://localhost:4000/api/gallery/accept/${commentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+      });
 
-        if (res.ok) {
-          setSelectedComments((prev) => prev.filter((c) => c !== commentId));
-          setComments((prev) => prev.filter((c) => c.CommentId !== commentId));
+      if (res.ok) {
+        // Actualizar lista de comentarios públicos pendientes
+        setPublicComments(prev => prev.filter(c => c.CommentId !== commentId));
 
-          const pubRes = await fetch("http://localhost:4000/api/gallery/comments/public");
-          if (pubRes.ok) setPublicComments(await pubRes.json());
+        // Si ya no hay comentarios en la página actual, ir a la anterior
+        if (currentModalComments.length === 1 && currentModalPage > 1) {
+          setCurrentModalPage(prev => prev - 1);
         }
+
+        // Recargar comentarios de la imagen actual
+        await refreshComments();
+        addToast("Comentario aceptado correctamente", "success");
       } else {
-        const res = await fetch(`http://localhost:4000/api/gallery/${ImgId}/comments`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ commentId }),
-        });
-
-        if (res.ok) {
-          setSelectedComments((prev) => [...prev, commentId]);
-          await refreshComments();
-
-          const pubRes = await fetch("http://localhost:4000/api/gallery/comments/public");
-          if (pubRes.ok) setPublicComments(await pubRes.json());
-        }
+        const error = await res.json();
+        console.error("Error al aceptar comentario:", error);
+        addToast("Error al aceptar el comentario", "danger");
       }
     } catch (err) {
-      console.error("Error al agregar/remover comentario:", err);
-      alert("Error al procesar el comentario");
+      console.error("Error al aceptar comentario:", err);
+      addToast("Error al aceptar el comentario", "danger");
     }
   };
 
-  const commentsPerPage = 5;
+  // Rechazar comentario
+  const handleRejectComment = async (commentId) => {
+    try {
+      const res = await fetch(`http://localhost:4000/api/gallery/remove/${commentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (res.ok) {
+        // Actualizar lista de comentarios públicos pendientes
+        setPublicComments(prev => prev.filter(c => c.CommentId !== commentId));
+
+        // Si ya no hay comentarios en la página actual, ir a la anterior
+        if (currentModalComments.length === 1 && currentModalPage > 1) {
+          setCurrentModalPage(prev => prev - 1);
+        }
+
+        // Recargar comentarios de la imagen actual
+        await refreshComments();
+        addToast("Comentario rechazado correctamente", "success");
+      } else {
+        const error = await res.json();
+        console.error("Error al rechazar comentario:", error);
+        addToast("Error al rechazar comentario", "danger");
+      }
+    } catch (err) {
+      console.error("Error al rechazar comentario:", err);
+      addToast("Error de conexión al rechazar el comentario", "danger");
+    }
+  };
+
+  const commentsPerPage = 4;
   const totalModalPages = Math.ceil(publicComments.length / commentsPerPage);
   const currentModalComments = publicComments.slice(
     (currentModalPage - 1) * commentsPerPage,
@@ -242,10 +244,51 @@ export default function ImageDetail() {
       <HeaderAdm />
 
       <div className="gallery-wrapper">
-        {/* Imagen principal */}
+        {/* Imagen principal con navegación */}
         <div className="image-section">
-          <div className="main-image-wrapper">
+          <div className="main-image-wrapper" style={{ position: "relative" }}>
+            {/* Botón anterior */}
+            <button
+              className="pagination-arrow"
+              onClick={goToPrevImage}
+              disabled={!navigation?.hasPrev}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+                <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+              </svg>
+            </button>
+
             <img src={image.src} alt={image.alt} className="main-image" />
+
+            {/* Botón siguiente */}
+            <button
+              className="pagination-arrow"
+              onClick={goToNextImage}
+              disabled={!navigation?.hasNext}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+                <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+              </svg>
+            </button>
+
+            {/* Contador de posición */}
+            {navigation && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  background: "rgba(0,0,0,0.6)",
+                  color: "white",
+                  padding: "5px 15px",
+                  borderRadius: "20px",
+                  fontSize: "14px",
+                }}
+              >
+                {navigation.currentPosition} / {navigation.totalImages}
+              </div>
+            )}
           </div>
         </div>
 
@@ -254,8 +297,9 @@ export default function ImageDetail() {
           <button className="btn-secondary-custom mb-3 w-100" onClick={() => navigate(-1)}>
             Volver a la galería
           </button>
-          <button className="btn-secondary-custom mb-3 w-100"
-            onClick={(e) => requestDeleteImage(ImgId, e)}
+          <button
+            className="btn-secondary-custom mb-3 w-100"
+            onClick={requestDeleteImage}
           >
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
               <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
@@ -285,7 +329,7 @@ export default function ImageDetail() {
             ) : (
               <div style={{ textAlign: "center", padding: "20px", color: "#6c757d" }}>
                 <p className="no-comments">No hay comentarios aún</p>
-                <small>¡Sé el primero en agregar uno!</small>
+                <small>Sé el primero en agregar uno</small>
               </div>
             )}
           </div>
@@ -294,91 +338,112 @@ export default function ImageDetail() {
             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor" style={{ marginRight: "8px" }}>
               <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
             </svg>
-            Añadir Comentario
+            Revisar Comentarios
           </button>
         </aside>
       </div>
 
-      {/* Modal */}
+      {/* Modal de comentarios */}
       {showCommentModal && (
         <>
           <div className="modal-overlay" onClick={closeCommentModal}></div>
-          <div className="profile-modal w-800 mt-5">
-            <button className="close-btn" onClick={closeCommentModal}>
-              &times;
-            </button>
+          <div className="comment-modal mt-4">
 
-            <header style={{ marginBottom: "15px", textAlign: "center" }}>
-              <h3 style={{ fontWeight: "bold", marginBottom: "10px" }}>
-                Seleccionar Comentarios Públicos
+
+            <header className="modal-header">
+              <h3 className="modal-title">
+                Comentarios Pendientes
               </h3>
-
-              <div style={{ textAlign: "center" }}>
-                <p style={{ color: "#007bff", fontWeight: "600", fontSize: "15px", marginBottom: "10px" }}>
-                  Imagen seleccionada: <span style={{ color: "#333" }}>#{image.ImgId}</span>
-                </p>
-              </div>
-
-              {publicComments.length === 0 && (
-                <p style={{ textAlign: "center", color: "#6c757d", fontSize: "14px" }}>
-                  No hay comentarios disponibles
-                </p>
-              )}
+              <p className="modal-subtitle">
+                Imagen seleccionada: <span>#{image.ImgId}</span>
+              </p>
             </header>
 
-            {/* Comentarios públicos */}
-            <div
-              className="pm-body"
-              style={{
-                flexDirection: "column",
-                maxHeight: "400px",
-                overflowY: "auto",
-                gap: "10px",
-              }}
-            >
+            <div className="modal-body">
               {currentModalComments.length > 0 ? (
                 currentModalComments.map((c) => (
                   <div key={c.CommentId} className="modal-comment-item">
-                    <div style={{ flex: 1 }}>
-                      <p className="comment-text" style={{ margin: 0 }}>
+                    <div className="comment-content">
+                      <p className="comment-text">
                         {c.CommentText}
                       </p>
+                      <small className="comment-date">
+                        {new Date(c.PublicationDate).toLocaleDateString("es-ES", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </small>
                     </div>
-                    <button
-                      className="btn-primary-custom"
-                      onClick={() => toggleCommentSelection(c.CommentId)}
-                      style={{
-                        minWidth: "120px",
-                        opacity: selectedComments.includes(c.CommentId) ? 0.8 : 1,
-                      }}
-                    >
-                      {selectedComments.includes(c.CommentId) ? (
-                        <>
-                          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
-                            <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
-                          </svg>
-                          Agregado
-                        </>
-                      ) : (
-                        <>
-                          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
-                            <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-                          </svg>
-                          Agregar
-                        </>
-                      )}
-                    </button>
+
+                    <div className="comment-actions">
+                      <button
+                        className="btn-primary-custom btn-action-g"
+                        onClick={() => handleApproveComment(c.CommentId)}
+                      >
+                        Aceptar
+                      </button>
+                      <button
+                        className="btn-secondary-custom btn-action-g"
+                        onClick={() => handleRejectComment(c.CommentId)}
+                      >
+                        Rechazar
+                      </button>
+                    </div>
                   </div>
                 ))
               ) : (
-                <div style={{ textAlign: "center", padding: "40px", color: "#6c757d" }}>
-                  <p>No hay comentarios públicos disponibles</p>
+                <div className="empty-state">
+                  <p>No hay comentarios pendientes</p>
                 </div>
               )}
             </div>
 
-            <div className="pm-footer">
-              <button className="btn btn-status w-100" onClick={closeCommentModal}>
+            {/* PAGINACIÓN */}
+            {publicComments.length > commentsPerPage && (
+              <div className="modal-pagination">
+                <button
+                  className="pagination-btn"
+                  onClick={() =>
+                    setCurrentModalPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentModalPage === 1}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+                    <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+                  </svg>
+
+                </button>
+
+                <span className="page-info">
+                  Página {currentModalPage} de{" "}
+                  {Math.ceil(publicComments.length / commentsPerPage)}
+                </span>
+
+                <button
+                  className="pagination-btn"
+                  onClick={() =>
+                    setCurrentModalPage((prev) =>
+                      prev < Math.ceil(publicComments.length / commentsPerPage)
+                        ? prev + 1
+                        : prev
+                    )
+                  }
+                  disabled={
+                    currentModalPage ===
+                    Math.ceil(publicComments.length / commentsPerPage)
+                  }
+                >
+
+                  <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+                    <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            <div className="modal-footer">
+              <button className="btn-close-modal" onClick={closeCommentModal}>
                 Cerrar
               </button>
             </div>
@@ -386,18 +451,18 @@ export default function ImageDetail() {
         </>
       )}
 
-
       <ConfirmModal
         show={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         onConfirm={() => {
-          confirmAction?.();
+          handleDeleteImage();
           setShowConfirmModal(false);
         }}
-        message={confirmMessage}
+        message="¿Estás seguro de que deseas eliminar esta imagen?"
         confirmText="Sí, eliminar"
       />
 
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

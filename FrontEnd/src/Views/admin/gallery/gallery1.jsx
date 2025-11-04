@@ -5,170 +5,159 @@ import "../../CSS/components.css";
 import { useNavigate } from "react-router-dom";
 import UploadPhotoModal from "./galleryof";
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
-
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
 
+// ============================
+// Funciones Fetch API Nueva
+// ============================
+
+async function getImages(page = 1, limit = 8) {
+  const response = await fetch(`http://localhost:4000/api/gallery/paginated?page=${page}&limit=${limit}`);
+  const data = await response.json();
+  return data;
+}
+
+async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await fetch(`http://localhost:4000/api/gallery`, { method: "POST", body: formData });
+  const data = await response.json();
+  return data;
+}
+
+async function deleteImage(id) {
+  const response = await fetch(`http://localhost:4000/api/gallery/${id}`, { method: "DELETE" });
+  const data = await response.json();
+  return data;
+}
+
+async function deleteAllImages(id) {
+  const response = await fetch(`http://localhost:4000/api/gallery`, { method: "DELETE" });
+  const data = await response.json();
+  return data;
+}
+
+// ============================
+// Componente principal
+// ============================
+
 const ImageGalleryC = () => {
   const navigate = useNavigate();
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [confirmAction, setConfirmAction] = useState(null);
-  const [confirmMessage, setConfirmMessage] = useState("");
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-
   const { toasts, addToast, removeToast } = useToast();
 
-  const imagesPerPage = 8;
-  const indexOfLastImage = currentPage * imagesPerPage;
-  const indexOfFirstImage = indexOfLastImage - imagesPerPage;
-  const currentImages = images.slice(indexOfFirstImage, indexOfLastImage);
-  const totalPages = Math.ceil(images.length / imagesPerPage);
+  const [images, setImages] = useState([]);
+  const [pageInfo, setPageInfo] = useState({ page: 1, totalPages: 1 });
+  const [loading, setLoading] = useState(false);
 
-  // Cargar imágenes al montar el componente
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [confirmAction, setConfirmAction] = useState(null);
+
+  // Cargar imágenes paginadas
   useEffect(() => {
-    fetchImages();
+    loadImages(pageInfo.page);
   }, []);
 
-  // Obtener todas las imágenes del backend
-  const fetchImages = async () => {
+  const loadImages = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:4000/api/gallery");
-      if (!response.ok) throw new Error("Error al obtener imágenes");
-
-      const data = await response.json();
-      setImages(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching images:", error);
+      const data = await getImages(page, 8);
+      setImages(data.images || []);
+      setPageInfo({
+        page: data.page,
+        totalPages: data.totalPages,
+        hasNextPage: data.hasNextPage,
+        hasPrevPage: data.hasPrevPage,
+      });
+    } catch (err) {
+      console.error("Error al cargar imágenes:", err);
       addToast("Error al cargar las imágenes", "danger");
     } finally {
       setLoading(false);
     }
   };
 
-  // Subir imagen al backend
-  const handleConfirmUpload = async (foto) => {
+  // Subir imagen
+  const handleConfirmUpload = async (file) => {
     try {
-      const formData = new FormData();
-      formData.append("file", foto);
-
-      const response = await fetch("http://localhost:4000/api/gallery", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) throw new Error("Error al subir la imagen");
-
-      const result = await response.json();
-      console.log("Imagen subida:", result);
-
-      // Recargar la galería
-      await fetchImages();
+      const data = await uploadImage(file);
+      console.log("Imagen subida:", data);
       addToast("Imagen subida correctamente", "success");
-    } catch (error) {
-      console.error("Error uploading image:", error);
+      loadImages(pageInfo.page);
+    } catch (err) {
+      console.error("Error al subir imagen:", err);
       addToast("Error al subir la imagen", "danger");
     }
   };
 
-  // Confirmar eliminación individual
-  const requestDeleteImage = (idx, e) => {
+  // Confirmar eliminación
+  const requestDeleteImage = (id, e) => {
     e.stopPropagation();
-    setConfirmAction(() => () => handleDeleteImage(idx));
     setConfirmMessage("¿Estás seguro de que deseas eliminar esta imagen?");
+    setConfirmAction(() => () => handleDeleteImage(id));
     setShowConfirmModal(true);
   };
 
-  // Confirmar eliminación de toda la galería
-  const requestClearAll = () => {
-    setConfirmAction(() => handleClearAll);
-    setConfirmMessage("¿Estás seguro de que deseas eliminar TODAS las imágenes?");
-    setShowConfirmModal(true);
-  };
-
-  // Eliminar imagen individual del backend
-  const handleDeleteImage = async (idx) => {
+  // Eliminar imagen
+  const handleDeleteImage = async (id) => {
     try {
-      const realIndex = indexOfFirstImage + idx;
-      const imageToDelete = images[realIndex];
-
-      const response = await fetch(`http://localhost:4000/api/gallery/${imageToDelete.FileId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("Error al eliminar la imagen");
-
-      // Recargar la galería
-      await fetchImages();
-
-      // Ajustar página si es necesario
-      const updatedLength = images.length - 1;
-      if (updatedLength <= indexOfFirstImage && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
+      const data = await deleteImage(id);
       addToast("Imagen eliminada correctamente", "success");
-    } catch (error) {
-      console.error("Error deleting image:", error);
+
+      if (data.isEmpty) {
+        setImages([]);
+      } else {
+        await loadImages(pageInfo.page);
+      }
+    } catch (err) {
+      console.error("Error al eliminar imagen:", err);
       addToast("Error al eliminar la imagen", "danger");
     }
   };
 
-  // Eliminar todas las imágenes del backend
-  const handleClearAll = async () => {
+  const requestDeleteAllImages = (e) => {
+    if (e) e.stopPropagation();
+    
+    // Verificar si hay imágenes
+    if (images.length === 0) {
+      addToast("No hay imágenes para eliminar", "danger");
+      return;
+    }
+    
+    setConfirmMessage(`¿Estás seguro de que deseas eliminar TODAS las ${images.length} imágenes? Esta acción no se puede deshacer.`);
+    setConfirmAction(() => handleDeleteAllImages);
+    setShowConfirmModal(true);
+  };
+
+  const handleDeleteAllImages = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/gallery", {
-        method: "DELETE",
+      const response = await fetch('http://localhost:4000/api/gallery', { 
+        method: 'DELETE' 
       });
-
-      if (!response.ok) throw new Error("Error al eliminar todas las imágenes");
-
+      
+      if (!response.ok) {
+        throw new Error('Error al eliminar las imágenes');
+      }
+      
+      const data = await response.json();
+      
+      // Limpiar el estado
       setImages([]);
-      setCurrentPage(1);
-      addToast("Todas las imágenes fueron eliminadas", "info");
-    } catch (error) {
-      console.error("Error clearing gallery:", error);
-      addToast("Error al eliminar todas las imágenes", "danger");
+      setPageInfo({ page: 1, totalPages: 1, hasNextPage: false, hasPrevPage: false });
+      
+      addToast(data.message || "Todas las imágenes han sido eliminadas", "success");
+      
+    } catch (err) {
+      console.error("Error al eliminar todas las imágenes:", err);
+      addToast("Error al eliminar las imágenes", "danger");
     }
   };
 
-  // Navegación
-  const handleImageClick = (idx) => {
-  const realIndex = indexOfFirstImage + idx;
-  const selected = images[realIndex];
-
-  navigate("/GalleryViewAdmin/" + selected.FileId);
-};
-
-
-  // Paginación
-  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
-  const goToPreviousPage = () =>
-    currentPage > 1 && setCurrentPage(currentPage - 1);
-  const goToNextPage = () =>
-    currentPage < totalPages && setCurrentPage(currentPage + 1);
-
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    const maxVisiblePages = 5;
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) pageNumbers.push(i);
-    } else if (currentPage <= 3) {
-      for (let i = 1; i <= 4; i++) pageNumbers.push(i);
-      pageNumbers.push("...");
-      pageNumbers.push(totalPages);
-    } else if (currentPage >= totalPages - 2) {
-      pageNumbers.push(1, "...");
-      for (let i = totalPages - 3; i <= totalPages; i++) pageNumbers.push(i);
-    } else {
-      pageNumbers.push(1, "...");
-      for (let i = currentPage - 1; i <= currentPage + 1; i++)
-        pageNumbers.push(i);
-      pageNumbers.push("...", totalPages);
-    }
-    return pageNumbers;
+  // Navegación hacia vista individual
+  const handleImageClick = (id) => {
+    navigate(`/GalleryViewAdmin/${id}`);
   };
 
   return (
@@ -181,117 +170,89 @@ const ImageGalleryC = () => {
 
           <div className="gallery-actions d-flex">
             <button
-              className="btn-primary-custom btn"
+              className="btn-primary-custom btn me-2"
               onClick={() => setShowUploadModal(true)}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="currentcolor"
-                style={{ marginRight: "8px" }}
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
                 <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
               </svg>
               Subir Imagen
             </button>
-
-            {images.length > 0 && (
-              <button
-                className="btn btn-outline-danger ms-2"
-                onClick={requestClearAll}
-              >
-                Eliminar Todo
-              </button>
-            )}
+            <button
+              className="btn-secondary-custom btn"
+              onClick={() => requestDeleteAllImages()}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+              </svg>
+              Eliminar TODA la galeria
+            </button>
           </div>
         </div>
 
         <div className="gallery-grid">
-          {currentImages.map((img, idx) => (
-            <div key={img.FileId} className="image-card">
-              <div
-                onClick={() => handleImageClick(idx)}
-                className="image-wrapper"
-              >
-                <img
-                  src={img.url}
-                  alt={img.FileName}
-                  className="preview-image"
-                  onError={(e) => (e.target.style.display = "none")}
-                />
-              </div>
-
-              <button
-                className="delete-image-btn"
-                onClick={(e) => requestDeleteImage(idx, e)}
-                title="Eliminar imagen"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="20px"
-                  viewBox="0 -960 960 960"
-                  width="20px"
-                  fill="currentcolor"
+          {loading ? (
+            <p>Cargando imágenes...</p>
+          ) : images.length === 0 ? (
+            <p>No hay imágenes disponibles.</p>
+          ) : (
+            images.map((img) => (
+              <div key={img.FileId} className="image-card">
+                <div
+                  onClick={() => handleImageClick(img.FileId)}
+                  className="image-wrapper"
                 >
-                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
-                </svg>
-              </button>
-            </div>
-          ))}
+                  <img
+                    src={img.url}
+                    alt={img.FileName}
+                    className="preview-image"
+                    onError={(e) => (e.target.style.display = "none")}
+                  />
+                </div>
+
+                <button
+                  className="delete-image-btn"
+                  onClick={(e) => requestDeleteImage(img.FileId, e)}
+                  title="Eliminar imagen"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="20px"
+                    viewBox="0 -960 960 960"
+                    width="20px"
+                    fill="currentcolor"
+                  >
+                    <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+                  </svg>
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Paginación */}
-        {totalPages > 1 && (
-          <div className="pagination">
+        {pageInfo.totalPages > 1 && (
+          <div className="pagination mb-2">
             <button
               className="pagination-arrow"
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
+              onClick={() => loadImages(pageInfo.page - 1)}
+              disabled={!pageInfo.hasPrevPage}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="currentcolor"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
                 <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
               </svg>
             </button>
 
-            <div className="pagination-numbers">
-              {renderPageNumbers().map((pageNum, index) =>
-                pageNum === "..." ? (
-                  <span key={`dots-${index}`} className="pagination-dots">
-                    ...
-                  </span>
-                ) : (
-                  <button
-                    key={pageNum}
-                    className={`pagination-btn ${currentPage === pageNum ? "active" : ""
-                      }`}
-                    onClick={() => goToPage(pageNum)}
-                  >
-                    {pageNum}
-                  </button>
-                )
-              )}
-            </div>
+            <span className="pagination-info">
+              Página {pageInfo.page} de {pageInfo.totalPages}
+            </span>
 
             <button
               className="pagination-arrow"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
+              onClick={() => loadImages(pageInfo.page + 1)}
+              disabled={!pageInfo.hasNextPage}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                height="20px"
-                viewBox="0 -960 960 960"
-                width="20px"
-                fill="currentcolor"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
                 <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
               </svg>
             </button>
@@ -317,6 +278,7 @@ const ImageGalleryC = () => {
         message={confirmMessage}
         confirmText="Sí, eliminar"
       />
+
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );

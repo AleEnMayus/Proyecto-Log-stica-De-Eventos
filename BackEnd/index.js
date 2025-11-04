@@ -44,7 +44,8 @@ app.use("/api/profile", require("./routes/Profile"));
 app.use("/api/requests", require("./routes/user/Request"));
 app.use("/api/contract", require("./routes/Admin/contractRoutes"));
 app.use("/api/promotion", require("./routes/Admin/promotionsroutes"));
-app.use("/api/gallery", require("./routes/Admin/GalleryRoutes"));
+app.use("/api/gallery", require("./routes/Admin/galleryRoutes"));
+app.use("/api/gallery", require("./routes/commentsRoutes"));
 
 // Jobs automáticos
 startEventCompletionJob();

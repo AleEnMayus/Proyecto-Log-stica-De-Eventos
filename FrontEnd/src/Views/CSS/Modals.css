@@ -325,8 +325,8 @@ input:disabled {
   Botón secundario / Cancelar
 =========================== */
 .btn-status {
-  background-color: #6c757d !important;
-  color: white !important;
+  background-color: #eff4f8 !important;
+  color: rgb(26, 25, 25) !important;
   border: none !important;
   border-radius: 25px !important;
   padding: 10px 25px !important;
@@ -336,7 +336,7 @@ input:disabled {
 }
 
 .btn-status:hover {
-  background-color: #5a6268 !important;
+  background-color: #c5cbcf !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3) !important;
 }

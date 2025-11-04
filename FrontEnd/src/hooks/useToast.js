@@ -7,7 +7,7 @@ export function useToast() {
     const id = Date.now() + Math.random();
     setToasts((prev) => {
       const next = [...prev, { id, message, type }];
-      return next.slice(0, 5); // máximo 3 visibles
+      return next.slice(0, 5); // máximo 5 visibles
     });
 
     // Remover automáticamente después de 3s

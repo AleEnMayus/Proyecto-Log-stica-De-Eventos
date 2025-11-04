@@ -1,117 +1,279 @@
-import React, { useState, useEffect } from "react";
-import HeaderAdm from "../../components/HeaderSidebar/HeaderCl"; // temporal
+import React, { useState, useEffect, useRef } from "react";
+import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ToastContainer";
 import './../CSS/components.css';
 import './../CSS/FormsUser.css';
 import '../CSS/Calendar.css';
 
+// ========================
+// CONSTANTES
+// ========================
+const MONTHS = [
+  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+];
+
+const WEEK_DAYS = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
+
+const YEAR_RANGE = { start: 2020, end: 2030 };
+
+const API_CONFIG = {
+  baseURL: "http://localhost:4000",
+  endpoints: {
+    requests: "/api/requests"
+  }
+};
+
+const STATUS_COLORS = {
+  completed: '#28a745',
+  in_planning: '#ffc107',
+  in_execution: '#007bff',
+  cancelled: '#dc3545',
+  default: '#6c757d'
+};
+
+// ========================
+// COMPONENTE PRINCIPAL
+// ========================
 const Calendarclient = () => {
+  // Estado de fecha y calendario
   const today = new Date();
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
+  
+  // Estado de eventos
   const [eventos, setEventos] = useState({});
+  
+  // Estado de selectores
+  const [showMonthSelector, setShowMonthSelector] = useState(false);
+  const [showYearSelector, setShowYearSelector] = useState(false);
+  
+  // Hooks
   const { toasts, addToast, removeToast } = useToast();
+  const monthRef = useRef(null);
+  const yearRef = useRef(null);
 
+  // ========================
+  // EFECTOS
+  // ========================
+  
+  // Cerrar selectores al hacer clic fuera
   useEffect(() => {
-    const fetchEventos = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/events");
-        if (!res.ok) throw new Error("Error al obtener eventos");
-        const data = await res.json();
-
-        const eventosPorFecha = {};
-        data.forEach(evento => {
-          const fecha = new Date(evento.EventDateTime).toISOString().split("T")[0];
-          if (!eventosPorFecha[fecha]) eventosPorFecha[fecha] = [];
-          eventosPorFecha[fecha].push(evento);
-        });
-
-        setEventos(eventosPorFecha);
-      } catch (error) {
-        console.error("Error:", error);
-        addToast("Error al cargar los eventos", "error");
+    const handleClickOutside = (event) => {
+      if (monthRef.current && !monthRef.current.contains(event.target)) {
+        setShowMonthSelector(false);
+      }
+      if (yearRef.current && !yearRef.current.contains(event.target)) {
+        setShowYearSelector(false);
       }
     };
 
-    fetchEventos();
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Cargar citas del usuario
+  useEffect(() => {
+    fetchCitasUsuario();
   }, [addToast]);
 
-  const months = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-  ];
+  // ========================
+  // FUNCIONES DE API
+  // ========================
+  
+  const fetchCitasUsuario = async () => {
+  try {
+    // Obtener token y usuario desde localStorage
+    const token = localStorage.getItem("authToken");
+    const userString = localStorage.getItem("user");
 
-  const generateYears = () => Array.from({ length: 36 }, (_, i) => 2000 + i);
+    // Validar que el usuario existe
+    if (!userString) {
+      console.warn("No hay información de usuario en localStorage");
+      return;
+    }
 
-  const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
+    // Parsear el string JSON del usuario
+    const user = JSON.parse(userString);
+    const userId = user.id;
+
+    // Realizar la solicitud al backend
+    const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.requests}`, {
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+
+    // Validar respuesta
+    if (!response.ok) {
+      throw new Error("Error al obtener solicitudes");
+    }
+
+    // Procesar datos
+    const data = await response.json();
+    const citasAprobadas = filterApprovedAppointments(data, userId);
+    const eventosPorFecha = groupAppointmentsByDate(citasAprobadas);
+
+    // Actualizar estado
+    setEventos(eventosPorFecha);
+  } catch (error) {
+    console.error("Error al cargar citas:", error);
+    addToast("Error al cargar las citas aprobadas", "error");
+  }
+};
+
+  // ========================
+  // FUNCIONES DE PROCESAMIENTO DE DATOS
+  // ========================
+  
+  const filterApprovedAppointments = (requests, userId) => {
+    return requests.filter(
+      (req) =>
+        req.UserId == userId &&
+        req.RequestType === "schedule_appointment" &&
+        req.RequestStatus === "approved"
+    );
+  };
+
+  const groupAppointmentsByDate = (appointments) => {
+    const grouped = {};
+    
+    appointments.forEach((cita) => {
+      const fecha = new Date(cita.RequestDate).toISOString().split("T")[0];
+      
+      if (!grouped[fecha]) {
+        grouped[fecha] = [];
+      }
+
+      grouped[fecha].push({
+        EventName: cita.RequestDescription || "Cita aprobada",
+        EventDateTime: cita.RequestDate,
+        EventStatus: cita.RequestStatus,
+        ClientName: "Tú",
+        EventDescription: cita.RequestDescription,
+        CitationDetails: "Cita confirmada",
+      });
+    });
+
+    return grouped;
+  };
+
+  // ========================
+  // FUNCIONES DE CALENDARIO
+  // ========================
+  
+  const generateYears = () => {
+    const years = [];
+    for (let i = YEAR_RANGE.start; i <= YEAR_RANGE.end; i++) {
+      years.push(i);
+    }
+    return years;
+  };
+
+  const getDaysInMonth = (year, month) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
 
   const getStartDay = (year, month) => {
     const day = new Date(year, month, 1).getDay();
-    return day === 0 ? 6 : day - 1;
+    return day === 0 ? 6 : day - 1; // Lunes = 0
   };
 
-  const handleDayClick = (day) => {
+  const formatDate = (year, month, day) => {
     const formattedDay = day < 10 ? `0${day}` : day;
-    const formattedMonth = selectedMonth + 1 < 10 ? `0${selectedMonth + 1}` : selectedMonth + 1;
-    const formattedDate = `${selectedYear}-${formattedMonth}-${formattedDay}`;
-    setSelectedDate(formattedDate);
+    const formattedMonth = month + 1 < 10 ? `0${month + 1}` : month + 1;
+    return `${year}-${formattedMonth}-${formattedDay}`;
+  };
+
+  const isToday = (year, month, day) => {
+    const date = new Date(year, month, day);
+    return new Date().toDateString() === date.toDateString();
   };
 
   const getColorByStatus = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'completed': return 'linear-gradient(135deg, #ff4d4d, #ff7a7a)';
-      case 'in_planning': return 'linear-gradient(135deg, #4CAF50, #81C784)';
-      case 'in_execution': return 'linear-gradient(135deg, #FFA500, #FFC107)';
-      default: return 'linear-gradient(135deg, #a5a5a5, #cccccc)';
-    }
+    return STATUS_COLORS[status?.toLowerCase()] || STATUS_COLORS.default;
   };
 
+  // ========================
+  // HANDLERS DE EVENTOS
+  // ========================
+  
+  const handleDayClick = (day) => {
+    const formattedDate = formatDate(selectedYear, selectedMonth, day);
+    setSelectedDate(formattedDate);
+  };
+
+  const changeMonth = (increment) => {
+    let nuevoMes = selectedMonth + increment;
+    let nuevoAño = selectedYear;
+    
+    if (nuevoMes > 11) {
+      nuevoMes = 0;
+      nuevoAño++;
+    } else if (nuevoMes < 0) {
+      nuevoMes = 11;
+      nuevoAño--;
+    }
+    
+    setSelectedMonth(nuevoMes);
+    setSelectedYear(nuevoAño);
+    setSelectedDate(null);
+  };
+
+  const selectMonth = (mes) => {
+    setSelectedMonth(mes);
+    setShowMonthSelector(false);
+    setSelectedDate(null);
+  };
+
+  const selectYear = (año) => {
+    setSelectedYear(año);
+    setShowYearSelector(false);
+    setSelectedDate(null);
+  };
+
+  const goToCurrentMonth = () => {
+    const now = new Date();
+    setSelectedMonth(now.getMonth());
+    setSelectedYear(now.getFullYear());
+    setSelectedDate(null);
+  };
+
+  // ========================
+  // FUNCIONES DE RENDERIZADO
+  // ========================
+  
   const renderCalendarDays = () => {
     const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
     const startDay = getStartDay(selectedYear, selectedMonth);
     const calendarCells = [];
 
+    // Días vacíos para alinear el calendario
     for (let i = 0; i < startDay; i++) {
-      calendarCells.push(<div key={`empty-${i}`} className="day empty"></div>);
+      calendarCells.push(
+        <div key={`empty-${i}`} className="day empty"></div>
+      );
     }
 
+    // Días del mes
     for (let day = 1; day <= daysInMonth; day++) {
-      const formattedDay = day < 10 ? `0${day}` : day;
-      const formattedMonth = selectedMonth + 1 < 10 ? `0${selectedMonth + 1}` : selectedMonth + 1;
-      const formattedDate = `${selectedYear}-${formattedMonth}-${formattedDay}`;
-
+      const formattedDate = formatDate(selectedYear, selectedMonth, day);
       const isSelected = selectedDate === formattedDate;
       const eventosDelDia = eventos[formattedDate] || [];
       const hasEvents = eventosDelDia.length > 0;
-
-      const background = hasEvents ? getColorByStatus(eventosDelDia[0].EventStatus) : "";
-      const esHoy = new Date().toDateString() === new Date(selectedYear, selectedMonth, day).toDateString();
+      const esHoy = isToday(selectedYear, selectedMonth, day);
 
       calendarCells.push(
         <div
           key={formattedDate}
-          className={`day ${isSelected ? "selected" : ""} ${esHoy ? "today" : ""}`}
+          className={`day ${esHoy ? 'today' : ''} ${isSelected ? "selected" : ""} ${hasEvents ? "event-day" : ""}`}
           onClick={() => handleDayClick(day)}
-          style={{
-            padding: "20px 10px",
-            fontSize: "1.1rem",
-            borderRadius: "12px",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            background: hasEvents ? background : "var(--color-light)",
-            color: hasEvents ? "white" : "var(--color-dark)",
-            boxShadow: isSelected ? "0 0 10px var(--color-primary)" : "0 2px 5px rgba(0,0,0,0.1)",
-            transform: isSelected ? "scale(1.05)" : "scale(1)",
-          }}
-          onMouseEnter={(e) => (e.target.style.transform = "scale(1.08)")}
-          onMouseLeave={(e) => (e.target.style.transform = isSelected ? "scale(1.05)" : "scale(1)")}
         >
-          {day}
-          {hasEvents && (
-            <div style={{ fontSize: "1.8rem", marginTop: "5px" }}>•</div>
-          )}
+          <span className="day-number">{day}</span>
+          {hasEvents && <span className="event-indicator">•</span>}
         </div>
       );
     }
@@ -119,83 +281,319 @@ const Calendarclient = () => {
     return calendarCells;
   };
 
+  const renderEventDetails = () => {
+    // SIEMPRE mostrar información vacía
+    return (
+      <div className="no-selection">
+        <div className="detail-item"><strong>Evento:</strong><span>-</span></div>
+        <div className="detail-item"><strong>Hora:</strong><span>-</span></div>
+        <div className="detail-item"><strong>Cliente:</strong><span>-</span></div>
+        <div className="detail-item"><strong>Estado:</strong><span>-</span></div>
+      </div>
+    );
+  };
+
+  const renderAppointmentDetails = () => {
+    if (!selectedDate) {
+      return (
+        <div className="no-selection">
+          <p>Selecciona un día</p>
+          <div className="detail-item"><strong>Descripción:</strong><span>-</span></div>
+          <div className="detail-item"><strong>Hora:</strong><span>-</span></div>
+          <div className="detail-item"><strong>Cliente:</strong><span>-</span></div>
+          <div className="detail-item"><strong>Fecha:</strong><span>-</span></div>
+          <div className="detail-item"><strong>Citación:</strong><span>-</span></div>
+        </div>
+      );
+    }
+
+    const eventosDelDia = eventos[selectedDate];
+    
+    if (!eventosDelDia || eventosDelDia.length === 0) {
+      return (
+        <div className="no-selection">
+          <p>No hay citas registradas para esta fecha.</p>
+        </div>
+      );
+    }
+
+    return eventosDelDia.map((ev, idx) => (
+      <div key={idx} className="event-item">
+        <div className="detail-item">
+          <strong>Descripción:</strong>
+          <span>{ev.EventDescription || "Sin descripción"}</span>
+        </div>
+        <div className="detail-item">
+          <strong>Hora:</strong>
+          <span>{new Date(ev.EventDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+        <div className="detail-item">
+          <strong>Cliente:</strong>
+          <span>{ev.ClientName || "Desconocido"}</span>
+        </div>
+        <div className="detail-item">
+          <strong>Fecha:</strong>
+          <span>{selectedDate.split("-")[2]} de {MONTHS[selectedMonth]} de {selectedYear}</span>
+        </div>
+        <div className="detail-item">
+          <strong>Citación:</strong>
+          <span>{ev.CitationDetails || "Por definir"}</span>
+        </div>
+        {idx < eventosDelDia.length - 1 && (
+          <hr style={{ margin: '10px 0', border: '1px solid var(--color-light)' }} />
+        )}
+      </div>
+    ));
+  };
+
+  // ========================
+  // COMPONENTES DE SELECTOR
+  // ========================
+  
+  const MonthSelector = () => (
+    <div ref={monthRef} style={{ position: 'relative' }}>
+      <button 
+        onClick={() => {
+          setShowMonthSelector(!showMonthSelector);
+          setShowYearSelector(false);
+        }}
+        style={{
+          background: 'var(--color-light)',
+          border: '2px solid var(--color-gray)',
+          fontSize: '1.2rem',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          minWidth: '140px',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.background = 'var(--color-accent)';
+          e.target.style.color = 'var(--color-white)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.background = 'var(--color-light)';
+          e.target.style.color = 'var(--color-dark)';
+        }}
+      >
+        <span>{MONTHS[selectedMonth]}</span>
+        <span style={{ fontSize: '0.8rem', marginLeft: '8px' }}>▼</span>
+      </button>
+      
+      {showMonthSelector && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          background: 'var(--color-white)',
+          border: '2px solid var(--color-primary)',
+          borderRadius: '8px',
+          boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+          zIndex: 1000,
+          width: '140px',
+          maxHeight: '200px',
+          overflowY: 'auto',
+          marginTop: '5px'
+        }}>
+          {MONTHS.map((mes, index) => (
+            <div
+              key={mes}
+              onClick={() => selectMonth(index)}
+              style={{
+                padding: '10px 12px',
+                cursor: 'pointer',
+                borderBottom: '1px solid var(--color-light)',
+                background: selectedMonth === index 
+                  ? 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))' 
+                  : 'transparent',
+                color: selectedMonth === index ? 'var(--color-white)' : 'var(--color-dark)',
+                transition: 'all 0.2s ease',
+                fontWeight: selectedMonth === index ? 'bold' : 'normal',
+                fontSize: '0.9rem'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedMonth !== index) {
+                  e.target.style.background = 'var(--color-accent)';
+                  e.target.style.color = 'var(--color-white)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedMonth !== index) {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = 'var(--color-dark)';
+                }
+              }}
+            >
+              {mes}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  const YearSelector = () => (
+    <div ref={yearRef} style={{ position: 'relative' }}>
+      <button 
+        onClick={() => {
+          setShowYearSelector(!showYearSelector);
+          setShowMonthSelector(false);
+        }}
+        style={{
+          background: 'var(--color-light)',
+          border: '2px solid var(--color-gray)',
+          fontSize: '1.2rem',
+          fontWeight: 'bold',
+          cursor: 'pointer',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          minWidth: '100px',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.background = 'var(--color-accent)';
+          e.target.style.color = 'var(--color-white)';
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.background = 'var(--color-light)';
+          e.target.style.color = 'var(--color-dark)';
+        }}
+      >
+        <span>{selectedYear}</span>
+        <span style={{ fontSize: '0.8rem', marginLeft: '8px' }}>▼</span>
+      </button>
+      
+      {showYearSelector && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          background: 'var(--color-white)',
+          border: '2px solid var(--color-secondary)',
+          borderRadius: '8px',
+          boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+          zIndex: 1000,
+          width: '100px',
+          maxHeight: '200px',
+          overflowY: 'auto',
+          marginTop: '5px'
+        }}>
+          {generateYears().map(año => (
+            <div
+              key={año}
+              onClick={() => selectYear(año)}
+              style={{
+                padding: '10px 12px',
+                cursor: 'pointer',
+                borderBottom: '1px solid var(--color-light)',
+                background: selectedYear === año 
+                  ? 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))' 
+                  : 'transparent',
+                color: selectedYear === año ? 'var(--color-white)' : 'var(--color-dark)',
+                transition: 'all 0.2s ease',
+                fontWeight: selectedYear === año ? 'bold' : 'normal',
+                textAlign: 'center',
+                fontSize: '0.9rem'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedYear !== año) {
+                  e.target.style.background = 'var(--color-accent)';
+                  e.target.style.color = 'var(--color-white)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedYear !== año) {
+                  e.target.style.background = 'transparent';
+                  e.target.style.color = 'var(--color-dark)';
+                }
+              }}
+            >
+              {año}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ========================
+  // RENDER PRINCIPAL
+  // ========================
+  
   return (
     <>
       <HeaderCl />
-      <div className="calendar-container" style={{ padding: "40px" }}>
-        <h2
-          className="calendar-title"
-          style={{
-            fontSize: "2.5rem",
-            textAlign: "center",
-            color: "var(--color-dark)",
-            marginBottom: "30px",
-            fontWeight: "700",
-            background: "linear-gradient(135deg, var(--color-primary), var(--color-secondary))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          <br></br><br></br>
-          Calendario de Eventos (Cliente)
-        </h2>
+      <div className="calendar-container" style={{ marginTop: "80px" }}>
+        <h2 className="calendar-title">CALENDARIO</h2>
 
-        <div className="calendar-content" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "40px" }}>
+        <div className="calendar-content">
           {/* Calendario */}
-          <div
-            className="calendar-box"
-            style={{
-              background: "var(--color-white)",
-              borderRadius: "16px",
-              boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-              padding: "30px",
-              minWidth: "600px",
-              maxWidth: "650px",
-            }}
-          >
-            <div className="calendar-header" style={{ display: "flex", justifyContent: "center", marginBottom: "20px", gap: "10px" }}>
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                style={{
-                  background: "var(--color-light)",
-                  border: "2px solid var(--color-gray)",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  fontSize: "1.1rem",
-                  cursor: "pointer",
-                }}
-              >
-                {months.map((month, index) => (
-                  <option key={index} value={index}>
-                    {month}
-                  </option>
-                ))}
-              </select>
+          <div className="calendar-box">
+            <div className="calendar-header">
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px', 
+                flexWrap: 'wrap', 
+                justifyContent: 'center' 
+              }}>
+                <button 
+                  className="calendar-arrow" 
+                  onClick={() => changeMonth(-1)}
+                  title="Mes anterior"
+                >
+                  ‹
+                </button>
+                
+                <MonthSelector />
+                <YearSelector />
 
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                style={{
-                  background: "var(--color-light)",
-                  border: "2px solid var(--color-gray)",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  fontSize: "1.1rem",
-                  cursor: "pointer",
-                }}
-              >
-                {generateYears().map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+                <button 
+                  className="calendar-arrow" 
+                  onClick={() => changeMonth(1)}
+                  title="Mes siguiente"
+                >
+                  ›
+                </button>
+
+                <button 
+                  onClick={goToCurrentMonth}
+                  style={{
+                    background: 'var(--color-success)',
+                    color: 'var(--color-white)',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: 'bold',
+                    marginLeft: '10px',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.background = 'var(--color-secondary)';
+                    e.target.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.background = 'var(--color-success)';
+                    e.target.style.transform = 'scale(1)';
+                  }}
+                >
+                  Hoy
+                </button>
+              </div>
             </div>
 
-            <div className="calendar-grid" style={{ gap: "8px" }}>
-              {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((dayName) => (
-                <div key={dayName} className="day-name" style={{ fontWeight: "bold", padding: "10px", fontSize: "1rem" }}>
+            <div className="calendar-grid">
+              {WEEK_DAYS.map((dayName, index) => (
+                <div key={index} className="day-name">
                   {dayName}
                 </div>
               ))}
@@ -203,39 +601,27 @@ const Calendarclient = () => {
             </div>
           </div>
 
-          {/* Detalle de eventos */}
-          <div
-            className="event-box"
-            style={{
-              background: "var(--color-white)",
-              borderRadius: "16px",
-              boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-              padding: "30px",
-              minWidth: "400px",
-              maxWidth: "450px",
-            }}
-          >
-            <h4 style={{ fontSize: "1.4rem", marginBottom: "10px" }}>Detalles del Evento</h4>
-            {selectedDate && eventos[selectedDate]?.length > 0 ? (
-              <>
-                <p><strong>Fecha:</strong> {selectedDate}</p>
-                {eventos[selectedDate].map((ev, idx) => (
-                  <div key={idx} style={{ padding: "10px 0", borderBottom: "1px solid var(--color-light)" }}>
-                    <p><strong>Evento:</strong> {ev.EventName}</p>
-                    <p><strong>Hora:</strong> {new Date(ev.EventDateTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
-                    <p><strong>Cliente:</strong> {ev.ClientName || "Desconocido"}</p>
-                    <p><strong>Estado:</strong> {ev.EventStatus}</p>
-                  </div>
-                ))}
-              </>
-            ) : selectedDate ? (
-              <>
-                <p><strong>Fecha:</strong> {selectedDate}</p>
-                <p>No hay eventos registrados.</p>
-              </>
-            ) : (
-              <p>Selecciona un día</p>
-            )}
+          {/* Contenedor de detalles */}
+          <div style={{ display: 'flex', gap: '20px', flexDirection: 'row' }}>
+            {/* Detalles del Evento - SIEMPRE VACÍO */}
+            <div className="event-box" style={{ width: '280px' }}>
+              <div className="event-header">
+                <h4>Detalles del Evento</h4>
+              </div>
+              <div className="event-details">
+                {renderEventDetails()}
+              </div>
+            </div>
+
+            {/* Detalles de Cita - CON INFORMACIÓN */}
+            <div className="event-box" style={{ width: '280px' }}>
+              <div className="event-header">
+                <h4>Detalles de Cita</h4>
+              </div>
+              <div className="event-details">
+                {renderAppointmentDetails()}
+              </div>
+            </div>
           </div>
         </div>
       </div>

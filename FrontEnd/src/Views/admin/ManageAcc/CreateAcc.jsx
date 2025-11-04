@@ -3,8 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import '../../CSS/FormsUser.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
+// ✅ Importar el hook y el contenedor de notificaciones
+import { useToast } from "../../../hooks/useToast"; 
+import ToastContainer from "../../../components/ToastContainer";
+
 const CreateAccountForm = () => {
   const navigate = useNavigate(); // ✅ Hook para redireccionar
+
+  // ✅ Sistema de notificaciones
+  const { toasts, addToast, removeToast } = useToast();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -45,7 +52,7 @@ const CreateAccountForm = () => {
     const requiredFields = ['firstName', 'rol', 'email', 'birthDate', 'documentType', 'documentNumber', 'password', 'confirmPassword'];
     const emptyFields = requiredFields.filter(field => !formData[field]);
     if (emptyFields.length > 0) {
-      setErrorMessage('Por favor, completa todos los campos obligatorios.');
+      addToast('Por favor, completa todos los campos obligatorios.', 'danger');
       return;
     }
 
@@ -59,20 +66,20 @@ const CreateAccountForm = () => {
     }
 
     if (age < 18) {
-      setErrorMessage('Debes ser mayor de edad para registrarte.');
+      addToast('Debes ser mayor de edad para registrarte.', 'danger');
       return;
     }
 
     // Validar contraseña
     const passwordErrors = validatePassword(formData.password);
     if (passwordErrors.length > 0) {
-      setErrorMessage(passwordErrors.join(', '));
+      addToast(passwordErrors.join(', '), 'danger');
       return;
     }
 
     // Confirmar contraseña
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage('Las contraseñas no coinciden.');
+      addToast('Las contraseñas no coinciden.', 'danger');
       return;
     }
 
@@ -91,20 +98,22 @@ const CreateAccountForm = () => {
         })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errData = await response.json();
-        setErrorMessage(errData.message || 'Error al crear la cuenta.');
+        addToast(data.message || 'Error al crear la cuenta.', 'danger');
         return;
       }
 
-      alert('Cuenta creada exitosamente!');
+      addToast('Cuenta creada exitosamente!', 'success');
 
-      // ✅ Redireccionar automáticamente a la lista de cuentas
-      navigate('/admin/accounts');
+      setTimeout(() => {
+        navigate('/admin/accounts');
+      }, 2000);
 
     } catch (error) {
       console.error('Error en la petición:', error);
-      setErrorMessage('Error en el servidor, intenta más tarde.');
+      addToast('Error en el servidor, intenta más tarde.', 'danger');
     }
   };
 
@@ -268,7 +277,7 @@ const CreateAccountForm = () => {
                 <button
                   type="button"
                   className="btn-cancel"
-                  onClick={() => navigate('/admin/accounts')} // ✅ también para el botón Cancelar
+                  onClick={() => navigate('/admin/accounts')}
                 >
                   Cancelar
                 </button>
@@ -283,6 +292,9 @@ const CreateAccountForm = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ Contenedor de notificaciones */}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 };

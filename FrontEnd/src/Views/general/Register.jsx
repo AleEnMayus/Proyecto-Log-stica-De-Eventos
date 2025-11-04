@@ -80,8 +80,7 @@ const RegisterPage = () => {
       addToast('El número de documento debe tener entre 10 y 20 caracteres', 'danger');
       return;
     }
-
-    // ✅ ARREGLA EL REGISTRO → convierte birthDate al formato correcto YYYY-MM-DD
+    
     const formattedData = {
       ...formData,
       birthDate: new Date(formData.birthDate).toISOString().slice(0, 10)
@@ -91,7 +90,7 @@ const RegisterPage = () => {
       const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formattedData) // ✅ se envía con formato válido
+        body: JSON.stringify(formattedData) 
       });
 
       if (response.ok) {
@@ -245,7 +244,7 @@ const RegisterPage = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
-                    {/* ✅ NO TOQUÉ tus iconos */}
+                    {/* NO TOQUÉ tus iconos */}
                     {showPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -281,7 +280,7 @@ const RegisterPage = () => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
-                    {/* ✅ iconos intactos */}
+                    {/* iconos intactos */}
                     {showConfirmPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

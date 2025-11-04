@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
-const db = require("../../db");
+const db = require("../../db"); // asegúrate de que este archivo exista y exporte la conexión
 
 // === Configuración de Multer ===
 const storage = multer.diskStorage({

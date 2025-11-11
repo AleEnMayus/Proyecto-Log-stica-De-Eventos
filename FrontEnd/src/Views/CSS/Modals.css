@@ -352,6 +352,130 @@ input:disabled {
 }
 
 /* ===========================
+   Botón de editar foto (ícono cámara)
+=========================== */
+.pm-photo {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pm-photo img,
+.pm-photo svg {
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.btn-edit-photo {
+  position: absolute;
+  bottom: 100px;
+  right: 6px;
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.btn-edit-photo:hover {
+  background: #f3f5f7;
+  border-color: #0e40b6;
+  transform: scale(1.1);
+}
+
+.btn-edit-photo:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   Cuerpo del perfil del modal
+=========================== */
+.pm-body-profile {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: nowrap;
+  padding: 10px 0;
+}
+
+.pm-body-profile .pm-photo {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.pm-body-profile .pm-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Imagen de perfil */
+.pm-body-profile .img-pf {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ===========================
+   Responsive (desde 520px)
+=========================== */
+@media (max-width: 520px) {
+  .pm-body-profile {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-align: center;
+    padding: 0 !important;
+  }
+
+  .pm-body-profile .pm-photo {
+    order: 1;
+  }
+
+  .pm-body-profile .pm-fields {
+    order: 2;
+    width: 100%;
+  }
+
+  .pm-body-profile .img-pf {
+    width: 120px;
+    height: 120px;
+  }
+
+  .pm-body-profile .field-row {
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .pm-body-profile .field {
+    width: 100%;
+  }
+
+  .pm-body-profile .btn-edit-photo {
+    bottom: -7px;
+    right: 140px;
+  }
+
+  .field-row {
+    margin-bottom: 0 !important;
+  }
+}
+
+
+/* ===========================
   Responsive
 =========================== */
 @media (max-width: 768px) {

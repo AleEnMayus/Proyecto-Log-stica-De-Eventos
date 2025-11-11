@@ -12,13 +12,15 @@ const ContractsClient = () => {
   const [loading, setLoading] = useState(true);
   const { toasts, addToast, removeToast } = useToast();
 
-  const clientId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+  const user = localStorage.getItem('user')
+  const id = user ? JSON.parse(user).id : null;
+  const clientId = id;
 
   // === FETCH TODOS LOS EVENTOS DEL CLIENTE ===
   const fetchContratos = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:4000/api/contracts/client/${clientId}`);
+      const response = await fetch(`http://localhost:4000/api/contracts/by-client/${clientId}`);
       
       if (!response.ok) {
         throw new Error('Error al cargar los eventos');
@@ -212,13 +214,13 @@ const ContractsClient = () => {
   }
 
   return (
-    <div className="contrato-container mt-10">
+    <div className="contrato-container mt-11">
       <HeaderCl />
       <ToastContainer toasts={toasts} removeToast={removeToast} />
       
       <div className="contrato-wrapper">
         {/* Sección de Descarga */}
-        <div className="contrato-card">
+        <div className="contrato-card ">
           <h2 className="contrato-subtitle">
             Descargar Contrato
           </h2>

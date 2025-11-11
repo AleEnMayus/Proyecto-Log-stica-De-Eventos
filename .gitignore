@@ -59,3 +59,13 @@ __snapshots__/
 # Otros
 *.tgz
 *.lock
+
+# Ignorar todo dentro de la carpeta /uploads/gallery, uploads/perfiles y uploads/contratos
+gallery/*
+contracts/*
+profiles/*
+
+# Pero mantener la carpeta en sí
+!gallery/.gitkeep
+!profiles/.gitkeep
+!contratcs/.gitkeep

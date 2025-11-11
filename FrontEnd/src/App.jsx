@@ -116,7 +116,7 @@ const routeConfig = {
     { path: '/GalleryView/:ImgId', component: ImageGalleryViewerC },
     { path: '/Gallery', component: ImageGalleryC },
     { path: '/Calendar', component: ClientCalendar },
-    { path: '/HomeContractsCl', component: ContractsClient },
+    { path: '/HomeContracts', component: ContractsClient },
     { path: '/EventsHome/Details/:eventId', component: EventDetailsC },
     { path: '/EventsHome', component: ListEventsC },
     { path: '/Notification-tray', component: NotificationsClient },

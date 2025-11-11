@@ -162,7 +162,7 @@ const HeaderCl = () => {
             <Link to="/Schedule" className="sidebar-menu-item">
               <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="currentcolor"><path d="M693.33-80v-120h-120v-66.67h120v-120H760v120h120V-200H760v120h-66.67Zm-506.66-80q-27 0-46.84-19.83Q120-199.67 120-226.67v-520q0-27 19.83-46.83 19.84-19.83 46.84-19.83h56.66V-880h70v66.67h253.34V-880h70v66.67h56.66q27 0 46.84 19.83Q760-773.67 760-746.67V-464q-16.67-2.33-33.33-2.33-16.67 0-33.34 2.33v-102.67H186.67v340h306.66q0 16.67 3 33.34 3 16.66 9 33.33H186.67Zm0-473.33h506.66v-113.34H186.67v113.34Zm0 0v-113.34 113.34Z" /></svg>
               Agendar cita</Link>
-            <Link to="/HomeContractsCl" className="sidebar-menu-item">
+            <Link to="/HomeContracts" className="sidebar-menu-item">
               <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="Currentcolor"><path d="M230-80q-45.83 0-77.92-32.08Q120-144.17 120-190v-130h120v-560h600v690q0 45.83-32.08 77.92Q775.83-80 730-80H230Zm499.94-66.67q18.39 0 30.89-12.45 12.5-12.46 12.5-30.88v-623.33H306.67V-320h380v130q0 18.42 12.44 30.88 12.44 12.45 30.83 12.45ZM360-626.67v-66.66h360v66.66H360Zm0 120v-66.66h360v66.66H360Zm-130.67 360H620v-106.66H186.67V-190q0 18.42 12.5 30.88 12.5 12.45 30.16 12.45Zm0 0h-42.66H620 229.33Z" /></svg>
               Contrato</Link>
             <Link to="/Calendar" className="sidebar-menu-item">

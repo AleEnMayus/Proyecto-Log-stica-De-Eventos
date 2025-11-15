@@ -6,7 +6,7 @@
   height: 80px;
   width: 100%;
   z-index: 1060;
-  background: white !important;
+  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241), rgb(251, 82, 119)) !important;
   display: flex;
   align-items: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.08);
@@ -23,10 +23,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
 }
 .menu-btn:hover {
   background: rgba(21, 165, 231, 0.1);
-  color: rgb(21, 165, 231);
+  color: white;
 }
 
 .register-btn {
@@ -55,13 +56,10 @@
   align-items: center;
 }
 .logo-text {
+  color: white !important;
   margin-left: 10px;
-  font-weight: bold;
+  font-weight: 650;
   font-size: 1.5rem;
-  background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241), rgb(255, 103, 141));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 }
 
 /* Sidebar */
@@ -106,7 +104,7 @@
 
 /* Sidebar item-menu */
 .sidebar-menu-item {
-  color: rgba(0, 0, 0, 0.904);
+  color: rgba(0, 0, 0, 0.596);
   text-decoration: none;
   padding: 15px 25px;
   display: flex;
@@ -118,7 +116,7 @@
 }
 
 .sidebar-menu-item:hover {
-  background: rgba(151, 151, 151, 0.2);
+  background: rgba(72, 147, 209, 0.2);
   color: rgb(21, 165, 231);
   transform: translateX(10px);
 }

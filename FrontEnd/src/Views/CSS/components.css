@@ -367,6 +367,11 @@ button.dropdown-item-custom:focus {
   line-clamp: 3;
 }
 
+.title-headersb {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white !important;
+}
 
 
 @media (max-width: 770px) {

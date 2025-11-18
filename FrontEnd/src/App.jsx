@@ -4,9 +4,6 @@ import useNotifications from "./hooks/useNotifications";
 import autoLogoutService from "./services/autoLogoutService";
 import Results from "./Views/admin/CreateSurvey/results";
 
-
-
-
 // Toasts
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -237,7 +234,6 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-
       <ToastContainer />
     </div>
   );

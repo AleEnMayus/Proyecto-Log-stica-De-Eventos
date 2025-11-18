@@ -1,5 +1,9 @@
 /* Css Generales */
 
+.Toastify{
+  margin: 0;
+}
+
 /* Estilo personalizado del toast */
 .custom-toast {
   border-radius: 12px;

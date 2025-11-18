@@ -39,60 +39,6 @@ const Survey = () => {
   const indexOfFirst = indexOfLast - questionsPerPage;
   const currentQuestions = questionsFiltradas.slice(indexOfFirst, indexOfLast);
 
-  // Abrir modal editar
-  const handleEditClick = (question) => {
-    setSelectedQuestion(question);
-    setShowEditModal(true);
-  };
-
-  // Guardar cambios desde modal
-  const handleSaveEdit = async (id, newText) => {
-    try {
-      const res = await fetch(`http://localhost:4000/api/questions/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ QuestionText: newText }),
-      });
-      if (!res.ok) throw new Error("Error al actualizar la pregunta");
-
-      setQuestions((prev) =>
-        prev.map((q) => (q.QuestionId === id ? { ...q, QuestionText: newText } : q))
-      );
-
-      setShowEditModal(false);
-      setSelectedQuestion(null);
-    } catch (err) {
-      console.error("Error al guardar cambios:", err);
-    }
-  };
-
-  // Abrir modal eliminar
-  const confirmDelete = (question) => {
-    setQuestionToDelete(question);
-    setShowDeleteModal(true);
-  };
-
-  // Eliminar pregunta
-  const handleDelete = async () => {
-    if (!questionToDelete) return;
-    try {
-      const res = await fetch(
-        `http://localhost:4000/api/questions/${questionToDelete.QuestionId}`,
-        { method: "DELETE" }
-      );
-      if (!res.ok) throw new Error("Error al eliminar la pregunta");
-
-      setQuestions((prev) =>
-        prev.filter((q) => q.QuestionId !== questionToDelete.QuestionId)
-      );
-
-      setShowDeleteModal(false);
-      setQuestionToDelete(null);
-    } catch (err) {
-      console.error("Error al eliminar:", err);
-    }
-  };
-
   return (
     <div className="list-container">
       <HeaderAdm />

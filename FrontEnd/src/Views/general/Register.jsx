@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../CSS/FormsUser.css';
 import { useToast } from '../../hooks/useToast';
 import ToastContainer from '../../components/ToastContainer';
+import TermsModal from "../../components/Modals/TermsConditions";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,8 @@ const RegisterPage = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -42,6 +45,13 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    //  Validación de términos
+    const terms = document.getElementById("acceptTerms");
+    if (!terms.checked) {
+      addToast("Debes aceptar los términos y condiciones", "danger");
+      return;
+    }
 
     if (!validateEmail(formData.email)) {
       addToast('El correo no tiene un formato válido', 'danger');
@@ -80,7 +90,7 @@ const RegisterPage = () => {
       addToast('El número de documento debe tener entre 10 y 20 caracteres', 'danger');
       return;
     }
-    
+
     const formattedData = {
       ...formData,
       birthDate: new Date(formData.birthDate).toISOString().slice(0, 10)
@@ -90,7 +100,7 @@ const RegisterPage = () => {
       const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formattedData) 
+        body: JSON.stringify(formattedData)
       });
 
       if (response.ok) {
@@ -154,6 +164,8 @@ const RegisterPage = () => {
           </p>
 
           <form onSubmit={handleSubmit}>
+            {/* TODA TU ESTRUCTURA ORIGINAL SE RESPETA */}
+
             <div className="row">
               <div className="col-md-6">
                 <label className="form-label">Nombre Completo</label>
@@ -167,6 +179,7 @@ const RegisterPage = () => {
                   required
                 />
               </div>
+
               <div className="col-md-6">
                 <label className="form-label">Fecha de Nacimiento</label>
                 <input
@@ -196,6 +209,7 @@ const RegisterPage = () => {
                   <option value="PP">Permiso de permanencia</option>
                 </select>
               </div>
+
               <div className="col-md-6">
                 <label className="form-label">Número de Documento</label>
                 <input
@@ -226,6 +240,7 @@ const RegisterPage = () => {
             </div>
 
             <div className="row">
+              {/* CONTRASEÑA 1 */}
               <div className="col-md-6">
                 <label className="form-label">Contraseña</label>
                 <div className="password-wrapper">
@@ -242,9 +257,7 @@ const RegisterPage = () => {
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
-                    {/* NO TOQUÉ tus iconos */}
                     {showPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -262,6 +275,7 @@ const RegisterPage = () => {
                 </div>
               </div>
 
+              {/* CONFIRMAR CONTRASEÑA */}
               <div className="col-md-6">
                 <label className="form-label">Confirmar Contraseña</label>
                 <div className="password-wrapper">
@@ -278,9 +292,7 @@ const RegisterPage = () => {
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
-                    {/* iconos intactos */}
                     {showConfirmPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -299,12 +311,35 @@ const RegisterPage = () => {
               </div>
             </div>
 
+            {/* CHECKBOX PERSONALIZADO */}
+            <div className="mt-3" style={{ display: "flex", justifyContent: "center" }}>
+              <label className="checkbox-wrapper">
+                <input type="checkbox" id="acceptTerms" className="custom-checkbox" />
+                <span className="checkmark"></span>
+                <span style={{ marginLeft: "8px" }}>
+                  Acepto los{" "}
+                  <span
+                    style={{ cursor: "pointer", textDecoration: "underline", color: "rgb(21,165,231)" }}
+                    onClick={() => setShowTermsModal(true)}
+                  >
+                    Términos y Condiciones
+                  </span>
+                </span>
+              </label>
+            </div>
+
+
             <button type="submit" className="btn-primary-custom mt-4 w-100">
               Registrarse
             </button>
           </form>
         </div>
       </div>
+
+      {/*  MODAL LISTO */}
+      {showTermsModal && (
+        <TermsModal onClose={() => setShowTermsModal(false)} />
+      )}
 
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>

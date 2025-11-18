@@ -279,7 +279,7 @@ const CalendarAdmin = () => {
                     {/* Eventos */}
                     {currentDayEvents.eventos.length > 0 && (
                       <div className="event-section">
-                        <h4 className="section-title">Eventos</h4>
+                        <h4 className="section-title-calendar">Eventos</h4>
                         {currentDayEvents.eventos.map((ev, idx) => (
                           <div key={idx} className="event-item">
                             <div className="event-indicator purple"></div>
@@ -314,7 +314,7 @@ const CalendarAdmin = () => {
                     {/* Citas */}
                     {currentDayEvents.citas.length > 0 && (
                       <div className="event-section">
-                        <h4 className="section-title">Citas</h4>
+                        <h4 className="section-title-calendar">Citas</h4>
                         {currentDayEvents.citas.map((cita, idx) => (
                           <div key={idx} className="event-item">
                             <div className="event-indicator blue"></div>

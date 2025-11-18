@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../../../Views/CSS/Modals.css";
 import RequestModal from '../RequestModal';
+import api from '../../../utils/axiosConfig';
 
 //  Importar el hook y el contenedor de toasts
 import { useToast } from "../../../hooks/useToast";
@@ -31,20 +32,15 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
   // Función para obtener la foto de perfil
   const fetchProfilePhoto = async () => {
     try {
-      const storedUser = localStorage.getItem("user");
+      const storedUser = sessionStorage.getItem("user");
       if (!storedUser) throw new Error("No se encontró información del usuario.");
 
       const parsedUser = JSON.parse(storedUser);
       const userId = parsedUser.id || parsedUser.UserId;
       if (!userId) throw new Error("No se encontró el ID del usuario.");
 
-      const res = await fetch(`http://localhost:4000/api/pfp/${userId}`);
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || `Error HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
+      const res = await api.get(`/pfp/${userId}`);
+      const data = res.data;
       setPhotoUrl(data.url);
 
       // Actualizar también el formData con la nueva URL
@@ -69,7 +65,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
     const loadUserData = async () => {
       setLoading(true);
 
-      const storedUser = localStorage.getItem("user");
+      const storedUser = sessionStorage.getItem("user");
       if (!storedUser) {
         setLoading(false);
         return;
@@ -79,13 +75,13 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
         const parsedUser = JSON.parse(storedUser);
         const userId = parsedUser.id || parsedUser.UserId;
 
-        // Cargar datos del perfil desde el servidor
-        const res = await fetch(`http://localhost:4000/api/profile/${userId}`);
+        // Cargar datos del perfil desde el servidor usando axios (cookies)
+        const res = await api.get(`/profile/${userId}`);
 
-        if (res.ok) {
-          const serverData = await res.json();
+        if (res.status === 200) {
+          const serverData = res.data;
 
-          // Combinar datos del servidor con localStorage
+          // Combinar datos del servidor con sessionStorage
           const initialData = {
             fullName: serverData.Names || parsedUser.fullName || parsedUser.Names || "",
             email: serverData.Email || parsedUser.email || parsedUser.Email || "",
@@ -109,11 +105,11 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
             setPhotoUrl(serverData.url);
           }
 
-          // Actualizar localStorage con datos frescos del servidor
+          // Actualizar sessionStorage con datos frescos del servidor
           const updatedUser = { ...parsedUser, ...serverData };
-          localStorage.setItem("user", JSON.stringify(updatedUser));
+          try { sessionStorage.setItem("user", JSON.stringify(updatedUser)); } catch(e) { console.warn('sessionStorage set failed', e); }
         } else {
-          // Si falla el fetch, usar datos de localStorage
+          // Si falla el fetch, usar datos de sessionStorage
           const initialData = {
             fullName: parsedUser.fullName || parsedUser.Names || "",
             email: parsedUser.email || parsedUser.Email || "",
@@ -232,7 +228,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
         return;
       }
 
-      const storedUser = localStorage.getItem("user");
+      const storedUser = sessionStorage.getItem("user");
       if (!storedUser) {
         addToast("No se encontró información del usuario.", "danger");
         onClose();
@@ -264,15 +260,11 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
       }
 
       //  Enviar actualización
-      const response = await fetch(`http://localhost:4000/api/profile/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(changes),
-      });
+      const res = await api.put(`/profile/${userId}`, changes);
 
-      if (response.ok) {
+      if (res.status === 200) {
         const updatedUser = { ...parsedUser, ...formData };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+        try { sessionStorage.setItem("user", JSON.stringify(updatedUser)); } catch(e) { console.warn('sessionStorage set failed', e); }
 
         addToast("Perfil actualizado correctamente.", "success");
 
@@ -281,7 +273,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
 
         setTimeout(() => onClose(), 2000);
       } else {
-        const errorData = await response.json();
+        const errorData = res.data || {};
         addToast(errorData.message || "Error al actualizar el perfil.", "danger");
       }
     } catch (error) {
@@ -310,7 +302,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
     }
 
     // Obtener usuario actual del localStorage
-    const storedUser = localStorage.getItem("user");
+    const storedUser = sessionStorage.getItem("user");
     if (!storedUser) {
       addToast("No se encontró información del usuario.", "danger");
       return;
@@ -330,22 +322,16 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
     try {
       setUploading(true);
 
-      const res = await fetch(`http://localhost:4000/api/pfp/${userId}`, {
-        method: "POST",
-        body: fd,
+      const res = await api.post(`/pfp/${userId}`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || err.message || `HTTP ${res.status}`);
-      }
-
-      const data = await res.json();
+      const data = res.data;
       const newUrl = data.url;
 
-      // Actualizar localStorage
+      // Actualizar sessionStorage
       const updatedUser = { ...parsedUser, photo: newUrl, Photo: newUrl };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      try { sessionStorage.setItem("user", JSON.stringify(updatedUser)); } catch(e) { console.warn('sessionStorage set failed', e); }
 
       // Actualizar estado local
       setPhotoUrl(newUrl);

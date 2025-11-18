@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import "../CSS/FormsUser.css";
 import { useToast } from '../../hooks/useToast'; // Asegúrate que esta ruta esté bien
 import ToastContainer from '../../components/ToastContainer'; // Contenedor visual de los toasts
+import api from '../../utils/axiosConfig';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -30,25 +31,23 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:4000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
+      const res = await api.post('/auth/login', formData);
+      const data = res.data;
 
-      if (response.ok) {
-        localStorage.setItem("authToken", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        console.log("Login exitoso:", data.user);
+      if (res.status === 200) {
+        // Guardamos solo datos no sensibles en sessionStorage
+        if (data.user) {
+          try {
+            sessionStorage.setItem('role', data.user.role);
+            sessionStorage.setItem('name', data.user.fullName);
+            sessionStorage.setItem('user', JSON.stringify(data.user));
+          } catch (e) {
+            console.warn('No se pudo guardar datos en sessionStorage', e);
+          }
+        }
 
-        addToast("Inicio de sesión exitoso", "success");
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } else {
-        addToast(data.message || "Error al iniciar sesión", "danger");
+        addToast('Inicio de sesión exitoso', 'success');
+        setTimeout(() => window.location.reload(), 800);
       }
     } catch (err) {
       addToast("Error de conexión con el servidor", "danger");

@@ -4,6 +4,7 @@ const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 require("dotenv").config();
+const cookieParser = require('cookie-parser');
 
 const db = require("./db");
 const { startEventCompletionJob } = require("./jobs/eventCompletionJob");
@@ -22,8 +23,10 @@ const io = init(server);
 notificationSocket(io);
 
 // Middlewares
-app.use(cors());
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+app.use(cors({ origin: FRONTEND_ORIGIN, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 // Servir carpeta uploads
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -34,7 +37,7 @@ app.get("/", (req, res) => {
 });
 
 // Rutas
-app.use("/api", require("./routes/auth"));
+app.use("/api/auth", require("./routes/auth"));
 app.use("/api/password", require("./routes/PasswordChange"));
 app.use("/api/questions", require("./routes/Admin/questions"));
 app.use("/api/survey", require("./routes/user/Survey"));

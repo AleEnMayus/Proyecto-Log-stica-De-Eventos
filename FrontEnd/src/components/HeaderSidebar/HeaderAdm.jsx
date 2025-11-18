@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../utils/axiosConfig';
 import { Link } from 'react-router-dom';
 import PerfilModal from '../Modals/AccountModal/account';
 import EditModal from "../Modals/AccountModal/EditAccount";
@@ -14,7 +15,7 @@ const HeaderCl = () => {
   });
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     if (storedUser) setUserData(JSON.parse(storedUser));
 
     const handleStorageChange = (event) => {
@@ -30,7 +31,7 @@ const HeaderCl = () => {
   const handleSaveProfile = (updatedData) => {
     const updatedUser = { ...userData, ...updatedData };
     setUserData(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    try { sessionStorage.setItem('user', JSON.stringify(updatedUser)); } catch(e){ console.warn('sessionStorage set failed', e); }
     console.log("Perfil actualizado:", updatedUser);
   };
 
@@ -40,20 +41,15 @@ const HeaderCl = () => {
 
   const fetchProfilePhoto = async () => {
         try {
-          const storedUser = localStorage.getItem("user");
+          const storedUser = sessionStorage.getItem("user");
           if (!storedUser) throw new Error("No se encontró información del usuario.");
-    
+
           const parsedUser = JSON.parse(storedUser);
           const userId = parsedUser.id || parsedUser.UserId;
           if (!userId) throw new Error("No se encontró el ID del usuario.");
-    
-          const res = await fetch(`http://localhost:4000/api/pfp/${userId}`);
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.error || `Error HTTP ${res.status}`);
-          }
-    
-          const data = await res.json();
+
+          const res = await api.get(`/pfp/${userId}`);
+          const data = res.data;
           setPhotoUrl(data.url);
     
           // Actualizar también el formData con la nueva URL

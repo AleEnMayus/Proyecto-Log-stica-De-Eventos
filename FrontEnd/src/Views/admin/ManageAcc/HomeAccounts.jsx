@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { capitalize } from "../../../utils/FormatText";
+import { translateStatus } from "../../../utils/FormatText";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
 import ModalState from "../../../components/Modals/ModalState";
@@ -227,7 +227,7 @@ const AdminAccountsList = () => {
                       <p className="text-muted small mb-0">{user.Email}</p>
                     </td>
                     <td className="d-none d-md-table-cell">{user.DocumentNumber}</td>
-                    <td className="fw-semibold text-muted small mb-0">{capitalize(user.Role)}</td>
+                    <td className="fw-semibold text-muted small mb-0">{translateStatus(user.Role)}</td>
                     <td>
                       <button
                         className="btn-custom btn-status-custom mx-auto"
@@ -235,7 +235,7 @@ const AdminAccountsList = () => {
                           handleOpenStatusModal(user.UserId, user.Status)
                         }
                       >
-                        {capitalize(user.Status)}
+                        {translateStatus(user.Status)}
                       </button>
                     </td>
                     <td>

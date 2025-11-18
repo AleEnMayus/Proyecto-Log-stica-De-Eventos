@@ -3,10 +3,9 @@ import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm";
 import { translateRequestType, translateStatus } from "../../utils/FormatText";
 import { useToast } from "../../hooks/useToast";
 import { socket } from "../../services/socket";
+import api from '../../utils/axiosConfig';
 import ToastContainer from "../../components/ToastContainer";
 import "../CSS/Notification.css";
-
-const baseURL = "http://localhost:4000";
 
 const Notifications = () => {
   const [activeTab, setActiveTab] = useState("Todo");
@@ -19,15 +18,8 @@ const Notifications = () => {
   // --- Cargar solicitudes desde API ---
   const fetchRequests = async () => {
     try {
-      const token = localStorage.getItem("authToken");
-      const res = await fetch(`${baseURL}/api/requests`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-      if (!res.ok) throw new Error("Error al obtener solicitudes");
-      const data = await res.json();
+      const res = await api.get('/requests');
+      const data = res.data;
       setRequests(data);
     } catch (err) {
       console.error(err);
@@ -40,11 +32,7 @@ const Notifications = () => {
   // --- Actualizar estado de solicitud ---
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        addToast("No hay token de autenticación", "error");
-        return;
-      }
+      // Usamos cookies HttpOnly, no necesitamos token en JS
 
       // Agregar ID al set de elementos que se están removiendo
       setRemovingIds(prev => new Set(prev).add(id));
@@ -52,21 +40,8 @@ const Notifications = () => {
       // Esperar 300ms para que se complete la animación de salida
       await new Promise(resolve => setTimeout(resolve, 300));
 
-      const res = await fetch(`${baseURL}/api/requests/${id}/status`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error || errorData.message || "Error al actualizar estado");
-      }
-
-      const updatedRequest = await res.json();
+      const res = await api.put(`/requests/${id}/status`, { status: newStatus });
+      const updatedRequest = res.data;
 
       addToast(
         newStatus === "approved" ? "Solicitud aceptada" : "Solicitud rechazada",

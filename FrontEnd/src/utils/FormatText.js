@@ -27,8 +27,13 @@ export function translateStatus(status) {
     'rejected': 'Rechazado',
     'In_planning': 'En planeación',
     'In_execution': 'En ejecución',
-    'completed': 'Completado',
-    'canceled': 'Cancelado'
+    'Completed': 'Completado',
+    'Canceled': 'Cancelado',
+    'Cash': 'Efectivo',
+    'Transfer': 'Transferencia',
+    'Card': 'Tarjeta',
+    'inactive': 'Inactiva',
+    'active': 'Activa'
   };
   
   return translations[status] || status;

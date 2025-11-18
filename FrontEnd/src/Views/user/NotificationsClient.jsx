@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import { translateRequestType, translateStatus } from "../../utils/FormatText";
 import { socket } from "../../services/socket";
+import api from '../../utils/axiosConfig';
 import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ToastContainer";
 import "../CSS/Notification.css";
@@ -14,22 +15,14 @@ const NotificationsClient = () => {
   const [activeSection, setActiveSection] = useState("pendientes");
   const { toasts, addToast, removeToast } = useToast();
 
-  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const storedUser = JSON.parse(sessionStorage.getItem("user") || "{}");
   const userId = storedUser?.id;
 
   // --- Cargar solicitudes propias ---
   const fetchRequests = async () => {
     try {
-      const token = localStorage.getItem("authToken");
-      const res = await fetch(`${baseURL}/api/requests`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-      });
-      if (!res.ok) throw new Error("Error al obtener solicitudes");
-
-      const data = await res.json();
+      const res = await api.get('/requests');
+      const data = res.data;
       const userRequests = data.filter((req) => req.UserId == userId);
       setNotifications(userRequests);
     } catch (err) {

@@ -1,18 +1,23 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { eraseUnderscore } from '../../../utils/FormatText';
+import { translateStatus } from '../../../utils/FormatText';
 import '../../CSS/components.css';
 import '../../CSS/Lists.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
-const EstadoBadge = ({ estado }) => {
-  const normalizado = estado?.toLowerCase();
+function EstadoBadge({ estado }) {
+  const normalizado = String(estado || "")
+    .normalize("NFD") // quita acentos
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
 
   const estilos = {
-    completed: { background: "#ffe6e6", color: "#ff0000", border: "1px solid #ff0000" },
-    "in planning": { background: "#e6ffe6", color: "#13a927", border: "1px solid #13a927" },
-    "in execution": { background: "#fff4e0", color: "#ffae00", border: "1px solid #ffae00" },
-    canceled: { background: "#f0f0f0", color: "#6c757d", border: "1px solid #6c757d" },
+    "completado": { background: "#ffe6e6", color: "#ff0000", border: "1px solid #ff0000" },
+    "en ejecucion": { background: "#e6ffe6", color: "#13a927", border: "1px solid #13a927" },
+    "en planeacion": { background: "#fff4e0", color: "#ffae00", border: "1px solid #ffae00" },
+    "cancelado": { background: "#f0f0f0", color: "#6c757d", border: "1px solid #6c757d" },
   };
 
   const estilo = estilos[normalizado] || { background: "#f0f0f0", color: "#6c757d" };
@@ -32,7 +37,7 @@ const EstadoBadge = ({ estado }) => {
       {estado || "N/A"}
     </span>
   );
-};
+}
 
 const ListEventsA = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -64,20 +69,6 @@ const ListEventsA = () => {
     evento.EventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     evento.EventStatus?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Colores de estado
-  const getEstadoColor = (estado) => {
-    switch (estado?.toLowerCase()) {
-      case 'completed':
-        return { color: '#ff0000ff' };
-      case 'in_planning':
-        return { color: '#13a927ff' };
-      case 'in_execution':
-        return { color: '#ffae00ff' };
-      default:
-        return { color: '#6c757d' };
-    }
-  };
 
   // Ver evento
   const handleVerEvento = (eventId) => {
@@ -172,7 +163,7 @@ const ListEventsA = () => {
                     </span>
                   </td>
                   <td>
-                    <EstadoBadge estado={eraseUnderscore(evento.EventStatus)} />
+                    <EstadoBadge estado={translateStatus(evento.EventStatus)} />
                   </td>
                   <td>
                     <button

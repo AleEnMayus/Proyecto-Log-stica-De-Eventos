@@ -15,8 +15,17 @@ exports.getProfileImage = async (req, res) => {
       return res.status(404).json({ error: "No se encontró imagen de perfil" });
     }
 
-    const photoPath = rows[0].Photo.replace(/\\/g, "/");
-    const url = `${req.protocol}://localhost:4000/${photoPath}`;
+    let photoPath = rows[0].Photo.replace(/\\/g, "/");
+
+    // Si ya es una URL absoluta, devolver tal cual
+    if (/^https?:\/\//i.test(photoPath)) {
+      return res.json({ url: photoPath });
+    }
+
+    // Construir la URL usando el host real de la petición
+    const host = req.get("host");
+    const cleaned = photoPath.replace(/^\/+/, "");
+    const url = `${req.protocol}://${host}/${cleaned}`;
 
     return res.json({ url });
   } catch (err) {
@@ -40,7 +49,9 @@ exports.uploadImage = async (req, res) => {
     }
 
     const filePath = file.path.replace(/\\/g, "/");
-    const fileUrl = `${req.protocol}://localhost:4000/${filePath}`;
+    const host = req.get("host");
+    const cleanedPath = filePath.replace(/^\/+/, "");
+    const fileUrl = `${req.protocol}://${host}/${cleanedPath}`;
 
     // Verificar existencia del usuario
     const [rows] = await db.query("SELECT Photo FROM User WHERE UserId = ?", [UserId]);
@@ -58,13 +69,17 @@ exports.uploadImage = async (req, res) => {
     if (previousPhoto) {
       try {
         let prevPath = previousPhoto.replace(/\\/g, "/");
+
+        // Si es una URL absoluta, extraer la parte relativa a uploads/
         if (/^https?:\/\//i.test(prevPath)) {
           const idx = prevPath.indexOf("uploads/");
           if (idx !== -1) prevPath = prevPath.substring(idx);
+          else prevPath = null;
         }
 
-        if (prevPath.includes("uploads")) {
-          const fullPath = path.resolve(prevPath);
+        if (prevPath && prevPath.includes("uploads")) {
+          // Resolver la ruta desde el directorio del proyecto (más robusto que path.resolve solo)
+          const fullPath = path.resolve(__dirname, '..', prevPath);
           if (fs.existsSync(fullPath)) fs.unlinkSync(fullPath);
         }
       } catch (e) {

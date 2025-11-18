@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useNotifications from "./hooks/useNotifications";
 import autoLogoutService from "./services/autoLogoutService";
 import Results from "./Views/admin/CreateSurvey/results";
+import api from './utils/axiosConfig';
 
 // Toasts
 import { ToastContainer } from "react-toastify";
@@ -131,19 +132,28 @@ const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const token = localStorage.getItem("authToken");
-      const storedUser = localStorage.getItem("user");
-      if (token && storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        setIsAuthenticated(true);
-        setUserRole(parsedUser.role);
-      }
-    } catch (err) {
-      console.error("Error checking authentication:", err);
-    } finally {
-      setLoading(false);
-    }
+    let mounted = true;
+    api.get('/auth/me')
+      .then(res => {
+        if (!mounted) return;
+        if (res.data && res.data.user) {
+          setIsAuthenticated(true);
+          setUserRole(res.data.user.role);
+          // store user in sessionStorage for components that still rely on it
+          try { sessionStorage.setItem('user', JSON.stringify(res.data.user)); } catch (err) { console.warn('sessionStorage set failed', err); }
+        } else {
+          setIsAuthenticated(false);
+          setUserRole(null);
+        }
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setIsAuthenticated(false);
+        setUserRole(null);
+      })
+      .finally(() => mounted && setLoading(false));
+
+    return () => { mounted = false; };
   }, []);
 
   return { isAuthenticated, userRole, loading };
@@ -202,10 +212,14 @@ function App() {
   // Auto logout por inactividad
   useEffect(() => {
     if (isAuthenticated) {
-      autoLogoutService.start(() => {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("user");
-        window.location.href = "/login";
+      autoLogoutService.start(async () => {
+        try {
+          await api.post('/auth/logout');
+        } catch (e) {
+          console.warn('Logout request failed', e);
+        }
+        try { sessionStorage.removeItem('user'); sessionStorage.removeItem('role'); sessionStorage.removeItem('name'); } catch(e){}
+        window.location.href = '/login';
       }, 30 * 60 * 1000);
     }
     return () => autoLogoutService.stop();

@@ -4,7 +4,7 @@ import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 import RequestModal from '../../../components/Modals/RequestModal';
 import '../../CSS/components.css';
 import '../../CSS/DetailsEvt.css';
-import { eraseUnderscore } from '../../../utils/FormatText';
+import { translateStatus } from '../../../utils/FormatText';
 
 const EventDetailsC = () => {
   const { eventId } = useParams();
@@ -158,7 +158,7 @@ const EventDetailsC = () => {
           <p className="status-title">Estado del evento</p>
           <div className="status-indicator">
             <span className="status-dot"></span>
-            <span className="status-text">{eraseUnderscore(eventData.EventStatus) || "N/A"}</span>
+            <span className="status-text">{translateStatus(eventData.EventStatus) || "N/A"}</span>
           </div>
         </div>
       </div>
@@ -191,7 +191,7 @@ const EventDetailsC = () => {
         </div>
         <div className="detail-item">
           <span className="detail-label">Método de pago</span>
-          <div className="detail-box">{eventData.AdvancePaymentMethod || "N/A"}</div>
+          <div className="detail-box">{translateStatus(eventData.AdvancePaymentMethod) || "N/A"}</div>
         </div>
         <div className="detail-item" style={{ gridColumn: "1 / -1" }}>
           <span className="detail-label">Descripción</span>

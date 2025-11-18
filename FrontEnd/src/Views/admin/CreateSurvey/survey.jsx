@@ -144,8 +144,6 @@ const Survey = () => {
             <tr>
               <th>ID</th>
               <th>Pregunta</th>
-              <th className="acciones-header">Editar</th>
-              <th className="acciones-header">Eliminar</th>
             </tr>
           </thead>
           <tbody>

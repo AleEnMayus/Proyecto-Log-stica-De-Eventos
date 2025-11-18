@@ -19,7 +19,8 @@ import {
   RecoverPassword,
   Logout,
   UpdatePassword,
-  TestC
+  TestC,
+  NotFound
 } from './imports/commonImports';
 
 // Vistas Admin
@@ -231,7 +232,7 @@ function App() {
           {renderRoutes(routeConfig.development, 'development')}
 
           {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
       <ToastContainer />

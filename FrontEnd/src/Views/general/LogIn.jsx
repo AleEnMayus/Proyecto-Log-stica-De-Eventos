@@ -72,7 +72,7 @@ const LoginPage = () => {
             <div className="col-6">
               <div className="d-flex align-items-center">
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
-                  ←
+                  ‹
                 </button>
                 <div className="logo-text">
                   Happy-Art-Events
@@ -80,7 +80,7 @@ const LoginPage = () => {
               </div>
             </div>
             <div className="col-6 text-end w-auto">
-              <a href="/Register" className="btn-primary-custom btn">
+              <a href="/Register" className="btn-secondary-custom btn">
                 Registrarse
               </a>
             </div>

@@ -51,15 +51,14 @@ const submitSurvey = async (req, res) => {
       ON DUPLICATE KEY UPDATE NumericValue = VALUES(NumericValue)
     `;
 
-    // Aplanar array para pasar a db.query
     const flatValues = insertValues.flat();
-
     const [result] = await db.query(sql, flatValues);
 
     res.status(201).json({
       message: "Encuesta guardada con éxito",
       result,
     });
+
   } catch (err) {
     console.error("Error al guardar encuesta:", err);
 
@@ -75,9 +74,17 @@ const submitSurvey = async (req, res) => {
 const getAllAnswers = async (req, res) => {
   try {
     const [results] = await db.query(`
-      SELECT a.AnswerId, a.NumericValue, a.EventId, a.UserId, a.QuestionId, q.QuestionText
+      SELECT 
+        a.AnswerId,
+        u.Names AS UserName,
+        e.EventName AS EventName,
+        q.QuestionText,
+        a.NumericValue
       FROM Answers a
-      JOIN Questions q ON a.QuestionId = q.QuestionId
+      INNER JOIN User u ON a.UserId = u.UserId
+      INNER JOIN Events e ON a.EventId = e.EventId
+      INNER JOIN Questions q ON a.QuestionId = q.QuestionId
+      ORDER BY u.Names, e.EventName;
     `);
 
     res.json(results);

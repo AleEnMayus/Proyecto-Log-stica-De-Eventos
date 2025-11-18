@@ -114,10 +114,10 @@ const HomeGuest = () => {
               {galleryImages.length > 1 && (
                 <>
                   <button className="carousel-btn prev" onClick={prevSlide}>
-                    <span className="arrow-icon">‹</span>
+                    <span className="carousel-btn">‹</span>
                   </button>
                   <button className="carousel-btn next" onClick={nextSlide}>
-                    <span className="arrow-icon">›</span>
+                    <span className="carousel-btn">›</span>
                   </button>
                   
                   <div className="carousel-indicators">

@@ -133,14 +133,14 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container p-0">
       <header className="bg-white shadow-sm sticky-top header-container">
         <div className="container">
           <div className="row align-items-center py-3 justify-content-between">
             <div className="col-6">
               <div className="d-flex align-items-center">
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
-                  ←
+                  ‹
                 </button>
                 <div className="logo-text">
                   Happy-Art-Events
@@ -148,7 +148,7 @@ const RegisterPage = () => {
               </div>
             </div>
             <div className="col-6 text-end w-auto">
-              <a href="/login" className="btn-primary-custom btn">
+              <a href="/login" className="btn-secondary-custom btn">
                 Iniciar Sesión
               </a>
             </div>
@@ -164,8 +164,6 @@ const RegisterPage = () => {
           </p>
 
           <form onSubmit={handleSubmit}>
-            {/* TODA TU ESTRUCTURA ORIGINAL SE RESPETA */}
-
             <div className="row">
               <div className="col-md-6">
                 <label className="form-label">Nombre Completo</label>

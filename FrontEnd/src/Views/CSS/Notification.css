@@ -1,6 +1,7 @@
-/* Estilos Generales */
+/* =========================================
+   Estilos Generales
+========================================= */
 
-/* Contenedor principal de notificaciones */
 .notificaciones-container {
   margin-top: 6rem;
   padding: 20px;
@@ -8,11 +9,10 @@
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  max-height: 80vh; /* Altura máxima del contenedor */
-  overflow-y: auto; /* Barra de scroll vertical solo si el contenido es largo */
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-/* Título principal */
 .titulo {
   font-size: 2rem;
   font-weight: 700;
@@ -21,7 +21,10 @@
   text-align: center;
 }
 
-/* Pestañas (Tabs) */
+/* =========================================
+   Tabs
+========================================= */
+
 .tabs {
   display: flex;
   gap: 0.5rem;
@@ -55,7 +58,10 @@
   font-weight: 600;
 }
 
-/* Lista de Notificaciones */
+/* =========================================
+   Lista de Notificaciones
+========================================= */
+
 .lista {
   display: flex;
   flex-direction: column;
@@ -69,14 +75,18 @@
   font-size: 1.1rem;
 }
 
-/* Estilos de las Cards */
+/* =========================================
+   Cards
+========================================= */
+
 .card {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border-left: 4px solid #3b82f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
+  animation: slideIn 0.3s ease;
 }
 
 .card:hover {
@@ -97,26 +107,7 @@
   margin-bottom: 0.5rem;
 }
 
-.card .estado {
-  display: inline-block;
-  padding: 0.25rem 0.75rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-top: 0.5rem;
-  background: #e9ecef;
-  color: #495057;
-}
-
-/* Acciones */
-.acciones {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-  flex-wrap: wrap;
-}
-
-/* Estados de las Cards */
+/* Estados */
 .card[data-status="pending"] {
   border-left-color: #fbbf24;
 }
@@ -132,38 +123,177 @@
   opacity: 0.7;
 }
 
-/* Estilos Responsive */
-@media (max-width: 768px) {
-  .notificaciones-container {
-    padding: 1rem;
-    margin-top: 5rem;
-  }
+/* Estilos extra */
+.card-approved {
+  border-left: 4px solid #10B981;
+  background: linear-gradient(to right, rgba(16, 185, 129, 0.05), transparent);
+}
 
-  .titulo {
-    font-size: 1.5rem;
-  }
+.card-rejected {
+  border-left: 4px solid #EF4444;
+  background: linear-gradient(to right, rgba(239, 68, 68, 0.05), transparent);
+}
 
-  .tabs {
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-  }
+/* =========================================
+   Animación de Salida para Cards
+========================================= */
 
-  .tab-btn {
-    white-space: nowrap;
-    padding: 0.625rem 1rem;
-    font-size: 0.9rem;
-  }
+.card-removing {
+  animation: slideOut 0.3s ease forwards !important;
+  pointer-events: none;
+}
 
-  .card {
-    padding: 1.25rem;
+@keyframes slideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: 500px;
+    margin-bottom: 1rem;
   }
-
-  .acciones {
-    flex-direction: column;
+  50% {
+    opacity: 0;
+    transform: translateX(100%);
+    max-height: 500px;
+    margin-bottom: 1rem;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top-width: 0;
+    border-bottom-width: 0;
   }
 }
 
-/* Header de Notificaciones */
+/* =========================================
+   Estados y Badges
+========================================= */
+
+.estado {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  background: #e9ecef;
+  color: #495057;
+}
+
+.estado-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.estado-approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.estado-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+}
+
+.status-badge.status-pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.status-badge.status-approved {
+  background-color: #D1FAE5;
+  color: #065F46;
+}
+
+.status-badge.status-rejected {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
+
+/* =========================================
+   Header de Tarjeta
+========================================= */
+
+.card-header-not {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+
+.card-header-not h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+/* =========================================
+   Descripción de Tarjeta
+========================================= */
+
+.card-description {
+  margin: 15px 0;
+  color: #4B5563;
+  line-height: 1.6;
+  font-size: 0.9375rem;
+}
+
+/* =========================================
+   Footer de Tarjeta
+========================================= */
+
+.card-footer-not {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.fecha-solicitud,
+.fecha-gestion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+.fecha-gestion {
+  color: #059669;
+  font-weight: 500;
+}
+
+/* =========================================
+   Acciones
+========================================= */
+
+.acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* =========================================
+   Header Notificaciones
+========================================= */
+
 .header-notificaciones {
   display: flex;
   justify-content: space-between;
@@ -177,7 +307,7 @@
   margin-bottom: 0;
 }
 
-/* Toggle entre Pendientes y Gestionadas */
+/* Toggle */
 .toggle-section {
   display: flex;
   gap: 0.5rem;
@@ -210,44 +340,150 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos de Cards por Estado */
-.card-approved {
-  border-left-color: #10b981;
-  background: #f0fdf4;
+/* =========================================
+   Estado vacío
+========================================= */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #6B7280;
+  text-align: center;
 }
 
-.card-rejected {
-  border-left-color: #ef4444;
-  background: #fef2f2;
+.empty-state p {
+  font-size: 1.125rem;
+  font-weight: 500;
 }
 
-/* Colores de Estados */
-.estado-pending {
-  background: #fef3c7;
-  color: #92400e;
+/* =========================================
+   Loading
+========================================= */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 20px;
 }
 
-.estado-approved {
-  background: #d1fae5;
-  color: #065f46;
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(139, 92, 246, 0.1);
+  border-top-color: #8B5CF6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-.estado-rejected {
-  background: #fee2e2;
-  color: #991b1b;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Fecha de Gestión */
-.fecha-gestion {
-  font-size: 0.875rem;
-  color: #6c757d;
-  margin-top: 0.75rem;
-  font-style: italic;
+/* =========================================
+   Socket Status
+========================================= */
+
+.socket-status {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 10px;
+  animation: pulse 2s infinite;
 }
 
-/* Responsive para Header */
+.socket-status.connected {
+  background-color: #28a745;
+  box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+}
+
+.socket-status.disconnected {
+  background-color: #dc3545;
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+  animation: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* =========================================
+   Animaciones
+========================================= */
+
+@keyframes slideIn {
+  from { 
+    opacity: 0; 
+    transform: translateX(-20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+/* =========================================
+   Responsive
+========================================= */
 
 @media (max-width: 768px) {
+  .notificaciones-container {
+    padding: 1rem;
+    margin-top: 5rem;
+  }
+
+  .titulo {
+    font-size: 1.5rem;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status-badge {
+    align-self: flex-start;
+  }
+
+  .btn-primary-custom,
+  .btn-secondary-custom {
+    width: 100%;
+  }
+
+  .socket-status {
+    width: 10px;
+    height: 10px;
+    margin-left: 8px;
+  }
+
   .header-notificaciones {
     flex-direction: column;
     align-items: stretch;

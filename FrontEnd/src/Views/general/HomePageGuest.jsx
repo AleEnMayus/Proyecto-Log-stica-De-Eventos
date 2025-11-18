@@ -65,7 +65,7 @@ const HomeGuest = () => {
     <div className="home-guest">
       <HeaderSidebar />
 
-      <main className="main-content mx-auto">
+      <main className="main-content mx-auto px-2">
         {/* Hero Section */}
         <section className="hero-section">
           <div className="hero-content">

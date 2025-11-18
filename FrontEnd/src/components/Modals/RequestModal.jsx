@@ -79,7 +79,7 @@ const RequestModal = ({ isOpen, onClose, usert, requestType, eventId = null }) =
   return (
     <div className="sidebar-overlay active" onClick={onClose}>
       <div
-        className="profile-modal w-80 position-absolute top-50 start-50 translate-middle"
+        className="profile-modal w-800 position-absolute top-50 start-50 translate-middle"
         onClick={stop}
         role="dialog"
         aria-modal="true"

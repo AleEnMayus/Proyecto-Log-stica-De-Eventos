@@ -306,15 +306,17 @@ const HomeAdmin = ({ user, onLogout }) => {
           )}
         </section>
 
-        {/* CITAS */}
-        <section id="citas" className="mb-5">
-          <h2 className="section-title h3">Gestión de Eventos</h2>
-          <p className="text-muted mb-4">
-            Como administrador, puedes ver y gestionar todos los eventos registrados en el sistema.
-          </p>
-          <a href="/EventsHomeAdmin" className="btn-secondary-custom btn w-200p">
+        {/* Eventos */}
+        <section id="citas" className="appointment-section">
+          <div className="appointment-card">
+            <h2 className="section-title">Gestión de Eventos</h2>
+            <p className="appointment-description">
+              Accede a la sección de gestión de eventos para crear, editar o eliminar eventos programados.
+            </p>
+          <a href="/EventsHomeAdmin" className="btn-primary-custom btn w-200p">
             Gestionar Eventos
           </a>
+          </div>
         </section>
 
         {/* PROMOCIONES */}

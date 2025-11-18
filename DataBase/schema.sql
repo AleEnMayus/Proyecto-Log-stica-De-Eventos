@@ -509,6 +509,21 @@ BEGIN
 END//
 
 -- ==========================================================
+-- TRAER DATOS A ENCUESTAS
+-- ==========================================================
+
+CREATE OR REPLACE VIEW EventFeedbackDetailView AS
+SELECT
+    u.Names AS UserName,
+    e.EventName,
+    a.NumericValue AS Rating,
+    q.QuestionText AS Question
+FROM Answers a
+INNER JOIN User u ON a.UserId = u.UserId
+INNER JOIN Events e ON a.EventId = e.EventId
+INNER JOIN Questions q ON a.QuestionId = q.QuestionId;
+
+-- ==========================================================
 -- VERIFICAR CONFIGURACIÓN
 -- ==========================================================
 SHOW VARIABLES LIKE 'event_scheduler';

@@ -28,11 +28,12 @@ const ResultsSurvey = () => {
 
       // Mapeamos para asegurarnos de que siempre haya texto y nombre de usuario
       const organized = data.map(item => ({
-        user: item.UserId ? `Usuario ${item.UserId}` : "Sin usuario",
-        event: item.EventId ? `Evento ${item.EventId}` : "Sin evento",
+        user: item.UserName || "Usuario desconocido",
+        event: item.EventName || "Evento desconocido",
         question: item.QuestionText || "Pregunta sin texto",
         value: Number(item.NumericValue) || 0
       }));
+
 
       // Ordenar por usuario -> evento -> pregunta
       organized.sort((a, b) => {
@@ -150,7 +151,9 @@ const ResultsSurvey = () => {
           onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          ◀
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+          </svg>
         </button>
 
         <div className="pagination-numbers">
@@ -170,7 +173,9 @@ const ResultsSurvey = () => {
           onClick={() => goToPage(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          ▶
+          <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
+            <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+          </svg>
         </button>
       </div>
 

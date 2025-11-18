@@ -167,9 +167,9 @@ const ImageGalleryC = () => {
         <div className="gallery-header">
           <h2 className="gallery-title">Galería de Eventos</h2>
 
-          <div className="gallery-actions d-flex">
+          <div className="gallery-actions d-flex flex-wrap">
             <button
-              className="btn-primary-custom btn me-2"
+              className="btn-primary-custom btn me-2 mb-2"
               onClick={() => setShowUploadModal(true)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">
@@ -178,7 +178,7 @@ const ImageGalleryC = () => {
               Subir Imagen
             </button>
             <button
-              className="btn-secondary-custom btn"
+              className="btn-secondary-custom btn mb-2"
               onClick={() => requestDeleteAllImages()}
             >
               <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentcolor">

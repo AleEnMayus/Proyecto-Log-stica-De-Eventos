@@ -85,8 +85,8 @@
 
 
 /* Margenes personalizadas */
-.mt-10 {
-  margin-top: 10vh !important;
+.mt-11 {
+  margin-top: 11vh !important;
 }
 
 /* Hacer que los botones se vean igual que los enlaces */
@@ -367,6 +367,11 @@ button.dropdown-item-custom:focus {
   line-clamp: 3;
 }
 
+.title-headersb {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white !important;
+}
 
 
 @media (max-width: 770px) {

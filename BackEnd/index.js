@@ -48,6 +48,8 @@ app.use("/api/gallery", require("./routes/Admin/galleryRoutes"));
 app.use("/api/gallery", require("./routes/commentsRoutes"));
 app.use("/api/contracts", require("./routes/Admin/contractsUploadRoutes"));
 app.use("/api/calendar", require("./routes/Admin/calendarRoutes"));
+app.use("/api/pfp", require("./routes/ProfileRoutes"));
+
 
 // Jobs automáticos
 startEventCompletionJob();

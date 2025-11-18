@@ -15,7 +15,7 @@ const HeaderSidebar = () => {
 
   return (
     <>
-      <header className="bg-white shadow-sm sticky-top header-container">
+      <header className="gradiante-bg shadow-sm sticky-top header-container">
         <div className="container d-flex justify-content-between align-items-center py-3">
           
           {/* Logo + menú */}
@@ -24,22 +24,22 @@ const HeaderSidebar = () => {
               ☰
             </button>
             <a href="/" className="navbar-brand d-flex align-items-center">
-              <img src="/HAE_logo.png" className="img-50" alt="Logo" />
+              <img src="/Logo-White.png" className="img-50" alt="Logo" />
               <div className="logo-text ms-2">Happy-Art-Events</div>
             </a>
           </div>
 
           {/* Botones de acción */}
-          <div className="d-flex align-items-center gap-2">
+          <div className="d-flex align-items-center gap-2 flex-wrap">
             <a 
               href="/Register" 
-              className="btn btn-outline-primary register-btn"
+              className="btn btn-secondary-custom"
             >
-              Registrarse
+              Registro
             </a>
             <Link 
               to="/login" 
-              className="btn btn-primary-custom"
+              className="btn btn-secondary-custom"
             >
               Iniciar Sesión
             </Link>

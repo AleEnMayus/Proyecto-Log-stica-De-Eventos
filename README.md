@@ -13,18 +13,24 @@ Un sistema inteligente de gestión de eventos desarrollado con tecnologías mode
 
 ---
 
-## 🔧 Funcionalidades Clave (por implementar)
+## 🔧 Funcionalidades Clave
 
-- Gestión de eventos, cronogramas y participantes  
-- Panel administrativo con estadísticas en tiempo real  
-- Registro e inicio de sesión  
-- Integración con proveedores y logística de recursos
+- Gestión integral de eventos, cronogramas y participantes
+- Registro de usuarios e inicio de sesión seguro
+- Integración con la logística de recursos
+- Sistema de encuestas estáticas
+- Calendario organizado con citas y eventos
+- Programación de citas personalizada
+- Galería de fotos interactiva con opción de comentarios
+- Envío y descarga de contratos en formato PDF
+- Notificaciones en tiempo real
+- Administración completa de cuentas
 
 ---
 
 ## 📌 Estado del Proyecto
 
-> 🚧 **En desarrollo** — Fecha estimada de entrega: *finales de septiembre*
+> 🚧 **En desarrollo** — Avance aproximado del 95%
 
 ---
 

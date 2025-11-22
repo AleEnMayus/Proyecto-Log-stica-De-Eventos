@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { eraseUnderscore } from '../../../utils/FormatText';
+import { translateStatus } from '../../../utils/FormatText';
 import '../../CSS/components.css';
 import '../../CSS/DetailsEvt.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
@@ -102,11 +102,10 @@ const EventDetailsA = () => {
 
       if (!response.ok) throw new Error(`Error al cambiar estado: ${response.status}`);
 
-      const data = await response.json();
-
+      // Actualiza inmediatamente el estado en el frontend
       setEventData((prev) => ({
         ...prev,
-        EventStatus: data.EventStatus
+        EventStatus: newStatus
       }));
 
       setShowStateModal(false);
@@ -115,6 +114,10 @@ const EventDetailsA = () => {
       console.error('Error cambiando estado:', err);
       addToast("No se pudo cambiar el estado del evento", "danger");
     }
+  };
+
+  const handleSend = (eventId) => {
+    navigate(`/SendContractsAdmin/${eventId}`);
   };
 
   // Renders intermedios
@@ -180,7 +183,7 @@ const EventDetailsA = () => {
           <p className="status-title">Estado del evento</p>
           <div className="status-indicator">
             <span className="status-dot"></span>
-            <span className="status-text">{eraseUnderscore(eventData.EventStatus) || "N/A"}</span>
+            <span className="status-text">{translateStatus(eventData.EventStatus) || "N/A"}</span>
           </div>
         </div>
       </div>
@@ -213,7 +216,7 @@ const EventDetailsA = () => {
         </div>
         <div className="detail-item">
           <span className="detail-label">Método de pago</span>
-          <div className="detail-box">{eventData.AdvancePaymentMethod || "N/A"}</div>
+          <div className="detail-box">{translateStatus(eventData.AdvancePaymentMethod) || "N/A"}</div>
         </div>
         <div className="detail-item" style={{ gridColumn: "1 / -1" }}>
           <span className="detail-label">Descripción</span>
@@ -223,6 +226,9 @@ const EventDetailsA = () => {
 
       {/* Botones */}
       <div className="button-container">
+        <button className="btn-primary-custom" onClick={() => handleSend(eventId)}>
+          Enviar contrato
+        </button>
         <button className="btn-primary-custom" onClick={handleEditEvent}>
           Editar evento
         </button>

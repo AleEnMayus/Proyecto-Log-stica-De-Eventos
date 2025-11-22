@@ -2,7 +2,7 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 
 const Account = {
-  // Crear usuario con contraseña hasheada
+  // Crear usuario con contraseña 
   create: async ({ Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status = "active", Role = "user" }) => {
     if (!Password) throw new Error("Password is required");
     const hashedPassword = await bcrypt.hash(Password, 10);
@@ -36,7 +36,7 @@ const Account = {
     return rows[0];
   },
 
-  update: async (id, { Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role }) => {
+  update: async (id, { Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Role }) => {
     let sql;
     let params;
 
@@ -47,14 +47,14 @@ const Account = {
         SET Names = ?, DocumentType = ?, DocumentNumber = ?, BirthDate = ?, Email = ?, Password = ?, Status = ?, Role = ?
         WHERE UserId = ?
       `;
-      params = [Names, DocumentType, DocumentNumber, BirthDate, Email, hashedPassword, Status, Role, id];
+      params = [Names, DocumentType, DocumentNumber, BirthDate, Email, hashedPassword, 'active', Role, id];
     } else {
       sql = `
         UPDATE User 
         SET Names = ?, DocumentType = ?, DocumentNumber = ?, BirthDate = ?, Email = ?, Status = ?, Role = ?
         WHERE UserId = ?
       `;
-      params = [Names, DocumentType, DocumentNumber, BirthDate, Email, Status, Role, id];
+      params = [Names, DocumentType, DocumentNumber, BirthDate, Email, 'active', Role, id];
     }
 
     const [result] = await db.query(sql, params);

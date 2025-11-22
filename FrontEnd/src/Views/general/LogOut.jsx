@@ -2,21 +2,52 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../CSS/Logout.css";
+import api from '../../utils/axiosConfig';
+import { socket } from '../../services/socket';
 
 const Logout = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Simula proceso de cierre de sesión
-    const timer = setTimeout(() => {
-      localStorage.clear(); // elimina datos de usuario
-      navigate(0); // recarga la página
-      navigate("/login");   // redirige al login
-    }, 2000); // 2 segundos de "cargando"
+    useEffect(() => {
+      let mounted = true;
 
-    return () => clearTimeout(timer);
-  }, navigate(0)
-  );
+      const doLogout = async () => {
+        try {
+          await api.post('/auth/logout');
+        } catch (e) {
+          console.warn('Logout request failed', e.message || e);
+        }
+
+        try {
+          sessionStorage.removeItem('user');
+          sessionStorage.removeItem('role');
+          sessionStorage.removeItem('name');
+        } catch (e) {
+          console.warn('Error cleaning sessionStorage', e);
+        }
+
+        // Desconectar socket si está conectado
+        try {
+          if (socket && socket.connected) {
+            socket.disconnect();
+          }
+        } catch (e) {
+          console.warn('Error disconnecting socket', e);
+        }
+
+        if (mounted) {
+          navigate('/login');
+        }
+      };
+
+      // Pequeña animación de salida
+      const timer = setTimeout(doLogout, 700);
+
+      return () => {
+        mounted = false;
+        clearTimeout(timer);
+      };
+    }, [navigate]);
 
   return (
     <div className="logout-container">

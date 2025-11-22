@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import "../../Views/CSS/Modals.css";
+import api from '../../utils/axiosConfig';
 
-const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) => {
+const RequestModal = ({ isOpen, onClose, usert, requestType, eventId = null }) => {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   if (!isOpen) return null;
+
+  const user = JSON.parse(sessionStorage.getItem('user') || '{}');
 
   const stop = (e) => e.stopPropagation();
 
@@ -17,8 +20,6 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
     setError("");
 
     try {
-      const token = localStorage.getItem("authToken");
-
       const payload = {
         RequestDate: new Date().toISOString(),
         RequestDescription: reason,
@@ -28,23 +29,10 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
         ...(requestType === "cancel_event" && { EventId: eventId }),
       };
 
-      const res = await fetch("http://localhost:4000/api/requests", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setReason("");
-        onClose();
-      } else {
-        setError(data.error || "Error al crear la solicitud");
-      }
+      const res = await api.post('/requests', payload);
+      const data = res.data;
+      setReason("");
+      onClose();
     } catch (err) {
       console.error("Error de red:", err);
       setError("No se pudo conectar con el servidor");
@@ -77,7 +65,7 @@ const RequestModal = ({ isOpen, onClose, user, requestType, eventId = null }) =>
   return (
     <div className="sidebar-overlay active" onClick={onClose}>
       <div
-        className="profile-modal w-80 position-absolute top-50 start-50 translate-middle"
+        className="profile-modal w-800 position-absolute top-50 start-50 translate-middle"
         onClick={stop}
         role="dialog"
         aria-modal="true"

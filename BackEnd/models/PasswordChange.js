@@ -12,7 +12,7 @@ const updatePassword = async (userId, newPasswordHash) => {
   return result;
 };
 
-// Agregar método para comparar contraseñas
+// Método para comparar contraseñas
 const comparePassword = async (plainPassword, hashedPassword) => {
   return await bcrypt.compare(plainPassword, hashedPassword);
 };

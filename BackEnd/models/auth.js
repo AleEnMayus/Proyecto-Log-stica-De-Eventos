@@ -18,7 +18,6 @@ const auth = {
     return rows[0];
   },
 
-  // AGREGAR ESTE MÉTODO
   findById: async (userId) => {
     const [rows] = await db.query(
       "SELECT * FROM User WHERE UserId = ?",
@@ -40,7 +39,6 @@ const auth = {
     return await bcrypt.compare(password, hashedPassword);
   },
 
-  // AGREGAR ESTE MÉTODO PARA ACTUALIZAR CONTRASEÑA
   updatePassword: async (userId, newPasswordHash) => {
     const [result] = await db.query(
       "UPDATE User SET Password = ? WHERE UserId = ?",

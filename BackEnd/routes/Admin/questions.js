@@ -1,13 +1,15 @@
-// routes/admin/questions.js
+// routes/questions.js
 const express = require("express");
 const router = express.Router();
 const {
-  createQuestion,
   getAllQuestions,
-  createMultipleQuestions
+  createQuestion,
+  createMultipleQuestions,
 } = require("../../controllers/QuestionController");
 
-router.post("/bulk", createMultipleQuestions);
-router.get("", getAllQuestions);
+// Rutas principales
+router.get("/", getAllQuestions); // obtener todas
+router.post("/", createQuestion); // crear una
+router.post("/bulk", createMultipleQuestions); // crear varias
 
 module.exports = router;

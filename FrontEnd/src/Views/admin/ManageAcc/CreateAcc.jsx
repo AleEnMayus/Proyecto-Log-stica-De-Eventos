@@ -3,12 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import '../../CSS/FormsUser.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
+// Importar el hook y el contenedor de notificaciones
+import { useToast } from "../../../hooks/useToast"; 
+import ToastContainer from "../../../components/ToastContainer";
+
 const CreateAccountForm = () => {
-  const navigate = useNavigate(); // ✅ Hook para redireccionar
+  const navigate = useNavigate();
+  const { toasts, addToast, removeToast } = useToast();
 
   const [formData, setFormData] = useState({
     firstName: '',
-    rol: '',
+    role: '', // Cambié 'rol' a 'role' para ser consistente
     email: '',
     birthDate: '', 
     documentType: '',
@@ -18,7 +23,6 @@ const CreateAccountForm = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,13 +43,11 @@ const CreateAccountForm = () => {
   };
 
   const handleSubmit = async () => {
-    setErrorMessage('');
-
     // Validar campos obligatorios
-    const requiredFields = ['firstName', 'rol', 'email', 'birthDate', 'documentType', 'documentNumber', 'password', 'confirmPassword'];
+    const requiredFields = ['firstName', 'role', 'email', 'birthDate', 'documentType', 'documentNumber', 'password', 'confirmPassword'];
     const emptyFields = requiredFields.filter(field => !formData[field]);
     if (emptyFields.length > 0) {
-      setErrorMessage('Por favor, completa todos los campos obligatorios.');
+      addToast('Por favor, completa todos los campos obligatorios.', 'warning');
       return;
     }
 
@@ -59,20 +61,20 @@ const CreateAccountForm = () => {
     }
 
     if (age < 18) {
-      setErrorMessage('Debes ser mayor de edad para registrarte.');
+      addToast('Debes ser mayor de edad para registrarte.', 'warning');
       return;
     }
 
     // Validar contraseña
     const passwordErrors = validatePassword(formData.password);
     if (passwordErrors.length > 0) {
-      setErrorMessage(passwordErrors.join(', '));
+      addToast(passwordErrors.join(', '), 'warning');
       return;
     }
 
     // Confirmar contraseña
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage('Las contraseñas no coinciden.');
+      addToast('Las contraseñas no coinciden.', 'warning');
       return;
     }
 
@@ -82,7 +84,7 @@ const CreateAccountForm = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           Names: formData.firstName,
-          Rol: formData.rol,
+          Role: formData.role, // Corregido
           DocumentType: formData.documentType,
           DocumentNumber: formData.documentNumber,
           BirthDate: formData.birthDate,
@@ -91,36 +93,34 @@ const CreateAccountForm = () => {
         })
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errData = await response.json();
-        setErrorMessage(errData.message || 'Error al crear la cuenta.');
+        addToast(data.error || data.message || 'Error al crear la cuenta.', 'danger');
         return;
       }
 
-      alert('Cuenta creada exitosamente!');
+      addToast('Cuenta creada exitosamente!', 'success');
 
-      // ✅ Redireccionar automáticamente a la lista de cuentas
-      navigate('/admin/accounts');
+      setTimeout(() => {
+        navigate('/admin/accounts');
+      }, 2000);
 
     } catch (error) {
       console.error('Error en la petición:', error);
-      setErrorMessage('Error en el servidor, intenta más tarde.');
+      addToast('Error en el servidor, intenta más tarde.', 'danger');
     }
   };
 
   return (
     <>
       <HeaderAdm />
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <div className="login-container">
         <div className="login-content">
           <div className="login-form-card" style={{ maxWidth: "800px" }}>
             <h1 className="login-title">CREAR CUENTA</h1>
-
-            {errorMessage && (
-              <p className="text-danger" style={{ color: "red", marginBottom: "10px" }}>
-                {errorMessage}
-              </p>
-            )}
 
             <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
               
@@ -145,14 +145,14 @@ const CreateAccountForm = () => {
                     Rol <span className="text-danger">*</span>
                   </label>
                   <select
-                    name="rol"
+                    name="role"
                     className="form-input"
-                    value={formData.rol}
+                    value={formData.role}
                     onChange={handleInputChange}
                   >
                     <option value="">Selecciona un rol</option>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Cliente">Cliente</option>
+                    <option value="admin">Administrador</option>
+                    <option value="user">Cliente</option>
                   </select>
                 </div>
               </div>
@@ -201,8 +201,7 @@ const CreateAccountForm = () => {
                     <option value="">Elige tipo</option>
                     <option value="CC">Cédula de Ciudadanía</option>
                     <option value="CE">Cédula de Extranjería</option>
-                    <option value="Pasaporte">Pasaporte</option>
-                    <option value="TI">Tarjeta de Identidad</option>
+                    <option value="PP">Pasaporte</option>
                   </select>
                 </div>
                 <div className="col-md-6 mb-3">
@@ -230,7 +229,7 @@ const CreateAccountForm = () => {
                     <input
                       type={showPassword ? "text" : "password"}
                       name="password"
-                      className="form-input d-flex align-items-center"
+                      className="form-input"
                       placeholder="Mínimo 8 caracteres"
                       value={formData.password}
                       onChange={handleInputChange}
@@ -238,11 +237,18 @@ const CreateAccountForm = () => {
                     <span
                       className="toggle-visibility-inside"
                       onClick={() => setShowPassword(!showPassword)}
+                      style={{ cursor: 'pointer' }}
                     >
                       {showPassword ? (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                          <circle cx="12" cy="12" r="3" />
+                        </svg>
                       ) : (
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" /><path d="M1 1l22 22" /></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.07 21.07 0 0 1 5.06-6.06" />
+                          <path d="M1 1l22 22" />
+                        </svg>
                       )}
                     </span>
                   </div>
@@ -268,7 +274,7 @@ const CreateAccountForm = () => {
                 <button
                   type="button"
                   className="btn-cancel"
-                  onClick={() => navigate('/admin/accounts')} // ✅ también para el botón Cancelar
+                  onClick={() => navigate('/admin/accounts')}
                 >
                   Cancelar
                 </button>

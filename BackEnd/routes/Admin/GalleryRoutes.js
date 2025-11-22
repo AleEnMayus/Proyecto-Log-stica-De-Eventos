@@ -1,35 +1,34 @@
-import express from "express";
-import { db } from "../db.js";
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
+const galleryController = require("../../controllers/galleryController");
 
 const router = express.Router();
 
-// Obtener todos los comentarios
-router.get("/", (req, res) => {
-  db.query("SELECT * FROM Comments", (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
-  });
+// Configuración de Multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadPath = "uploads/gallery/";
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
 });
 
-// Agregar un comentario nuevo
-router.post("/", (req, res) => {
-  const { CommentText, UserId, MultimediaFileId } = req.body;
-  const sql = "INSERT INTO Comments (CommentText, UserId, MultimediaFileId) VALUES (?, ?, ?)";
-  db.query(sql, [CommentText, UserId, MultimediaFileId || null], (err, result) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: "Comentario agregado correctamente", CommentId: result.insertId });
-  });
-});
+const upload = multer({ storage });
 
-// Actualizar estado de comentario (publicar o rechazar)
-router.put("/:id", (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  const sql = "UPDATE Comments SET CommentStatus = ? WHERE CommentId = ?";
-  db.query(sql, [status, id], (err) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: `Comentario actualizado a ${status}` });
-  });
-});
+// Rutas de imágenes
+router.get("/paginated", galleryController.getPaginatedImages);
+router.post("/", upload.single("file"), galleryController.uploadImage);
+router.get("/", galleryController.getAllImages);
+router.get("/:id", galleryController.getImageById);
+router.delete("/:id", galleryController.deleteImage);
+router.delete("/", galleryController.deleteAllImages);
 
-export default router;
+module.exports = router;

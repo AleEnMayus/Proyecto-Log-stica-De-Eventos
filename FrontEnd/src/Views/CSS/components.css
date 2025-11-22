@@ -1,5 +1,9 @@
 /* Css Generales */
 
+.Toastify{
+  margin: 0;
+}
+
 /* Estilo personalizado del toast */
 .custom-toast {
   border-radius: 12px;
@@ -38,6 +42,10 @@
   align-items: center;
 }
 
+.btn {
+  border-radius: 25px !important;
+}
+
 .btn-primary-custom {
   background: linear-gradient(135deg, rgb(21, 165, 231), rgb(177, 121, 241));
   border: none;
@@ -59,7 +67,7 @@
 }
 
 .btn-secondary-custom {
-  background: rgb(255, 83, 121);
+  background: rgb(251, 82, 119);
   border: none;
   border-radius: 25px;
   padding: 10px 25px;
@@ -67,6 +75,10 @@
   transition: all 0.3s ease;
   color: white;
   cursor: pointer;
+  display: flex;
+  gap: 5px;
+  align-items: center; 
+  justify-content: center;
 }
 
 .btn-secondary-custom:hover {
@@ -77,8 +89,8 @@
 
 
 /* Margenes personalizadas */
-.mt-10 {
-  margin-top: 10vh !important;
+.mt-11 {
+  margin-top: 11vh !important;
 }
 
 /* Hacer que los botones se vean igual que los enlaces */
@@ -99,6 +111,7 @@ button.dropdown-item-custom {
   text-decoration: none;
   transition: background-color 0.2s;
 }
+
 
 button.dropdown-item-custom:hover {
   background-color: rgba(0, 0, 0, 0.1);
@@ -216,8 +229,6 @@ button.dropdown-item-custom:focus {
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin: 20px auto;
-  padding: 1rem;
   width: 100%;
   z-index: 10;
   background: transparent;
@@ -234,6 +245,7 @@ button.dropdown-item-custom:focus {
 .pagination-numbers {
   display: flex;
   align-items: center;
+  gap: 2px;
 }
 
 .pagination-btn, .pagination-arrow {
@@ -249,7 +261,7 @@ button.dropdown-item-custom:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #909499 !important;
+  border: 1px solid #dee0e2 !important;
 }
 
 .pagination-btn:hover, .pagination-arrow:hover {
@@ -333,6 +345,38 @@ button.dropdown-item-custom:focus {
   opacity: 1;
   transform: rotate(45deg) scale(1);
 }
+
+/* Evitar desbordes en la descripción de promociones */
+.promo-card {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  height: 100%;
+  overflow: hidden;
+}
+
+.promo-description {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical; 
+  -webkit-line-clamp: 3;
+
+  line-clamp: 3;
+}
+
+.title-headersb {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white !important;
+}
+
 
 @media (max-width: 770px) {
   .title-headersb{

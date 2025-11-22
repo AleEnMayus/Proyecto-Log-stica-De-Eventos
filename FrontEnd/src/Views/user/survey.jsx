@@ -2,40 +2,63 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import "../CSS/FormsUser.css";
+import { useToast } from "../../hooks/useToast";
+import ToastContainer from "../../components/ToastContainer";
 
-const ClientSurvey = ({ userId }) => {
+const ClientSurvey = () => {
   const { eventId } = useParams();
+  const { toasts, addToast, removeToast } = useToast();
 
+  const [userId, setUserId] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [hover, setHover] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [loadingQuestions, setLoadingQuestions] = useState(true);
+
+  const defaultQuestions = [
+  ];
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/questions");
-        const data = await res.json();
-
-        const normalized = data.map((q, idx) => {
-          const id = q?.QuestionId ?? q?._id ?? `q_${idx}`;
-          const text = q?.QuestionText ?? `Pregunta ${idx + 1}`;
-          return { ...q, _qid: id, _text: text };
-        });
-
-        const initialAnswers = {};
-        normalized.forEach((q) => {
-          initialAnswers[q._qid] = 0;
-        });
-
-        setQuestions(normalized);
-        setAnswers(initialAnswers);
-      } catch (err) {
-        console.error("Error al obtener preguntas:", err);
-      }
-    };
-
+    // Obtener ID de usuario desde localStorage
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUserId(storedUser?.id || 4); // fallback por defecto 4
     fetchQuestions();
   }, []);
+
+  const fetchQuestions = async () => {
+    try {
+      setLoadingQuestions(true);
+      const res = await fetch("http://localhost:4000/api/questions");
+      if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
+      const data = await res.json();
+
+      let questionsToUse = [];
+      if (data && Array.isArray(data) && data.length > 0) {
+        questionsToUse = data.map((q, idx) => {
+          const id = q?.QuestionId || q?._id || q?.id || `q_${idx}`;
+          const text = q?.QuestionText || q?.text || q?.question || `Pregunta ${idx + 1}`;
+          return { ...q, _qid: id, _text: text };
+        });
+      } else {
+        questionsToUse = defaultQuestions;
+      }
+
+      const initialAnswers = {};
+      questionsToUse.forEach(q => { initialAnswers[q._qid] = 0; });
+
+      setQuestions(questionsToUse);
+      setAnswers(initialAnswers);
+    } catch (err) {
+      console.error("Error cargando preguntas:", err);
+      const initialAnswers = {};
+      defaultQuestions.forEach(q => { initialAnswers[q._qid] = 0; });
+      setQuestions(defaultQuestions);
+      setAnswers(initialAnswers);
+    } finally {
+      setLoadingQuestions(false);
+    }
+  };
 
   const renderStars = (questionId) => {
     const rating = answers[questionId] ?? 0;
@@ -47,15 +70,9 @@ const ClientSurvey = ({ userId }) => {
       return (
         <svg
           key={`${questionId}-${i}`}
-          onClick={() =>
-            setAnswers((prev) => ({ ...prev, [questionId]: value }))
-          }
-          onMouseEnter={() =>
-            setHover((prev) => ({ ...prev, [questionId]: value }))
-          }
-          onMouseLeave={() =>
-            setHover((prev) => ({ ...prev, [questionId]: 0 }))
-          }
+          onClick={() => setAnswers(prev => ({ ...prev, [questionId]: value }))}
+          onMouseEnter={() => setHover(prev => ({ ...prev, [questionId]: value }))}
+          onMouseLeave={() => setHover(prev => ({ ...prev, [questionId]: 0 }))}
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           width="28"
@@ -78,29 +95,44 @@ const ClientSurvey = ({ userId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!userId) return addToast("No se encontró el ID de usuario", "danger");
+    if (!eventId) return addToast("No se encontró el ID del evento", "danger");
+
+    const unanswered = Object.entries(answers)
+      .filter(([_, val]) => val === 0)
+      .map(([qid]) => {
+        const question = questions.find(q => q._qid === qid);
+        return question ? question._text : `Pregunta ${qid}`;
+      });
+
+    if (unanswered.length > 0) {
+      return addToast(`Por favor, responde las siguientes preguntas:\n${unanswered.join('\n')}`, "warning");
+    }
+
+    setLoading(true);
+
     try {
       const res = await fetch("http://localhost:4000/api/survey", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          EventId: eventId,
-          UserId: userId,
-          Answers: answers,
-        }),
+        body: JSON.stringify({ EventId: eventId, UserId: userId, Answers: answers }),
       });
 
-      if (!res.ok) throw new Error("Error al enviar la encuesta");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al enviar la encuesta");
 
-      const result = await res.json();
-      alert(`Encuesta enviada con éxito\n${JSON.stringify(result)}`);
+      addToast("¡Encuesta enviada con éxito!", "success");
 
-      // Resetear estrellas
-      const reset = {};
-      Object.keys(answers).forEach((k) => (reset[k] = 0));
-      setAnswers(reset);
+      const resetAnswers = {};
+      questions.forEach(q => { resetAnswers[q._qid] = 0; });
+      setAnswers(resetAnswers);
+      setHover({});
     } catch (err) {
-      console.error("Error:", err);
-      alert("No se pudo enviar la encuesta");
+      console.error("Error al enviar encuesta:", err);
+      addToast(err.message || "Error inesperado al enviar la encuesta", "danger");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,23 +141,43 @@ const ClientSurvey = ({ userId }) => {
       <HeaderCl />
       <div className="survey-container">
         <h2 className="survey-title">Encuesta de Satisfacción</h2>
+        <div className="debug-info" style={{fontSize: '12px', color: '#666', marginBottom: '10px'}}>
+          ID de usuario: {userId} | ID de evento: {eventId}
+          {loadingQuestions && " | Cargando preguntas..."}
+        </div>
+
         <form onSubmit={handleSubmit} className="survey-form">
-          {questions.length > 0 ? (
-            questions.map((q) => (
+          {loadingQuestions ? (
+            <p>Cargando preguntas...</p>
+          ) : questions.length > 0 ? (
+            questions.map((q, index) => (
               <div key={q._qid} className="survey-question-block">
-                <p className="survey-question">{q._text}</p>
+                <p className="survey-question">{index + 1}. {q._text}</p>
                 <div className="stars">{renderStars(q._qid)}</div>
+                <div className="rating-display" style={{fontSize: '14px', color: '#666', marginTop: '5px'}}>
+                  Calificación seleccionada: <strong>{answers[q._qid] || 0}/5</strong>
+                </div>
               </div>
             ))
           ) : (
-            <p>No hay preguntas disponibles.</p>
+            <p>No hay preguntas disponibles en este momento.</p>
           )}
 
-          <button type="submit" className="survey-btn">
-            Enviar Encuesta
+          <button 
+            type="submit" 
+            className="survey-btn"
+            disabled={loading || loadingQuestions || questions.length === 0}
+            style={{
+              opacity: (loading || loadingQuestions || questions.length === 0) ? 0.6 : 1,
+              cursor: (loading || loadingQuestions || questions.length === 0) ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? "Enviando..." : "Enviar Encuesta"}
           </button>
         </form>
       </div>
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

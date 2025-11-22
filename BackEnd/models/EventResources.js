@@ -3,7 +3,7 @@ const db = require("../db");
 const EventResources = {
   assignResources: async (eventId, resources) => {
     try {
-      // Validar que el evento exista
+      // Validación que el evento exista
       const [eventRows] = await db.query("SELECT * FROM Events WHERE EventId = ?", [eventId]);
       if (eventRows.length === 0) {
         throw new Error("Evento no encontrado");

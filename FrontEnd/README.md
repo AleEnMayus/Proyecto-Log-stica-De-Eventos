@@ -1,18 +1,18 @@
-# 🎯 Frontend — Proyecto de Logística de Eventos
+#  Frontend — Proyecto de Logística de Eventos
 
 Interfaz web desarrollada con **React** para la gestión inteligente de eventos. Este módulo permite a los usuarios interactuar con el sistema de forma intuitiva, visualizando cronogramas, gestionando participantes y accediendo a funcionalidades clave del proyecto.
 
 ---
 
-## 🛠️ Tecnologías
+##  Tecnologías
 
-- ⚛️ **React** — Librería principal para construir interfaces dinámicas
-- 📦 **Vite** — Herramienta de desarrollo rápida y moderna
-- 🎨 **Bootstrap** — Estilos responsivos y componentes reutilizables
+-  **React** — Librería principal para construir interfaces dinámicas
+-  **Vite** — Herramienta de desarrollo rápida y moderna
+-  **Bootstrap** — Estilos responsivos y componentes reutilizables
 
 ---
 
-## 📋 Funcionalidades (en desarrollo)
+##  Funcionalidades (en desarrollo)
 
 - Visualización de eventos y cronogramas
 - Registro e inicio de sesión de usuarios
@@ -21,7 +21,7 @@ Interfaz web desarrollada con **React** para la gestión inteligente de eventos.
 
 ---
 
-## 🚀 Instalación
+##  Instalación
 
 1. Asegúrate de tener **Node.js** instalado  
 2. Desde la raíz del proyecto, entra a la carpeta `Frontend`:
@@ -39,7 +39,7 @@ Interfaz web desarrollada con **React** para la gestión inteligente de eventos.
    ```
 ---
 
-## 📂 Estructura de Carpetas
+##  Estructura de Carpetas
 
 ```text
 FrontEnd/
@@ -59,6 +59,6 @@ FrontEnd/
 
 ---
 
-## 📌 Estado
+##  Estado
 
-> 🚧 **En desarrollo activo**
+>  **En desarrollo activo**

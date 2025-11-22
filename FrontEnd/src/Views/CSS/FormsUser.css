@@ -87,8 +87,8 @@
 }
 
 .back-btn:hover {
-  background: rgba(21, 165, 231, 0.1);
-  color: rgb(21, 165, 231);
+  background: rgba(162, 211, 218, 0.377);
+  color: rgb(255, 255, 255);
 }
 
 .form-page-title {
@@ -198,7 +198,7 @@
   border-radius: 10px;
   font-size: 16px;
   transition: all 0.3s ease;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   box-sizing: border-box;
 }
 
@@ -449,3 +449,5 @@ select.form-input {
   background-color: rgb(15, 145, 201);
   transform: translateY(-2px);
 }
+
+

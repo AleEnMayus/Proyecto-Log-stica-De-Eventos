@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import "../CSS/FormsUser.css";
 import { useToast } from '../../hooks/useToast'; // Asegúrate que esta ruta esté bien
 import ToastContainer from '../../components/ToastContainer'; // Contenedor visual de los toasts
+import api from '../../utils/axiosConfig';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -30,25 +31,23 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:4000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-      const data = await response.json();
+      const res = await api.post('/auth/login', formData);
+      const data = res.data;
 
-      if (response.ok) {
-        localStorage.setItem("authToken", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        console.log("Login exitoso:", data.user);
+      if (res.status === 200) {
+        // Guardamos solo datos no sensibles en sessionStorage
+        if (data.user) {
+          try {
+            sessionStorage.setItem('role', data.user.role);
+            sessionStorage.setItem('name', data.user.fullName);
+            sessionStorage.setItem('user', JSON.stringify(data.user));
+          } catch (e) {
+            console.warn('No se pudo guardar datos en sessionStorage', e);
+          }
+        }
 
-        addToast("Inicio de sesión exitoso", "success");
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } else {
-        addToast(data.message || "Error al iniciar sesión", "danger");
+        addToast('Inicio de sesión exitoso', 'success');
+        setTimeout(() => window.location.reload(), 800);
       }
     } catch (err) {
       addToast("Error de conexión con el servidor", "danger");
@@ -59,29 +58,7 @@ const LoginPage = () => {
 
   // Volver atrás con el navegador
   const handleGoBackBrowser = () => {
-    window.history.back();
-  };
-
-  // Simulación de login con Google
-  const handleGoogleLogin = () => {
-    const googleUser = {
-      id: 4,
-      name: 'Usuario Google',
-      role: 'user',
-      email: 'google@usuario.com',
-      fullName: 'Usuario Google',
-      birthDate: '',
-      identificationType: '',
-      documentNumber: '',
-      profilePicture: 'https://randomuser.me/api/portraits/men/50.jpg'
-    };
-
-    localStorage.setItem('user', JSON.stringify(googleUser));
-    addToast("Inicio de sesión con Google exitoso", "success");
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    navigate(`/`);
   };
 
   return (
@@ -94,7 +71,7 @@ const LoginPage = () => {
             <div className="col-6">
               <div className="d-flex align-items-center">
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
-                  ←
+                  ‹
                 </button>
                 <div className="logo-text">
                   Happy-Art-Events
@@ -102,7 +79,7 @@ const LoginPage = () => {
               </div>
             </div>
             <div className="col-6 text-end w-auto">
-              <a href="/Register" className="btn-primary-custom btn">
+              <a href="/Register" className="btn-secondary-custom btn">
                 Registrarse
               </a>
             </div>
@@ -163,35 +140,34 @@ const LoginPage = () => {
               </button>
             </div>
 
-            <div className="form-options">
-              <Link to="/recover" className="forgot-password">
+            <div
+              className="form-options"
+              style={{ width: "100%", marginBottom: "15px", display: "flex", justifyContent: "center" }}
+            >
+              <Link
+                to="/recover"
+                className="forgot-password"
+                style={{ display: "block", textAlign: "center" }}
+              >
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
 
+
             <button
               type="submit"
-              className="btn-primary-custom login-btn"
+              className="btn-primary-custom"
               disabled={isLoading}
+              style={{
+                width: "100%",
+                padding: "14px 0",
+                fontSize: "16px"
+              }}
             >
               {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
           </form>
-
-          <div className="divider">
-            <span>O continúa con</span>
-          </div>
-
-          <div className="social-buttons">
-            <button
-              className="social-btn"
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Conectando...' : 'Google'}
-            </button>
-          </div>
+          <div className="divider">O</div>
 
           <p className="register-link">
             ¿No tienes una cuenta?{' '}

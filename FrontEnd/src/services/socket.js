@@ -1,11 +1,11 @@
 import { io } from "socket.io-client";
 
-const user = JSON.parse(localStorage.getItem("user") || "{}");
+const user = JSON.parse(sessionStorage.getItem("user") || "{}");
 
 export const socket = io("http://localhost:4000", {
   auth: {
-    userId: user?.id,  // objeto en localStorage tiene "id", no "UserId"
-    role: user?.role
+    userId: user?.id,
+    role: user?.role,
   },
   transports: ["websocket"],
 });

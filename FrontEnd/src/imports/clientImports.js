@@ -1,5 +1,6 @@
 export { default as NotificationsClient } from '../Views/user/NotificationsClient' 
-
+export { default as HomeClient } from '../Views/general/HomePageCl'
+// Calendario
 export { default as ClientCalendar } from '../views/user/Calendarclient'
 // Eventos
 export { default as EventDetailsC } from '../views/user/Events/EventDetailsCl'

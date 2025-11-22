@@ -5,13 +5,13 @@ REM Limpiar modulos si existen
 echo Limpiando node_modules del Frontend...
 IF EXIST frontend\node_modules (
     rmdir /S /Q frontend\node_modules
-    echo ✔ node_modules del Frontend eliminados
+    echo -/ node_modules del Frontend eliminados
 )
 
 echo Limpiando node_modules del Backend...
 IF EXIST backend\node_modules (
     rmdir /S /Q backend\node_modules
-    echo ✔ node_modules del Backend eliminados
+    echo -/ node_modules del Backend eliminados
 )
 
 REM Instalar librerias Frontend 
@@ -26,12 +26,6 @@ IF %ERRORLEVEL% NEQ 0 (
 call npm install
 IF %ERRORLEVEL% NEQ 0 (
     echo  Error al instalar dependencias del frontend
-    exit /b
-)
-
-call npm install react-router-dom
-IF %ERRORLEVEL% NEQ 0 (
-    echo  Error al instalar react-router-dom
     exit /b
 )
 
@@ -50,11 +44,5 @@ IF %ERRORLEVEL% NEQ 0 (
     exit /b
 )
 
-call npm install express
-IF %ERRORLEVEL% NEQ 0 (
-    echo  Error al instalar express
-    exit /b
-)
-
-echo ¡Listo! Dependencias instaladas correctamente.
+echo Listo! Dependencias instaladas correctamente.
 pause

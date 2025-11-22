@@ -1,18 +1,18 @@
-// 📌 Importaciones de React y hooks
+// Importaciones de React y hooks
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// 📌 Importar el hook y componente de notificaciones
+// Importar el hook y componente de notificaciones
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
 
-// 📌 Componentes y estilos
+// Componentes y estilos
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/components.css";
 import "../../CSS/FormsUser.css";
 
 /**
- * 📝 Componente: CreateSurvay
+ * Componente: CreateSurvay
  * Permite crear una encuesta con hasta 5 preguntas dinámicas.
  */
 const CreateSurvay = () => {
@@ -22,27 +22,27 @@ const CreateSurvay = () => {
   const [questions, setQuestions] = useState([""]);
   const [error, setError] = useState("");
 
-  // ➕ Agregar nueva pregunta (máximo 5)
+  //  Agregar nueva pregunta (máximo 5)
   const addQuestion = () => {
     if (questions.length < 5) {
       setQuestions(prev => [...prev, ""]);
     }
   };
 
-  // ❌ Eliminar pregunta específica
+  // Eliminar pregunta específica
   const removeQuestion = (index) => {
     if (questions.length === 1) return;
     setQuestions(prev => prev.filter((_, i) => i !== index));
   };
 
-  // ✍️ Manejar cambio de texto en cada input
+  // Manejar cambio de texto en cada input
   const handleQuestionChange = (index, value) => {
     const updated = [...questions];
     updated[index] = value;
     setQuestions(updated);
   };
 
-  // 📤 Enviar encuesta al backend
+  // Enviar encuesta al backend
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -69,10 +69,10 @@ const CreateSurvay = () => {
 
       console.log("Encuesta creada:", data);
 
-      // ✅ Mostrar notificación de éxito
+      // Mostrar notificación de éxito
       addToast(data.message || "Encuesta creada con éxito", "success");
 
-      // 🕒 Redirigir después de un pequeño delay
+      // Redirigir después de un pequeño delay
       setTimeout(() => {
         navigate("/SurvayHome");
       }, 2000);
@@ -83,12 +83,12 @@ const CreateSurvay = () => {
     }
   };
 
-  // ↩️ Cancelar creación
+  // Cancelar creación
   const handleCancel = () => {
     navigate("/SurvayHome");
   };
 
-  // ⭐ Estrellas dinámicas
+  // Estrellas dinámicas
   const starCount = Math.min(questions.length, 5);
 
   return (
@@ -100,7 +100,7 @@ const CreateSurvay = () => {
           <h1 className="login-title">CREAR ENCUESTA</h1>
 
           <form onSubmit={handleSubmit}>
-            {/* ⭐ Estrellas dinámicas */}
+            {/* Estrellas dinámicas */}
             <div className="survay-stars" style={{ textAlign: "center", marginBottom: "20px" }}>
               {[...Array(5)].map((_, i) => (
                 <svg
@@ -119,7 +119,7 @@ const CreateSurvay = () => {
               ))}
             </div>
 
-            {/* 📝 Inputs de preguntas */}
+            {/* Inputs de preguntas */}
             {questions.map((q, index) => (
               <div key={index} style={{ position: "relative", marginBottom: "10px" }}>
                 <input
@@ -160,10 +160,10 @@ const CreateSurvay = () => {
               </div>
             ))}
 
-            {/* ⚠️ Mensaje de error */}
+            {/* Mensaje de error */}
             {error && <p className="text-danger">{error}</p>}
 
-            {/* ➕ Botón agregar pregunta */}
+            {/* Botón agregar pregunta */}
             {questions.length < 5 && (
               <div className="form-actions">
                 <button type="button" className="btn-cancel" onClick={addQuestion}>
@@ -172,7 +172,7 @@ const CreateSurvay = () => {
               </div>
             )}
 
-            {/* 🧭 Botones de acción */}
+            {/* Botones de acción */}
             <div className="form-actions">
               <button type="button" className="btn-cancel" onClick={handleCancel}>
                 Cancelar
@@ -185,7 +185,7 @@ const CreateSurvay = () => {
         </div>
       </div>
 
-      {/* 📢 Toast de notificaciones */}
+      {/* Toast de notificaciones */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );

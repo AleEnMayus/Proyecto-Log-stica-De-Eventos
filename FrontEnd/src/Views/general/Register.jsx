@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../CSS/FormsUser.css';
 import { useToast } from '../../hooks/useToast';
 import ToastContainer from '../../components/ToastContainer';
+import TermsModal from "../../components/Modals/TermsConditions";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +20,8 @@ const RegisterPage = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -43,6 +46,13 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    //  Validación de términos
+    const terms = document.getElementById("acceptTerms");
+    if (!terms.checked) {
+      addToast("Debes aceptar los términos y condiciones", "danger");
+      return;
+    }
+
     if (!validateEmail(formData.email)) {
       addToast('El correo no tiene un formato válido', 'danger');
       return;
@@ -55,6 +65,11 @@ const RegisterPage = () => {
 
     if (formData.password !== formData.confirmPassword) {
       addToast('Las contraseñas no coinciden', 'danger');
+      return;
+    }
+
+    if (!formData.birthDate || formData.birthDate.trim() === "") {
+      addToast('Debes ingresar tu fecha de nacimiento', 'danger');
       return;
     }
 
@@ -76,11 +91,16 @@ const RegisterPage = () => {
       return;
     }
 
+    const formattedData = {
+      ...formData,
+      birthDate: new Date(formData.birthDate).toISOString().slice(0, 10)
+    };
+
     try {
       const response = await fetch('http://localhost:4000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formattedData)
       });
 
       if (response.ok) {
@@ -113,14 +133,14 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container p-0">
       <header className="bg-white shadow-sm sticky-top header-container">
         <div className="container">
           <div className="row align-items-center py-3 justify-content-between">
             <div className="col-6">
               <div className="d-flex align-items-center">
                 <button onClick={handleGoBackBrowser} className="back-btn me-4 mb-0" title="Volver">
-                  ←
+                  ‹
                 </button>
                 <div className="logo-text">
                   Happy-Art-Events
@@ -128,7 +148,7 @@ const RegisterPage = () => {
               </div>
             </div>
             <div className="col-6 text-end w-auto">
-              <a href="/login" className="btn-primary-custom btn">
+              <a href="/login" className="btn-secondary-custom btn">
                 Iniciar Sesión
               </a>
             </div>
@@ -157,6 +177,7 @@ const RegisterPage = () => {
                   required
                 />
               </div>
+
               <div className="col-md-6">
                 <label className="form-label">Fecha de Nacimiento</label>
                 <input
@@ -186,6 +207,7 @@ const RegisterPage = () => {
                   <option value="PP">Permiso de permanencia</option>
                 </select>
               </div>
+
               <div className="col-md-6">
                 <label className="form-label">Número de Documento</label>
                 <input
@@ -216,6 +238,7 @@ const RegisterPage = () => {
             </div>
 
             <div className="row">
+              {/* CONTRASEÑA 1 */}
               <div className="col-md-6">
                 <label className="form-label">Contraseña</label>
                 <div className="password-wrapper">
@@ -232,7 +255,6 @@ const RegisterPage = () => {
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
                     {showPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -251,6 +273,7 @@ const RegisterPage = () => {
                 </div>
               </div>
 
+              {/* CONFIRMAR CONTRASEÑA */}
               <div className="col-md-6">
                 <label className="form-label">Confirmar Contraseña</label>
                 <div className="password-wrapper">
@@ -267,7 +290,6 @@ const RegisterPage = () => {
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
                     {showConfirmPassword ? (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -287,12 +309,35 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            <button type="submit" className="btn-primary-custom btn mt-4 w-100">
+            {/* CHECKBOX PERSONALIZADO */}
+            <div className="mt-3" style={{ display: "flex", justifyContent: "center" }}>
+              <label className="checkbox-wrapper">
+                <input type="checkbox" id="acceptTerms" className="custom-checkbox" />
+                <span className="checkmark"></span>
+                <span style={{ marginLeft: "8px" }}>
+                  Acepto los{" "}
+                  <span
+                    style={{ cursor: "pointer", textDecoration: "underline", color: "rgb(21,165,231)" }}
+                    onClick={() => setShowTermsModal(true)}
+                  >
+                    Términos y Condiciones
+                  </span>
+                </span>
+              </label>
+            </div>
+
+
+            <button type="submit" className="btn-primary-custom mt-4 w-100">
               Registrarse
             </button>
           </form>
         </div>
       </div>
+
+      {/*  MODAL LISTO */}
+      {showTermsModal && (
+        <TermsModal onClose={() => setShowTermsModal(false)} />
+      )}
 
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>

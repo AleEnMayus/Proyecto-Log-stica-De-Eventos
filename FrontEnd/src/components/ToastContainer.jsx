@@ -6,7 +6,10 @@ const ToastContainer = ({ toasts = [], removeToast }) => {
     <div className="toast-stack">
       {toasts.length > 0 ? (
         toasts.map((toast) => (
-          <div key={toast.id} className={`custom-toast type-${toast.type}`}>
+          <div 
+            key={toast.id} 
+            className={`custom-toast type-${toast.type} ${toast.removing ? 'removing' : ''}`}
+          >
             <div className="toast-body">{toast.message}</div>
             <button
               type="button"

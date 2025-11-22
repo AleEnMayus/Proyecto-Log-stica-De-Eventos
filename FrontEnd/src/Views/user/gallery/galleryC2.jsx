@@ -1,166 +1,208 @@
-import React, { useState } from "react";
-import "../../CSS/Gallery.css"
-import HeaderAdm from "../../../components/HeaderSidebar/HeaderCl";
-import { useLocation } from "react-router-dom"; 
+import React, { useState, useEffect } from "react";
+import "../../CSS/GalleryView.css";
+import "../../CSS/components.css";
+import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
+import { useParams, useNavigate } from "react-router-dom";
 
+// toast
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/ToastContainer";
+
+// ================================
+// Funciones Fetch del cliente
+// ================================
+async function getImageById(id) {
+  const response = await fetch(`http://localhost:4000/api/gallery/${id}`);
+  return await response.json();
+}
+
+async function getComments(imageId) {
+  const response = await fetch(`http://localhost:4000/api/gallery/${imageId}/comments`);
+  return await response.json();
+}
+
+async function addCommentToImage(imageId, text) {
+  // Recuperamos el usuario del localStorage
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userId = storedUser?.id
+
+  const response = await fetch(`http://localhost:4000/api/gallery/${imageId}/comments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text, userId }),
+  });
+
+  return await response.json();
+}
+
+
+// ================================
+// Componente principal
+// ================================
 const ImageGalleryViewerC = () => {
-  const location = useLocation();
-  const selectedImage = location.state?.selectedImage || null; // 👈 Imagen pasada desde GalleryC
+  const { ImgId } = useParams();
+  const navigate = useNavigate();
+  const { toasts, addToast, removeToast } = useToast();
 
-  const [currentImage, setCurrentImage] = useState(0);
+  const [imageData, setImageData] = useState(null);
+  const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Si viene una imagen desde GalleryC, la ponemos de primera en el array
-  const images = [
-    selectedImage && { id: 0, src: selectedImage, alt: "Imagen seleccionada" },
-    { id: 1, src: "https://picsum.photos/400/300?random=1", alt: "Imagen 1" },
-    { id: 2, src: "https://picsum.photos/400/300?random=2", alt: "Imagen 2" },
-    { id: 3, src: "https://picsum.photos/400/300?random=3", alt: "Imagen 3" },
-    { id: 4, src: "https://picsum.photos/400/300?random=4", alt: "Imagen 4" },
-    { id: 5, src: "https://picsum.photos/400/300?random=5", alt: "Imagen 5" },
-  ].filter(Boolean); // elimina null si no hay imagen seleccionada
+  useEffect(() => {
+    if (ImgId) loadImage(ImgId);
+  }, [ImgId]);
 
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      user: "Comentario 1",
-      text: "Este es un comentario de ejemplo.",
-      imageId: 1,
-    },
-    {
-      id: 2,
-      user: "Comentario 2",
-      text: "Otro comentario de prueba.",
-      imageId: 1,
-    },
-  ]);
+  const loadImage = async (id) => {
+    try {
+      setLoading(true);
+      const data = await getImageById(id);
+      setImageData(data);
+
+      const commentsData = await getComments(id);
+      setComments(commentsData);
+    } catch (error) {
+      console.error("Error cargando imagen:", error);
+      addToast("Error al cargar imagen", "danger");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!newComment.trim()) return;
+    try {
+      await addCommentToImage(imageData.FileId, newComment);
+      setNewComment("");
+      const updated = await getComments(imageData.FileId);
+      setComments(updated);
+      addToast("Comentario en espera, ¡Espera a que el admin lo acepte!", "info");
+    } catch (err) {
+      console.error("Error al añadir comentario:", err);
+      addToast("Error al añadir comentario", "danger");
+    }
+  };
 
   const handlePrevImage = () => {
-    setCurrentImage((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+    if (imageData?.navigation?.hasPrev) {
+      navigate(`/GalleryView/${imageData.navigation.prevId}`);
+    }
   };
 
   const handleNextImage = () => {
-    setCurrentImage((prev) => (prev < images.length - 1 ? prev + 1 : 0));
-  };
-
-  const handlePageClick = (pageIndex) => {
-    setCurrentImage(pageIndex);
-  };
-
-  const handleAddComment = () => {
-    if (newComment.trim()) {
-      const comment = {
-        id: Date.now(),
-        user: `Comentario ${comments.length + 1}`,
-        text: newComment,
-        imageId: images[currentImage].id,
-      };
-      setComments([...comments, comment]);
-      setNewComment("");
+    if (imageData?.navigation?.hasNext) {
+      navigate(`/GalleryView/${imageData.navigation.nextId}`);
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && e.ctrlKey) {
-      handleAddComment();
-    }
-  };
-
-  const currentImageComments = comments.filter(
-    (comment) => comment.imageId === images[currentImage].id
-  );
+  if (loading) return <div className="loading">Cargando imagen...</div>;
 
   return (
-    <div>
-      <HeaderAdm />
-      <div className="gallery-container" style={{ marginTop: "80px" }}>
-        {/* Área principal de imagen */}
-        <div className="main-area">
-          <div className="image-container">
+    <div className="gallery-page">
+      <HeaderCl />
+      <div className="gallery-wrapper mx-auto">
+        {/* Imagen principal */}
+        <div className="image-section">
+          <div className="main-image-wrapper">
             {/* Botón anterior */}
-            <button onClick={handlePrevImage} className="nav-button prev">
-              <span className="nav-icon">‹</span>
+            <button
+              className="pagination-arrow"
+              onClick={handlePrevImage}
+              disabled={!imageData?.navigation?.hasPrev}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="currentColor"
+              >
+                <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z" />
+              </svg>
             </button>
 
-            {/* Imagen central */}
-            <div className="image-wrapper">
-              {images[currentImage] ? (
-                <img
-                  src={images[currentImage].src}
-                  alt={images[currentImage].alt}
-                  className="main-image"
-                />
-              ) : (
-                <div className="placeholder-image">
-                  <span className="placeholder-icon"></span>
-                </div>
-              )}
-            </div>
+            {/* Imagen */}
+            {imageData ? (
+              <img
+                src={imageData.url}
+                alt={imageData.FileName}
+                className="main-image"
+              />
+            ) : (
+              <div className="placeholder-image">Sin imagen</div>
+            )}
 
             {/* Botón siguiente */}
-            <button onClick={handleNextImage} className="nav-button next">
-              <span className="nav-icon">›</span>
-            </button>
-          </div>
-
-          {/* Paginación */}
-          <div className="pagination">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => handlePageClick(index)}
-                className={`page-button ${
-                  currentImage === index ? "active" : "inactive"
-                }`}
+            <button
+              className="pagination-arrow"
+              onClick={handleNextImage}
+              disabled={!imageData?.navigation?.hasNext}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="currentColor"
               >
-                {index + 1}
-              </button>
-            ))}
+                <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
+              </svg>
+            </button>
+
+            {/* Contador */}
+            {imageData?.navigation && (
+              <div className="position-counter">
+                {imageData.navigation.currentPosition} / {imageData.navigation.totalImages}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Panel de comentarios */}
         <div className="comments-panel">
-          <div className="comments-list">
-            {currentImageComments.map((comment) => (
-              <div key={comment.id} className="comment-item">
-                <div className="comment-user">{comment.user}</div>
-                <div className="comment-text">{comment.text}</div>
-              </div>
-            ))}
+          <div className="panel-title">Comentarios</div>
 
-            {currentImageComments.length === 0 && (
-              <div className="no-comments">No hay comentarios para esta imagen</div>
+          <div className="comments-list">
+            {comments.length > 0 ? (
+              comments.map((comment) => (
+                <div key={comment.CommentId} className="comment-card">
+                  <div className="comment-text">{comment.CommentText}</div>
+                  <div className="comment-author">
+                    {comment.UserName} —{" "}
+                    {new Date(comment.PublicationDate).toLocaleDateString()}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <small className="no-comments mb-4">No hay comentarios para esta imagen</small >
             )}
           </div>
 
-          {/* Área para añadir comentario */}
-          <div className="add-comment-area">
-            <div className="add-comment-header">Añadir Comentario</div>
-            <div className="add-comment-body">
+          <div className="commentInput ">
+            <div className="panel-title">Añadir comentario</div>
+            <div className="d-flex g-2">
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Escribe tu comentario aquí... (Ctrl+Enter para enviar)"
-                className="comment-textarea"
+                placeholder="Escribe tu comentario aquí..."
+                className="commentInput-area"
+                onKeyDown={(e) => {
+                  if (e.ctrlKey && e.key === "Enter") handleAddComment();
+                }}
               />
               <button
                 onClick={handleAddComment}
                 disabled={!newComment.trim()}
-                className="add-comment-button"
-                style={{
-                  backgroundColor: newComment.trim() ? "#4b5563" : "#9ca3af",
-                  cursor: newComment.trim() ? "pointer" : "not-allowed",
-                }}
+                className="sendcomment-button"
+                
               >
-                <span className="add-icon">+</span>
-                Añadir
-              </button>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>
+            </button>
             </div>
           </div>
         </div>
       </div>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 };

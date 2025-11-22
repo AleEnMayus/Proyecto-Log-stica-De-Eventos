@@ -2,7 +2,9 @@
 -- ELIMINACIÓN Y CREACIÓN DE BASE DE DATOS
 -- ==========================================================
 DROP DATABASE IF EXISTS ProyectoLogisticaEventos;
-CREATE DATABASE ProyectoLogisticaEventos;
+CREATE DATABASE ProyectoLogisticaEventos
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 USE ProyectoLogisticaEventos;
 
 -- ==========================================================
@@ -10,11 +12,11 @@ USE ProyectoLogisticaEventos;
 -- ==========================================================
 CREATE TABLE User (
     UserId INT PRIMARY KEY AUTO_INCREMENT,
-    Names VARCHAR(50) NOT NULL,
+    Names VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     DocumentType ENUM('CC', 'CE', 'PP') NOT NULL,
     DocumentNumber VARCHAR(20) NOT NULL UNIQUE,
     BirthDate DATE NOT NULL,
-    Email VARCHAR(50) NOT NULL UNIQUE,
+    Email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
     Status ENUM('active', 'inactive') DEFAULT 'active',
     Role ENUM('user','admin') DEFAULT 'user',
@@ -28,7 +30,7 @@ CREATE TABLE User (
 -- ==========================================================
 CREATE TABLE Events (
     EventId INT PRIMARY KEY AUTO_INCREMENT,
-    EventName VARCHAR(50) NOT NULL,
+    EventName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     ClientId INT NOT NULL,
     EventStatus ENUM('In_planning', 'In_execution', 'Completed', 'Canceled') DEFAULT 'In_planning',
     Capacity INT NOT NULL,
@@ -36,8 +38,8 @@ CREATE TABLE Events (
     AdvancePaymentMethod ENUM('Cash','Transfer','Card'),
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     EventDateTime DATETIME NOT NULL,
-    Address VARCHAR(50) NOT NULL,
-    EventDescription VARCHAR(500),
+    Address VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    EventDescription TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     ContractRoute VARCHAR(100),
     ContractNumber INT,
     FOREIGN KEY (ClientId) REFERENCES User(UserId) ON DELETE RESTRICT,
@@ -46,14 +48,15 @@ CREATE TABLE Events (
     INDEX idx_datetime (EventDateTime)
 );
 
+
 -- ==========================================================
 -- TABLA: RECURSOS
 -- ==========================================================
 CREATE TABLE Resources (
     ResourceId INT PRIMARY KEY AUTO_INCREMENT,
-    ResourceName VARCHAR(50) NOT NULL,
+    ResourceName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     Quantity INT NOT NULL DEFAULT 0,
-    StatusDescription VARCHAR(150),
+    StatusDescription VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     Status ENUM('In_use','Available') DEFAULT 'Available',
     Price FLOAT NOT NULL,
     INDEX idx_status (Status)
@@ -83,7 +86,7 @@ CREATE TABLE Requests (
     RequestId INT PRIMARY KEY AUTO_INCREMENT,
     RequestDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     ManagementDate DATETIME,
-    RequestDescription VARCHAR(500) NOT NULL,
+    RequestDescription TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     RequestType ENUM('schedule_appointment', 'cancel_event', 'document_change') NOT NULL,
     RequestStatus ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     UserId INT NOT NULL,
@@ -99,9 +102,9 @@ CREATE TABLE Requests (
 -- ==========================================================
 CREATE TABLE MultimediaFile (
     FileId INT PRIMARY KEY AUTO_INCREMENT,
-    FileName VARCHAR(50) NOT NULL,
-    FilePath VARCHAR(256) NOT NULL,
-    Extension ENUM('JPG','PNG') NOT NULL
+    FileName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    FilePath VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    Extension ENUM('JPG','PNG','JPEG') NOT NULL
 );
 
 -- ==========================================================
@@ -109,7 +112,7 @@ CREATE TABLE MultimediaFile (
 -- ==========================================================
 CREATE TABLE Questions (
     QuestionId INT PRIMARY KEY AUTO_INCREMENT,
-    QuestionText TEXT NOT NULL
+    QuestionText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 );
 
 -- ==========================================================
@@ -133,7 +136,7 @@ CREATE TABLE Answers (
 -- ==========================================================
 CREATE TABLE Comments (
     CommentId INT PRIMARY KEY AUTO_INCREMENT,
-    CommentText TEXT NOT NULL,
+    CommentText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     CommentStatus ENUM('pending', 'selected', 'rejected') DEFAULT 'pending',
     PublicationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
     UserId INT NOT NULL,
@@ -149,37 +152,22 @@ CREATE TABLE Comments (
 -- ==========================================================
 CREATE TABLE Promotions (
 	PromotionId INT PRIMARY KEY AUTO_INCREMENT,
-	TitleProm VARCHAR (25),
-	DescriptionProm VARCHAR (255),
-	Price FLOAT,
-	StatusProm ENUM('active', 'inactive') DEFAULT 'inactive'
-);
-
--- ==========================================================
--- TABLA: ASIGNACION DE PROMOCIONES
--- ==========================================================
-
-CREATE TABLE PromotionEvent (
-    PromotionEventId INT AUTO_INCREMENT PRIMARY KEY,
-    EventId INT,
-    PromotionId INT,
-    FOREIGN KEY (EventId) REFERENCES Events(EventId) ON DELETE CASCADE,
-    FOREIGN KEY (PromotionId) REFERENCES Promotions(PromotionId) ON DELETE RESTRICT
+	TitleProm VARCHAR (255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+	DescriptionProm VARCHAR (255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+	Price DECIMAL(10,2)
 );
 
 -- ==========================================================
 -- TABLA: RECUPERACIÓN DE CONTRASEÑAS
 -- ==========================================================
 CREATE TABLE PasswordReset (
-    Email VARCHAR(255) PRIMARY KEY,
-    Code VARCHAR(10) NOT NULL,
+    Email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci PRIMARY KEY,
+    Code VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
     SendAttempts TINYINT DEFAULT 1,
     LastSendAttempt DATETIME DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_created (CreatedAt)
 );
-
-
 
 -- ==========================================================
 -- PROCEDIMIENTOS ALMACENADOS
@@ -295,6 +283,113 @@ DELIMITER ;
 -- ==========================================================
 -- VISTAS
 -- ==========================================================
+-- ========================================
+-- Vista: UserCalendarView (usando RequestDate)
+-- ========================================
+CREATE OR REPLACE VIEW UserCalendarView AS
+SELECT 
+    'event' AS type,
+    e.EventId AS id,
+    e.EventName AS title,
+    e.EventDateTime AS start_date,
+    e.EventStatus AS status,
+    e.Address AS location,
+    e.EventDescription AS description,
+    e.Capacity,
+    e.ClientId AS user_id,
+    u.Names AS user_name,
+    NULL AS request_id,
+    NULL AS request_type
+FROM Events e
+INNER JOIN User u ON e.ClientId = u.UserId
+WHERE e.EventStatus != 'Canceled'
+
+UNION ALL
+
+SELECT 
+    'appointment' AS type,
+    r.RequestId AS id,
+    CONCAT(
+        'Cita: ',
+        CASE r.RequestType
+            WHEN 'schedule_appointment' THEN 'Agendar'
+            WHEN 'cancel_event' THEN 'Cancelación'
+            WHEN 'document_change' THEN 'Cambio de documento'
+        END
+    ) AS title,
+    r.RequestDate AS start_date,  -- <--- CAMBIO AQUÍ
+    r.RequestStatus AS status,
+    NULL AS location,
+    r.RequestDescription AS description,
+    NULL AS Capacity,
+    r.UserId AS user_id,
+    u.Names AS user_name,
+    r.RequestId AS request_id,
+    r.RequestType AS request_type
+FROM Requests r
+INNER JOIN User u ON r.UserId = u.UserId
+WHERE r.RequestStatus = 'approved'
+  AND r.RequestType = 'schedule_appointment'
+  AND r.RequestDate IS NOT NULL;  -- <--- USANDO REQUESTDATE
+
+
+-- ========================================
+-- Vista: AdminCalendarView (usando RequestDate)
+-- ========================================
+CREATE OR REPLACE VIEW AdminCalendarView AS
+SELECT 
+    'event' AS type,
+    e.EventId AS id,
+    e.EventName AS title,
+    e.EventDateTime AS start_date,
+    e.EventStatus AS status,
+    e.Address AS location,
+    e.EventDescription AS description,
+    e.Capacity,
+    e.ClientId AS user_id,
+    u.Names AS user_name,
+    u.Email AS user_email,
+    e.AdvancePaymentMethod AS payment_method,
+    e.ContractNumber AS contractNumber,
+    NULL AS request_id,
+    NULL AS request_type,
+    NULL AS request_date
+FROM Events e
+INNER JOIN User u ON e.ClientId = u.UserId
+
+UNION ALL
+
+SELECT 
+    'appointment' AS type,
+    r.RequestId AS id,
+    CONCAT(
+        'Cita: ',
+        u.Names,
+        ' - ',
+        CASE r.RequestType
+            WHEN 'schedule_appointment' THEN 'Agendar'
+            WHEN 'cancel_event' THEN 'Cancelación'
+            WHEN 'document_change' THEN 'Cambio de documento'
+        END
+    ) AS title,
+    r.RequestDate AS start_date,
+    r.RequestStatus AS status,
+    NULL AS location,
+    r.RequestDescription AS description,
+    NULL AS Capacity,
+    r.UserId AS user_id,
+    u.Names AS user_name,
+    u.Email AS user_email,
+    NULL AS payment_method,
+    NULL AS contractNumber,
+    r.RequestId AS request_id,
+    r.RequestType AS request_type,
+    r.RequestDate AS request_date
+FROM Requests r
+INNER JOIN User u ON r.UserId = u.UserId
+WHERE r.RequestStatus = 'approved'
+  AND r.RequestType = 'schedule_appointment'
+  AND r.RequestDate IS NOT NULL;  -- <--- USANDO REQUESTDATE
 
 -- Satisfacción de eventos
 CREATE OR REPLACE VIEW EventSatisfactionView AS
@@ -414,6 +509,33 @@ BEGIN
 END//
 
 -- ==========================================================
+-- TRAER DATOS A ENCUESTAS
+-- ==========================================================
+
+CREATE OR REPLACE VIEW EventFeedbackDetailView AS
+SELECT
+    u.Names AS UserName,
+    e.EventName,
+    a.NumericValue AS Rating,
+    q.QuestionText AS Question
+FROM Answers a
+INNER JOIN User u ON a.UserId = u.UserId
+INNER JOIN Events e ON a.EventId = e.EventId
+INNER JOIN Questions q ON a.QuestionId = q.QuestionId;
+
+-- ==========================================================
 -- VERIFICAR CONFIGURACIÓN
 -- ==========================================================
 SHOW VARIABLES LIKE 'event_scheduler';
+
+Insert into user (UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role, Photo)
+values (1, 'Ale', 'CC', '12345678901', '2000-04-08', 'apilogisticaeventos@gmail.com', 
+  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL);
+
+Insert into user (UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role, Photo)
+values (2, 'Ale', 'CC', '12345678902', '2000-04-08', 'admin@gmail.com', 
+  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL);
+        
+UPDATE user
+SET role = 'admin'
+WHERE userid = 2;

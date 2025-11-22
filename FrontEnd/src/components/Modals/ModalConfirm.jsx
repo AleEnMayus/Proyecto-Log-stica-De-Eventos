@@ -12,7 +12,7 @@ const ConfirmModal = ({
 
   return (
     <div className="sidebar-overlay active" onClick={onClose}>
-      <div className="profile-modal w-80 position-absolute top-50 start-50 translate-middle">
+      <div className="profile-modal mt-5">
         {/* Botón de cerrar */}
         <button className="close-btn" onClick={onClose}>
           &times;
@@ -27,11 +27,11 @@ const ConfirmModal = ({
 
         {/* Botones */}
         <div className="pm-footer">
-          <button className="btn btn-status w-100 " onClick={onClose}>
-            Cancelar
-          </button>
           <button className="btn-primary-custom w-100" onClick={onConfirm}>
             {confirmText}
+          </button>
+          <button className="btn-secondary-custom w-100 " onClick={onClose}>
+            Cancelar
           </button>
         </div>
       </div>

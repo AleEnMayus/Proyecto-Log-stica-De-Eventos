@@ -2,7 +2,7 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 
 const PasswordReset = {
-  // Crear código de recuperación
+  // Código de recuperación
   createResetCode: async (email, code) => {
     try {
       await db.query("CALL CreatePasswordResetCode(?, ?)", [email, code]);

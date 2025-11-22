@@ -1,381 +1,126 @@
-/* ===== VARIABLES ===== */
-:root {
-  --blue: #0d6efd;
-  --blue-hover: #0b5ed7;
-  --gray-light: #f8f9fa;
-  --gray-border: #dee2e6;
-  --white: #fff;
-  --text-dark: #212529;
-  --radius: 8px;
-}
-
-/* ===== CONTENEDOR GENERAL ===== */
+/* Galería de imágenes */
 .gallery-manager {
-    background: #f8f9fa;
-    min-height: 100vh;
-    font-family: "Segoe UI", sans-serif;
+  min-height: 100vh;
+  background-color: #f8f9fa;
 }
 
-/* Sección principal donde van el título y las imágenes */
 .gallery-left {
-    padding: 40px 60px;
-    background: #fff;
+  padding: 90px 20px 5px; /* margen por header fijo */
+  max-width: 1420px;
+  margin: 0 auto;
 }
 
-
-/* ===== CABECERA DE GALERÍA ===== */
 .gallery-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
-/* Estilo del título principal */
 .gallery-title {
-    display: flex;
-    justify-content: space-between;
-    flex: 0 1 auto;
-    max-width: 70%;
-    text-align: left;
+  font-size: 28px;
+  font-weight: 700;
+  color: #212529;
+  margin: 0;
 }
 
-
-/* Botón oscuro (Editar Galería) */
-.btn-dark {
-    background: #343a40;
-    color: #fff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-/* Cuadrícula donde se organizan las imágenes */
 .gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    justify-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+  min-height: 400px;
 }
 
-/* Tarjeta individual de cada imagen */
 .image-card {
-    background: #f1f1f1;
-    border-radius: 12px;
-    overflow: hidden;
-    width: 100%;
-    max-width: 420px;
-    aspect-ratio: 4/3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;   
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  aspect-ratio: 4/3;
 }
 
-/* Efecto al pasar el ratón sobre la imagen */
 .image-card:hover {
-    transform: scale(1.03);
-}
-
-/* Estilo de la imagen dentro de cada tarjeta */
-.preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* segunda parte  edicion de  galeria */
-
-/*  Estructura general  */
-.app-container {
-    background: #f8f9fa;
-    font-family: "Segoe UI", sans-serif;
-    min-height: 100vh;
-}
-
-/*  Contenedor principal  */
-.gallery-container {
-    display: flex;
-    background: #fff;
-    border-radius: 8px;
-    margin: 15px;
-    overflow: hidden;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Área principal (imagen + botones)  */
-.main-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Imagen principal  */
-.image-container {
-    background: #f5f5f5;
-    border-bottom: 1px solid #dee2e6;
-    position: relative;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .image-wrapper {
-    width: 80%;
-    margin: 10px auto;
-}
-
-.main-image {
-    border-radius: 8px;
-    max-height: 360px;
-    width: 100%;
-    object-fit: cover;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Botones de navegacion  */
-.nav-button {
-    background: #ffffffcc;
-    border: none;
-    font-size: 1.3rem;
-    width: 36px;
-    height: 36px;
-    color: #333;
-    transition: 0.2s;
-}
-
-.nav-button:hover {
-    background: #0d6efd;
-    color: #fff;
-}
-
-/* Paginacion */
-.pagination {
-    background: #fff;
-    border-top: 1px solid #dee2e6;
-    padding: 10px;
-    gap: 6px;
-}
-
-.pagination .btn {
-    width: 30px;
-    height: 30px;
-    font-size: 0.9rem;
-    border-radius: 5px;
-}
-
-/*  Panel lateral (comentarios) */
-.comments-panel {
-    width: 260px;
-    border-left: 1px solid #dee2e6;
-    display: flex;
-    flex-direction: column;
-    background: #f8f9fa;
-}
-
-.comments-list {
-    padding: 10px;
-    overflow-y: auto;
-    flex-grow: 1;
-}
-
-.card {
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    background: #fff;
-    margin-bottom: 8px;
-}
-
-.card-body {
-    padding: 8px 10px;
-    font-size: 0.9rem;
-}
-
-/* Botones panel  */
-.comments-panel .btn {
-    border-radius: 5px;
-    font-size: 0.9rem;
-}
-
-/*  Modal */
-.modal-header {
-    background: #0d6efd;
-    color: #fff;
-}
-
-.modal-content {
-    border-radius: 10px;
-}
-
-/* Tercera parte vista de cometarios */
-
-.gallery-manager {
-    display: flex;
-    background: #f8f9fa;
-    min-height: 100vh;
-    font-family: "Segoe UI", sans-serif;
-}
-
-/* ===== GALERÍA ===== */
-.gallery-left {
-    flex: 1;
-    padding: 60px 80px;
-    background: #fff;
-}
-
-.gallery-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-align: left;
-    color: #212529;
-    margin-bottom: 30px;
-}
-
-/* ===== CUADRÍCULA DE IMÁGENES ===== */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-}
-
-/* ===== TARJETAS ===== */
-.image-card {
-    position: relative;
-    background: #f1f1f1;
-    border-radius: 12px;
-    overflow: hidden;
-    aspect-ratio: 4/3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.image-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .preview-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-/* ===== BOTÓN ELIMINAR ===== */
-.btn-delete {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(255, 0, 0, 0.8);
-    border: none;
-    color: #fff;
-    font-weight: bold;
-    font-size: 14px;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    cursor: pointer;
-    transition: 0.2s;
+.image-card:hover .preview-image {
+  transform: scale(1.05);
 }
 
-/* Parte de cometarias del cliente*/
-
-/* Contenedor general  */
-.gallery-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 40px 60px;
-  background-color: var(--gray-light);
-  min-height: calc(100vh - 80px);
-}
-
-/*  Area principal de igamenes  */
-.main-area {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* contenedor de imagenes*/
-.image-container {
-  position: relative;
-  width: 720px;
-  height: 420px;
-  background: var(--white);
-  border-radius: var(--radius);
-  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
+.delete-image-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(220, 53, 69, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+  z-index: 10;
 }
 
-.btn-delete:hover {
-  background: rgba(200, 35, 51, 1);
+.image-card:hover .delete-image-btn {
+  opacity: 1;
+}
+
+.delete-image-btn:hover {
+  background-color: rgba(200, 35, 51, 1);
   transform: scale(1.1);
 }
 
-/* ===== PANEL DE COMENTARIOS ===== */
-.comments-panel {
-  flex: 1;
-  background-color: var(--white);
-  border-radius: var(--radius);
-  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.1);
-  padding: 25px 20px;
-  display: flex;
-  flex-direction: column;
-  max-width: 360px;
+.delete-image-btn svg {
+  pointer-events: none;
 }
 
-.comments-list {
-  flex: 1;
-  overflow-y: auto;
-  max-height: 340px;
-  margin-bottom: 20px;
-  scrollbar-width: thin;
+/* Responsive */
+@media (max-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  .gallery-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .gallery-title {
+    font-size: 24px;
+  }
 }
 
-.comment-item {
-  border: 1px solid var(--blue);
-  border-radius: var(--radius);
-  background-color: var(--white);
-  padding: 10px 14px;
-  margin-bottom: 15px;
-}
-
-.comment-user {
-  color: var(--blue);
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.comment-text {
-  color: var(--text-dark);
-  font-size: 0.95rem;
-}
-
-/* ===== BOTÓN DE AÑADIR COMENTARIO ===== */
-.add-comment-button {
-  background-color: var(--blue);
-  color: var(--white);
-  border: none;
-  padding: 10px 14px;
-  font-weight: 600;
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.add-comment-button:hover {
-  background-color: var(--blue-hover);
-  transform: translateY(-1px);
-}
-
-.add-icon {
-  margin-right: 5px;
-  font-weight: bold;
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
 }

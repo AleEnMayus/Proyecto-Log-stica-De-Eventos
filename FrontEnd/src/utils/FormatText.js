@@ -24,7 +24,16 @@ export function translateStatus(status) {
   const translations = {
     'pending': 'Pendiente',
     'approved': 'Aprobado',
-    'rejected': 'Rechazado'
+    'rejected': 'Rechazado',
+    'In_planning': 'En planeación',
+    'In_execution': 'En ejecución',
+    'Completed': 'Completado',
+    'Canceled': 'Cancelado',
+    'Cash': 'Efectivo',
+    'Transfer': 'Transferencia',
+    'Card': 'Tarjeta',
+    'inactive': 'Inactiva',
+    'active': 'Activa'
   };
   
   return translations[status] || status;

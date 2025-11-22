@@ -1,181 +1,178 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import "../CSS/CalendarAdmin.css";
 import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm";
-import { useToast } from "../../hooks/useToast";
-import ToastContainer from "../../components/ToastContainer";
-import './../CSS/components.css';
-import './../CSS/FormsUser.css';
-import '../CSS/Calendar.css';
+import {translateStatus} from "../../utils/FormatText";
 
-const Calendaradmin = () => {
+const CalendarAdmin = () => {
   const today = new Date();
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
   const [eventos, setEventos] = useState({});
-  const [showMonthSelector, setShowMonthSelector] = useState(false);
-  const [showYearSelector, setShowYearSelector] = useState(false);
-  const { toasts, addToast, removeToast } = useToast();
-
-  const monthRef = useRef(null);
-  const yearRef = useRef(null);
-
-  // Cerrar selectores al hacer clic fuera
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (monthRef.current && !monthRef.current.contains(event.target)) {
-        setShowMonthSelector(false);
-      }
-      if (yearRef.current && !yearRef.current.contains(event.target)) {
-        setShowYearSelector(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    const fetchEventos = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/events");
-        if (!res.ok) throw new Error("Error al obtener eventos");
-        const data = await res.json();
-
-        const eventosPorFecha = {};
-
-        data.forEach(evento => {
-          const fecha = new Date(evento.EventDateTime).toISOString().split("T")[0];
-          if (!eventosPorFecha[fecha]) {
-            eventosPorFecha[fecha] = [];
-          }
-          eventosPorFecha[fecha].push(evento);
-        });
-
-        setEventos(eventosPorFecha);
-      } catch (error) {
-        console.error("Error:", error);
-        addToast("Error al cargar los eventos", "error");
-      }
-    };
-
-    fetchEventos();
-  }, [addToast]);
+  const [citas, setCitas] = useState({});
+  const [currentDayEvents, setCurrentDayEvents] = useState({ eventos: [], citas: [] });
 
   const months = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
-  const generateYears = () => {
-    const years = [];
-    for (let i = 2020; i <= 2030; i++) {
-      years.push(i);
+  useEffect(() => {
+    fetchCalendarData();
+  }, [selectedYear, selectedMonth]);
+
+  const fetchCalendarData = async () => {
+    try {
+      const startDate = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-01`;
+      const lastDay = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+      const endDate = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${lastDay}`;
+
+      const res = await fetch(`http://localhost:4000/api/calendar/admin?startDate=${startDate}&endDate=${endDate}`);
+      if (!res.ok) throw new Error("Error al obtener calendario");
+
+      const data = await res.json();
+
+      const eventosPorFecha = {};
+      const citasPorFecha = {};
+
+      data.forEach(item => {
+        const fecha = new Date(item.start).toISOString().split("T")[0];
+
+        if (item.type === "event") {
+          if (!eventosPorFecha[fecha]) eventosPorFecha[fecha] = [];
+          eventosPorFecha[fecha].push({
+            EventName: item.title,
+            EventDateTime: item.start,
+            EventStatus: item.status,
+            ClientName: item.userEmail,
+            EventDescription: item.description,
+            Address: item.location,
+            Capacity: item.capacity
+          });
+        } else if (item.type === "appointment") {
+          if (!citasPorFecha[fecha]) citasPorFecha[fecha] = [];
+          citasPorFecha[fecha].push({
+            AppointmentName: item.title,
+            AppointmentDateTime: item.start,
+            AppointmentStatus: item.status,
+            Description: item.description,
+            UserEmail: item.userEmail,
+            UserPhone: item.userPhone
+          });
+        }
+      });
+
+      setEventos(eventosPorFecha);
+      setCitas(citasPorFecha);
+    } catch (error) {
+      console.error("Error:", error);
     }
-    return years;
   };
 
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
+  const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
 
   const getStartDay = (year, month) => {
     const day = new Date(year, month, 1).getDay();
-    return day === 0 ? 6 : day - 1; // Lunes = 0
+    return day === 0 ? 6 : day - 1;
   };
 
   const handleDayClick = (day) => {
-    const formattedDay = day < 10 ? `0${day}` : day;
-    const formattedMonth = selectedMonth + 1 < 10 ? `0${selectedMonth + 1}` : selectedMonth + 1;
+    const formattedDay = String(day).padStart(2, "0");
+    const formattedMonth = String(selectedMonth + 1).padStart(2, "0");
     const formattedDate = `${selectedYear}-${formattedMonth}-${formattedDay}`;
+
     setSelectedDate(formattedDate);
+    setCurrentDayEvents({
+      eventos: eventos[formattedDate] || [],
+      citas: citas[formattedDate] || []
+    });
   };
 
-  // Cambiar mes
   const changeMonth = (increment) => {
-    let nuevoMes = selectedMonth + increment;
-    let nuevoAño = selectedYear;
-    
-    if (nuevoMes > 11) {
-      nuevoMes = 0;
-      nuevoAño++;
-    } else if (nuevoMes < 0) {
-      nuevoMes = 11;
-      nuevoAño--;
+    let newMonth = selectedMonth + increment;
+    let newYear = selectedYear;
+
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear++;
+    } else if (newMonth < 0) {
+      newMonth = 11;
+      newYear--;
     }
-    
-    setSelectedMonth(nuevoMes);
-    setSelectedYear(nuevoAño);
+
+    setSelectedMonth(newMonth);
+    setSelectedYear(newYear);
     setSelectedDate(null);
   };
 
-  // Seleccionar mes específico
-  const selectMonth = (mes) => {
-    setSelectedMonth(mes);
-    setShowMonthSelector(false);
-    setSelectedDate(null);
-  };
-
-  // Seleccionar año específico
-  const selectYear = (año) => {
-    setSelectedYear(año);
-    setShowYearSelector(false);
-    setSelectedDate(null);
-  };
-
-  // Ir al mes actual
-  const goToCurrentMonth = () => {
+  const goToToday = () => {
     const now = new Date();
     setSelectedMonth(now.getMonth());
     setSelectedYear(now.getFullYear());
     setSelectedDate(null);
   };
 
-  const getColorByStatus = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'completed':
-        return '#28a745'; // Verde
-      case 'in_planning':
-        return '#ffc107'; // Amarillo
-      case 'in_execution':
-        return '#007bff'; // Azul
-      case 'cancelled':
-        return '#dc3545'; // Rojo
-      default:
-        return '#6c757d'; // Gris
-    }
-  };
-
   const renderCalendarDays = () => {
     const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
     const startDay = getStartDay(selectedYear, selectedMonth);
     const calendarCells = [];
+    const prevMonthDays = new Date(selectedYear, selectedMonth, 0).getDate();
 
-    // Días vacíos para alinear el calendario
-    for (let i = 0; i < startDay; i++) {
-      calendarCells.push(<div key={`empty-${i}`} className="day empty"></div>);
+    for (let i = startDay - 1; i >= 0; i--) {
+      calendarCells.push(
+        <div key={`prev-${i}`} className="calendar-day other-month">
+          <span className="day-number">{prevMonthDays - i}</span>
+        </div>
+      );
     }
 
-    // Días del mes
     for (let day = 1; day <= daysInMonth; day++) {
-      const formattedDay = day < 10 ? `0${day}` : day;
-      const formattedMonth = selectedMonth + 1 < 10 ? `0${selectedMonth + 1}` : selectedMonth + 1;
+      const formattedDay = String(day).padStart(2, "0");
+      const formattedMonth = String(selectedMonth + 1).padStart(2, "0");
       const formattedDate = `${selectedYear}-${formattedMonth}-${formattedDay}`;
 
       const isSelected = selectedDate === formattedDate;
       const eventosDelDia = eventos[formattedDate] || [];
-      const hasEvents = eventosDelDia.length > 0;
+      const citasDelDia = citas[formattedDate] || [];
       const esHoy = new Date().toDateString() === new Date(selectedYear, selectedMonth, day).toDateString();
+
+      const todosEventos = [...eventosDelDia, ...citasDelDia];
 
       calendarCells.push(
         <div
           key={formattedDate}
-          className={`day ${esHoy ? 'today' : ''} ${isSelected ? "selected" : ""} ${hasEvents ? "event-day" : ""}`}
+          className={`calendar-day ${esHoy ? "today" : ""} ${isSelected ? "selected" : ""}`}
           onClick={() => handleDayClick(day)}
         >
           <span className="day-number">{day}</span>
-          {hasEvents && <span className="event-indicator">•</span>}
+
+          {todosEventos.length > 0 && (
+            <div className="event-indicators">
+              {todosEventos.slice(0, 2).map((item, idx) => (
+                <div key={idx} className={`event-badge ${item.EventName ? "event" : "appointment"}`}>
+                  {(item.EventName || item.Description || "Sin título").substring(0, 15)}
+                  {(item.EventName || item.Description || "").length > 15 ? "..." : ""}
+                </div>
+              ))}
+              {todosEventos.length > 2 && (
+                <div className="event-dots">
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const totalCells = calendarCells.length;
+    const remainingCells = 35 - totalCells;
+
+    for (let i = 1; i <= remainingCells; i++) {
+      calendarCells.push(
+        <div key={`next-${i}`} className="calendar-day other-month">
+          <span className="day-number">{i}</span>
         </div>
       );
     }
@@ -183,378 +180,184 @@ const Calendaradmin = () => {
     return calendarCells;
   };
 
+  const formatTime = (dateTime) => new Date(dateTime).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+
+  const getStatusColor = (status) => {
+    const colors = {
+      completed: "#28a745",
+      in_planning: "#ffc107",
+      in_execution: "#007bff",
+      canceled: "#dc3545",
+      cancelled: "#dc3545",
+      approved: "#17a2b8"
+    };
+    return colors[status?.toLowerCase()] || "#6c757d";
+  };
+
   return (
-    <>
+    <div className="mx-auto calendar-admin-container">
       <HeaderAdm />
-      <div className="calendar-container" style={{ marginTop: "80px" }}>
-        {/* Título */}
-        <h2 className="calendar-title">
-          CALENDARIO 
-        </h2>
+        <div className="row g-4">
 
-        <div className="calendar-content">
-          {/* Calendario */}
-          <div className="calendar-box">
-            <div className="calendar-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                <button 
-                  className="calendar-arrow" 
-                  onClick={() => changeMonth(-1)}
-                  title="Mes anterior"
-                >
-                  ‹
-                </button>
-                
-                {/* Selector de Mes */}
-                <div ref={monthRef} style={{ position: 'relative' }}>
-                  <button 
-                    onClick={() => {
-                      setShowMonthSelector(!showMonthSelector);
-                      setShowYearSelector(false);
-                    }}
-                    style={{
-                      background: 'var(--color-light)',
-                      border: '2px solid var(--color-gray)',
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      minWidth: '140px',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = 'var(--color-accent)';
-                      e.target.style.color = 'var(--color-white)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = 'var(--color-light)';
-                      e.target.style.color = 'var(--color-dark)';
-                    }}
+          {/* Calendario Principal */}
+          <div className="col-lg-8">
+            <div className="calendar-card">
+
+              <div className="calendar-header">
+                <div className="selectors">
+                  <select
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                    className="month-selector p-3 me-2 btn-today"
                   >
-                    <span>{months[selectedMonth]}</span>
-                    <span style={{ fontSize: '0.8rem', marginLeft: '8px' }}>▼</span>
-                  </button>
-                  
-                  {showMonthSelector && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      left: 0,
-                      background: 'var(--color-white)',
-                      border: '2px solid var(--color-primary)',
-                      borderRadius: '8px',
-                      boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                      zIndex: 1000,
-                      width: '140px',
-                      maxHeight: '200px',
-                      overflowY: 'auto',
-                      marginTop: '5px'
-                    }}>
-                      {months.map((mes, index) => (
-                        <div
-                          key={mes}
-                          onClick={() => selectMonth(index)}
-                          style={{
-                            padding: '10px 12px',
-                            cursor: 'pointer',
-                            borderBottom: '1px solid var(--color-light)',
-                            background: selectedMonth === index 
-                              ? 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))' 
-                              : 'transparent',
-                            color: selectedMonth === index ? 'var(--color-white)' : 'var(--color-dark)',
-                            transition: 'all 0.2s ease',
-                            fontWeight: selectedMonth === index ? 'bold' : 'normal',
-                            fontSize: '0.9rem'
-                          }}
-                          onMouseEnter={(e) => {
-                            if (selectedMonth !== index) {
-                              e.target.style.background = 'var(--color-accent)';
-                              e.target.style.color = 'var(--color-white)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (selectedMonth !== index) {
-                              e.target.style.background = 'transparent';
-                              e.target.style.color = 'var(--color-dark)';
-                            }
-                          }}
-                        >
-                          {mes}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Selector de Año */}
-                <div ref={yearRef} style={{ position: 'relative' }}>
-                  <button 
-                    onClick={() => {
-                      setShowYearSelector(!showYearSelector);
-                      setShowMonthSelector(false);
-                    }}
-                    style={{
-                      background: 'var(--color-light)',
-                      border: '2px solid var(--color-gray)',
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                      cursor: 'pointer',
-                      padding: '8px 16px',
-                      borderRadius: '8px',
-                      minWidth: '100px',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.background = 'var(--color-accent)';
-                      e.target.style.color = 'var(--color-white)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.background = 'var(--color-light)';
-                      e.target.style.color = 'var(--color-dark)';
-                    }}
+                    {months.map((m, i) => (
+                      <option key={i} value={i}>{m}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(Number(e.target.value))}
+                    className="year-selector p-3 btn-today"
                   >
-                    <span>{selectedYear}</span>
-                    <span style={{ fontSize: '0.8rem', marginLeft: '8px' }}>▼</span>
-                  </button>
-                  
-                  {showYearSelector && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '100%',
-                      left: 0,
-                      background: 'var(--color-white)',
-                      border: '2px solid var(--color-secondary)',
-                      borderRadius: '8px',
-                      boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
-                      zIndex: 1000,
-                      width: '100px',
-                      maxHeight: '200px',
-                      overflowY: 'auto',
-                      marginTop: '5px'
-                    }}>
-                      {generateYears().map(año => (
-                        <div
-                          key={año}
-                          onClick={() => selectYear(año)}
-                          style={{
-                            padding: '10px 12px',
-                            cursor: 'pointer',
-                            borderBottom: '1px solid var(--color-light)',
-                            background: selectedYear === año 
-                              ? 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))' 
-                              : 'transparent',
-                            color: selectedYear === año ? 'var(--color-white)' : 'var(--color-dark)',
-                            transition: 'all 0.2s ease',
-                            fontWeight: selectedYear === año ? 'bold' : 'normal',
-                            textAlign: 'center',
-                            fontSize: '0.9rem'
-                          }}
-                          onMouseEnter={(e) => {
-                            if (selectedYear !== año) {
-                              e.target.style.background = 'var(--color-accent)';
-                              e.target.style.color = 'var(--color-white)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (selectedYear !== año) {
-                              e.target.style.background = 'transparent';
-                              e.target.style.color = 'var(--color-dark)';
-                            }
-                          }}
-                        >
-                          {año}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                    {Array.from({ length: 11 }, (_, i) => 2025 + i).map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
                 </div>
 
-                <button 
-                  className="calendar-arrow" 
-                  onClick={() => changeMonth(1)}
-                  title="Mes siguiente"
-                >
-                  ›
-                </button>
-
-                <button 
-                  onClick={goToCurrentMonth}
-                  style={{
-                    background: 'var(--color-success)',
-                    color: 'var(--color-white)',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    fontWeight: 'bold',
-                    marginLeft: '10px',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.background = 'var(--color-secondary)';
-                    e.target.style.transform = 'scale(1.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.background = 'var(--color-success)';
-                    e.target.style.transform = 'scale(1)';
-                  }}
-                >
-                  Hoy
-                </button>
+                <div className="calendar-controls">
+                  <button className="btn-control" onClick={() => changeMonth(-1)} title="Mes anterior">
+                    ‹
+                  </button>
+                  <button className="btn-today" onClick={goToToday}>
+                    Hoy
+                  </button>
+                  <button className="btn-control" onClick={() => changeMonth(1)} title="Mes siguiente">
+                    ›
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="calendar-grid">
-              {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((dayName, index) => (
-                <div key={index} className="day-name">
-                  {dayName}
+              <div className="calendar-grid-container">
+                <div className="weekdays-grid">
+                  {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((day, idx) => (
+                    <div key={idx} className="weekday-name">{day}</div>
+                  ))}
                 </div>
-              ))}
-              {renderCalendarDays()}
+                <div className="calendar-grid">
+                  {renderCalendarDays()}
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Contenedor de detalles - Ambos cuadros uno al lado del otro */}
-          <div style={{ display: 'flex', gap: '20px' }}>
-            {/* Detalle de eventos */}
-            <div className="event-box" style={{ width: '280px' }}>
-              <div className="event-header">
-                <h4>Detalles del Evento</h4>
-                {selectedDate && (
-                  <div className="event-date">
-                    {selectedDate.split("-")[2]} de {months[selectedMonth]} de {selectedYear}
-                  </div>
-                )}
-              </div>
-
-              <div className="event-details">
-                {selectedDate && eventos[selectedDate]?.length > 0 ? (
-                  eventos[selectedDate].map((ev, idx) => (
-                    <div key={idx} className="event-item">
-                      <div className="detail-item">
-                        <strong>Evento:</strong>
-                        <span>{ev.EventName}</span>
-                      </div>
-                      <div className="detail-item">
-                        <strong>Hora:</strong>
-                        <span>{new Date(ev.EventDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                      </div>
-                      <div className="detail-item">
-                        <strong>Cliente:</strong>
-                        <span>{ev.ClientName || "Desconocido"}</span>
-                      </div>
-                      <div className="detail-item">
-                        <strong>Estado:</strong>
-                        <span style={{ 
-                          color: getColorByStatus(ev.EventStatus),
-                          fontWeight: 'bold'
-                        }}>
-                          {ev.EventStatus}
-                        </span>
-                      </div>
-                      {idx < eventos[selectedDate].length - 1 && <hr style={{ margin: '10px 0', border: '1px solid var(--color-light)' }} />}
-                    </div>
-                  ))
-                ) : selectedDate ? (
-                  <div className="no-selection">
-                    <p>No hay eventos registrados para esta fecha.</p>
-                  </div>
+          {/* Panel de Detalles */}
+          <div className="col-lg-4">
+            <div className="details-panel">
+              <h3 className="details-title">
+                {selectedDate ? (
+                  <>
+                    {months[selectedMonth]} {selectedDate.split("-")[2]}, {selectedYear}
+                  </>
                 ) : (
-                  <div className="no-selection">
-                    <p>Selecciona un día</p>
-                    <div className="detail-item">
-                      <strong>Evento:</strong>
-                      <span>-</span>
-                    </div>
-                    <div className="detail-item">
-                      <strong>Hora:</strong>
-                      <span>-</span>
-                    </div>
-                    <div className="detail-item">
-                      <strong>Cliente:</strong>
-                      <span>-</span>
-                    </div>
-                    <div className="detail-item">
-                      <strong>Estado:</strong>
-                      <span>-</span>
-                    </div>
-                  </div>
+                  "Selecciona un día"
                 )}
-              </div>
-            </div>
+              </h3>
+              
+              {selectedDate && (
+                <p className="details-count">
+                  {currentDayEvents.eventos.length + currentDayEvents.citas.length} evento(s) programado(s)
+                </p>
+              )}
 
-            {/* Detalles de Cita */}
-            <div className="event-box" style={{ width: '280px', borderTop: '4px solid var(--color-accent)' }}>
-              <div className="event-header">
-                <h4>Detalles de Cita</h4>
-              </div>
+              <hr className="divider" />
 
-              <div className="event-details">
-                {selectedDate && eventos[selectedDate]?.length > 0 ? (
-                  eventos[selectedDate].map((ev, idx) => (
-                    <div key={idx} className="event-item">
-                      <div className="detail-item">
-                        <strong>Descripción:</strong>
-                        <span>{ev.EventDescription || "Sin descripción"}</span>
+              <div className="events-list">
+                {selectedDate ? (
+                  <>
+                    {/* Eventos */}
+                    {currentDayEvents.eventos.length > 0 && (
+                      <div className="event-section">
+                        <h4 className="section-title-calendar">Eventos</h4>
+                        {currentDayEvents.eventos.map((ev, idx) => (
+                          <div key={idx} className="event-item">
+                            <div className="event-indicator purple"></div>
+                            <div className="event-content">
+                              <p className="event-name">{ev.EventName}</p>
+                              <p className="event-time">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M582-298 440-440v-200h80v167l118 118-56 57ZM440-720v-80h80v80h-80Zm280 280v-80h80v80h-80ZM440-160v-80h80v80h-80ZM160-440v-80h80v80h-80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                                {formatTime(ev.EventDateTime)}
+                              </p>
+                              <p className="event-location">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/></svg> 
+                                {ev.Address || 'Sin ubicación'}
+                              </p>
+                              <p className="event-location">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/></svg>
+                                {ev.ClientName || 'Sin cliente'}
+                              </p>
+                              <p className="event-status-calendar">
+                                <span 
+                                  className="status-badge"
+                                  style={{ backgroundColor: getStatusColor(ev.EventStatus) }}
+                                >
+                                  {translateStatus(ev.EventStatus)}
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div className="detail-item">
-                        <strong>Hora:</strong>
-                        <span>{new Date(ev.EventDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    )}
+
+                    {/* Citas */}
+                    {currentDayEvents.citas.length > 0 && (
+                      <div className="event-section">
+                        <h4 className="section-title-calendar">Citas</h4>
+                        {currentDayEvents.citas.map((cita, idx) => (
+                          <div key={idx} className="event-item">
+                            <div className="event-indicator blue"></div>
+                            <div className="event-content">
+                              <p className="event-name">{cita.Description || 'Sin descripción'}</p>
+                              <p className="event-time">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M582-298 440-440v-200h80v167l118 118-56 57ZM440-720v-80h80v80h-80Zm280 280v-80h80v80h-80ZM440-160v-80h80v80h-80ZM160-440v-80h80v80h-80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+                                {formatTime(cita.AppointmentDateTime)}
+                              </p>
+                              <p className="event-contact">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/></svg>
+                                {cita.UserEmail || cita.UserPhone || 'Sin contacto'}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      <div className="detail-item">
-                        <strong>Cliente:</strong>
-                        <span>{ev.ClientName || "Desconocido"}</span>
+                    )}
+
+                    {/* Sin eventos */}
+                    {currentDayEvents.eventos.length === 0 && currentDayEvents.citas.length === 0 && (
+                      <div className="no-events d-flex flex-column align-items-center gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor" style={{ opacity: 0.3 }}>
+                        <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/>
+                      </svg>
+                        <p>No hay eventos para este día</p>
                       </div>
-                      <div className="detail-item">
-                        <strong>Fecha:</strong>
-                        <span>{selectedDate.split("-")[2]} de {months[selectedMonth]} de {selectedYear}</span>
-                      </div>
-                      {idx < eventos[selectedDate].length - 1 && <hr style={{ margin: '10px 0', border: '1px solid var(--color-light)' }} />}
-                    </div>
-                  ))
-                ) : selectedDate ? (
-                  <div className="no-selection">
-                    <p>No hay citas registradas para esta fecha.</p>
-                  </div>
+                    )}
+                  </>
                 ) : (
-                  <div className="no-selection">
-                    <p>Selecciona un día</p>
-                    <div className="detail-item">
-                      <strong>Descripción:</strong>
-                      <span>-</span>
-                    </div>
-                    <div className="detail-item">
-                      <strong>Hora:</strong>
-                      <span>-</span>
-                    </div>
-                    <div className="detail-item">
-                      <strong>Cliente:</strong>
-                      <span>-</span>
-                    </div>
-                    <div className="detail-item">
-                      <strong>Fecha:</strong>
-                      <span>-</span>
-                    </div>
+                  <div className="no-events d-flex flex-column align-items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor" style={{ opacity: 0.3 }}>
+                        <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/>
+                      </svg>
+                    <p>Selecciona un día para ver los eventos</p>
                   </div>
                 )}
               </div>
             </div>
           </div>
-        </div>
       </div>
-
-      {/* Toast container */}
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-    </>
+    </div>
   );
 };
 
-export default Calendaradmin;
+export default CalendarAdmin;

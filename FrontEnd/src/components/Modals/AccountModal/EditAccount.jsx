@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../../../Views/CSS/Modals.css";
 import RequestModal from '../RequestModal';
+import api from '../../../utils/axiosConfig';
+
+//  Importar el hook y el contenedor de toasts
+import { useToast } from "../../../hooks/useToast";
+import ToastContainer from "../../../components/ToastContainer";
 
 const API_FIELD_MAPPING = {
   fullName: "Names",
@@ -11,43 +16,147 @@ const API_FIELD_MAPPING = {
   documentNumber: "DocumentNumber",
 };
 
-const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
+const EditModal = ({ isOpen, onClose, user, onSave }) => {
   const navigate = useNavigate();
+  const { toasts, addToast, removeToast } = useToast();
 
   const [isRequestModalOpen, setRequestModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [originalUser, setOriginalUser] = useState({});
   const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const fileInputRef = useRef(null);
 
-  // Efecto inicial
+  // Función para obtener la foto de perfil
+  const fetchProfilePhoto = async () => {
+    try {
+      const storedUser = sessionStorage.getItem("user");
+      if (!storedUser) throw new Error("No se encontró información del usuario.");
+
+      const parsedUser = JSON.parse(storedUser);
+      const userId = parsedUser.id || parsedUser.UserId;
+      if (!userId) throw new Error("No se encontró el ID del usuario.");
+
+      const res = await api.get(`/pfp/${userId}`);
+      const data = res.data;
+      setPhotoUrl(data.url);
+
+      // Actualizar también el formData con la nueva URL
+      setFormData(prev => ({ ...prev, photo: data.url }));
+    } catch (err) {
+      console.error("Error obteniendo la foto de perfil:", err);
+      setPhotoUrl(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Llamar al cargar el componente
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    fetchProfilePhoto();
+  }, []);
+
+  // Efecto inicial - cargar datos del usuario y foto
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const loadUserData = async () => {
+      setLoading(true);
+
+      const storedUser = sessionStorage.getItem("user");
+      if (!storedUser) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const parsedUser = JSON.parse(storedUser);
+        const userId = parsedUser.id || parsedUser.UserId;
 
-        const initialData = {
-          fullName: parsedUser.fullName || parsedUser.Names || "",
-          email: parsedUser.email || parsedUser.Email || "",
-          birthDate: parsedUser.birthDate
-            ? parsedUser.birthDate.split("T")[0]
-            : parsedUser.BirthDate
-            ? parsedUser.BirthDate.split("T")[0]
-            : "",
-          identificationType:
-            parsedUser.identificationType || parsedUser.DocumentType || "",
-          documentNumber:
-            parsedUser.documentNumber || parsedUser.DocumentNumber || "",
-          photo: parsedUser.photo || parsedUser.Photo || parsedUser.profilePicture || "",
-        };
+        // Cargar datos del perfil desde el servidor usando axios (cookies)
+        const res = await api.get(`/profile/${userId}`);
 
-        setFormData(initialData);
-        setOriginalUser(initialData);
+        if (res.status === 200) {
+          const serverData = res.data;
+
+          // Combinar datos del servidor con sessionStorage
+          const initialData = {
+            fullName: serverData.Names || parsedUser.fullName || parsedUser.Names || "",
+            email: serverData.Email || parsedUser.email || parsedUser.Email || "",
+            birthDate: serverData.BirthDate
+              ? serverData.BirthDate.split("T")[0]
+              : parsedUser.birthDate
+                ? parsedUser.birthDate.split("T")[0]
+                : parsedUser.BirthDate
+                  ? parsedUser.BirthDate.split("T")[0]
+                  : "",
+            identificationType: serverData.DocumentType || parsedUser.identificationType || parsedUser.DocumentType || "",
+            documentNumber: serverData.DocumentNumber || parsedUser.documentNumber || parsedUser.DocumentNumber || "",
+            photo: serverData.url || serverData.Photo || parsedUser.photo || parsedUser.Photo || "",
+          };
+
+          setFormData(initialData);
+          setOriginalUser(initialData);
+
+          // Si hay URL de foto del servidor, usarla
+          if (serverData.url) {
+            setPhotoUrl(serverData.url);
+          }
+
+          // Actualizar sessionStorage con datos frescos del servidor
+          const updatedUser = { ...parsedUser, ...serverData };
+          try { sessionStorage.setItem("user", JSON.stringify(updatedUser)); } catch(e) { console.warn('sessionStorage set failed', e); }
+        } else {
+          // Si falla el fetch, usar datos de sessionStorage
+          const initialData = {
+            fullName: parsedUser.fullName || parsedUser.Names || "",
+            email: parsedUser.email || parsedUser.Email || "",
+            birthDate: parsedUser.birthDate
+              ? parsedUser.birthDate.split("T")[0]
+              : parsedUser.BirthDate
+                ? parsedUser.BirthDate.split("T")[0]
+                : "",
+            identificationType: parsedUser.identificationType || parsedUser.DocumentType || "",
+            documentNumber: parsedUser.documentNumber || parsedUser.DocumentNumber || "",
+            photo: parsedUser.photo || parsedUser.Photo || parsedUser.profilePicture || "",
+          };
+
+          setFormData(initialData);
+          setOriginalUser(initialData);
+        }
       } catch (err) {
-        console.error("⚠️ Error al parsear user de localStorage:", err);
+        console.error("Error al cargar datos del usuario:", err);
+
+        // Fallback: usar localStorage si hay error de red
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          const initialData = {
+            fullName: parsedUser.fullName || parsedUser.Names || "",
+            email: parsedUser.email || parsedUser.Email || "",
+            birthDate: parsedUser.birthDate
+              ? parsedUser.birthDate.split("T")[0]
+              : parsedUser.BirthDate
+                ? parsedUser.BirthDate.split("T")[0]
+                : "",
+            identificationType: parsedUser.identificationType || parsedUser.DocumentType || "",
+            documentNumber: parsedUser.documentNumber || parsedUser.DocumentNumber || "",
+            photo: parsedUser.photo || parsedUser.Photo || parsedUser.profilePicture || "",
+          };
+
+          setFormData(initialData);
+          setOriginalUser(initialData);
+        } catch (parseErr) {
+          console.error("Error al parsear localStorage:", parseErr);
+        }
+      } finally {
+        setLoading(false);
       }
-    }
-  }, []);
+    };
+
+    loadUserData();
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -98,135 +207,284 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
 
   // Guardar cambios
   const handleSaveChanges = async () => {
-    // Validar todo antes de enviar
-    Object.keys(formData).forEach((key) => {
-      validateField(key, formData[key]);
-    });
+    try {
+      //  Validar antes de enviar
+      Object.keys(formData).forEach((key) => validateField(key, formData[key]));
+      const hasErrors = Object.values(errors).some((err) => err);
 
-    const hasErrors = Object.values(errors).some((err) => err);
-    if (hasErrors) {
-      console.error("Hay errores en el formulario.");
+      // Validar campos obligatorios
+      const requiredFields = ["fullName", "birthDate", "identificationType", "documentNumber"];
+      const emptyFields = requiredFields.filter(
+        (f) => !formData[f] || formData[f].trim() === ""
+      );
+
+      if (emptyFields.length > 0) {
+        addToast("Por favor, completa todos los campos obligatorios antes de guardar.", "danger");
+        return;
+      }
+
+      if (hasErrors) {
+        addToast("Por favor, corrige los errores antes de guardar.", "danger");
+        return;
+      }
+
+      const storedUser = sessionStorage.getItem("user");
+      if (!storedUser) {
+        addToast("No se encontró información del usuario.", "danger");
+        onClose();
+        return;
+      }
+
+      const parsedUser = JSON.parse(storedUser);
+      const userId = parsedUser.id;
+      if (!userId) {
+        addToast("No se pudo encontrar el ID del usuario.", "danger");
+        onClose();
+        return;
+      }
+
+      const changes = {};
+      Object.keys(formData).forEach((key) => {
+        if (formData[key] !== originalUser[key]) {
+          const apiFieldName = API_FIELD_MAPPING[key];
+          if (apiFieldName) {
+            changes[apiFieldName] = formData[key];
+          }
+        }
+      });
+
+      if (Object.keys(changes).length === 0) {
+        addToast("No se detectaron cambios para guardar.", "warning");
+        onClose();
+        return;
+      }
+
+      //  Enviar actualización
+      const res = await api.put(`/profile/${userId}`, changes);
+
+      if (res.status === 200) {
+        const updatedUser = { ...parsedUser, ...formData };
+        try { sessionStorage.setItem("user", JSON.stringify(updatedUser)); } catch(e) { console.warn('sessionStorage set failed', e); }
+
+        addToast("Perfil actualizado correctamente.", "success");
+
+        if (onSave) onSave(updatedUser);
+        setOriginalUser(formData);
+
+        setTimeout(() => onClose(), 2000);
+      } else {
+        const errorData = res.data || {};
+        addToast(errorData.message || "Error al actualizar el perfil.", "danger");
+      }
+    } catch (error) {
+      console.error("Error de red o conexión:", error);
+      addToast("Error de conexión con el servidor.", "danger");
+    }
+  };
+
+  // Subir imagen al backend
+  const handleFileButtonClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    // Validar tipo y tamaño
+    if (!file.type.startsWith("image/")) {
+      addToast("El archivo debe ser una imagen.", "danger");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      addToast("La imagen no debe superar 2MB.", "danger");
       return;
     }
 
-    const storedUser = localStorage.getItem("user");
+    // Obtener usuario actual del localStorage
+    const storedUser = sessionStorage.getItem("user");
     if (!storedUser) {
-      console.error("No se encontró información de usuario en localStorage.");
-      onClose();
+      addToast("No se encontró información del usuario.", "danger");
       return;
     }
 
     const parsedUser = JSON.parse(storedUser);
     const userId = parsedUser.id;
     if (!userId) {
-      console.error("No se pudo encontrar el ID de usuario.");
-      onClose();
+      addToast("No se pudo encontrar el ID del usuario.", "danger");
       return;
     }
 
-    const changes = {};
-    Object.keys(formData).forEach((key) => {
-      if (formData[key] !== originalUser[key]) {
-        const apiFieldName = API_FIELD_MAPPING[key];
-        if (apiFieldName) {
-          changes[apiFieldName] = formData[key];
-        }
-      }
-    });
-
-    if (Object.keys(changes).length === 0) {
-      console.log("No se detectaron cambios.");
-      onClose();
-      return;
-    }
+    // Crear el FormData para el envío del archivo
+    const fd = new FormData();
+    fd.append("photo", file);
 
     try {
-      const response = await fetch(`http://localhost:4000/api/profile/${userId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(changes),
+      setUploading(true);
+
+      const res = await api.post(`/pfp/${userId}`, fd, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      if (response.ok) {
-        console.log("Perfil actualizado correctamente.");
+      const data = res.data;
+      const newUrl = data.url;
 
-        const updatedUser = { ...parsedUser, ...formData };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+      // Actualizar sessionStorage
+      const updatedUser = { ...parsedUser, photo: newUrl, Photo: newUrl };
+      try { sessionStorage.setItem("user", JSON.stringify(updatedUser)); } catch(e) { console.warn('sessionStorage set failed', e); }
 
-        // 🔥 Notificamos al Header para que se actualice
-        if (onSave) {
-          onSave(updatedUser);
-        }
+      // Actualizar estado local
+      setPhotoUrl(newUrl);
+      setFormData(prev => ({ ...prev, photo: newUrl }));
 
-        setOriginalUser(formData);
-        setFormData(formData);
+      addToast("Foto de perfil actualizada correctamente.", "success");
 
-        onClose();
-      } else {
-        const errorData = await response.json();
-        console.error("Error de la API:", errorData.message);
-      }
-    } catch (error) {
-      console.error("Error de red o conexión:", error);
+      // Llamar a onSave para actualizar el componente padre si existe
+      if (onSave) onSave(updatedUser);
+    } catch (err) {
+      console.error("Error subiendo imagen:", err);
+      addToast(err.message || "Error al subir la imagen.", "danger");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const openRequestModal = () => setRequestModalOpen(true);
-  const closeRequestModal = () => setRequestModalOpen(false);
+  // Determinar qué foto mostrar
+  const displayPhoto = photoUrl || formData.photo;
 
   return (
     <>
-      {/* Modal */}
       <div className="sidebar-overlay active" onClick={onClose}>
         <div className="profile-modal w-800" onClick={stopPropagation}>
           <button className="close-btn" onClick={onClose}>×</button>
           <h4 className="modal-title text-center mb-3">Editar Perfil</h4>
 
-          <div className="pm-body d-flex flex-wrap">
+          <div className="pm-body-profile pm-body d-flex flex-wrap">
             {/* Foto */}
             <div className="pm-photo">
-              {formData.photo ? (
-                <img
-                  src={formData.photo}
-                  alt="Avatar del usuario"
-                  className="img-pf rounded-circle"
-                  onError={(e) => {
-                    e.target.style.display = "none";
-                    e.target.nextElementSibling.style.display = "block";
-                  }}
-                />
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                  <span>Cargando...</span>
+                </div>
+              ) : displayPhoto ? (
+                <>
+                  <img
+                    src={displayPhoto}
+                    alt="Avatar del usuario"
+                    className="img-pf rounded-circle"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      setPhotoUrl(null);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleFileButtonClick}
+                    disabled={uploading}
+                    title="Cambiar foto"
+                    className="btn-edit-photo"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#0e40b6"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3l2-3h6l2 3h3a2 2 0 0 1 2 2z"></path>
+                      <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                  </button>
+                </>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" height="50px" viewBox="0 -960 960 960" width="50px" fill="#0e40b68b">
-                  <path d="M222-255q63-40 124.5-60.5T480-336q72 0 134 20.5T739-255q44-54 62.5-109T820-480q0-145-97.5-242.5T480-820q-145 0-242.5 97.5T140-480q0 61 19 116t63 109Zm257.81-195q-57.81 0-97.31-39.69-39.5-39.68-39.5-97.5 0-57.81 39.69-97.31 39.68-39.5 97.5-39.5 57.81 0 97.31 39.69 39.5 39.68 39.5 97.5 0 57.81-39.69 97.31-39.68 39.5-97.5 39.5Zm-.21 370q-83.15 0-156.28-31.5t-127.22-86Q142-252 111-324.84 80-397.68 80-480.5t31.5-155.66Q143-709 197.5-763t127.34-85.5Q397.68-880 480.5-880t155.66 31.5Q709-817 763-763t85.5 127Q880-563 880-480.27q0 82.74-31.5 155.5Q817-252 763-197.5t-127.13 86Q562.74-80 479.6-80Z" />
-                </svg>
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="90px"
+                    viewBox="0 -960 960 960"
+                    width="90px"
+                    fill="#0e40b68b"
+                  >
+                    <path d="M222-255q63-40 124.5-60.5T480-336q72 0 134 20.5T739-255q44-54 62.5-109T820-480q0-145-97.5-242.5T480-820q-145 0-242.5 97.5T140-480q0 61 19 116t63 109Zm257.81-195q-57.81 0-97.31-39.69-39.5-39.68-39.5-97.5 0-57.81 39.69-97.31 39.68-39.5 97.5-39.5 57.81 0 97.31 39.69 39.5 39.68 39.5 97.5 0 57.81-39.69 97.31-39.68 39.5-97.5 39.5Z" />
+                  </svg>
+                  <button
+                    type="button"
+                    onClick={handleFileButtonClick}
+                    disabled={uploading}
+                    title="Subir foto"
+                    className="btn-edit-photo"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#0e40b6"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3l2-3h6l2 3h3a2 2 0 0 1 2 2z"></path>
+                      <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                  </button>
+                </>
               )}
-            </div>
 
+              {uploading && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    background: 'rgba(255,255,255,0.9)',
+                    padding: '10px',
+                    borderRadius: '5px',
+                  }}
+                >
+                  Subiendo...
+                </div>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                disabled={uploading}
+              />
+            </div>
             {/* Campos */}
             <div className="pm-fields" style={{ maxWidth: "800px" }}>
-              {/* Rol */}
               <div className="field-row">
                 <div className="field">
-                  <div className="badge bg-secondary small mt-3">{rolLegible}</div>
+                  <div className="badge bg-secondary small">{rolLegible}</div>
                 </div>
               </div>
 
-              {/* Nombre */}
+              {/* Campos de usuario */}
               <div className="field-row">
                 <div className="field">
-                  <div className="field-label">Nombre completo</div>
+                  <div className="field-label">Nombre completo *</div>
                   <input
                     type="text"
                     name="fullName"
                     className="field-value"
-                    value={formData.fullName}
+                    value={formData.fullName || ''}
                     onChange={handleInputChange}
                   />
                   {errors.fullName && <small className="error-text">{errors.fullName}</small>}
                 </div>
               </div>
 
-              {/* Correo */}
               <div className="field-row">
                 <div className="field">
                   <div className="field-label">
@@ -236,38 +494,36 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
                     type="email"
                     name="email"
                     className="field-value field-disabled"
-                    value={formData.email}
+                    value={formData.email || ''}
                     disabled
                   />
                 </div>
               </div>
 
-              {/* Fecha de nacimiento */}
               <div className="field-row">
                 <div className="field">
-                  <div className="field-label">Fecha de nacimiento</div>
+                  <div className="field-label">Fecha de nacimiento *</div>
                   <input
                     type="date"
                     name="birthDate"
                     className="field-value"
-                    value={formData.birthDate}
+                    value={formData.birthDate || ''}
                     onChange={handleInputChange}
                   />
                   {errors.birthDate && <small className="error-text">{errors.birthDate}</small>}
                 </div>
               </div>
 
-              {/* Documento */}
               <div className="field-row two-cols">
                 <div className="field">
                   <div className="field-label">
-                    Tipo de documento
+                    Tipo de documento *
                     {role === "user" && <span className="text-muted ms-2">(Campo protegido)</span>}
                   </div>
                   <select
                     name="identificationType"
                     className={`field-value ${role === "user" ? "field-disabled" : ""}`}
-                    value={formData.identificationType}
+                    value={formData.identificationType || ''}
                     onChange={handleInputChange}
                     disabled={role === "user"}
                   >
@@ -280,34 +536,18 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
 
                 <div className="field">
                   <div className="field-label">
-                    Número de documento
+                    Número de documento *
                     {role === "user" && <span className="text-muted ms-2">(Campo protegido)</span>}
                   </div>
                   <input
                     type="text"
                     name="documentNumber"
                     className={`field-value ${role === "user" ? "field-disabled" : ""}`}
-                    value={formData.documentNumber}
+                    value={formData.documentNumber || ''}
                     onChange={handleInputChange}
                     disabled={role === "user"}
                   />
                   {errors.documentNumber && <small className="error-text">{errors.documentNumber}</small>}
-                </div>
-              </div>
-
-              {/* Foto */}
-              <div className="field-row">
-                <div className="field">
-                  <div className="field-label">URL de foto (opcional)</div>
-                  <input
-                    type="url"
-                    name="photo"
-                    className="field-value"
-                    value={formData.photo}
-                    onChange={handleInputChange}
-                    placeholder="https://ejemplo.com/foto.jpg"
-                  />
-                  {errors.photo && <small className="error-text">{errors.photo}</small>}
                 </div>
               </div>
             </div>
@@ -315,7 +555,11 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
 
           {/* Footer */}
           <div className="pm-footer d-flex flex-column gap-2">
-            <button className="btn-primary-custom w-100" onClick={handleSaveChanges}>
+            <button
+              className="btn-primary-custom w-100"
+              onClick={handleSaveChanges}
+              disabled={uploading}
+            >
               Guardar Cambios
             </button>
 
@@ -330,7 +574,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
             </button>
 
             {role === "user" && (
-              <button className="btn-secondary-custom w-100" onClick={openRequestModal}>
+              <button className="btn-secondary-custom w-100" onClick={() => setRequestModalOpen(true)}>
                 Solicitar cambio de documento
               </button>
             )}
@@ -341,11 +585,13 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => { // se agrega onSave
       {isRequestModalOpen && (
         <RequestModal
           isOpen={isRequestModalOpen}
-          onClose={closeRequestModal}
+          onClose={() => setRequestModalOpen(false)}
           user={user}
           requestType="document_change"
         />
       )}
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </>
   );
 };

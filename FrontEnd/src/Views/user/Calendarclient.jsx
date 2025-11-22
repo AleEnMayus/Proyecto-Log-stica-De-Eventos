@@ -1,49 +1,88 @@
 import React, { useState, useEffect } from "react";
-import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm"; // temporal
-import { useToast } from "../../hooks/useToast";
-import ToastContainer from "../../components/ToastContainer";
-import './../CSS/components.css';
-import './../CSS/FormsUser.css';
-import '../CSS/Calendar.css';
+import "../CSS/CalendarAdmin.css";
+import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
+import {translateRequestType} from "../../utils/FormatText";
 
-const Calendarclient = () => {
+const CalendarClient = () => {
   const today = new Date();
   const [selectedYear, setSelectedYear] = useState(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(null);
   const [eventos, setEventos] = useState({});
-  const { toasts, addToast, removeToast } = useToast();
-
-  useEffect(() => {
-    const fetchEventos = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/events");
-        if (!res.ok) throw new Error("Error al obtener eventos");
-        const data = await res.json();
-
-        const eventosPorFecha = {};
-        data.forEach(evento => {
-          const fecha = new Date(evento.EventDateTime).toISOString().split("T")[0];
-          if (!eventosPorFecha[fecha]) eventosPorFecha[fecha] = [];
-          eventosPorFecha[fecha].push(evento);
-        });
-
-        setEventos(eventosPorFecha);
-      } catch (error) {
-        console.error("Error:", error);
-        addToast("Error al cargar los eventos", "error");
-      }
-    };
-
-    fetchEventos();
-  }, [addToast]);
+  const [citas, setCitas] = useState({});
+  const [currentDayEvents, setCurrentDayEvents] = useState({ eventos: [], citas: [] });
 
   const months = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
-  const generateYears = () => Array.from({ length: 36 }, (_, i) => 2000 + i);
+  useEffect(() => {
+    fetchCalendarData();
+  }, [selectedYear, selectedMonth]);
+
+  const fetchCalendarData = async () => {
+    try {
+      const userString = localStorage.getItem("user");
+      if (!userString) {
+        console.error("No hay usuario en localStorage");
+        return;
+      }
+
+      const user = JSON.parse(userString);
+      const userId = user.id;
+
+      const startDate = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-01`;
+      const lastDay = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+      const endDate = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${lastDay}`;
+
+      // Obtener todos los datos (eventos y citas)
+      const res = await fetch(
+        `http://localhost:4000/api/calendar/user/${userId}?startDate=${startDate}&endDate=${endDate}`
+      );
+
+      if (!res.ok) throw new Error("Error al obtener calendario");
+
+      const data = await res.json();
+
+      // Separar eventos y citas
+      const eventosPorFecha = {};
+      const citasPorFecha = {};
+
+      data.forEach(item => {
+        const fecha = item.start ? item.start.split("T")[0] : null;
+        if (!fecha) return;
+
+        if (item.type === "event") {
+          if (!eventosPorFecha[fecha]) eventosPorFecha[fecha] = [];
+          eventosPorFecha[fecha].push({
+            EventName: item.title || "Sin título",
+            EventDateTime: item.start,
+            EventStatus: item.status,
+            EventDescription: item.description,
+            Address: item.location,
+            Capacity: item.capacity
+          });
+        } else if (item.type === "appointment") {
+          if (!citasPorFecha[fecha]) citasPorFecha[fecha] = [];
+          citasPorFecha[fecha].push({
+            title: item.title || "Sin título",
+            start: item.start,
+            status: item.status || "pending",
+            description: item.description || "Sin descripción",
+            requestType: item.requestType || "Por definir",
+            userEmail: item.userEmail || "",
+            userPhone: item.userPhone || ""
+          });
+        }
+      });
+
+      setEventos(eventosPorFecha);
+      setCitas(citasPorFecha);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
 
@@ -53,65 +92,105 @@ const Calendarclient = () => {
   };
 
   const handleDayClick = (day) => {
-    const formattedDay = day < 10 ? `0${day}` : day;
-    const formattedMonth = selectedMonth + 1 < 10 ? `0${selectedMonth + 1}` : selectedMonth + 1;
+    const formattedDay = String(day).padStart(2, "0");
+    const formattedMonth = String(selectedMonth + 1).padStart(2, "0");
     const formattedDate = `${selectedYear}-${formattedMonth}-${formattedDay}`;
+
     setSelectedDate(formattedDate);
+    setCurrentDayEvents({
+      eventos: eventos[formattedDate] || [],
+      citas: citas[formattedDate] || []
+    });
   };
 
-  const getColorByStatus = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'completed': return 'linear-gradient(135deg, #ff4d4d, #ff7a7a)';
-      case 'in_planning': return 'linear-gradient(135deg, #4CAF50, #81C784)';
-      case 'in_execution': return 'linear-gradient(135deg, #FFA500, #FFC107)';
-      default: return 'linear-gradient(135deg, #a5a5a5, #cccccc)';
+  const changeMonth = (increment) => {
+    let newMonth = selectedMonth + increment;
+    let newYear = selectedYear;
+
+    if (newMonth > 11) {
+      newMonth = 0;
+      newYear++;
+    } else if (newMonth < 0) {
+      newMonth = 11;
+      newYear--;
     }
+
+    setSelectedMonth(newMonth);
+    setSelectedYear(newYear);
+    setSelectedDate(null);
+  };
+
+  const goToToday = () => {
+    const now = new Date();
+    setSelectedMonth(now.getMonth());
+    setSelectedYear(now.getFullYear());
+    setSelectedDate(null);
   };
 
   const renderCalendarDays = () => {
     const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
     const startDay = getStartDay(selectedYear, selectedMonth);
     const calendarCells = [];
+    const prevMonthDays = new Date(selectedYear, selectedMonth, 0).getDate();
 
-    for (let i = 0; i < startDay; i++) {
-      calendarCells.push(<div key={`empty-${i}`} className="day empty"></div>);
+    // Días del mes anterior
+    for (let i = startDay - 1; i >= 0; i--) {
+      calendarCells.push(
+        <div key={`prev-${i}`} className="calendar-day other-month">
+          <span className="day-number">{prevMonthDays - i}</span>
+        </div>
+      );
     }
 
+    // Días del mes actual
     for (let day = 1; day <= daysInMonth; day++) {
-      const formattedDay = day < 10 ? `0${day}` : day;
-      const formattedMonth = selectedMonth + 1 < 10 ? `0${selectedMonth + 1}` : selectedMonth + 1;
+      const formattedDay = String(day).padStart(2, "0");
+      const formattedMonth = String(selectedMonth + 1).padStart(2, "0");
       const formattedDate = `${selectedYear}-${formattedMonth}-${formattedDay}`;
 
       const isSelected = selectedDate === formattedDate;
       const eventosDelDia = eventos[formattedDate] || [];
-      const hasEvents = eventosDelDia.length > 0;
-
-      const background = hasEvents ? getColorByStatus(eventosDelDia[0].EventStatus) : "";
+      const citasDelDia = citas[formattedDate] || [];
       const esHoy = new Date().toDateString() === new Date(selectedYear, selectedMonth, day).toDateString();
+
+      const todosEventos = [...eventosDelDia, ...citasDelDia];
 
       calendarCells.push(
         <div
           key={formattedDate}
-          className={`day ${isSelected ? "selected" : ""} ${esHoy ? "today" : ""}`}
+          className={`calendar-day ${esHoy ? "today" : ""} ${isSelected ? "selected" : ""}`}
           onClick={() => handleDayClick(day)}
-          style={{
-            padding: "20px 10px",
-            fontSize: "1.1rem",
-            borderRadius: "12px",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            background: hasEvents ? background : "var(--color-light)",
-            color: hasEvents ? "white" : "var(--color-dark)",
-            boxShadow: isSelected ? "0 0 10px var(--color-primary)" : "0 2px 5px rgba(0,0,0,0.1)",
-            transform: isSelected ? "scale(1.05)" : "scale(1)",
-          }}
-          onMouseEnter={(e) => (e.target.style.transform = "scale(1.08)")}
-          onMouseLeave={(e) => (e.target.style.transform = isSelected ? "scale(1.05)" : "scale(1)")}
         >
-          {day}
-          {hasEvents && (
-            <div style={{ fontSize: "1.8rem", marginTop: "5px" }}>•</div>
+          <span className="day-number">{day}</span>
+
+          {todosEventos.length > 0 && (
+            <div className="event-indicators">
+              {todosEventos.slice(0, 2).map((item, idx) => (
+                <div key={idx} className={`event-badge ${item.EventName ? "event" : "appointment"}`}>
+                  {(item.EventName || item.title || item.description || "Sin título").substring(0, 15)}
+                  {(item.EventName || item.title || item.description || "").length > 15 ? "..." : ""}
+                </div>
+              ))}
+              {todosEventos.length > 2 && (
+                <div className="event-dots">
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                </div>
+              )}
+            </div>
           )}
+        </div>
+      );
+    }
+
+    // Días del siguiente mes
+    const totalCells = calendarCells.length;
+    const remainingCells = 35 - totalCells;
+
+    for (let i = 1; i <= remainingCells; i++) {
+      calendarCells.push(
+        <div key={`next-${i}`} className="calendar-day other-month">
+          <span className="day-number">{i}</span>
         </div>
       );
     }
@@ -119,130 +198,239 @@ const Calendarclient = () => {
     return calendarCells;
   };
 
+  const formatTime = (dateTime) => {
+    return new Date(dateTime).toLocaleTimeString("es-ES", { 
+      hour: "2-digit", 
+      minute: "2-digit" 
+    });
+  };
+
+  const getStatusColor = (status) => {
+    const colors = {
+      completed: "#28a745",
+      in_planning: "#ffc107",
+      in_execution: "#007bff",
+      canceled: "#dc3545",
+      cancelled: "#dc3545",
+      approved: "#17a2b8",
+      pending: "#ffc107",
+      rejected: "#dc3545"
+    };
+    return colors[status?.toLowerCase()] || "#6c757d";
+  };
+
+  const getStatusText = (status) => {
+    const statusTexts = {
+      completed: "Completado",
+      in_planning: "En Planificación",
+      in_execution: "En Ejecución",
+      canceled: "Cancelado",
+      cancelled: "Cancelado",
+      approved: "Aprobada",
+      pending: "Pendiente",
+      rejected: "Rechazada"
+    };
+    return statusTexts[status?.toLowerCase()] || status;
+  };
+
   return (
-    <>
-      <HeaderAdm />
-      <div className="calendar-container" style={{ padding: "40px" }}>
-        <h2
-          className="calendar-title"
-          style={{
-            fontSize: "2.5rem",
-            textAlign: "center",
-            color: "var(--color-dark)",
-            marginBottom: "30px",
-            fontWeight: "700",
-            background: "linear-gradient(135deg, var(--color-primary), var(--color-secondary))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          <br></br><br></br>
-          Calendario de Eventos (Cliente)
-        </h2>
+    <div className="mx-auto calendar-admin-container">
+      <HeaderCl />
+      <div className="row g-4">
 
-        <div className="calendar-content" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "40px" }}>
-          {/* Calendario */}
-          <div
-            className="calendar-box"
-            style={{
-              background: "var(--color-white)",
-              borderRadius: "16px",
-              boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-              padding: "30px",
-              minWidth: "600px",
-              maxWidth: "650px",
-            }}
-          >
-            <div className="calendar-header" style={{ display: "flex", justifyContent: "center", marginBottom: "20px", gap: "10px" }}>
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                style={{
-                  background: "var(--color-light)",
-                  border: "2px solid var(--color-gray)",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  fontSize: "1.1rem",
-                  cursor: "pointer",
-                }}
-              >
-                {months.map((month, index) => (
-                  <option key={index} value={index}>
-                    {month}
-                  </option>
-                ))}
-              </select>
+        {/* Calendario Principal */}
+        <div className="col-lg-8">
+          <div className="calendar-card">
 
-              <select
-                value={selectedYear}
-                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                style={{
-                  background: "var(--color-light)",
-                  border: "2px solid var(--color-gray)",
-                  borderRadius: "8px",
-                  padding: "10px",
-                  fontSize: "1.1rem",
-                  cursor: "pointer",
-                }}
-              >
-                {generateYears().map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
+            <div className="calendar-header">
+              <div className="selectors">
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(Number(e.target.value))}
+                  className="month-selector p-3 me-2 btn-today"
+                >
+                  {months.map((m, i) => (
+                    <option key={i} value={i}>{m}</option>
+                  ))}
+                </select>
+
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  className="year-selector p-3 btn-today"
+                >
+                  {Array.from({ length: 11 }, (_, i) => 2025 + i).map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="calendar-controls">
+                <button className="btn-control" onClick={() => changeMonth(-1)} title="Mes anterior">
+                  ‹
+                </button>
+                <button className="btn-today" onClick={goToToday}>
+                  Hoy
+                </button>
+                <button className="btn-control" onClick={() => changeMonth(1)} title="Mes siguiente">
+                  ›
+                </button>
+              </div>
             </div>
 
-            <div className="calendar-grid" style={{ gap: "8px" }}>
-              {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((dayName) => (
-                <div key={dayName} className="day-name" style={{ fontWeight: "bold", padding: "10px", fontSize: "1rem" }}>
-                  {dayName}
-                </div>
-              ))}
-              {renderCalendarDays()}
+            <div className="calendar-grid-container">
+              <div className="weekdays-grid">
+                {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((day, idx) => (
+                  <div key={idx} className="weekday-name">{day}</div>
+                ))}
+              </div>
+              <div className="calendar-grid">
+                {renderCalendarDays()}
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Detalle de eventos */}
-          <div
-            className="event-box"
-            style={{
-              background: "var(--color-white)",
-              borderRadius: "16px",
-              boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-              padding: "30px",
-              minWidth: "400px",
-              maxWidth: "450px",
-            }}
-          >
-            <h4 style={{ fontSize: "1.4rem", marginBottom: "10px" }}>Detalles del Evento</h4>
-            {selectedDate && eventos[selectedDate]?.length > 0 ? (
-              <>
-                <p><strong>Fecha:</strong> {selectedDate}</p>
-                {eventos[selectedDate].map((ev, idx) => (
-                  <div key={idx} style={{ padding: "10px 0", borderBottom: "1px solid var(--color-light)" }}>
-                    <p><strong>Evento:</strong> {ev.EventName}</p>
-                    <p><strong>Hora:</strong> {new Date(ev.EventDateTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</p>
-                    <p><strong>Cliente:</strong> {ev.ClientName || "Desconocido"}</p>
-                    <p><strong>Estado:</strong> {ev.EventStatus}</p>
-                  </div>
-                ))}
-              </>
-            ) : selectedDate ? (
-              <>
-                <p><strong>Fecha:</strong> {selectedDate}</p>
-                <p>No hay eventos registrados.</p>
-              </>
-            ) : (
-              <p>Selecciona un día</p>
+        {/* Panel de Detalles */}
+        <div className="col-lg-4">
+          <div className="details-panel">
+            <h3 className="details-title">
+              {selectedDate ? (
+                <>
+                  {months[selectedMonth]} {selectedDate.split("-")[2]}, {selectedYear}
+                </>
+              ) : (
+                "Selecciona un día"
+              )}
+            </h3>
+            
+            {selectedDate && (
+              <p className="details-count">
+                {currentDayEvents.eventos.length + currentDayEvents.citas.length} evento(s) programado(s)
+              </p>
             )}
+
+            <hr className="divider" />
+
+            <div className="events-list">
+              {selectedDate ? (
+                <>
+                  {/* Eventos */}
+                  {currentDayEvents.eventos.length > 0 && (
+                    <div className="event-section">
+                      <h4 className="section-title-calendar">Eventos</h4>
+                      {currentDayEvents.eventos.map((ev, idx) => (
+                        <div key={idx} className="event-item">
+                          <div className="event-indicator purple"></div>
+                          <div className="event-content">
+                            <p className="event-name">{ev.EventName}</p>
+                            <p className="event-time">
+                              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                                <path d="M582-298 440-440v-200h80v167l118 118-56 57ZM440-720v-80h80v80h-80Zm280 280v-80h80v80h-80ZM440-160v-80h80v80h-80ZM160-440v-80h80v80h-80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                              </svg>
+                              {formatTime(ev.EventDateTime)}
+                            </p>
+                            <p className="event-location">
+                              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                                <path d="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z"/>
+                              </svg>
+                              {ev.Address || 'Sin ubicación'}
+                            </p>
+                            {ev.EventDescription && (
+                              <p className="event-description" style={{ 
+                                fontSize: '0.875rem', 
+                                color: 'var(--color-gray)', 
+                                margin: '0.25rem 0',
+                                fontStyle: 'italic'
+                              }}>
+                                {ev.EventDescription}
+                              </p>
+                            )}
+                            <p className="event-status-calendar">
+                              <span 
+                                className="status-badge"
+                                style={{ backgroundColor: getStatusColor(ev.EventStatus) }}
+                              >
+                                {getStatusText(ev.EventStatus)}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Citas */}
+                  {currentDayEvents.citas.length > 0 && (
+                    <div className="event-section">
+                      <h4 className="section-title-calendar">Mis Citas</h4>
+                      {currentDayEvents.citas.map((cita, idx) => (
+                        <div key={idx} className="event-item">
+                          <div className="event-indicator blue"></div>
+                          <div className="event-content">
+                            <p className="event-name">
+                              {cita.title || cita.description || 'Sin título'}
+                            </p>
+                            <p className="event-time">
+                              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                                <path d="M582-298 440-440v-200h80v167l118 118-56 57ZM440-720v-80h80v80h-80Zm280 280v-80h80v80h-80ZM440-160v-80h80v80h-80ZM160-440v-80h80v80h-80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/>
+                              </svg>
+                              {formatTime(cita.start)}
+                            </p>
+                            <p className="event-location">
+                              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                                <path d="M240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
+                              </svg>
+                              {translateRequestType(cita.requestType) || 'Tipo no especificado'}
+                            </p>
+                            {cita.description && cita.description !== cita.title && (
+                              <p className="event-description" style={{ 
+                                fontSize: '0.875rem', 
+                                color: 'var(--color-gray)', 
+                                margin: '0.25rem 0',
+                                fontStyle: 'italic'
+                              }}>
+                                {cita.description}
+                              </p>
+                            )}
+                            <p className="event-status-calendar">
+                              <span 
+                                className="status-badge"
+                                style={{ backgroundColor: getStatusColor(cita.status) }}
+                              >
+                                {getStatusText(cita.status)}
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Sin eventos ni citas */}
+                  {currentDayEvents.eventos.length === 0 && currentDayEvents.citas.length === 0 && (
+                    <div className="no-events d-flex flex-column align-items-center gap-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor" style={{ opacity: 0.3 }}>
+                        <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/>
+                      </svg>
+                      <p>No hay eventos ni citas para este día</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="no-events d-flex flex-column align-items-center gap-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor" style={{ opacity: 0.3 }}>
+                        <path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/>
+                      </svg>
+                  <p>Selecciona un día para ver tus eventos y citas</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-    </>
+    </div>
   );
 };
 
-export default Calendarclient;
+export default CalendarClient;

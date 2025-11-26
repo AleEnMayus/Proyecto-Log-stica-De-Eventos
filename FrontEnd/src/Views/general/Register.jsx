@@ -98,7 +98,7 @@ const RegisterPage = () => {
     };
 
     try {
-      const response = await api.post('/register', formattedData);
+      const response = await api.post('/auth/register', formattedData);
       const data = response.data;
 
       addToast('Registro exitoso. Ahora puedes iniciar sesión.', 'success');

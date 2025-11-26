@@ -7,7 +7,7 @@ import { useToast } from "../../hooks/useToast";
 import ToastContainer from "../../components/ToastContainer";
 import "../CSS/Notification.css";
 
-const baseURL = "http://localhost:4000";
+const baseURL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000';
 
 const NotificationsClient = () => {
   const [notifications, setNotifications] = useState([]);

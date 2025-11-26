@@ -34,23 +34,59 @@ const LoginPage = () => {
       const res = await api.post('/auth/login', formData);
       const data = res.data;
 
-      if (res.status === 200) {
-        // Guardamos solo datos no sensibles en sessionStorage
-        if (data.user) {
-          try {
-            sessionStorage.setItem('role', data.user.role);
-            sessionStorage.setItem('name', data.user.fullName);
-            sessionStorage.setItem('user', JSON.stringify(data.user));
-          } catch (e) {
-            console.warn('No se pudo guardar datos en sessionStorage', e);
-          }
+      if (res.status === 200 && data.user) {
+        // Guardamos solo datos no sensibles en localStorage y sessionStorage
+        try {
+          sessionStorage.setItem('role', data.user.role);
+          sessionStorage.setItem('name', data.user.fullName);
+          sessionStorage.setItem('user', JSON.stringify(data.user));
+          localStorage.setItem('user', JSON.stringify(data.user));
+        } catch (e) {
+          console.warn('No se pudo guardar datos en almacenamiento local', e);
         }
 
         addToast('Inicio de sesión exitoso', 'success');
         setTimeout(() => window.location.reload(), 800);
       }
     } catch (err) {
-      addToast("Error de conexión con el servidor", "danger");
+      // Manejar errores específicos del backend
+      let errorMessage = "Error de conexión con el servidor";
+      
+      if (err.response && err.response.data) {
+        const { message, error } = err.response.data;
+        
+        // Mensajes específicos según el código de error
+        switch (error) {
+          case "MISSING_CREDENTIALS":
+            errorMessage = "Por favor ingresa correo y contraseña";
+            break;
+          case "INVALID_CREDENTIALS":
+            errorMessage = "Correo o contraseña incorrectos";
+            break;
+          case "ACCOUNT_INACTIVE":
+            errorMessage = message || "Tu cuenta está inactiva. Contacta al administrador.";
+            break;
+          case "DB_ERROR":
+            errorMessage = "Error al conectar con la base de datos. Intenta nuevamente.";
+            break;
+          case "PASSWORD_CHECK_ERROR":
+            errorMessage = "Error al validar credenciales. Intenta nuevamente.";
+            break;
+          case "JWT_ERROR":
+            errorMessage = "Error al generar sesión. Intenta nuevamente.";
+            break;
+          case "UNEXPECTED_ERROR":
+            errorMessage = message || "Error inesperado. Intenta nuevamente.";
+            break;
+          default:
+            errorMessage = message || errorMessage;
+        }
+      } else if (err.request) {
+        errorMessage = "No se pudo contactar al servidor. Verifica tu conexión.";
+      }
+      
+      addToast(errorMessage, "danger");
+      console.error('Error en login:', err.response?.data || err.message);
     } finally {
       setIsLoading(false);
     }

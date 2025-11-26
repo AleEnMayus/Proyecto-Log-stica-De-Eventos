@@ -36,7 +36,7 @@ const Logout = () => {
         }
 
         if (mounted) {
-          navigate('/login');
+          navigate(0);
         }
       };
 

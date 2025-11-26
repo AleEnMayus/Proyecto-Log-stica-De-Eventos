@@ -94,7 +94,7 @@ const CreateAccountForm = () => {
       addToast('Cuenta creada exitosamente!', 'success');
 
       setTimeout(() => {
-        navigate('/admin/accounts');
+        navigate('/ManageAccounts');
       }, 2000);
 
     } catch (error) {
@@ -265,7 +265,7 @@ const CreateAccountForm = () => {
                 <button
                   type="button"
                   className="btn-cancel"
-                  onClick={() => navigate('/admin/accounts')}
+                  onClick={() => navigate('/ManageAccounts')}
                 >
                   Cancelar
                 </button>

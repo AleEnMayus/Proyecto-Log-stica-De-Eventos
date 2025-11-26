@@ -181,7 +181,7 @@ const EditAccountPage = () => {
                   >
                     <option value="">Seleccione</option>
                     <option value="admin">Administrador</option>
-                    <option value="client">Cliente</option>
+                    <option value="user">Cliente</option>
                   </select>
                 </div>
               </div>

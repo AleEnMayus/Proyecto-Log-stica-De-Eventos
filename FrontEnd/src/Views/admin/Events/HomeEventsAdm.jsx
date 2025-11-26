@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 import { translateStatus } from '../../../utils/FormatText';
 import '../../CSS/components.css';
 import '../../CSS/Lists.css';
@@ -51,12 +52,10 @@ const ListEventsA = () => {
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/events");
-        if (!res.ok) throw new Error("Error al obtener eventos");
-        const data = await res.json();
-        setEventos(data);
+        const response = await api.get("/events");
+        setEventos(response.data);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error:", error.response?.data || error.message);
       } finally {
         setLoading(false);
       }

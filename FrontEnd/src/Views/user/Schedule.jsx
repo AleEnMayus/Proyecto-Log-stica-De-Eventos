@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../../utils/axiosConfig";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 
 //  Importamos tu hook y el contenedor
@@ -60,32 +61,23 @@ const Schedule = () => {
       const dateTime = `${date}T${time}:00`;
       const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-      const response = await fetch("http://localhost:4000/api/requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          RequestDate: dateTime,
-          RequestDescription: reason,
-          RequestType: "schedule_appointment",
-          UserId: user.id || 1,
-          EventId: null
-        })
+      const response = await api.post("/requests", {
+        RequestDate: dateTime,
+        RequestDescription: reason,
+        RequestType: "schedule_appointment",
+        UserId: user.id || 1,
+        EventId: null
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        addToast("Tu cita ha sido enviada correctamente", "success");
-        setDate("");
-        setTime("");
-        setReason("");
-        setTimeout(() => navigate("/EventsHome"), 2000);
-      } else {
-        addToast(data.error || "Error al enviar la solicitud", "danger");
-      }
+      const data = response.data;
+      addToast("Tu cita ha sido enviada correctamente", "success");
+      setDate("");
+      setTime("");
+      setReason("");
+      setTimeout(() => navigate("/EventsHome"), 2000);
     } catch (err) {
       console.error(err);
-      addToast("Hubo un problema al enviar la solicitud", "danger");
+      addToast(err.response?.data?.error || "Hubo un problema al enviar la solicitud", "danger");
     }
   };
 

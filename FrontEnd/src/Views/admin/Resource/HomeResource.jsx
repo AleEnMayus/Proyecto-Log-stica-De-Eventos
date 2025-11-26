@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 import { eraseUnderscore } from '../../../utils/FormatText';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
@@ -10,7 +11,7 @@ import '../../CSS/components.css';
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
 
-const API_URL = "http://localhost:4000/api/resources";
+const API_URL = "/resources";
 
 const ListResource = () => {
   const navigate = useNavigate();
@@ -31,15 +32,12 @@ const ListResource = () => {
   const fetchResources = async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
-      if (!res.ok) {
-        throw new Error("No se pudieron cargar los recursos");
-      }
-      const data = await res.json();
+      const res = await api.get(API_URL);
+      const data = res.data;
       setRecursos(data);
     } catch (err) {
       console.error("Error cargando recursos:", err);
-      addToast(err.message || "Error al cargar los recursos", "danger");
+      addToast(err.response?.data?.error || err.message || "Error al cargar los recursos", "danger");
     } finally {
       setLoading(false);
     }
@@ -56,17 +54,12 @@ const ListResource = () => {
       confirmText: "Eliminar",
       onConfirm: async () => {
         try {
-          const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-          if (res.ok) {
-            setRecursos(prev => prev.filter(r => r.ResourceId !== id));
-            addToast("Recurso eliminado correctamente", "success");
-          } else {
-            const data = await res.json();
-            addToast(data.error || "No se pudo eliminar el recurso", "danger");
-          }
+          await api.delete(`${API_URL}/${id}`);
+          setRecursos(prev => prev.filter(r => r.ResourceId !== id));
+          addToast("Recurso eliminado correctamente", "success");
         } catch (err) {
           console.error("Error eliminando recurso:", err);
-          addToast(err.message || "Error inesperado", "danger");
+          addToast(err.response?.data?.error || err.message || "Error inesperado", "danger");
         } finally {
           setShowModal(false);
         }
@@ -84,25 +77,15 @@ const ListResource = () => {
 
   const handleSaveEdit = async (updatedResource) => {
     try {
-      const res = await fetch(`${API_URL}/${updatedResource.ResourceId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedResource),
-      });
-
-      if (res.ok) {
-        const saved = await res.json();
-        setRecursos(prev =>
-          prev.map(r => (r.ResourceId === saved.ResourceId ? saved : r))
-        );
-        addToast("Recurso actualizado correctamente", "success");
-      } else {
-        const data = await res.json();
-        addToast(data.error || "Error al actualizar recurso", "danger");
-      }
+      const res = await api.put(`${API_URL}/${updatedResource.ResourceId}`, updatedResource);
+      const saved = res.data;
+      setRecursos(prev =>
+        prev.map(r => (r.ResourceId === saved.ResourceId ? saved : r))
+      );
+      addToast("Recurso actualizado correctamente", "success");
     } catch (err) {
       console.error("Error actualizando recurso:", err);
-      addToast(err.message || "Error inesperado", "danger");
+      addToast(err.response?.data?.error || err.message || "Error inesperado", "danger");
     } finally {
       setShowEditModal(false);
     }

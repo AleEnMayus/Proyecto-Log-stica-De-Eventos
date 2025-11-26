@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 import RequestModal from '../../../components/Modals/RequestModal';
 import '../../CSS/components.css';
@@ -26,14 +27,8 @@ const EventDetailsC = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`http://localhost:4000/api/events/${id}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
+      const response = await api.get(`/events/${id}`);
+      const data = response.data;
 
       // Validar que el evento le pertenece al usuario
       if (currentUser && data.ClientId !== currentUser.id) {
@@ -45,7 +40,7 @@ const EventDetailsC = () => {
       setEventData(data);
     } catch (err) {
       console.error('Error fetching event details:', err);
-      setError(`Error al cargar el evento: ${err.message}`);
+      setError(err.response?.data?.error || `Error al cargar el evento: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -57,13 +52,8 @@ const EventDetailsC = () => {
       if (!eventData?.ClientId) return;
 
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/accounts/${eventData.ClientId}`
-        );
-
-        if (!response.ok) throw new Error("Error al cargar datos del cliente");
-
-        const userData = await response.json();
+        const response = await api.get(`/accounts/${eventData.ClientId}`);
+        const userData = response.data;
         setClientData({
           name: userData.Names || "N/A",
           email: userData.Email || "Sin correo",

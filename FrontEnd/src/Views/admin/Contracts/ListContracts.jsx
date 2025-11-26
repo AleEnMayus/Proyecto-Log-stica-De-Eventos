@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from "../../../utils/axiosConfig";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
@@ -18,16 +19,10 @@ const ContractsList = () => {
   const fetchContratos = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:4000/api/contracts/list');
+      const response = await api.get('/contracts/list');
+      setContratos(response.data);
       
-      if (!response.ok) {
-        throw new Error('Error al cargar los contratos');
-      }
-      
-      const data = await response.json();
-      setContratos(data);
-      
-      if (data.length === 0) {
+      if (response.data.length === 0) {
         addToast('No hay contratos registrados', 'info');
       }
     } catch (error) {
@@ -47,13 +42,11 @@ const ContractsList = () => {
     try {
       addToast('Descargando contrato...', 'info');
       
-      const response = await fetch(`http://localhost:4000/api/contracts/download/${eventId}`);
-      
-      if (!response.ok) {
-        throw new Error("No se pudo descargar el contrato");
-      }
+      const response = await api.get(`/contracts/download/${eventId}`, {
+        responseType: 'blob'
+      });
 
-      const blob = await response.blob();
+      const blob = response.data;
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -74,16 +67,8 @@ const ContractsList = () => {
     if (!window.confirm(`¿Seguro que quieres eliminar el contrato de "${eventName}"?`)) return;
     
     try {
-      const response = await fetch(`http://localhost:4000/api/contracts/delete/${eventId}`, { 
-        method: 'DELETE' 
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error al eliminar el contrato');
-      }
-      
-      const data = await response.json();
-      addToast(data.message || 'Contrato eliminado correctamente', 'success');
+      const response = await api.delete(`/contracts/delete/${eventId}`);
+      addToast(response.data.message || 'Contrato eliminado correctamente', 'success');
       fetchContratos(); // refresca la lista
     } catch (error) {
       console.error("Error al eliminar:", error);
@@ -95,16 +80,8 @@ const ContractsList = () => {
     try {
       addToast('Enviando correo...', 'info');
       
-      const response = await fetch(`http://localhost:4000/api/contracts/send-email/${eventId}`, { 
-        method: 'POST' 
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error al enviar el correo');
-      }
-      
-      const data = await response.json();
-      addToast(`Correo enviado exitosamente a ${data.emailSentTo}`, 'success');
+      const response = await api.post(`/contracts/send-email/${eventId}`);
+      addToast(`Correo enviado exitosamente a ${response.data.emailSentTo}`, 'success');
     } catch (error) {
       console.error("Error al enviar correo:", error);
       addToast('Error al enviar el correo', 'danger');

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../utils/axiosConfig";
 import "../CSS/CalendarAdmin.css";
 import HeaderAdm from "../../components/HeaderSidebar/HeaderAdm";
 import {translateStatus} from "../../utils/FormatText";
@@ -27,10 +28,8 @@ const CalendarAdmin = () => {
       const lastDay = new Date(selectedYear, selectedMonth + 1, 0).getDate();
       const endDate = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${lastDay}`;
 
-      const res = await fetch(`http://localhost:4000/api/calendar/admin?startDate=${startDate}&endDate=${endDate}`);
-      if (!res.ok) throw new Error("Error al obtener calendario");
-
-      const data = await res.json();
+      const response = await api.get(`/calendar/admin?startDate=${startDate}&endDate=${endDate}`);
+      const data = response.data;
 
       const eventosPorFecha = {};
       const citasPorFecha = {};

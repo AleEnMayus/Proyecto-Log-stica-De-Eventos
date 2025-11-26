@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import api from '../../utils/axiosConfig';
 import '../CSS/FormsUser.css';
 import ToastContainer from '../../components/ToastContainer';
 import { useToast } from '../../hooks/useToast';
@@ -57,31 +58,16 @@ const RecoverPassword = () => {
     setCodeTimer(180); // 3 minutos
 
     try {
-      const response = await fetch('http://localhost:4000/api/password/send-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
+      const response = await api.post('/password/send-code', { email });
+      const data = response.data;
 
-      let data;
-      try {
-        data = await response.json();
-      } catch {
-        data = { message: 'Error inesperado del servidor.' };
-      }
-
-      if (response.ok) {
-        addToast(data.message || 'Código enviado', 'success');
-        setErrorMessage('');
-        setCodeTimer(120); // CAMBIO: ahora son 2 minutos (120 segundos)
-      } else {
-        setCodeTimer(0);
-        setErrorMessage(data.message || 'Error al enviar el código');
-        addToast(data.message || 'Error al enviar el código', 'error');
-      }
+      addToast(data.message || 'Código enviado', 'success');
+      setErrorMessage('');
+      setCodeTimer(120); // CAMBIO: ahora son 2 minutos (120 segundos)
     } catch (error) {
-      setErrorMessage('Error al conectar con el servidor');
-      addToast('Error al conectar con el servidor', 'error');
+      setCodeTimer(0);
+      setErrorMessage(error.response?.data?.message || 'Error al enviar el código');
+      addToast(error.response?.data?.message || 'Error al enviar el código', 'error');
     }
   };
 
@@ -109,35 +95,20 @@ const RecoverPassword = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/password/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          code: code.join(''),
-          newPassword,
-        }),
+      const response = await api.post('/password/reset-password', {
+        email,
+        code: code.join(''),
+        newPassword,
       });
 
-      let errorData;
-      if (response.ok) {
-        addToast('Contraseña actualizada exitosamente', 'success');
-        setErrorMessage('');
-        setTimeout(() => {
-          window.location.href = '/login';
-        }, 2000);
-      } else {
-        try {
-          errorData = await response.json();
-        } catch {
-          errorData = { message: 'Error inesperado del servidor' };
-        }
-        setErrorMessage(errorData.message || 'Error al actualizar la contraseña');
-        addToast(errorData.message || 'Error al actualizar la contraseña', 'error');
-      }
+      addToast('Contraseña actualizada exitosamente', 'success');
+      setErrorMessage('');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
     } catch (error) {
-      setErrorMessage('Error al conectar con el servidor');
-      addToast('Error al conectar con el servidor', 'error');
+      setErrorMessage(error.response?.data?.message || 'Error al actualizar la contraseña');
+      addToast(error.response?.data?.message || 'Error al actualizar la contraseña', 'error');
     }
   };
 

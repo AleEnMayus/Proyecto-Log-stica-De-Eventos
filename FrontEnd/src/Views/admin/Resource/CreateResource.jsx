@@ -1,6 +1,7 @@
 // Importaciones de React y hooks
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 
 // Importar el hook y el componente ToastContainer
 import { useToast } from "../../../hooks/useToast"; 
@@ -42,23 +43,15 @@ const CreateResource = () => {
   // Enviar datos a la API
   const handleSubmit = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/resources", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ResourceName: formData.resourceName,
-          Quantity: formData.quantity,
-          StatusDescription: formData.description,
-          Status: formData.status,
-          Price: formData.price || 0
-        })
+      const response = await api.post("/resources", {
+        ResourceName: formData.resourceName,
+        Quantity: formData.quantity,
+        StatusDescription: formData.description,
+        Status: formData.status,
+        Price: formData.price || 0
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Error al crear recurso");
-      }
+      const data = response.data;
 
       console.log("Recurso creado:", data);
 
@@ -72,7 +65,7 @@ const CreateResource = () => {
       console.error("Error creando recurso:", error);
 
       // Notificación de error
-      addToast(error.message || "Ocurrió un error al crear el recurso", "danger");
+      addToast(error.response?.data?.error || error.message || "Ocurrió un error al crear el recurso", "danger");
     }
   };
 

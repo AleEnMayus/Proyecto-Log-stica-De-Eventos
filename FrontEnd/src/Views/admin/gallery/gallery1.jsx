@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../../utils/axiosConfig";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/Gallery.css";
 import "../../CSS/components.css";
@@ -12,29 +13,27 @@ import ToastContainer from "../../../components/ToastContainer";
 
 
 async function getImages(page = 1, limit = 8) {
-  const response = await fetch(`http://localhost:4000/api/gallery/paginated?page=${page}&limit=${limit}`);
-  const data = await response.json();
-  return data;
+  const response = await api.get(`/gallery/paginated?page=${page}&limit=${limit}`);
+  return response.data;
 }
 
 async function uploadImage(file) {
   const formData = new FormData();
   formData.append("file", file);
-  const response = await fetch(`http://localhost:4000/api/gallery`, { method: "POST", body: formData });
-  const data = await response.json();
-  return data;
+  const response = await api.post(`/gallery`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+  return response.data;
 }
 
 async function deleteImage(id) {
-  const response = await fetch(`http://localhost:4000/api/gallery/${id}`, { method: "DELETE" });
-  const data = await response.json();
-  return data;
+  const response = await api.delete(`/gallery/${id}`);
+  return response.data;
 }
 
 async function deleteAllImages(id) {
-  const response = await fetch(`http://localhost:4000/api/gallery`, { method: "DELETE" });
-  const data = await response.json();
-  return data;
+  const response = await api.delete(`/gallery`);
+  return response.data;
 }
 
 
@@ -132,15 +131,7 @@ const ImageGalleryC = () => {
 
   const handleDeleteAllImages = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/gallery', { 
-        method: 'DELETE' 
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error al eliminar las imágenes');
-      }
-      
-      const data = await response.json();
+      const data = await deleteAllImages();
       
       // Limpiar el estado
       setImages([]);

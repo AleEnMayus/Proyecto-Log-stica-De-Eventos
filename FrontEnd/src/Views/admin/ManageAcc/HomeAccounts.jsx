@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../../../utils/axiosConfig";
 import { translateStatus } from "../../../utils/FormatText";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
@@ -9,8 +10,6 @@ import "../../CSS/components.css";
 // Importar el contenedor de toasts y el hook personalizado
 import ToastContainer from "../../../components/ToastContainer";
 import { useToast } from "../../../hooks/useToast";
-
-const API_URL = "http://localhost:4000/api/accounts";
 
 const AdminAccountsList = () => {
   // Estados principales
@@ -37,13 +36,13 @@ const AdminAccountsList = () => {
   const fetchAccounts = async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL);
-      const data = await res.json();
+      const res = await api.get("/accounts");
+      const data = res.data;
       setUsers(data);
       setCurrentPage(1); // Reinicia la paginación al cargar datos
     } catch (err) {
       console.error("Error cargando cuentas:", err);
-          addToast("Error cargando cuentas", "danger");
+      addToast(err.response?.data?.error || err.message || "Error cargando cuentas", "danger");
     } finally {
       setLoading(false);
     }
@@ -60,12 +59,7 @@ const AdminAccountsList = () => {
       confirmText: "Eliminar",
       onConfirm: async () => {
         try {
-          const res = await fetch(`${API_URL}/${userId}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-          });
-
-          if (!res.ok) throw new Error("Error al eliminar cuenta");
+          await api.delete(`/accounts/${userId}`);
 
           // Elimina la cuenta de la lista local
           setUsers((prev) => prev.filter((u) => u.UserId !== userId));
@@ -73,7 +67,7 @@ const AdminAccountsList = () => {
           setShowModal(false);
         } catch (err) {
           console.error("Error eliminando cuenta:", err);
-          addToast("No se pudo eliminar la cuenta", "danger");
+          addToast(err.response?.data?.error || "No se pudo eliminar la cuenta", "danger");
         }
       },
     });
@@ -98,13 +92,9 @@ const AdminAccountsList = () => {
       confirmText: "Confirmar cambio",
       onConfirm: async () => {
         try {
-          const res = await fetch(`${API_URL}/${userId}/status`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ Status: newStatus }),
+          const res = await api.patch(`/accounts/${userId}/status`, {
+            Status: newStatus
           });
-
-          if (!res.ok) throw new Error("Error al cambiar estado");
 
           // Actualiza el estado localmente
           setUsers((prev) =>
@@ -116,7 +106,7 @@ const AdminAccountsList = () => {
           setShowModal(false);
         } catch (err) {
           console.error("Error cambiando estado:", err);
-          addToast("No se pudo cambiar el estado", "danger");
+          addToast(err.response?.data?.error || "No se pudo cambiar el estado", "danger");
         }
       },
     });

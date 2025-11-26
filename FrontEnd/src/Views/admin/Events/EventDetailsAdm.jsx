@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 import { translateStatus } from '../../../utils/FormatText';
 import '../../CSS/components.css';
 import '../../CSS/DetailsEvt.css';
@@ -25,18 +26,11 @@ const EventDetailsA = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`http://localhost:4000/api/events/${id}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
-      setEventData(data);
+      const response = await api.get(`/events/${id}`);
+      setEventData(response.data);
     } catch (err) {
       console.error('Error fetching event details:', err);
-      setError(`Error al cargar el evento: ${err.message}`);
+      setError(`Error al cargar el evento: ${err.response?.data?.error || err.message}`);
       addToast("No se pudo cargar el evento", "danger");
     } finally {
       setLoading(false);
@@ -58,13 +52,11 @@ const EventDetailsA = () => {
       }
 
       try {
-        const response = await fetch(
-          `http://localhost:4000/api/accounts/${eventData.ClientId}`
+        const response = await api.get(
+          `/accounts/${eventData.ClientId}`
         );
 
-        if (!response.ok) throw new Error("Error al cargar datos del cliente");
-
-        const userData = await response.json();
+        const userData = response.data;
         setClientData({
           name: userData.Names || "N/A",
           email: userData.Email || "Sin correo",
@@ -94,13 +86,9 @@ const EventDetailsA = () => {
 
   const handleStatusChangeFromModal = async (id, newStatus) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/events/${id}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ EventStatus: newStatus })
+      const response = await api.patch(`/events/${id}/status`, { 
+        EventStatus: newStatus 
       });
-
-      if (!response.ok) throw new Error(`Error al cambiar estado: ${response.status}`);
 
       // Actualiza inmediatamente el estado en el frontend
       setEventData((prev) => ({

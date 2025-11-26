@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import api from "../../../utils/axiosConfig";
 import "../../CSS/GalleryView.css";
 import "../../CSS/Modals.css";
 import "../../CSS/components.css";
@@ -33,12 +34,10 @@ export default function ImageDetail() {
   // Función para recargar comentarios
   const refreshComments = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/api/gallery/${ImgId}/comments`);
-      if (res.ok) {
-        const data = await res.json();
-        setComments(data);
-        setSelectedComments(data.map((c) => c.CommentId));
-      }
+      const res = await api.get(`/gallery/${ImgId}/comments`);
+      const data = res.data;
+      setComments(data);
+      setSelectedComments(data.map((c) => c.CommentId));
     } catch (err) {
       console.error("Error al recargar comentarios:", err);
     }
@@ -52,11 +51,8 @@ export default function ImageDetail() {
         setLoading(true);
         setError(null);
 
-        const imageRes = await fetch(`http://localhost:4000/api/gallery/${ImgId}`);
-        if (imageRes.status === 404) throw new Error("Imagen no encontrada");
-        if (!imageRes.ok) throw new Error("Error al obtener la imagen");
-
-        const imageData = await imageRes.json();
+        const imageRes = await api.get(`/gallery/${ImgId}`);
+        const imageData = imageRes.data;
         if (mounted) {
           setImage({
             ImgId: imageData.FileId,
@@ -69,7 +65,13 @@ export default function ImageDetail() {
         await refreshComments();
       } catch (err) {
         console.error(err);
-        if (mounted) setError(err.message);
+        if (mounted) {
+          if (err.response?.status === 404) {
+            setError("Imagen no encontrada");
+          } else {
+            setError(err.message || "Error al obtener la imagen");
+          }
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -97,11 +99,9 @@ export default function ImageDetail() {
   // Cargar comentarios públicos cuando se abre el modal
   const openCommentModal = async () => {
     try {
-      const res = await fetch("http://localhost:4000/api/gallery/comments/pending");
-      if (res.ok) {
-        const data = await res.json();
-        setPublicComments(data);
-      }
+      const res = await api.get("/gallery/comments/pending");
+      const data = res.data;
+      setPublicComments(data);
     } catch (err) {
       console.error("Error al cargar comentarios públicos:", err);
     }
@@ -122,13 +122,8 @@ export default function ImageDetail() {
 
   const handleDeleteImage = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/gallery/${ImgId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) throw new Error("Error al eliminar la imagen");
-
-      const data = await response.json();
+      const response = await api.delete(`/gallery/${ImgId}`);
+      const data = response.data;
 
       addToast("Imagen eliminada correctamente", "success");
       // Redirigir según respuesta del backend
@@ -141,69 +136,51 @@ export default function ImageDetail() {
       }
     } catch (error) {
       console.error("Error deleting image:", error);
-      ("Error al eliminar la imagen");
+      addToast(error.response?.data?.error || "Error al eliminar la imagen", "danger");
     }
   };
 
   // Aceptar comentario
   const handleApproveComment = async (commentId) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/gallery/accept/${commentId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await api.put(`/gallery/accept/${commentId}`);
 
-      if (res.ok) {
-        // Actualizar lista de comentarios públicos pendientes
-        setPublicComments(prev => prev.filter(c => c.CommentId !== commentId));
+      // Actualizar lista de comentarios públicos pendientes
+      setPublicComments(prev => prev.filter(c => c.CommentId !== commentId));
 
-        // Si ya no hay comentarios en la página actual, ir a la anterior
-        if (currentModalComments.length === 1 && currentModalPage > 1) {
-          setCurrentModalPage(prev => prev - 1);
-        }
-
-        // Recargar comentarios de la imagen actual
-        await refreshComments();
-        addToast("Comentario aceptado correctamente", "success");
-      } else {
-        const error = await res.json();
-        console.error("Error al aceptar comentario:", error);
-        addToast("Error al aceptar el comentario", "danger");
+      // Si ya no hay comentarios en la página actual, ir a la anterior
+      if (currentModalComments.length === 1 && currentModalPage > 1) {
+        setCurrentModalPage(prev => prev - 1);
       }
+
+      // Recargar comentarios de la imagen actual
+      await refreshComments();
+      addToast("Comentario aceptado correctamente", "success");
     } catch (err) {
       console.error("Error al aceptar comentario:", err);
-      addToast("Error al aceptar el comentario", "danger");
+      addToast(err.response?.data?.error || "Error al aceptar el comentario", "danger");
     }
   };
 
   // Rechazar comentario
   const handleRejectComment = async (commentId) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/gallery/remove/${commentId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-      });
+      const res = await api.put(`/gallery/remove/${commentId}`);
 
-      if (res.ok) {
-        // Actualizar lista de comentarios públicos pendientes
-        setPublicComments(prev => prev.filter(c => c.CommentId !== commentId));
+      // Actualizar lista de comentarios públicos pendientes
+      setPublicComments(prev => prev.filter(c => c.CommentId !== commentId));
 
-        // Si ya no hay comentarios en la página actual, ir a la anterior
-        if (currentModalComments.length === 1 && currentModalPage > 1) {
-          setCurrentModalPage(prev => prev - 1);
-        }
-
-        // Recargar comentarios de la imagen actual
-        await refreshComments();
-        addToast("Comentario rechazado correctamente", "success");
-      } else {
-        const error = await res.json();
-        console.error("Error al rechazar comentario:", error);
-        addToast("Error al rechazar comentario", "danger");
+      // Si ya no hay comentarios en la página actual, ir a la anterior
+      if (currentModalComments.length === 1 && currentModalPage > 1) {
+        setCurrentModalPage(prev => prev - 1);
       }
+
+      // Recargar comentarios de la imagen actual
+      await refreshComments();
+      addToast("Comentario rechazado correctamente", "success");
     } catch (err) {
       console.error("Error al rechazar comentario:", err);
-      addToast("Error de conexión al rechazar el comentario", "danger");
+      addToast(err.response?.data?.error || "Error de conexión al rechazar el comentario", "danger");
     }
   };
 

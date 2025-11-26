@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 import { translateStatus } from '../../../utils/FormatText';
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 import '../../CSS/Lists.css';
@@ -50,15 +51,13 @@ const ListEventsC = () => {
   // ID del usuario actual 
   const user = JSON.parse(localStorage.getItem('user'));
   const userId = user?.id;
-  const baseURL = "http://localhost:4000";
 
   // Cargar eventos desde el backend
   useEffect(() => {
     const fetchEventos = async () => {
       try {
-        const res = await fetch(`${baseURL}/api/events/user/${userId}`);
-        if (!res.ok) throw new Error("Error al cargar eventos");
-        const data = await res.json();
+        const res = await api.get(`/events/user/${userId}`);
+        const data = res.data;
         setEventos(data);
       } catch (error) {
         console.error(error);

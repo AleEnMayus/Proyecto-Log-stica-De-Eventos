@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../../utils/axiosConfig";
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 import { useNavigate } from "react-router-dom";
 import "../../CSS/Gallery.css";
@@ -8,9 +9,8 @@ import "../../CSS/components.css";
 // Función fetch: obtener imágenes paginadas
 // ================================
 async function getPaginatedImages(page = 1, limit = 8) {
-  const response = await fetch(`http://localhost:4000/api/gallery/paginated?page=${page}&limit=${limit}`);
-  const data = await response.json();
-  return data;
+  const response = await api.get(`/gallery/paginated?page=${page}&limit=${limit}`);
+  return response.data;
 }
 
 // ================================

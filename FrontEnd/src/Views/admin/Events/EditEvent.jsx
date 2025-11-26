@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import api from "../../../utils/axiosConfig";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
@@ -32,14 +33,8 @@ const EditEvent = () => {
   const fetchEventData = async (id) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:4000/api/events/${id}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) throw new Error("Error al cargar el evento");
-
-      const data = await response.json();
+      const response = await api.get(`/events/${id}`);
+      const data = response.data;
       
       // Formatear la fecha para datetime-local
       if (data.EventDateTime) {
@@ -49,7 +44,7 @@ const EditEvent = () => {
       
       setFormData(data);
     } catch (err) {
-      addToast(err.message || "Error cargando evento", "danger");
+      addToast(err.response?.data?.error || err.message || "Error cargando evento", "danger");
     } finally {
       setLoading(false);
     }
@@ -71,26 +66,16 @@ const EditEvent = () => {
   // Guardar cambios
   const handleSubmit = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:4000/api/events/${eventId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
+      const response = await api.put(
+        `/events/${eventId}`,
+        formData
       );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || `Error ${response.status}`);
-      }
-
-      addToast(data.message || "Evento actualizado", "success");
+      addToast(response.data.message || "Evento actualizado", "success");
       setTimeout(() => navigate(`/EventsHomeAdmin/Details/${eventId}`), 2000);
     } catch (error) {
       console.error("Error actualizando evento:", error);
-      addToast(error.message || "Error al actualizar el evento", "danger");
+      addToast(error.response?.data?.error || error.message || "Error al actualizar el evento", "danger");
     }
   };
 

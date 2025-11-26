@@ -1,4 +1,5 @@
 import React, { useMemo, useState, useEffect } from "react";
+import api from "../../../utils/axiosConfig";
 import { eraseUnderscore } from "../../../utils/FormatText";
 import "../../CSS/components.css";
 import "../../CSS/Lists.css";
@@ -14,9 +15,8 @@ const EditAssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
   // Cargar recursos
   const fetchRecursos = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/resources");
-      if (!response.ok) throw new Error("Error al cargar recursos");
-      const data = await response.json();
+      const response = await api.get("/resources");
+      const data = response.data;
 
       // Inicializar seleccion con preselected
       const preMap = new Map();

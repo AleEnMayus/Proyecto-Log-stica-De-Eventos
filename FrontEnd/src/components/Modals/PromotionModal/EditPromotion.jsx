@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from "../../../utils/axiosConfig";
 import ConfirmModal from "../../Modals/ModalConfirm"; 
 import '../../../Views/CSS/Modals.css';
 import '../../../Views/CSS/components.css';
@@ -18,21 +19,13 @@ const PromotionModal = ({ promo, onClose, refreshPromos }) => {
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const updatePromo = async () => {
-    await fetch("http://localhost:4000/api/promotions", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-
+    await api.put("/promotions", form);
     refreshPromos();
     onClose();
   };
 
   const deletePromo = async () => {
-    await fetch(`http://localhost:4000/api/promotions/${form.PromotionId}`, {
-      method: "DELETE",
-    });
-
+    await api.delete(`/promotions/${form.PromotionId}`);
     refreshPromos();
     onClose();
   };

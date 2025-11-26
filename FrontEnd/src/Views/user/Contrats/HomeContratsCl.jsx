@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../../utils/axiosConfig';
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
@@ -20,13 +21,8 @@ const ContractsClient = () => {
   const fetchContratos = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:4000/api/contracts/by-client/${clientId}`);
-      
-      if (!response.ok) {
-        throw new Error('Error al cargar los eventos');
-      }
-      
-      const data = await response.json();
+      const response = await api.get(`/contracts/by-client/${clientId}`);
+      const data = response.data;
       setContratos(data);
       
       if (data.length === 0) {
@@ -34,7 +30,7 @@ const ContractsClient = () => {
       }
     } catch (error) {
       console.error("Error al cargar eventos:", error);
-      addToast('Error al cargar los eventos', 'danger');
+      addToast(error.response?.data?.error || 'Error al cargar los eventos', 'danger');
     } finally {
       setLoading(false);
     }
@@ -94,17 +90,11 @@ const ContractsClient = () => {
 
       addToast(tieneContrato ? 'Reemplazando contrato...' : 'Subiendo contrato...', 'info');
 
-      const response = await fetch('http://localhost:4000/api/contracts/upload', {
-        method: 'POST',
-        body: formData,
+      const response = await api.post('/contracts/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Error al subir el contrato');
-      }
-
-      const data = await response.json();
+      const data = response.data;
       addToast(data.message || 'Contrato procesado exitosamente', 'success');
       
       // Limpiar formulario
@@ -116,7 +106,7 @@ const ContractsClient = () => {
       fetchContratos();
     } catch (error) {
       console.error("Error al enviar contrato:", error);
-      addToast(error.message || 'Error al procesar el contrato', 'danger');
+      addToast(error.response?.data?.error || error.message || 'Error al procesar el contrato', 'danger');
     }
   };
 
@@ -136,15 +126,8 @@ const ContractsClient = () => {
     if (!window.confirm(`¿Seguro que quieres eliminar el contrato N° ${eventoSeleccionado.ContractNumber}?`)) return;
 
     try {
-      const response = await fetch(`http://localhost:4000/api/contracts/delete/${uploadContractId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al eliminar el contrato');
-      }
-
-      const data = await response.json();
+      const response = await api.delete(`/contracts/delete/${uploadContractId}`);
+      const data = response.data;
       addToast(data.message || 'Contrato eliminado correctamente', 'success');
       
       // Limpiar formulario
@@ -170,13 +153,11 @@ const ContractsClient = () => {
     try {
       addToast('Descargando contrato...', 'info');
 
-      const response = await fetch(`http://localhost:4000/api/contracts/download/${selectedContractId}`);
+      const response = await api.get(`/contracts/download/${selectedContractId}`, {
+        responseType: 'blob'
+      });
       
-      if (!response.ok) {
-        throw new Error('No se pudo descargar el contrato');
-      }
-
-      const blob = await response.blob();
+      const blob = response.data;
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;

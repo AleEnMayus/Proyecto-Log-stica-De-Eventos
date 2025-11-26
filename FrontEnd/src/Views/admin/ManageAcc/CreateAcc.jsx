@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 import '../../CSS/FormsUser.css';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 
@@ -79,27 +80,17 @@ const CreateAccountForm = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:4000/api/accounts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          Names: formData.firstName,
-          Role: formData.role, // Corregido
-          DocumentType: formData.documentType,
-          DocumentNumber: formData.documentNumber,
-          BirthDate: formData.birthDate,
-          Email: formData.email,
-          Password: formData.password
-        })
+      const response = await api.post('/accounts', {
+        Names: formData.firstName,
+        Role: formData.role,
+        DocumentType: formData.documentType,
+        DocumentNumber: formData.documentNumber,
+        BirthDate: formData.birthDate,
+        Email: formData.email,
+        Password: formData.password
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        addToast(data.error || data.message || 'Error al crear la cuenta.', 'danger');
-        return;
-      }
-
+      const data = response.data;
       addToast('Cuenta creada exitosamente!', 'success');
 
       setTimeout(() => {
@@ -108,7 +99,7 @@ const CreateAccountForm = () => {
 
     } catch (error) {
       console.error('Error en la petición:', error);
-      addToast('Error en el servidor, intenta más tarde.', 'danger');
+      addToast(error.response?.data?.error || error.response?.data?.message || 'Error en el servidor, intenta más tarde.', 'danger');
     }
   };
 

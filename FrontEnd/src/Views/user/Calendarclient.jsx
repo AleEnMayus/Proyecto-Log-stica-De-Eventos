@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../utils/axiosConfig";
 import "../CSS/CalendarAdmin.css";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import {translateRequestType} from "../../utils/FormatText";
@@ -37,13 +38,11 @@ const CalendarClient = () => {
       const endDate = `${selectedYear}-${String(selectedMonth + 1).padStart(2, "0")}-${lastDay}`;
 
       // Obtener todos los datos (eventos y citas)
-      const res = await fetch(
-        `http://localhost:4000/api/calendar/user/${userId}?startDate=${startDate}&endDate=${endDate}`
+      const res = await api.get(
+        `/calendar/user/${userId}?startDate=${startDate}&endDate=${endDate}`
       );
 
-      if (!res.ok) throw new Error("Error al obtener calendario");
-
-      const data = await res.json();
+      const data = res.data;
 
       // Separar eventos y citas
       const eventosPorFecha = {};

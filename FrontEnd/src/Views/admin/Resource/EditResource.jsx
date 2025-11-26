@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../../utils/axiosConfig";
 import "../../CSS/components.css";
 import "../../CSS/Lists.css";
 import "../../CSS/Modals.css";
@@ -36,14 +37,8 @@ const EditResource = ({ resource, onSave, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:4000/api/resources/${formData.ResourceId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error("Error al actualizar el recurso");
-      const data = await res.json();
+      const res = await api.put(`/resources/${formData.ResourceId}`, formData);
+      const data = res.data;
       onSave(data); // Notifica al padre
     } catch (err) {
       console.error("Error actualizando recurso:", err);

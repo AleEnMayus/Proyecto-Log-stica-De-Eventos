@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import api from "../../utils/axiosConfig";
 import HeaderCl from "../../components/HeaderSidebar/HeaderCl";
 import "../CSS/FormsUser.css";
 import { useToast } from "../../hooks/useToast";
@@ -29,9 +30,8 @@ const ClientSurvey = () => {
   const fetchQuestions = async () => {
     try {
       setLoadingQuestions(true);
-      const res = await fetch("http://localhost:4000/api/questions");
-      if (!res.ok) throw new Error(`Error HTTP: ${res.status}`);
-      const data = await res.json();
+      const res = await api.get("/questions");
+      const data = res.data;
 
       let questionsToUse = [];
       if (data && Array.isArray(data) && data.length > 0) {
@@ -113,15 +113,13 @@ const ClientSurvey = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:4000/api/survey", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ EventId: eventId, UserId: userId, Answers: answers }),
+      const res = await api.post("/survey", {
+        EventId: eventId,
+        UserId: userId,
+        Answers: answers
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Error al enviar la encuesta");
-
+      const data = res.data;
       addToast("¡Encuesta enviada con éxito!", "success");
 
       const resetAnswers = {};
@@ -130,7 +128,7 @@ const ClientSurvey = () => {
       setHover({});
     } catch (err) {
       console.error("Error al enviar encuesta:", err);
-      addToast(err.message || "Error inesperado al enviar la encuesta", "danger");
+      addToast(err.response?.data?.error || err.message || "Error inesperado al enviar la encuesta", "danger");
     } finally {
       setLoading(false);
     }

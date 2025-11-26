@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../../utils/axiosConfig";
 import "../../CSS/GalleryView.css";
 import "../../CSS/components.css";
 import HeaderCl from "../../../components/HeaderSidebar/HeaderCl";
@@ -12,13 +13,13 @@ import ToastContainer from "../../../components/ToastContainer";
 // Funciones Fetch del cliente
 // ================================
 async function getImageById(id) {
-  const response = await fetch(`http://localhost:4000/api/gallery/${id}`);
-  return await response.json();
+  const response = await api.get(`/gallery/${id}`);
+  return response.data;
 }
 
 async function getComments(imageId) {
-  const response = await fetch(`http://localhost:4000/api/gallery/${imageId}/comments`);
-  return await response.json();
+  const response = await api.get(`/gallery/${imageId}/comments`);
+  return response.data;
 }
 
 async function addCommentToImage(imageId, text) {
@@ -26,13 +27,12 @@ async function addCommentToImage(imageId, text) {
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userId = storedUser?.id
 
-  const response = await fetch(`http://localhost:4000/api/gallery/${imageId}/comments`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ text, userId }),
+  const response = await api.post(`/gallery/${imageId}/comments`, {
+    UserId: userId,
+    CommentText: text
   });
 
-  return await response.json();
+  return response.data;
 }
 
 

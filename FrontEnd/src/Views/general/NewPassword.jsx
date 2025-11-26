@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../../utils/axiosConfig';
 import "../CSS/FormsUser.css";
 
 const UpdatePassword = () => {
@@ -66,34 +67,25 @@ const UpdatePassword = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/api/password/${userId}/change-password`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword
-        }),
+      const response = await api.put(`/password/${userId}/change-password`, {
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword
       });
 
-      const data = await response.json();
+      const data = response.data;
+      setSuccess('Contraseña actualizada exitosamente');
+      setFormData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
 
-      if (response.ok) {
-        setSuccess('Contraseña actualizada exitosamente');
-        setFormData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        });
-
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
-      } else {
-        setError(data.error || 'No se pudo actualizar la contraseña');
-      }
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (err) {
       console.error(err);
-      setError('Error de conexión con el servidor');
+      setError(err.response?.data?.error || 'Error de conexión con el servidor');
     } finally {
       setIsLoading(false);
     }

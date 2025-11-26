@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../../utils/axiosConfig';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
 import '../../CSS/Lists.css';
 import '../../CSS/components.css';
 
-const API_URL = "http://localhost:4000/api/survey";
 const QUESTIONS_PER_PAGE = 5;
 
 const ResultsSurvey = () => {
@@ -22,9 +22,8 @@ const ResultsSurvey = () => {
   const fetchResults = async () => {
     try {
       setLoading(true);
-      const res = await fetch(API_URL, { mode: 'cors' });
-      if (!res.ok) throw new Error("No se pudieron cargar los resultados");
-      const data = await res.json();
+      const response = await api.get("/survey");
+      const data = response.data;
 
       // Mapeamos para asegurarnos de que siempre haya texto y nombre de usuario
       const organized = data.map(item => ({
@@ -45,7 +44,7 @@ const ResultsSurvey = () => {
       setResults(organized);
     } catch (err) {
       console.error(err);
-      addToast(err.message || "Error al cargar resultados", "danger");
+      addToast(err.response?.data?.error || err.message || "Error al cargar resultados", "danger");
     } finally {
       setLoading(false);
     }

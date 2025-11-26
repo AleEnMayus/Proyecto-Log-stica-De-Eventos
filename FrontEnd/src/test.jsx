@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import api from "./utils/axiosConfig";
 import HeaderCl from "./components/HeaderSidebar/HeaderCl";
 import { useToast } from "./hooks/useToast";
 import ToastContainer from "./components/ToastContainer";
@@ -14,14 +15,6 @@ const MONTHS = [
 const WEEK_DAYS = ["LUN", "MAR", "MIÉ", "JUE", "VIE", "SÁB", "DOM"];
 
 const YEAR_RANGE = { start: 2020, end: 2030 };
-
-const API_CONFIG = {
-  baseURL: "http://localhost:4000",
-  endpoints: {
-    requests: "/api/requests",
-    events: "/api/events"
-  }
-};
 
 const STATUS_COLORS = {
   completed: '#28a745',
@@ -75,18 +68,13 @@ const TestC = () => {
       const user = JSON.parse(userString);
       const userId = user.id;
 
-      const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.requests}`, {
+      const response = await api.get("/requests", {
         headers: {
-          "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
       });
 
-      if (!response.ok) {
-        throw new Error("Error al obtener solicitudes");
-      }
-
-      const data = await response.json();
+      const data = response.data;
       const citasAprobadas = filterApprovedAppointments(data, userId);
       const eventosPorFecha = groupAppointmentsByDate(citasAprobadas);
 

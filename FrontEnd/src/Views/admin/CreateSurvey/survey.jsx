@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import api from "../../../utils/axiosConfig";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/Lists.css";
 
@@ -17,10 +18,8 @@ const Survey = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch("http://localhost:4000/api/questions");
-        if (!res.ok) throw new Error("Error al obtener preguntas");
-        const data = await res.json();
-        setQuestions(data);
+        const response = await api.get("/questions");
+        setQuestions(response.data);
       } catch (err) {
         console.error("Error cargando preguntas:", err);
       }

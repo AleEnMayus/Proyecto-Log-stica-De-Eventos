@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Importar el hook y componente de notificaciones
+// Importar axios y el hook de notificaciones
+import api from "../../../utils/axiosConfig";
 import { useToast } from "../../../hooks/useToast";
 import ToastContainer from "../../../components/ToastContainer";
 
@@ -55,17 +56,8 @@ const CreateSurvay = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:4000/api/questions/bulk", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ questions }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Error al guardar encuesta");
-      }
+      const response = await api.post("/questions/bulk", { questions });
+      const data = response.data;
 
       console.log("Encuesta creada:", data);
 
@@ -79,7 +71,7 @@ const CreateSurvay = () => {
 
     } catch (err) {
       console.error("Error creando encuesta:", err);
-      addToast(err.message || "Ocurrió un error al crear la encuesta", "danger");
+      addToast(err.response?.data?.error || err.message || "Ocurrió un error al crear la encuesta", "danger");
     }
   };
 

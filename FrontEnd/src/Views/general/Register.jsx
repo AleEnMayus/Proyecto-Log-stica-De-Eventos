@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../utils/axiosConfig';
 import '../CSS/FormsUser.css';
 import { useToast } from '../../hooks/useToast';
 import ToastContainer from '../../components/ToastContainer';
@@ -97,34 +98,26 @@ const RegisterPage = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:4000/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formattedData)
+      const response = await api.post('/register', formattedData);
+      const data = response.data;
+
+      addToast('Registro exitoso. Ahora puedes iniciar sesión.', 'success');
+
+      setFormData({
+        fullName: '',
+        birthDate: '',
+        identificationType: '',
+        documentNumber: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
       });
 
-      if (response.ok) {
-        addToast('Registro exitoso. Ahora puedes iniciar sesión.', 'success');
-
-        setFormData({
-          fullName: '',
-          birthDate: '',
-          identificationType: '',
-          documentNumber: '',
-          email: '',
-          password: '',
-          confirmPassword: ''
-        });
-
-        setTimeout(() => {
-          navigate('/login');
-        }, 1500);
-      } else {
-        const errorData = await response.json();
-        addToast(errorData.message || 'Error en el registro', 'danger');
-      }
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
     } catch (error) {
-      addToast('Error al conectar con el servidor', 'danger');
+      addToast(error.response?.data?.message || 'Error en el registro', 'danger');
     }
   };
 

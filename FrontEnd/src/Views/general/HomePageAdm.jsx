@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import api from '../../utils/axiosConfig';
 import '../CSS/components.css';
 import '../CSS/Home.css';
 import '../../Views/CSS/HeaderSB.css';
@@ -42,8 +43,8 @@ const HomeAdmin = ({ user, onLogout }) => {
   const loadGallery = async () => {
     try {
       setLoadingGallery(true);
-      const response = await fetch("http://localhost:4000/api/gallery/1");
-      const data = await response.json();
+      const response = await api.get("/gallery/1");
+      const data = response.data;
 
       if (data && data.navigation) {
         const totalImages = data.navigation.totalImages;
@@ -52,8 +53,8 @@ const HomeAdmin = ({ user, onLogout }) => {
         const imagePromises = [];
         for (let i = 1; i <= imagesToLoad; i++) {
           imagePromises.push(
-            fetch(`http://localhost:4000/api/gallery/${i}`)
-              .then(res => res.json())
+            api.get(`/gallery/${i}`)
+              .then(res => res.data)
               .catch(err => null)
           );
         }
@@ -72,9 +73,8 @@ const HomeAdmin = ({ user, onLogout }) => {
 
   // Cargar promociones
   const loadPromotions = () => {
-    fetch("http://localhost:4000/api/promotions")
-      .then(res => res.json())
-      .then(data => setPromociones(data))
+    api.get("/promotions")
+      .then(res => setPromociones(res.data))
       .catch(err => console.error("Error cargando promociones:", err));
   };
 

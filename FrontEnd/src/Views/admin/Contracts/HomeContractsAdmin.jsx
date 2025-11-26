@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from "../../../utils/axiosConfig";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/components.css";
 import { useParams, useNavigate } from "react-router-dom";
@@ -17,14 +18,16 @@ const ContractsAdmin = () => {
       setLoading(true);
 
       // Paso 1: verificar contrato existente
-      const verifyResponse = await fetch(`http://localhost:4000/api/contracts/by-event/${eventId}`);
-      if (verifyResponse.ok) {
-        const existing = await verifyResponse.json();
+      try {
+        const verifyResponse = await api.get(`/contracts/by-event/${eventId}`);
+        const existing = verifyResponse.data;
         if (existing.ContractRoute) {
           alert("Este evento ya tiene un contrato asignado. No puedes reemplazarlo.");
           setLoading(false);
           return;
         }
+      } catch (err) {
+        // Si no existe es OK, continuamos
       }
 
       // Paso 2: subir contrato
@@ -32,21 +35,16 @@ const ContractsAdmin = () => {
       formData.append("pdf", contrato);
       formData.append("eventId", eventId);
 
-      const response = await fetch("http://localhost:4000/api/contracts/upload", {
-        method: "POST",
-        body: formData,
+      const response = await api.post("/contracts/upload", formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Error al subir el contrato");
-
-      alert(`Contrato enviado correctamente a ${data.data.emailSentTo}\nCódigo: ${data.data.contractNumber}`);
+      alert(`Contrato enviado correctamente a ${response.data.data.emailSentTo}\nCódigo: ${response.data.data.contractNumber}`);
       setContrato(null);
 
     } catch (error) {
       console.error("Error subiendo contrato:", error);
-      alert(error.message || "Ocurrió un error al subir el contrato");
+      alert(error.response?.data?.error || error.message || "Ocurrió un error al subir el contrato");
     } finally {
       setLoading(false);
     }

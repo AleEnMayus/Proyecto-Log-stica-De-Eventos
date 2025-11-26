@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from "../../../utils/axiosConfig";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import AssignResourcesModal from "../Resource/AllocateResources";
 
@@ -59,25 +60,12 @@ const CreateEvent = () => {
         CreationDate: new Date().toISOString().slice(0, 19).replace("T", " ")
       };
 
-      const response = await fetch("http://localhost:4000/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
+      const response = await api.post("/events", payload);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || `Error ${response.status}`);
-      }
-
-      console.log("Respuesta backend:", data);
+      console.log("Respuesta backend:", response.data);
 
       // Notificación de éxito
-      
-      addToast(data.message || "Evento creado", "success");
+      addToast(response.data.message || "Evento creado", "success");
 
       setTimeout(() => {
         navigate("/EventsHomeAdmin");
@@ -86,7 +74,7 @@ const CreateEvent = () => {
       console.error("Error enviando evento:", error);
 
       // Notificación de error
-      addToast(error.message || "Error inesperado ", "danger");
+      addToast(error.response?.data?.error || error.message || "Error inesperado ", "danger");
     }
   };
 

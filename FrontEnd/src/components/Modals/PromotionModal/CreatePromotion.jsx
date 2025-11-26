@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from "../../../utils/axiosConfig";
 import '../../../Views/CSS/Modals.css';
 import '../../../Views/CSS/components.css';
 
@@ -20,14 +21,7 @@ const ModalPromotionCreate = ({ onClose, refreshPromos }) => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:4000/api/promotions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error("Error al crear promoción");
-
+      await api.post("/promotions", formData);
       refreshPromos();
       onClose();
     } catch (err) {

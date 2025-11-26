@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import api from "../../../utils/axiosConfig";
 import HeaderAdm from "../../../components/HeaderSidebar/HeaderAdm";
 import "../../CSS/FormsUser.css";
 
@@ -41,9 +42,8 @@ const EditAccountPage = () => {
   useEffect(() => {
     const fetchAccount = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/api/accounts/${userId}`);
-        if (!response.ok) throw new Error("Error al obtener la cuenta");
-        const data = await response.json();
+        const response = await api.get(`/accounts/${userId}`);
+        const data = response.data;
 
         setFormData({
           firstName: data.Names || "",
@@ -81,14 +81,7 @@ const EditAccountPage = () => {
           Password: formData.password || undefined,
         };
 
-        const response = await fetch(`http://localhost:4000/api/accounts/${userId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) throw new Error("Error al actualizar la cuenta");
-
+        const response = await api.put(`/accounts/${userId}`, payload);
         addToast("Cuenta actualizada correctamente", "success");
 
         setTimeout(() => {
@@ -96,7 +89,7 @@ const EditAccountPage = () => {
         }, 1000);
       } catch (error) {
         console.error(error);
-        addToast("Error al actualizar la cuenta", "error");
+        addToast(error.response?.data?.error || "Error al actualizar la cuenta", "error");
       }
     }
   };

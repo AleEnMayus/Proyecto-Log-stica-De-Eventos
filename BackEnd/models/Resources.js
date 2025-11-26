@@ -10,7 +10,6 @@ async function addResource(ResourceName, Quantity, StatusDescription, Status, Pr
 
 async function getAllResources() {
   const result = await db.execute('SELECT * FROM Resources ORDER BY ResourceId DESC');
-  console.log('Resultado de db.execute:', result);
   return result[0]; // si es un array, esto debería funcionar
 }
 

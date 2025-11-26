@@ -110,38 +110,6 @@ const ContractsClient = () => {
     }
   };
 
-  // === ELIMINAR CONTRATO ===
-  const handleEliminarContrato = async () => {
-    if (!uploadContractId) {
-      addToast('Por favor, selecciona un evento', 'warning');
-      return;
-    }
-
-    const eventoSeleccionado = contratos.find(c => c.EventId === parseInt(uploadContractId));
-    if (!eventoSeleccionado?.ContractRoute) {
-      addToast('Este evento no tiene contrato para eliminar', 'warning');
-      return;
-    }
-
-    if (!window.confirm(`¿Seguro que quieres eliminar el contrato N° ${eventoSeleccionado.ContractNumber}?`)) return;
-
-    try {
-      const response = await api.delete(`/contracts/delete/${uploadContractId}`);
-      const data = response.data;
-      addToast(data.message || 'Contrato eliminado correctamente', 'success');
-      
-      // Limpiar formulario
-      setPdfFile(null);
-      setUploadContractId('');
-      document.getElementById('fileInput').value = '';
-      
-      // Recargar contratos
-      fetchContratos();
-    } catch (error) {
-      console.error("Error al eliminar contrato:", error);
-      addToast('Error al eliminar el contrato', 'danger');
-    }
-  };
 
   // === DESCARGAR CONTRATO ===
   const handleDescargar = async () => {

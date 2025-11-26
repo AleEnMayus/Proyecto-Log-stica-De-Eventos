@@ -39,7 +39,7 @@ const ContractsList = () => {
 
   // FUNCIONES DE ACCIÓN 
   const handleDownload = async (eventId, eventName) => {
-    try {
+    try { 
       addToast('Descargando contrato...', 'info');
       
       const response = await api.get(`/contracts/download/${eventId}`, {

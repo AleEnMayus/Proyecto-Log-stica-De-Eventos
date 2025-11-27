@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer');
+const path = require('path');
 const eventCompletedTemplate = require('./templates/eventCompleted');
 const passwordResetTemplate = require('./templates/resetPassword');
+const sendContractTemplate = require('./templates/sendContract');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -13,7 +15,7 @@ const transporter = nodemailer.createTransport({
 // Enviar email al completar un evento
 const sendEventCompletedEmail = async (event, user) => {
   const surveyLink = `http://localhost:5173/Survey/${event.EventId}`;
-  
+
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: user.Email,
@@ -23,7 +25,6 @@ const sendEventCompletedEmail = async (event, user) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Email enviado a ${user.Email}`);
     return true;
   } catch (error) {
     console.error('Error al enviar email:', error);
@@ -42,7 +43,6 @@ const sendPasswordResetEmail = async (email, code) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`Email de recuperación enviado a ${email}`);
     return true;
   } catch (error) {
     console.error('Error al enviar email:', error);
@@ -50,7 +50,31 @@ const sendPasswordResetEmail = async (email, code) => {
   }
 };
 
-module.exports = { 
+const sendContractEmail = async (eventData, contractPath, accion, contractNumber) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: eventData.Email,
+    subject: `Contrato ${accion} para el evento "${eventData.EventName}"`,
+    html: sendContractTemplate(eventData, accion, contractNumber),
+    attachments: [
+      {
+        filename: `Contrato_${eventData.EventName}.pdf`,
+        path: contractPath
+      }
+    ]
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error('Error al enviar email de contrato:', error);
+    return false;
+  }
+};
+
+module.exports = {
   sendEventCompletedEmail,
-  sendPasswordResetEmail 
+  sendPasswordResetEmail,
+  sendContractEmail
 };

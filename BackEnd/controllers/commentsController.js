@@ -41,7 +41,19 @@ exports.getPublicComments = async (req, res) => {
 exports.addCommentToImage = async (req, res) => {
   try {
     const { id } = req.params;
-    const { text, userId } = req.body;
+    // Aceptar tanto { text, userId } como { CommentText, UserId }
+    const CommentText = req.body.CommentText || req.body.text;
+    const UserId = req.body.UserId || req.body.userId;
+
+    // Validar que el comentario no esté vacío
+    if (!CommentText || !CommentText.trim()) {
+      return res.status(400).json({ error: "El comentario no puede estar vacío" });
+    }
+
+    // Validar que el UserId no sea nulo
+    if (!UserId) {
+      return res.status(400).json({ error: "Usuario no autenticado" });
+    }
 
     const [images] = await db.query(
       "SELECT FileId FROM MultimediaFile WHERE FileId = ?",
@@ -55,7 +67,7 @@ exports.addCommentToImage = async (req, res) => {
     await db.query(
       `INSERT INTO Comments (CommentText, MultimediaFileId, UserId, PublicationDate)
        VALUES (?, ?, ?, NOW())`,
-      [text, id, userId]
+      [CommentText.trim(), id, UserId]
     );
 
     res.json({ message: "Comentario agregado correctamente" });

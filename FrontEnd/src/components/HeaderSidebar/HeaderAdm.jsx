@@ -15,7 +15,8 @@ const HeaderCl = () => {
   });
 
   useEffect(() => {
-    const storedUser = sessionStorage.getItem('user');
+    // Prefer localStorage (persisted) but fall back to sessionStorage
+    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
     if (storedUser) setUserData(JSON.parse(storedUser));
 
     const handleStorageChange = (event) => {
@@ -40,27 +41,59 @@ const HeaderCl = () => {
   const openPerfil = () => setOpenComponent("perfil");
 
   const fetchProfilePhoto = async () => {
-        try {
-          const storedUser = sessionStorage.getItem("user");
-          if (!storedUser) throw new Error("No se encontró información del usuario.");
+    try {
+      // Buscar usuario en localStorage o sessionStorage
+      const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+      if (!storedUser) {
+        // No hay usuario: no es un error crítico, simplemente no mostramos foto
+        setPhotoUrl(null);
+        setLoading(false);
+        return;
+      }
 
-          const parsedUser = JSON.parse(storedUser);
-          const userId = parsedUser.id || parsedUser.UserId;
-          if (!userId) throw new Error("No se encontró el ID del usuario.");
+      const parsedUser = JSON.parse(storedUser);
+      const userId = parsedUser.id || parsedUser.UserId || parsedUser._id;
+      if (!userId) {
+        setPhotoUrl(null);
+        setLoading(false);
+        return;
+      }
 
-          const res = await api.get(`/pfp/${userId}`);
-          const data = res.data;
-          setPhotoUrl(data.url);
-    
-          // Actualizar también el formData con la nueva URL
-          setFormData(prev => ({ ...prev, photo: data.url }));
-        } catch (err) {
-          console.error("Error obteniendo la foto de perfil:", err);
-          setPhotoUrl(null);
-        } finally {
-          setLoading(false);
-        }
-      };
+      // Intentar obtener la foto. Ser tolerante con diferentes formatos de respuesta.
+      const res = await api.get(`/pfp/${userId}`);
+      const data = res.data;
+
+      // Casos comunes: { url: 'http://...' } | 'http://...' | { photo: '<base64>' }
+      if (!data) {
+        setPhotoUrl(null);
+      } else if (typeof data === 'string') {
+        setPhotoUrl(data);
+        setFormData(prev => ({ ...prev, photo: data }));
+      } else if (data.url) {
+        setPhotoUrl(data.url);
+        setFormData(prev => ({ ...prev, photo: data.url }));
+      } else if (data.photo) {
+        // Si backend devuelve base64 sin prefijo
+        const base = data.photo.startsWith('data:') ? data.photo : `data:image/jpeg;base64,${data.photo}`;
+        setPhotoUrl(base);
+        setFormData(prev => ({ ...prev, photo: base }));
+      } else if (data.path) {
+        setPhotoUrl(data.path);
+        setFormData(prev => ({ ...prev, photo: data.path }));
+      } else {
+        // Intenta convertir objeto a URL si contiene campos conocidos
+        const possible = Object.values(data).find(v => typeof v === 'string' && (v.startsWith('http') || v.startsWith('data:')));
+        setPhotoUrl(possible || null);
+        if (possible) setFormData(prev => ({ ...prev, photo: possible }));
+      }
+    } catch (err) {
+      // Log con más contexto para ayudar a depurar, pero no romper UI
+      console.debug("fetchProfilePhoto error:", err.response?.data || err.message || err);
+      setPhotoUrl(null);
+    } finally {
+      setLoading(false);
+    }
+  };
     
       // Llamar al cargar el componente
       useEffect(() => {
@@ -122,6 +155,7 @@ const HeaderCl = () => {
                     alt="Avatar del usuario"
                     className="ms-2 rounded-circle img-50"
                     onError={(e) => {
+                      // Ocultar la imagen rota para que aparezca el SVG fallback
                       e.target.style.display = 'none';
                     }}
                   />

@@ -25,11 +25,19 @@ async function getComments(imageId) {
 async function addCommentToImage(imageId, text) {
   // Recuperamos el usuario del localStorage
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  const userId = storedUser?.id
+  const userId = storedUser?.id;
+
+  if (!userId) {
+    throw new Error("Usuario no autenticado");
+  }
+
+  if (!text || !text.trim()) {
+    throw new Error("El comentario no puede estar vacío");
+  }
 
   const response = await api.post(`/gallery/${imageId}/comments`, {
     UserId: userId,
-    CommentText: text
+    CommentText: text.trim()
   });
 
   return response.data;
@@ -79,7 +87,7 @@ const ImageGalleryViewerC = () => {
       addToast("Comentario en espera, ¡Espera a que el admin lo acepte!", "info");
     } catch (err) {
       console.error("Error al añadir comentario:", err);
-      addToast("Error al añadir comentario", "danger");
+      addToast(err.message || "Error al añadir comentario", "danger");
     }
   };
 

@@ -556,7 +556,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
           {/* Footer */}
           <div className="pm-footer d-flex flex-column gap-2">
             <button
-              className="btn-primary-custom w-100"
+              className="btn-primary-custom btn w-100"
               onClick={handleSaveChanges}
               disabled={uploading}
             >
@@ -564,7 +564,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
             </button>
 
             <button
-              className="btn-secondary-custom w-100"
+              className="btn-secondary-custom btn w-100"
               onClick={() => {
                 onClose();
                 navigate("/updatePassword");
@@ -574,7 +574,7 @@ const EditModal = ({ isOpen, onClose, user, onSave }) => {
             </button>
 
             {role === "user" && (
-              <button className="btn-secondary-custom w-100" onClick={() => setRequestModalOpen(true)}>
+              <button className="btn-secondary-custom btn w-100" onClick={() => setRequestModalOpen(true)}>
                 Solicitar cambio de documento
               </button>
             )}

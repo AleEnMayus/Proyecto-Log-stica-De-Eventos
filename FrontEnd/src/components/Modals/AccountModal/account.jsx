@@ -237,7 +237,7 @@ const PerfilModal = ({ isOpen, onClose, onEdit }) => {
           </div>
           <div className="pm-footer">
           <button
-            className="btn-primary-custom w-100"
+            className="btn-primary-custom btn w-100"
             onClick={() => {
               onClose();
               onEdit();
@@ -246,7 +246,7 @@ const PerfilModal = ({ isOpen, onClose, onEdit }) => {
             Editar perfil
           </button>
           <button
-            className="btn-secondary-custom w-100"
+            className="btn-secondary-custom btn w-100"
             onClick={() => {
               onClose();
               navigate("/logout");

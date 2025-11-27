@@ -8,10 +8,6 @@ const Survey = () => {
   const [questions, setQuestions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
-  const [questionToDelete, setQuestionToDelete] = useState(null);
   const questionsPerPage = 5;
 
   // Cargar preguntas
@@ -45,15 +41,17 @@ const Survey = () => {
       {/* Header con botones */}
       <div className="list-header mt-5 pt-5">
         <h2 className="list-title">PREGUNTAS REGISTRADAS</h2>
-        <div className="d-flex" style={{ display: "flex", gap: "12px" }}>
-          <Link to="/SurvayHome/create" className="btn-create">
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
-              <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
-            </svg>
-            Crear Encuesta
-          </Link>
+        <div className="d-flex gap-3">
+          {questions.length < 5 && (
+            <Link to="/SurvayHome/create" className="btn-status-custom status-active btn-create btn">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
+                <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
+              </svg>
+              Crear Encuesta
+            </Link>
+          )}
 
-          <Link to="/SurvayHome/results" className="btn-status-custom status-active btn-create">
+          <Link to="/SurvayHome/results" className="btn-status-custom status-active btn-create btn">
             <svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" fill="#fff" viewBox="0 -960 960 960">
               <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
             </svg>

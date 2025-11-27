@@ -72,6 +72,13 @@ const ResultsSurvey = () => {
   };
 
   const handleBack = () => navigate("/SurvayHome");
+  // Agrupar los resultados de la página actual por nombre de evento
+  const groupedCurrentResults = currentResults.reduce((acc, r) => {
+    const key = (r.event || 'Desconocido').trim();
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(r);
+    return acc;
+  }, {});
 
   return (
     <div className="list-container">
@@ -98,48 +105,52 @@ const ResultsSurvey = () => {
         {loading ? (
           <div className="empty-state">Cargando resultados...</div>
         ) : (
-          <table className="table list-table">
-            <thead>
-              <tr>
-                <th>Usuario</th>
-                <th>Evento</th>
-                <th>Pregunta</th>
-                <th>Valor</th>
-                <th>Barra</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentResults.map((r, idx) => (
-                <tr key={indexOfFirst + idx}>
-                  <td>{r.user}</td>
-                  <td>{r.event}</td>
-                  <td>{r.question}</td>
-                  <td>{r.value} ⭐</td>
-                  <td>
-                    <div className="result-bar-container">
-                      <div
-                        className="result-bar"
-                        style={{
-                          width: `${Math.min(r.value * 20, 100)}%`,
-                          backgroundColor:
-                            r.value >= 4 ? "#10b981" : r.value >= 3 ? "#facc15" : "#ef4444",
-                          height: '16px',
-                          borderRadius: '4px'
-                        }}
-                      ></div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {currentResults.length === 0 && (
-                <tr>
-                  <td colSpan="5">
-                    <div className="empty-state">No se encontraron resultados.</div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <>
+            {Object.keys(groupedCurrentResults).length === 0 ? (
+              <div className="empty-state">No se encontraron resultados.</div>
+            ) : (
+              Object.entries(groupedCurrentResults).map(([eventName, rows]) => (
+                <div key={eventName} className="mb-4">
+                  <h4 style={{ margin: '8px 0', color: '#222' }}>
+                    <strong>Nombre del evento:</strong>&nbsp;{eventName}
+                  </h4>
+                  <table className="table list-table">
+                    <thead>
+                      <tr>
+                        <th>Usuario</th>
+                        <th>Pregunta</th>
+                        <th>Valor</th>
+                        <th>Barra</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((r, idx) => (
+                        <tr key={`${eventName}-${idx}`}>
+                          <td>{r.user}</td>
+                          <td>{r.question}</td>
+                          <td>{r.value} ⭐</td>
+                          <td>
+                            <div className="result-bar-container">
+                              <div
+                                className="result-bar"
+                                style={{
+                                  width: `${Math.min(r.value * 20, 100)}%`,
+                                  backgroundColor:
+                                    r.value >= 4 ? "#10b981" : r.value >= 3 ? "#facc15" : "#ef4444",
+                                  height: '16px',
+                                  borderRadius: '4px'
+                                }}
+                              ></div>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ))
+            )}
+          </>
         )}
       </div>
 

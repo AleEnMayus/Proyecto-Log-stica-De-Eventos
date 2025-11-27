@@ -286,10 +286,10 @@ const EditAccountPage = () => {
 
               {/* Botones */}
               <div className="form-actions">
-                <button type="button" className="btn-cancel" onClick={() => navigate("/ManageAccounts")}>
+                <button type="button" className="btn-cancel btn" onClick={() => navigate("/ManageAccounts")}>
                   Cancelar
                 </button>
-                <button type="submit" className="btn-primary-custom">
+                <button type="submit" className="btn-primary-custom btn">
                   Actualizar Cuenta
                 </button>
               </div>

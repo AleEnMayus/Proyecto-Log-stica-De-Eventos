@@ -203,10 +203,25 @@ async function updateEventStatus(req, res) {
 async function updateEvent(req, res) {
   try {
     const { id } = req.params;
+    // Actualizar campos del evento
     const updated = await Event.updateEvent(id, req.body);
-    updated
-      ? res.json({ message: "Evento actualizado correctamente" })
-      : res.status(404).json({ error: "Evento no encontrado" });
+
+    if (!updated) {
+      return res.status(404).json({ error: "Evento no encontrado" });
+    }
+
+    // Si vienen recursos en el body, reemplazarlos (borrar asignaciones previas e insertar nuevas)
+    if (Array.isArray(req.body.resources)) {
+      try {
+        const resources = req.body.resources;
+        await EventResources.replaceResourcesForEvent(id, resources);
+      } catch (resErr) {
+        console.error('Error actualizando recursos del evento:', resErr);
+        return res.status(500).json({ error: 'Error actualizando recursos del evento' });
+      }
+    }
+
+    res.json({ message: "Evento actualizado correctamente" });
   } catch (err) {
     console.error("Error actualizando evento:", err);
     res.status(500).json({ error: "Error actualizando evento" });

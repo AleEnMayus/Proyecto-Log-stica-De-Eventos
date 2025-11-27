@@ -264,14 +264,14 @@ const CreateAccountForm = () => {
               <div className="d-flex justify-content-between mt-4">
                 <button
                   type="button"
-                  className="btn-cancel"
+                  className="btn-cancel btn"
                   onClick={() => navigate('/ManageAccounts')}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary-custom"
+                  className="btn-primary-custom btn"
                 >
                   Crear
                 </button>

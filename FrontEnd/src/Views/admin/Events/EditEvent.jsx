@@ -109,7 +109,7 @@ const EditEvent = () => {
   return (
     <>
       <HeaderAdm />
-      <div className="login-container container mt-10">
+      <div className="login-container container mt-3">
         <div className="login-form-card w-800">
           <h1 className="login-title">EDITAR EVENTO</h1>
 
@@ -120,7 +120,7 @@ const EditEvent = () => {
             }}
           >
             <div className="row">
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Nombre del evento *</label>
                 <input
                   type="text"
@@ -131,7 +131,7 @@ const EditEvent = () => {
                   required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Dirección *</label>
                 <input
                   type="text"
@@ -145,7 +145,7 @@ const EditEvent = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Fecha y hora *</label>
                 <input
                   type="datetime-local"
@@ -156,7 +156,7 @@ const EditEvent = () => {
                   required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Capacidad *</label>
                 <input
                   type="number"
@@ -170,7 +170,7 @@ const EditEvent = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Precio *</label>
                 <input
                   type="number"
@@ -181,7 +181,7 @@ const EditEvent = () => {
                   required
                 />
               </div>
-              <div className="col-md-6 mb-3 d-flex align-items-center">
+              <div className="col-md-6 mb-2 d-flex align-items-center">
                 <button
                   type="button"
                   className="btn-secondary-custom w-100"
@@ -192,7 +192,7 @@ const EditEvent = () => {
               </div>
             </div>
 
-            <div className="mb-3">
+            <div className="">
               <label className="form-label">Descripción *</label>
               <textarea
                 name="EventDescription"
@@ -205,7 +205,7 @@ const EditEvent = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-12 mb-3">
+              <div className="col-md-12 mb-2">
                 <label className="form-label">
                   Método de pago <span className="text-danger">*</span>
                 </label>
@@ -224,15 +224,15 @@ const EditEvent = () => {
               </div>
             </div>
 
-            <div className="d-flex justify-content-between mt-4">
+            <div className="d-flex justify-content-between mt-1">
               <button
                 type="button"
-                className="btn-cancel"
+                className="btn-cancel btn"
                 onClick={handleCancel}
               >
                 Cancelar
               </button>
-              <button type="submit" className="btn-primary-custom">
+              <button type="submit" className="btn-primary-custom btn">
                 Actualizar Evento
               </button>
             </div>

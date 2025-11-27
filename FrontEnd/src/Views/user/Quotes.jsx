@@ -84,7 +84,7 @@ const ScheduleAppointments = () => {
               />
             </div>
 
-            <button type="submit" className="btn-primary-custom w-100">
+            <button type="submit" className="btn-primary-custom btn w-100">
               Confirmar Cita
             </button>
           </form>

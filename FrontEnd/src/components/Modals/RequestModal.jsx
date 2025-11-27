@@ -100,7 +100,7 @@ const RequestModal = ({ isOpen, onClose, usert, requestType, eventId = null }) =
         </div>
 
         <button
-          className="btn-primary-custom w-100"
+          className="btn-primary-custom btn w-100"
           onClick={SendReason}
           disabled={loading}
         >

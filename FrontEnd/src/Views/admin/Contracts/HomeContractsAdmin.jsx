@@ -57,8 +57,8 @@ const ContractsAdmin = () => {
     <div className="contrato-container mle-0">
       <HeaderAdm />
 
-      <div className="contrato-wrapper mt-10 d-flex flex-column justify-center">
-        <div className="contrato-card mt-10 mx-auto">
+      <div className="contrato-wrapper mt-11 d-flex flex-column justify-center">
+        <div className="contrato-card  mx-auto">
           <h2 className="contrato-subtitle">Enviar Contrato</h2>
 
           {/* Zona de Drop & Upload */}
@@ -103,7 +103,7 @@ const ContractsAdmin = () => {
           <div className="contrato-actions">
             <button
               onClick={() => document.getElementById("fileInput").click()}
-              className="btn-primary-custom"
+              className="btn-primary-custom btn"
               disabled={loading}
             >
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
@@ -114,7 +114,7 @@ const ContractsAdmin = () => {
 
             <button
               onClick={handleSendContract}
-              className="btn-primary-custom"
+              className="btn-primary-custom btn"
               disabled={!contrato || loading}
             >
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
@@ -125,7 +125,7 @@ const ContractsAdmin = () => {
 
             <button
               onClick={handleEliminarContrato}
-              className="btn-secondary-custom w-100"
+              className="btn-secondary-custom btn w-100"
               disabled={!contrato || loading}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className='me-2' height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor">
@@ -138,7 +138,7 @@ const ContractsAdmin = () => {
 
         <button
           onClick={handleVerListado}
-          className="btn-secondary-custom mx-auto "
+          className="btn-secondary-custom btn mx-auto "
         >
           Ver Listado De Contratos
         </button>

@@ -27,10 +27,10 @@ const ConfirmModal = ({
 
         {/* Botones */}
         <div className="pm-footer">
-          <button className="btn-primary-custom w-100" onClick={onConfirm}>
+          <button className="btn-primary-custom btn w-100" onClick={onConfirm}>
             {confirmText}
           </button>
-          <button className="btn-secondary-custom w-100 " onClick={onClose}>
+          <button className="btn-secondary-custom btn w-100 " onClick={onClose}>
             Cancelar
           </button>
         </div>

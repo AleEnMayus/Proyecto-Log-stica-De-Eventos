@@ -94,7 +94,7 @@ const HomeAdmin = ({ user, onLogout }) => {
 
         {/* INICIO */}
         <section id="inicio" className="mb-5 mt-5">
-          <h1 className="section-title display-4">
+          <h1 className="display-4 fw-bold text-dark mb-2">
             Panel de Administrador - ¡Bienvenido {adminUser?.fullName || 'Administrador'}!
           </h1>
           <p className="lead text-muted mb-4">

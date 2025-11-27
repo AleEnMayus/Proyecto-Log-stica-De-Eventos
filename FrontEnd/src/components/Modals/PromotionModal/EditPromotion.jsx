@@ -71,7 +71,7 @@ const PromotionModal = ({ promo, onClose, refreshPromos }) => {
 
             {/* ABRIR MODAL DE CONFIRMACIÓN */}
             <button
-              className="btn btn-danger"
+              className="btn btn-danger btn"
               style={{ borderRadius: "25px", padding: "10px 22px" }}
               onClick={() => setShowConfirm(true)}
             >

@@ -149,7 +149,7 @@ const AdminAccountsList = () => {
         <h2 className="list-title">LISTADO DE CUENTAS</h2>
         <Link
           to="/CreateAccount"
-          className="btn-create d-flex align-items-center justify-content-center"
+          className="btn-create btn d-flex align-items-center justify-content-center"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

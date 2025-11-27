@@ -135,7 +135,7 @@ const Schedule = () => {
               </div>
 
               <div className="form-actions">
-                <button type="button" className="btn-cancel" onClick={cancel}>Cancelar</button>
+                <button type="button" className="btn-cancel btn" onClick={cancel}>Cancelar</button>
                 <button type="submit" className="btn-primary-custom btn">Enviar solicitud</button>
               </div>
             </form>

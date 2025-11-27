@@ -84,14 +84,14 @@ const CreateEvent = () => {
 
   return (<>
     <HeaderAdm />
-    <div className="login-container mt-10">
+    <div className="login-container mt-5">
       <div className="login-content container">
         <div className="login-form-card form-container-custom w-800">
           <h1 className="login-title">AGENDAR EVENTO</h1>
 
           <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
             <div className="row">
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Nombre del evento *</label>
                 <input
                   type="text"
@@ -102,7 +102,7 @@ const CreateEvent = () => {
                   required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Dirección *</label>
                 <input
                   type="text"
@@ -116,7 +116,7 @@ const CreateEvent = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-12 mb-3">
+              <div className="col-md-12 mb-2">
                 <label className="form-label">Cliente (correo o documento) *</label>
                 <input
                   type="text"
@@ -131,7 +131,7 @@ const CreateEvent = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Fecha y hora *</label>
                 <input
                   type="datetime-local"
@@ -142,7 +142,7 @@ const CreateEvent = () => {
                   required
                 />
               </div>
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Capacidad *</label>
                 <input
                   type="number"
@@ -156,7 +156,7 @@ const CreateEvent = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-6 mb-3">
+              <div className="col-md-6 mb-2">
                 <label className="form-label">Precio *</label>
                 <input
                   type="number"
@@ -167,7 +167,7 @@ const CreateEvent = () => {
                   required
                 />
               </div>
-              <div className="col-md-6 mb-3 d-flex align-items-center">
+              <div className="col-md-6 mb-2 d-flex align-items-center">
                 <button
                   type="button"
                   className="btn-secondary-custom w-100"
@@ -191,7 +191,7 @@ const CreateEvent = () => {
             </div>
 
             <div className="row">
-              <div className="col-md-12 mb-3">
+              <div className="col-md-12 mb-2">
                 <label className="form-label">
                   Método de pago <span className="text-danger">*</span>
                 </label>
@@ -210,17 +210,17 @@ const CreateEvent = () => {
               </div>
             </div>
 
-            <div className="d-flex justify-content-between mt-4">
+            <div className="d-flex justify-content-between mt-1">
               <button
                 type="button"
-                className="btn-cancel"
+                className="btn-cancel btn"
                 onClick={handleCancel}
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="btn-primary-custom"
+                className="btn-primary-custom btn"
               >
                 Agendar Evento
               </button>

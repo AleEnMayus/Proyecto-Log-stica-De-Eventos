@@ -67,7 +67,7 @@ const TermsModal = ({ onClose }) => {
 
         {/* Footer */}
         <div className="pm-footer mt-4">
-          <button className="btn-secondary-custom w-100" onClick={onClose}>
+          <button className="btn-secondary-custom btn w-100" onClick={onClose}>
             Cerrar
           </button>
         </div>

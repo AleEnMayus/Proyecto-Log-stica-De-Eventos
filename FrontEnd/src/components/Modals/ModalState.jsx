@@ -61,11 +61,11 @@ const ModalState = ({
           <button 
             onClick={handleStatusChange}
             disabled={!selectedStatus}
-            className="btn-primary-custom w-100"
+            className="btn-primary-custom btn w-100"
           >
             Cambiar
           </button>
-          <button className="btn-secondary-custom w-100" onClick={onClose}>Cancelar</button>
+          <button className="btn-secondary-custom btn w-100" onClick={onClose}>Cancelar</button>
         </div>
       </div>
     </div>

@@ -13,12 +13,13 @@ const EditAssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
   const recursosPorPagina = 4;
 
   // Cargar recursos
+  // Cargar recursos
   const fetchRecursos = async () => {
     try {
       const response = await api.get("/resources");
       const data = response.data;
 
-      // Inicializar seleccion con preselected
+      // --- FORMAR MAPA DE PRESELECCIONADOS ---
       const preMap = new Map();
       preselected.forEach((r) => {
         preMap.set(r.resourceId, {
@@ -26,16 +27,35 @@ const EditAssignResourcesModal = ({ onClose, onSave, preselected = [] }) => {
           status: r.status || "assigned",
           price: r.price || 0,
           max: r.max || null,
-          wasPreselected: true, // Marcar como preseleccionado
+          wasPreselected: true,
         });
       });
 
-      setSeleccion(preMap);
+      // --- MEZCLAR RECURSOS DISPONIBLES CON PRESELECCIONADOS ---
+      const updatedSeleccion = new Map(preMap);
+
+      data.forEach((r) => {
+        if (!updatedSeleccion.has(r.ResourceId)) {
+          // NO estaba asignado → sin selección
+          return;
+        }
+
+        // SI estaba asignado → conservar selección y completar datos faltantes
+        const prev = updatedSeleccion.get(r.ResourceId);
+        updatedSeleccion.set(r.ResourceId, {
+          ...prev,
+          price: prev.price || r.Price,
+          max: r.Quantity,
+        });
+      });
+
+      setSeleccion(updatedSeleccion);
       setRecursos(data);
     } catch (error) {
       console.error("Error cargando recursos:", error);
     }
   };
+
 
   useEffect(() => {
     fetchRecursos();

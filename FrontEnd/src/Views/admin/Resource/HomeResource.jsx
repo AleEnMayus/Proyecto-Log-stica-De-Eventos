@@ -119,7 +119,7 @@ const ListResource = () => {
 
       <div className="list-header mt-5 pt-5">
         <h2 className="list-title">LISTADO DE RECURSOS</h2>
-        <button onClick={handleCreate} className="btn-create d-flex">
+        <button onClick={handleCreate} className="btn-create btn d-flex">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#fff">
             <path d="M417-417H166v-126h251v-251h126v251h251v126H543v251H417v-251Z" />
           </svg>

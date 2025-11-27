@@ -81,8 +81,8 @@ const EditResource = ({ resource, onSave, onCancel }) => {
                 <textarea name="StatusDescription" value={formData.StatusDescription} onChange={handleChange} className="field-value min-h-200px" />
               </div>
               <div className="pm-footer">
-                <button type="button" className="btn-secondary-custom" onClick={onCancel}>Cancelar</button>
-                <button type="submit" className="btn-primary-custom">Guardar Cambios</button>
+                <button type="button" className="btn-secondary-custom btn" onClick={onCancel}>Cancelar</button>
+                <button type="submit" className="btn-primary-custom btn">Guardar Cambios</button>
               </div>
             </form>
           </div>

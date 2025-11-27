@@ -171,14 +171,14 @@ const CreateResource = () => {
             <div className="form-actions">
               <button
                 type="button"
-                className="btn-cancel"
+                className="btn-cancel btn"
                 onClick={handleCancel}
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="btn-primary-custom"
+                className="btn-primary-custom btn"
               >
                 Crear Recurso
               </button>

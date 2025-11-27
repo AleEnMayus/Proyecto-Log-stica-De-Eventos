@@ -102,7 +102,7 @@ const EventDetailsC = () => {
           {error}
           <button
             onClick={() => fetchEventDetails(eventId)}
-            className="btn-primary-custom"
+            className="btn-primary-custom btn"
           >
             Reintentar
           </button>
@@ -191,10 +191,10 @@ const EventDetailsC = () => {
 
       {/* Botones */}
       <div className="button-container">
-        <button className="btn-primary-custom"onClick={() => setModalOpen(true)}>
+        <button className="btn-primary-custom btn"onClick={() => setModalOpen(true)}>
           Cancelar evento
         </button>
-        <button className="btn-secondary-custom back-button" onClick={handleGoBack}>
+        <button className="btn-secondary-custom back-button btn" onClick={handleGoBack}>
           Volver
         </button>
       </div>

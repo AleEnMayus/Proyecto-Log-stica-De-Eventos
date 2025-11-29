@@ -284,6 +284,28 @@ DELIMITER ;
 -- VISTAS
 -- ==========================================================
 -- ========================================
+-- Vista: Recursos
+-- ========================================
+
+CREATE VIEW ViewAssignedResources AS
+SELECT 
+    r.ResourceId,
+    r.ResourceName,
+    r.Quantity,
+    r.StatusDescription,
+    COALESCE(SUM(CASE WHEN er.AssignmentStatus='assigned' THEN er.AssignedQuantity END),0) AS AssignedQuantity,
+    r.Price
+FROM Resources r
+LEFT JOIN EventResources er 
+    ON r.ResourceId = er.ResourceId
+GROUP BY 
+    r.ResourceId, 
+    r.ResourceName, 
+    r.Quantity, 
+    r.StatusDescription, 
+    r.Price;
+
+-- ========================================
 -- Vista: UserCalendarView (usando RequestDate)
 -- ========================================
 CREATE OR REPLACE VIEW UserCalendarView AS
@@ -463,35 +485,47 @@ END//
 
 -- Actualizar estado después de asignar
 DELIMITER //
-CREATE TRIGGER UpdateResourceStatusAfterAssignment
+CREATE TRIGGER UpdateResourceAfterAssignment
 AFTER INSERT ON EventResources
 FOR EACH ROW
 BEGIN
+    -- Descontamos la cantidad asignada del recurso
     UPDATE Resources r
-    SET r.Status = IF((
-        SELECT AvailableQuantity 
-        FROM ResourceAvailabilityView 
-        WHERE ResourceId = NEW.ResourceId
-    ) <= 0, 'In_use', 'Available')
+    SET r.Quantity = r.Quantity - NEW.AssignedQuantity
+    WHERE r.ResourceId = NEW.ResourceId;
+
+    -- Actualizamos el estado según la nueva disponibilidad
+    UPDATE Resources r
+    SET r.Status = IF(r.Quantity <= 0, 'In_use', 'Available')
     WHERE r.ResourceId = NEW.ResourceId;
 END//
+DELIMITER ;
 
 -- Actualizar estado al devolver
 DELIMITER //
-CREATE TRIGGER UpdateResourceStatusAfterReturn
-AFTER UPDATE ON EventResources
+CREATE TRIGGER ReturnResourcesAfterEventUpdate
+AFTER UPDATE ON Events
 FOR EACH ROW
 BEGIN
-    IF NEW.AssignmentStatus = 'returned' AND OLD.AssignmentStatus != 'returned' THEN
+    IF NEW.EventStatus IN ('Completed', 'Canceled') 
+       AND OLD.EventStatus NOT IN ('Completed', 'Canceled') THEN
+
+        -- Actualiza estado de recursos asignados
+        UPDATE EventResources
+        SET AssignmentStatus = 'returned'
+        WHERE EventId = NEW.EventId
+          AND AssignmentStatus IN ('reserved', 'assigned');
+
+        -- Devuelve la cantidad al inventario
         UPDATE Resources r
-        SET r.Status = IF((
-            SELECT AvailableQuantity 
-            FROM ResourceAvailabilityView 
-            WHERE ResourceId = NEW.ResourceId
-        ) > 0, 'Available', 'In_use')
-        WHERE r.ResourceId = NEW.ResourceId;
+        JOIN EventResources er ON r.ResourceId = er.ResourceId
+        SET r.Quantity = r.Quantity + er.AssignedQuantity
+        WHERE er.EventId = NEW.EventId
+          AND er.AssignmentStatus = 'returned';
     END IF;
 END//
+DELIMITER ;
+
 
 -- Devolver recursos al finalizar evento
 DELIMITER //
@@ -501,12 +535,22 @@ FOR EACH ROW
 BEGIN
     IF NEW.EventStatus IN ('Completed', 'Canceled') 
        AND OLD.EventStatus NOT IN ('Completed', 'Canceled') THEN
+
+        -- Actualiza estado de recursos asignados
         UPDATE EventResources
         SET AssignmentStatus = 'returned'
         WHERE EventId = NEW.EventId
-        AND AssignmentStatus IN ('reserved', 'assigned');
+          AND AssignmentStatus IN ('reserved', 'assigned');
+
+        -- Devuelve la cantidad al inventario
+        UPDATE Resources r
+        JOIN EventResources er ON r.ResourceId = er.ResourceId
+        SET r.Quantity = r.Quantity + er.AssignedQuantity
+        WHERE er.EventId = NEW.EventId
+          AND er.AssignmentStatus = 'returned';
     END IF;
 END//
+DELIMITER ;
 
 -- ==========================================================
 -- TRAER DATOS A ENCUESTAS

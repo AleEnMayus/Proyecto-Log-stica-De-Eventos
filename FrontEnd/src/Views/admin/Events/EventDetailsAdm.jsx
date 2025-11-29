@@ -91,8 +91,8 @@ const EventDetailsA = () => {
 
   const handleStatusChangeFromModal = async (id, newStatus) => {
     try {
-      const response = await api.patch(`/events/${id}/status`, { 
-        EventStatus: newStatus 
+      const response = await api.patch(`/events/${id}/status`, {
+        EventStatus: newStatus
       });
 
       setEventData((prev) => ({
@@ -226,7 +226,7 @@ const EventDetailsA = () => {
         {/* BOTÓN RECURSOS */}
         <div className="detail-item">
           <span className="detail-label">Recursos Asignados</span>
-          <button 
+          <button
             className="btn-primary-custom btn"
             onClick={handleResources}
             style={{ width: "100%" }}
@@ -247,12 +247,23 @@ const EventDetailsA = () => {
       </div>
 
       <div className="button-container">
-        <button className="btn-primary-custom btn" onClick={() => handleSend(eventId)}>
-          Enviar contrato
-        </button>
-        <button className="btn-primary-custom btn" onClick={handleEditEvent}>
-          Editar evento
-        </button>
+        {eventData.EventStatus === "In_planning" && (
+          <>
+            <button
+              className="btn-primary-custom btn"
+              onClick={() => handleSend(eventId)}
+            >
+              Enviar contrato
+            </button>
+            <button
+              className="btn-primary-custom btn"
+              onClick={handleEditEvent}
+            >
+              Editar evento
+            </button>
+          </>
+        )}
+
         <button className="btn-primary-custom btn" onClick={handleOpenStatusModal}>
           Cambiar estado
         </button>

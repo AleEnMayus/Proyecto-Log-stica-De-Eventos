@@ -182,7 +182,6 @@ input:focus {
   border-bottom: 1px solid #f0f0f0;
 }
 
-/* 🔹 Evita que el texto se extienda y lo muestra verticalmente */
 .list-table td {
   white-space: normal !important;
   word-wrap: break-word;
@@ -244,6 +243,75 @@ input:focus {
   line-height: 1.4;
   padding: 10px;
 }
+/* ==== TABLA DE EVENTOS ==== */
+.events-table {
+  width: 100%;
+  border-collapse: separate;   /* permite aplicar border-radius */
+  border-spacing: 0 10px;      /* espacio entre filas */
+  background: transparent;
+}
+
+/* Filas */
+.events-table tr {
+  background-color: #ffffff;
+  border-radius: 10px;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Hover en fila */
+.events-table tr:hover {
+  background-color: #dee0e6;   /* gris claro */
+  cursor: pointer;
+}
+
+/* Encabezados */
+.events-table th {
+  background: #f3f4f6;
+  font-weight: 600;
+  color: #34495e;
+  text-align: center;
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Celdas */
+.events-table td {
+  padding: 14px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ==== CELDAS DE FECHA Y HORA ==== */
+.events-td-fecha {
+  text-align: center;
+}
+
+.events-td-fecha .events-fecha {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.events-td-fecha .events-hora {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* ==== CELDAS DE TEXTO ==== */
+.events-td-evento {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.events-td-cliente {
+  font-weight: 500;
+  color: #34495e;
+}
+
+/* Texto en negrita */
+
+.text-bold {
+  font-weight: 600;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -267,6 +335,16 @@ input:focus {
   .list-container {
     padding-left: 5px !important;
     padding-right: 5px !important;
+  }
+
+  .sm-erase {
+    display: none;
+  }
+  
+  .events-table th,
+  .events-table td {
+    padding: 8px;
+    font-size: 0.85rem;
   }
 }
 /* ===== PAGINACIÓN MODERNA ===== */

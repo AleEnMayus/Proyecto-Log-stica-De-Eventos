@@ -46,7 +46,7 @@ const EventResources = {
       r.StatusDescription
     FROM EventResources er
     INNER JOIN Resources r ON er.ResourceId = r.ResourceId
-    WHERE er.EventId = ?
+    WHERE (er.EventId = ?) && (er.AssignmentStatus = 'assigned')
   `, [eventId]);
     return rows;
   }

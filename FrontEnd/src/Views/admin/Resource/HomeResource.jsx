@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../utils/axiosConfig';
-import { eraseUnderscore } from '../../../utils/FormatText';
 import HeaderAdm from '../../../components/HeaderSidebar/HeaderAdm';
 import ConfirmModal from "../../../components/Modals/ModalConfirm";
 import EditResource from "./EditResource";
@@ -153,10 +152,10 @@ const ListResource = () => {
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Estado</th>
-                <th>Descripción</th>
-                <th>Precio</th>
+                <th>Disponible</th>
+                <th>En Uso</th>
+                <th className='sm-erase'>Descripción</th>
+                <th>Precio por unidad</th>
                 <th>Editar</th>
                 <th>Eliminar</th>
               </tr>
@@ -166,9 +165,12 @@ const ListResource = () => {
                 <tr key={r.ResourceId}>
                   <td>{r.ResourceName}</td>
                   <td>{r.Quantity}</td>
-                  <td>{eraseUnderscore(r.Status)}</td>
-                  <td>{r.StatusDescription}</td>
-                  <td>{r.Price}</td>
+                  <td>{r.Status ?? 0}</td>
+                  <td className='sm-erase'>{r.StatusDescription}</td>
+                  <td className="text-bold">
+                    {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(r.Price)}
+                  </td>
+
                   <td>
                     <button
                       className="btn-custom btn-edit-custom mx-auto"

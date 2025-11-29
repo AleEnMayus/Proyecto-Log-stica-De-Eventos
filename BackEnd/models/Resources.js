@@ -6,10 +6,10 @@ async function addResource(ResourceName, Quantity, StatusDescription, Status, Pr
     [ResourceName, Quantity, StatusDescription, Status, Price]
   );
   return { ResourceId: result.insertId, ResourceName, Quantity, StatusDescription, Status, Price };
-} 
+}
 
 async function getAllResources() {
-  const result = await db.execute('SELECT * FROM Resources ORDER BY ResourceId DESC');
+  const result = await db.execute('SELECT * FROM ViewAssignedResources');
   return result[0]; // si es un array, esto debería funcionar
 }
 
@@ -28,9 +28,9 @@ async function deleteResource(ResourceId) {
   return result.affectedRows > 0;
 }
 
-module.exports = { 
-  addResource, 
-  getAllResources, 
-  updateResource, 
-  deleteResource 
+module.exports = {
+  addResource,
+  getAllResources,
+  updateResource,
+  deleteResource
 };

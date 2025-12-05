@@ -1,6 +1,12 @@
 -- ==========================================================
--- ELIMINACIÓN Y CREACIÓN DE BASE DE DATOS
+-- PROYECTO: SISTEMA DE LOGÍSTICA DE EVENTOS
+-- Base de datos completa con tablas, vistas, triggers y procedimientos
 -- ==========================================================
+
+-- ==========================================================
+-- SECCIÓN 1: CONFIGURACIÓN INICIAL DE BASE DE DATOS
+-- ==========================================================
+
 DROP DATABASE IF EXISTS ProyectoLogisticaEventos;
 CREATE DATABASE ProyectoLogisticaEventos
 CHARACTER SET utf8mb4
@@ -8,8 +14,13 @@ COLLATE utf8mb4_unicode_ci;
 USE ProyectoLogisticaEventos;
 
 -- ==========================================================
--- TABLA: USUARIOS
+-- SECCIÓN 2: DEFINICIÓN DE TABLAS PRINCIPALES
 -- ==========================================================
+
+-- ----------------------------------------------------------
+-- Tabla: User
+-- Almacena información de usuarios del sistema (clientes y administradores)
+-- ----------------------------------------------------------
 CREATE TABLE User (
     UserId INT PRIMARY KEY AUTO_INCREMENT,
     Names VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -25,9 +36,10 @@ CREATE TABLE User (
     INDEX idx_status (Status)
 );
 
--- ==========================================================
--- TABLA: EVENTOS
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: Events
+-- Gestiona eventos con sus detalles, fechas y estado
+-- ----------------------------------------------------------
 CREATE TABLE Events (
     EventId INT PRIMARY KEY AUTO_INCREMENT,
     EventName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -48,10 +60,10 @@ CREATE TABLE Events (
     INDEX idx_datetime (EventDateTime)
 );
 
-
--- ==========================================================
--- TABLA: RECURSOS
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: Resources
+-- Inventario de recursos disponibles para eventos
+-- ----------------------------------------------------------
 CREATE TABLE Resources (
     ResourceId INT PRIMARY KEY AUTO_INCREMENT,
     ResourceName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -62,9 +74,10 @@ CREATE TABLE Resources (
     INDEX idx_status (Status)
 );
 
--- ==========================================================
--- TABLA: RECURSOS ASIGNADOS A EVENTOS
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: EventResources
+-- Relación entre eventos y recursos asignados
+-- ----------------------------------------------------------
 CREATE TABLE EventResources (
     EventResourceId INT PRIMARY KEY AUTO_INCREMENT,
     AssignedQuantity INT NOT NULL,
@@ -79,9 +92,10 @@ CREATE TABLE EventResources (
     INDEX idx_status (AssignmentStatus)
 );
 
--- ==========================================================
--- TABLA: SOLICITUDES
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: Requests
+-- Solicitudes de clientes (citas, cancelaciones, cambios)
+-- ----------------------------------------------------------
 CREATE TABLE Requests (
     RequestId INT PRIMARY KEY AUTO_INCREMENT,
     RequestDate DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -97,9 +111,10 @@ CREATE TABLE Requests (
     INDEX idx_status (RequestStatus)
 );
 
--- ==========================================================
--- TABLA: ARCHIVOS MULTIMEDIA
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: MultimediaFile
+-- Archivos multimedia asociados a comentarios
+-- ----------------------------------------------------------
 CREATE TABLE MultimediaFile (
     FileId INT PRIMARY KEY AUTO_INCREMENT,
     FileName VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -107,17 +122,19 @@ CREATE TABLE MultimediaFile (
     Extension ENUM('JPG','PNG','JPEG') NOT NULL
 );
 
--- ==========================================================
--- TABLA: PREGUNTAS
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: Questions
+-- Preguntas para encuestas de satisfacción
+-- ----------------------------------------------------------
 CREATE TABLE Questions (
     QuestionId INT PRIMARY KEY AUTO_INCREMENT,
     QuestionText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 );
 
--- ==========================================================
--- TABLA: RESPUESTAS
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: Answers
+-- Respuestas numéricas a encuestas de satisfacción
+-- ----------------------------------------------------------
 CREATE TABLE Answers (
     AnswerId INT PRIMARY KEY AUTO_INCREMENT,
     NumericValue INT NOT NULL,
@@ -131,9 +148,10 @@ CREATE TABLE Answers (
     UNIQUE KEY unique_answer (EventId, UserId, QuestionId)
 );
 
--- ==========================================================
--- TABLA: COMENTARIOS
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: Comments
+-- Comentarios de usuarios con archivos multimedia opcionales
+-- ----------------------------------------------------------
 CREATE TABLE Comments (
     CommentId INT PRIMARY KEY AUTO_INCREMENT,
     CommentText TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -147,19 +165,21 @@ CREATE TABLE Comments (
     INDEX idx_status (CommentStatus)
 );
 
--- ==========================================================
--- TABLA: PROMOCIONES
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: Promotions
+-- Promociones y ofertas especiales del sistema
+-- ----------------------------------------------------------
 CREATE TABLE Promotions (
-	PromotionId INT PRIMARY KEY AUTO_INCREMENT,
-	TitleProm VARCHAR (255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-	DescriptionProm VARCHAR (255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-	Price DECIMAL(10,2)
+    PromotionId INT PRIMARY KEY AUTO_INCREMENT,
+    TitleProm VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    DescriptionProm VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    Price DECIMAL(10,2)
 );
 
--- ==========================================================
--- TABLA: RECUPERACIÓN DE CONTRASEÑAS
--- ==========================================================
+-- ----------------------------------------------------------
+-- Tabla: PasswordReset
+-- Control de códigos de recuperación de contraseña
+-- ----------------------------------------------------------
 CREATE TABLE PasswordReset (
     Email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci PRIMARY KEY,
     Code VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -170,10 +190,14 @@ CREATE TABLE PasswordReset (
 );
 
 -- ==========================================================
--- PROCEDIMIENTOS ALMACENADOS
+-- SECCIÓN 3: PROCEDIMIENTOS ALMACENADOS
 -- ==========================================================
 
--- Crear código de recuperación
+-- ----------------------------------------------------------
+-- Procedimiento: CreatePasswordResetCode
+-- Genera código de recuperación con límites de seguridad
+-- Límites: 5 intentos en 24 horas, 2 minutos entre envíos
+-- ----------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE CreatePasswordResetCode(
     IN pEmail VARCHAR(255),
@@ -183,24 +207,25 @@ BEGIN
     DECLARE vSendAttempts TINYINT;
     DECLARE vLastSend DATETIME;
     
+    -- Obtener intentos previos
     SELECT SendAttempts, LastSendAttempt
     INTO vSendAttempts, vLastSend
     FROM PasswordReset
     WHERE Email = pEmail;
     
     IF vSendAttempts IS NOT NULL THEN
-        -- Reiniciar si pasaron 24 horas
+        -- Reiniciar contador si pasaron 24 horas
         IF vLastSend < DATE_SUB(NOW(), INTERVAL 24 HOUR) THEN
             SET vSendAttempts = 0;
         END IF;
         
-        -- Validar límite de envíos
+        -- Validar límite máximo de intentos
         IF vSendAttempts >= 5 THEN
             SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Has superado el límite de solicitudes. Intenta en 24 horas.';
         END IF;
         
-        -- Validar tiempo entre envíos
+        -- Validar tiempo mínimo entre solicitudes
         IF vLastSend > DATE_SUB(NOW(), INTERVAL 2 MINUTE) THEN
             SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Espera 2 minutos antes de solicitar un nuevo código.';
@@ -211,12 +236,17 @@ BEGIN
         SET vSendAttempts = 1;
     END IF;
     
+    -- Insertar o actualizar código de recuperación
     REPLACE INTO PasswordReset (Email, Code, CreatedAt, SendAttempts, LastSendAttempt)
     VALUES (pEmail, pCode, NOW(), vSendAttempts, NOW());
 END //
 DELIMITER ;
 
--- Verificar código
+-- ----------------------------------------------------------
+-- Procedimiento: CheckResetCode
+-- Valida código de recuperación y verifica expiración
+-- Límite de expiración: 15 minutos
+-- ----------------------------------------------------------
 DELIMITER //
 CREATE PROCEDURE CheckResetCode(
     IN pEmail VARCHAR(255),
@@ -226,88 +256,97 @@ BEGIN
     DECLARE vStoredCode VARCHAR(10);
     DECLARE vCreatedAt DATETIME;
 
+    -- Obtener código almacenado
     SELECT Code, CreatedAt
     INTO vStoredCode, vCreatedAt
     FROM PasswordReset
     WHERE Email = pEmail;
 
+    -- Validar existencia del código
     IF vStoredCode IS NULL THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'No existe código de recuperación para este correo.';
     END IF;
 
+    -- Validar expiración del código
     IF vCreatedAt < DATE_SUB(NOW(), INTERVAL 15 MINUTE) THEN
         DELETE FROM PasswordReset WHERE Email = pEmail;
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'El código ha expirado. Solicita uno nuevo.';
     END IF;
 
+    -- Validar código correcto
     IF vStoredCode != pCode THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Código incorrecto.';
     END IF;
     
+    -- Eliminar código después de validación exitosa
     DELETE FROM PasswordReset WHERE Email = pEmail;
 END //
 DELIMITER ;
 
 -- ==========================================================
--- EVENTOS PROGRAMADOS
+-- SECCIÓN 4: EVENTOS PROGRAMADOS (TAREAS AUTOMÁTICAS)
 -- ==========================================================
+
+-- Activar el planificador de eventos
 SET GLOBAL event_scheduler = ON;
 
--- Limpieza automática
+-- ----------------------------------------------------------
+-- Evento: CleanupPasswordReset
+-- Elimina códigos de recuperación antiguos cada 6 horas
+-- ----------------------------------------------------------
 DELIMITER //
 CREATE EVENT IF NOT EXISTS CleanupPasswordReset
 ON SCHEDULE EVERY 6 HOUR
 DO
 BEGIN
-  DELETE FROM PasswordReset
-  WHERE CreatedAt < DATE_SUB(NOW(), INTERVAL 1 DAY);
+    DELETE FROM PasswordReset
+    WHERE CreatedAt < DATE_SUB(NOW(), INTERVAL 1 DAY);
 END //
 DELIMITER ;
 
--- Autocompletar eventos
+-- ----------------------------------------------------------
+-- Evento: AutoCompleteEvents
+-- Marca eventos como completados automáticamente cada hora
+-- ----------------------------------------------------------
 DELIMITER //
 CREATE EVENT IF NOT EXISTS AutoCompleteEvents
 ON SCHEDULE EVERY 1 HOUR
 DO
 BEGIN
-  UPDATE Events
-  SET EventStatus = 'Completed'
-  WHERE EventStatus = 'In_execution' 
-    AND EventDateTime < NOW();
+    UPDATE Events
+    SET EventStatus = 'Completed'
+    WHERE EventStatus = 'In_execution' 
+      AND EventDateTime < NOW();
 END //
 DELIMITER ;
 
 -- ==========================================================
--- VISTAS
+-- SECCIÓN 5: VISTAS DEL SISTEMA
 -- ==========================================================
--- ========================================
--- Vista: Recursos
--- ========================================
 
+-- ----------------------------------------------------------
+-- Vista: ViewAssignedResources
+-- Muestra recursos con cantidad asignada y disponible
+-- ----------------------------------------------------------
 CREATE VIEW ViewAssignedResources AS
 SELECT 
     r.ResourceId,
     r.ResourceName,
     r.Quantity,
     r.StatusDescription,
-    COALESCE(SUM(CASE WHEN er.AssignmentStatus='assigned' THEN er.AssignedQuantity END),0) AS AssignedQuantity,
+    COALESCE(SUM(CASE WHEN er.AssignmentStatus = 'assigned' THEN er.AssignedQuantity END), 0) AS AssignedQuantity,
     r.Price
 FROM Resources r
-LEFT JOIN EventResources er 
-    ON r.ResourceId = er.ResourceId
-GROUP BY 
-    r.ResourceId, 
-    r.ResourceName, 
-    r.Quantity, 
-    r.StatusDescription, 
-    r.Price;
+LEFT JOIN EventResources er ON r.ResourceId = er.ResourceId
+GROUP BY r.ResourceId, r.ResourceName, r.Quantity, r.StatusDescription, r.Price;
 
--- ========================================
--- Vista: UserCalendarView (usando RequestDate)
--- ========================================
+-- ----------------------------------------------------------
+-- Vista: UserCalendarView
+-- Calendario de usuario con eventos y citas aprobadas
+-- ----------------------------------------------------------
 CREATE OR REPLACE VIEW UserCalendarView AS
 SELECT 
     'event' AS type,
@@ -339,7 +378,7 @@ SELECT
             WHEN 'document_change' THEN 'Cambio de documento'
         END
     ) AS title,
-    r.RequestDate AS start_date,  -- <--- CAMBIO AQUÍ
+    r.RequestDate AS start_date,
     r.RequestStatus AS status,
     NULL AS location,
     r.RequestDescription AS description,
@@ -352,12 +391,12 @@ FROM Requests r
 INNER JOIN User u ON r.UserId = u.UserId
 WHERE r.RequestStatus = 'approved'
   AND r.RequestType = 'schedule_appointment'
-  AND r.RequestDate IS NOT NULL;  -- <--- USANDO REQUESTDATE
+  AND r.RequestDate IS NOT NULL;
 
-
--- ========================================
--- Vista: AdminCalendarView (usando RequestDate)
--- ========================================
+-- ----------------------------------------------------------
+-- Vista: AdminCalendarView
+-- Calendario administrativo con información completa de eventos y citas
+-- ----------------------------------------------------------
 CREATE OR REPLACE VIEW AdminCalendarView AS
 SELECT 
     'event' AS type,
@@ -411,9 +450,12 @@ FROM Requests r
 INNER JOIN User u ON r.UserId = u.UserId
 WHERE r.RequestStatus = 'approved'
   AND r.RequestType = 'schedule_appointment'
-  AND r.RequestDate IS NOT NULL;  -- <--- USANDO REQUESTDATE
+  AND r.RequestDate IS NOT NULL;
 
--- Satisfacción de eventos
+-- ----------------------------------------------------------
+-- Vista: EventSatisfactionView
+-- Promedio de satisfacción por evento basado en encuestas
+-- ----------------------------------------------------------
 CREATE OR REPLACE VIEW EventSatisfactionView AS
 SELECT 
     e.EventId, 
@@ -427,7 +469,10 @@ INNER JOIN Answers a ON e.EventId = a.EventId
 GROUP BY e.EventId, e.EventName, u.Names
 ORDER BY SatisfactionAverage DESC;
 
--- Disponibilidad de recursos
+-- ----------------------------------------------------------
+-- Vista: ResourceAvailabilityView
+-- Disponibilidad en tiempo real de recursos del sistema
+-- ----------------------------------------------------------
 CREATE OR REPLACE VIEW ResourceAvailabilityView AS
 SELECT 
     r.ResourceId,
@@ -449,113 +494,10 @@ FROM Resources r
 LEFT JOIN EventResources er ON r.ResourceId = er.ResourceId
 GROUP BY r.ResourceId, r.ResourceName, r.Quantity, r.Status, r.Price;
 
--- ==========================================================
--- TRIGGERS
--- ==========================================================
-
--- Actualizar fecha de gestion en solicitudes
-DELIMITER //
-CREATE TRIGGER SetManagementDate
-BEFORE UPDATE ON  requests
-FOR EACH ROW 
-BEGIN
-	IF NEW.RequestStatus IN ("approved","rejected")
-		AND OLD.RequestStatus != NEW.RequestStatus THEN
-		SET NEW.ManagementDate = curdate();
-	END IF;
-END//
-	
--- Validar disponibilidad antes de asignar
-DELIMITER //
-CREATE TRIGGER ValidateResourceAvailability
-BEFORE INSERT ON EventResources
-FOR EACH ROW
-BEGIN
-    DECLARE vAvailableQty INT;
-    
-    SELECT AvailableQuantity INTO vAvailableQty
-    FROM ResourceAvailabilityView
-    WHERE ResourceId = NEW.ResourceId;
-    
-    IF vAvailableQty < NEW.AssignedQuantity THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Cantidad insuficiente del recurso';
-    END IF;
-END//
-
--- Actualizar estado después de asignar
-DELIMITER //
-CREATE TRIGGER UpdateResourceAfterAssignment
-AFTER INSERT ON EventResources
-FOR EACH ROW
-BEGIN
-    -- Descontamos la cantidad asignada del recurso
-    UPDATE Resources r
-    SET r.Quantity = r.Quantity - NEW.AssignedQuantity
-    WHERE r.ResourceId = NEW.ResourceId;
-
-    -- Actualizamos el estado según la nueva disponibilidad
-    UPDATE Resources r
-    SET r.Status = IF(r.Quantity <= 0, 'In_use', 'Available')
-    WHERE r.ResourceId = NEW.ResourceId;
-END//
-DELIMITER ;
-
--- Actualizar estado al devolver
-DELIMITER //
-CREATE TRIGGER ReturnResourcesAfterEventUpdate
-AFTER UPDATE ON Events
-FOR EACH ROW
-BEGIN
-    IF NEW.EventStatus IN ('Completed', 'Canceled') 
-       AND OLD.EventStatus NOT IN ('Completed', 'Canceled') THEN
-
-        -- Actualiza estado de recursos asignados
-        UPDATE EventResources
-        SET AssignmentStatus = 'returned'
-        WHERE EventId = NEW.EventId
-          AND AssignmentStatus IN ('reserved', 'assigned');
-
-        -- Devuelve la cantidad al inventario
-        UPDATE Resources r
-        JOIN EventResources er ON r.ResourceId = er.ResourceId
-        SET r.Quantity = r.Quantity + er.AssignedQuantity
-        WHERE er.EventId = NEW.EventId
-          AND er.AssignmentStatus = 'returned';
-    END IF;
-END//
-DELIMITER ;
-
-
--- Devolver recursos al finalizar evento
-DELIMITER //
-CREATE TRIGGER ReturnResourcesAfterEventUpdate
-AFTER UPDATE ON Events
-FOR EACH ROW
-BEGIN
-    IF NEW.EventStatus IN ('Completed', 'Canceled') 
-       AND OLD.EventStatus NOT IN ('Completed', 'Canceled') THEN
-
-        -- Actualiza estado de recursos asignados
-        UPDATE EventResources
-        SET AssignmentStatus = 'returned'
-        WHERE EventId = NEW.EventId
-          AND AssignmentStatus IN ('reserved', 'assigned');
-
-        -- Devuelve la cantidad al inventario
-        UPDATE Resources r
-        JOIN EventResources er ON r.ResourceId = er.ResourceId
-        SET r.Quantity = r.Quantity + er.AssignedQuantity
-        WHERE er.EventId = NEW.EventId
-          AND er.AssignmentStatus = 'returned';
-    END IF;
-END//
-DELIMITER ;
-
--- ==========================================================
--- TRAER DATOS A ENCUESTAS
--- ==========================================================
-
+-- ----------------------------------------------------------
+-- Vista: EventFeedbackDetailView
+-- Detalle de respuestas a encuestas con información del usuario
+-- ----------------------------------------------------------
 CREATE OR REPLACE VIEW EventFeedbackDetailView AS
 SELECT
     u.Names AS UserName,
@@ -568,18 +510,129 @@ INNER JOIN Events e ON a.EventId = e.EventId
 INNER JOIN Questions q ON a.QuestionId = q.QuestionId;
 
 -- ==========================================================
--- VERIFICAR CONFIGURACIÓN
+-- SECCIÓN 6: TRIGGERS (DISPARADORES AUTOMÁTICOS)
 -- ==========================================================
+
+-- ----------------------------------------------------------
+-- Trigger: SetManagementDate
+-- Establece automáticamente la fecha de gestión al aprobar o rechazar solicitudes
+-- ----------------------------------------------------------
+DELIMITER //
+CREATE TRIGGER SetManagementDate
+BEFORE UPDATE ON Requests
+FOR EACH ROW 
+BEGIN
+    IF NEW.RequestStatus IN ('approved', 'rejected')
+       AND OLD.RequestStatus != NEW.RequestStatus THEN
+        SET NEW.ManagementDate = NOW();
+    END IF;
+END//
+DELIMITER ;
+
+-- ----------------------------------------------------------
+-- Trigger: ValidateResourceAvailability
+-- Valida disponibilidad de recursos antes de asignación
+-- ----------------------------------------------------------
+DELIMITER //
+CREATE TRIGGER ValidateResourceAvailability
+BEFORE INSERT ON EventResources
+FOR EACH ROW
+BEGIN
+    DECLARE vAvailableQty INT;
+    
+    -- Obtener cantidad disponible
+    SELECT AvailableQuantity INTO vAvailableQty
+    FROM ResourceAvailabilityView
+    WHERE ResourceId = NEW.ResourceId;
+    
+    -- Validar suficiencia de recursos
+    IF vAvailableQty < NEW.AssignedQuantity THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cantidad insuficiente del recurso';
+    END IF;
+END//
+DELIMITER ;
+
+-- ----------------------------------------------------------
+-- Trigger: UpdateResourceAfterAssignment
+-- Actualiza inventario y estado del recurso después de asignación
+-- ----------------------------------------------------------
+DELIMITER //
+CREATE TRIGGER UpdateResourceAfterAssignment
+AFTER INSERT ON EventResources
+FOR EACH ROW
+BEGIN
+    -- Descontar cantidad asignada del inventario
+    UPDATE Resources
+    SET Quantity = Quantity - NEW.AssignedQuantity
+    WHERE ResourceId = NEW.ResourceId;
+
+    -- Actualizar estado según disponibilidad
+    UPDATE Resources
+    SET Status = IF(Quantity <= 0, 'In_use', 'Available')
+    WHERE ResourceId = NEW.ResourceId;
+END//
+DELIMITER ;
+
+-- ----------------------------------------------------------
+-- Trigger: ReturnResourcesAfterEventUpdate
+-- Devuelve recursos al inventario cuando un evento se completa o cancela
+-- ----------------------------------------------------------
+DELIMITER //
+CREATE TRIGGER ReturnResourcesAfterEventUpdate
+AFTER UPDATE ON Events
+FOR EACH ROW
+BEGIN
+    IF NEW.EventStatus IN ('Completed', 'Canceled') 
+       AND OLD.EventStatus NOT IN ('Completed', 'Canceled') THEN
+
+        -- Marcar recursos como devueltos
+        UPDATE EventResources
+        SET AssignmentStatus = 'returned'
+        WHERE EventId = NEW.EventId
+          AND AssignmentStatus IN ('reserved', 'assigned');
+
+        -- Devolver cantidad al inventario
+        UPDATE Resources r
+        INNER JOIN EventResources er ON r.ResourceId = er.ResourceId
+        SET r.Quantity = r.Quantity + er.AssignedQuantity
+        WHERE er.EventId = NEW.EventId
+          AND er.AssignmentStatus = 'returned';
+
+        -- Actualizar estado de recursos devueltos
+        UPDATE Resources r
+        INNER JOIN EventResources er ON r.ResourceId = er.ResourceId
+        SET r.Status = 'Available'
+        WHERE er.EventId = NEW.EventId
+          AND er.AssignmentStatus = 'returned'
+          AND r.Quantity > 0;
+    END IF;
+END//
+DELIMITER ;
+
+-- ==========================================================
+-- SECCIÓN 7: DATOS INICIALES DEL SISTEMA
+-- ==========================================================
+
+-- ----------------------------------------------------------
+-- Insertar usuarios de prueba (usuario regular y administrador)
+-- Contraseña para ambos: hasheada con bcrypt
+-- ----------------------------------------------------------
+INSERT INTO User (UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role, Photo)
+VALUES 
+(1, 'Ale', 'CC', '12345678901', '2000-04-08', 'apilogisticaeventos@gmail.com', 
+  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL),
+(2, 'Ale', 'CC', '12345678902', '2000-04-08', 'admin@gmail.com', 
+  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL);
+
+-- Actualizar rol de administrador
+UPDATE User
+SET Role = 'admin'
+WHERE UserId = 2;
+
+-- ==========================================================
+-- SECCIÓN 8: VERIFICACIÓN DE CONFIGURACIÓN
+-- ==========================================================
+
+-- Verificar que el planificador de eventos esté activo
 SHOW VARIABLES LIKE 'event_scheduler';
-
-Insert into user (UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role, Photo)
-values (1, 'Ale', 'CC', '12345678901', '2000-04-08', 'apilogisticaeventos@gmail.com', 
-  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL);
-
-Insert into user (UserId, Names, DocumentType, DocumentNumber, BirthDate, Email, Password, Status, Role, Photo)
-values (2, 'Ale', 'CC', '12345678902', '2000-04-08', 'admin@gmail.com', 
-  '$2b$10$MLOkf8gB3m72sxLgAmUK0uWzzMqF0wPuP947QkYy0LJAlArPM5xF.', 'active', 'user', NULL);
-        
-UPDATE user
-SET role = 'admin'
-WHERE userid = 2;

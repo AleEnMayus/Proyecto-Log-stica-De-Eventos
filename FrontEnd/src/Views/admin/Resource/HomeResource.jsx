@@ -164,7 +164,7 @@ const ListResource = () => {
               {currentResources.map((r) => (
                 <tr key={r.ResourceId}>
                   <td>{r.ResourceName}</td>
-                  <td>{r.Quantity}</td>
+                  <td>{r.AssignedQuantity}</td>
                   <td>{r.Status ?? 0}</td>
                   <td className='sm-erase'>{r.StatusDescription}</td>
                   <td className="text-bold">

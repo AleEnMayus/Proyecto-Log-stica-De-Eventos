@@ -203,8 +203,9 @@ const LoginPage = () => {
               {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
             </button>
           </form>
-          <div className="divider">O</div>
-
+          <div class="divider">
+            <span>O</span>
+          </div>
           <p className="register-link">
             ¿No tienes una cuenta?{' '}
             <a href='/Register'>
